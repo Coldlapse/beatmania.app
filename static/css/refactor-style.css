@@ -646,3 +646,42 @@ body.bm-rankpage #rankimg { margin-top: .5rem; }
 .bm-token-bar-text { flex: 1 1 260px; min-width: 0; }
 .bm-token-bar-actions { flex: 0 0 auto; margin-left: auto; }
 .bm-health-when { color: var(--bm-text-subtle); }
+
+/* --- 개발자 명함 (roadmap.html) ------------------------------------------ */
+.bm-devcard {
+  display: flex; flex-wrap: wrap; gap: 1.25rem; align-items: flex-start;
+}
+.bm-devcard-id { text-align: center; flex: 0 0 auto; }
+.bm-devcard-photo {
+  width: 96px; height: 96px; border-radius: 50%;
+  border: 2px solid var(--bm-border); object-fit: cover; display: block;
+}
+.bm-devcard-name {
+  margin-top: .5rem; font-weight: 700; letter-spacing: -.01em;
+}
+/* min-width:0 이 없으면 글 상자가 제 내용 너비 아래로 줄지 않아 명함이 깨진다 */
+.bm-devcard-body { flex: 1 1 320px; min-width: 0; }
+.bm-devcard-body p { line-height: 1.75; }
+
+.bm-devlinks {
+  display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem;
+}
+/* 바깥으로 나가는 링크. 평소에는 같은 무게로 두고 올렸을 때만 각자의
+   상징색을 준다 — 네 개가 처음부터 알록달록하면 무엇을 먼저 볼지 알 수 없다. */
+.bm-devlink {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .4rem .85rem; border-radius: .45rem;
+  border: 1px solid var(--bm-border); background: var(--bm-surface-2);
+  color: var(--bm-text) !important; text-decoration: none;
+  font-size: .88rem; font-weight: 600;
+}
+.bm-devlink:hover { border-color: currentColor; }
+.bm-devlink-yt:hover  { color: #FF0000 !important; }
+.bm-devlink-dc:hover  { color: #5865F2 !important; }
+.bm-devlink-gh:hover  { color: var(--bm-nav-link-hover) !important; }
+/* 후원만 처음부터 색을 준다. 맨 뒤에 있어도 눈에 띄어야 한다. */
+.bm-devlink-bmc {
+  background: #FFDD00; border-color: rgba(0, 0, 0, .12);
+  color: #111 !important;
+}
+.bm-devlink-bmc:hover { filter: brightness(.95); color: #111 !important; }
