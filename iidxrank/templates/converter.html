@@ -1,7 +1,7 @@
 {% extends "common.html" %}
 {% load i18n %}
 {% load static %}
-{% block subtitle %}- {% trans '흰숫 변환기' %}{% endblock %}
+{% block page_title %}{% trans '흰숫 변환기' %}{% endblock %}
 {% block head %}
 <script src="{% static 'js/converter.js' %}?v=20260902-4" defer></script>
 {% endblock %}
@@ -12,7 +12,7 @@
 <div id="container">
   <h1 class="bm-page-title">{% trans '흰숫 변환기' %}</h1>
   <p class="text-body-secondary mb-3">
-    {% blocktrans %}beatoraja(비토라쟈)와 IIDX의 서든 플러스 수치를 서로 변환합니다.{% endblocktrans %}
+    {% blocktrans %}beatoraja와 IIDX의 서든 플러스 수치를 서로 변환합니다.{% endblocktrans %}
   </p>
 
   {% comment %}
@@ -21,7 +21,7 @@
   {% endcomment %}
   <div class="alert alert-warning bm-conv-notice" role="note">
     <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
-    <span>{% blocktrans %}Beatoraja의 LITONE 계열 스킨 등 IIDX와 동일한 구조로 제작된 스킨에 대응합니다. 일부 LITONE 버전은 IIDX AC 계산식대로의 서든 계산을 지원하지만, 일부 버전은 Beatoraja의 서든 계산대로 작동합니다. 확인 후 이용해주세요.{% endblocktrans %}</span>
+    <span>{% blocktrans %}beatoraja의 LITONE 계열 스킨 등 IIDX와 동일한 구조로 제작된 스킨에 대응합니다. 일부 LITONE 버전은 IIDX AC 계산식대로의 서든 계산을 지원하지만, 일부 버전은 beatoraja의 서든 계산대로 작동합니다. 확인 후 이용해주세요.{% endblocktrans %}</span>
   </div>
 
   {% comment %}

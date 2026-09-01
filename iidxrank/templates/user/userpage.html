@@ -4,7 +4,12 @@
   이전 2행은 <!--{% templatetag openblock %} block subtitle {% templatetag closeblock %}- recommendation ... --> 였다.
   HTML 주석 안이어도 Django 태그는 실행되므로 제목에 "- recommendation" 이 새어나왔다.
 {% endcomment %}
-{% block subtitle %} - {{ userdata.djname }}{% endblock %}
+{% comment %}
+  이 템플릿은 홈(/)과 남의 프로필(/u/x/)을 겸한다. 비로그인 홈에서는
+  djname 이 'NONAME' 이라 제목이 'NONAME - ...' 으로 나왔다(라이브 확인).
+  그 경우만 사이트명만 내보낸다.
+{% endcomment %}
+{% block title %}{% if viewing_other or user.is_authenticated %}{{ userdata.djname }} - {% endif %}INFINITAS Rank Table{% endblock %}
 {% block body %}
 
 {% include "top.html" %}

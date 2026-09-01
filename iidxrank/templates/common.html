@@ -30,11 +30,26 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   {% comment %}
-    기존 템플릿들은 "{% block subtitle %} - Join{% endblock %}" 형태로 써 왔는데,
-    부모에 subtitle 블록이 없어서 그동안 전부 무시되고 있었다. 그래서 모든 페이지
-    제목이 "INFINITAS Rank Table" 로 같았다. 접미사로 붙여 살린다.
+    제목 규칙: 자식은 page_title 에 "페이지 이름만" 넣는다.
+    구분자(" - ")와 사이트명은 여기서 붙인다.
+
+      {% block page_title %}{% trans '로그인' %}{% endblock %}
+        -> 로그인 - INFINITAS Rank Table
+
+    구분자를 자식이 쓰던 예전 방식(subtitle)은 실제로 깨져 있었다. 어떤 파일은
+    "- 로그인", 어떤 파일은 " - 설정" 이라 앞 공백이 있는 것과 없는 것이 섞였고,
+    없는 쪽은 "INFINITAS Rank Table- 로그인" 으로 붙어 나왔다(라이브에서 8곳).
+    구분자를 부모가 쥐고 있으면 이런 실수가 구조적으로 불가능하다.
+
+    페이지 이름을 앞에 두는 이유: 탭이 좁아지면 뒤부터 잘린다. 사이트명이
+    앞이면 탭 여러 개가 전부 "INFINITAS Ran…" 으로 똑같아 구분이 안 된다.
+
+    page_title 이 비면 " - INFINITAS Rank Table" 처럼 구분자가 앞에 남는다.
+    Django 템플릿은 블록의 출력을 조건에 쓸 수 없어서 부모가 알아서 지울 방법이
+    없다. 그런 페이지(홈, 오버조이)는 title 블록을 통째로 덮는다 — 예외를
+    두 곳으로 못 박아 두는 편이, 매직을 넣어 두고 나중에 헤매는 것보다 낫다.
   {% endcomment %}
-  <title>{% block title %}INFINITAS Rank Table{% block subtitle %}{% endblock %}{% endblock %}</title>
+  <title>{% block title %}{% block page_title %}{% endblock %} - INFINITAS Rank Table{% endblock %}</title>
   <meta name="description" content="{% trans 'beatmania IIDX INFINITAS 비공식 난이도 서열표 사이트입니다.' %}">
   <meta name="author" content="@lazykuna">
   <meta name="theme-color" content="#a0e2fc" media="(prefers-color-scheme: light)">
@@ -53,7 +68,7 @@
   <link rel="stylesheet" href="{% static 'css/theme.css' %}?v=3">
   <link rel="stylesheet" href="{% static 'css/rankpage_common.css' %}?v=3">
   <link rel="stylesheet" href="{% static 'css/common.css' %}?v=3">
-  <link rel="stylesheet" href="{% static 'css/refactor-style.css' %}?v=19">
+  <link rel="stylesheet" href="{% static 'css/refactor-style.css' %}?v=20260902a">
 
   <script src="{% static 'js/theme.js' %}?v=1"></script>
   <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>

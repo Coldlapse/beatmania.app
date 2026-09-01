@@ -4,7 +4,7 @@
   이전 버전은 {% templatetag openblock %} extends {% templatetag closeblock %} 자체가 없어서
   네비바도 CSS 도 없이 알몸으로 렌더되고 있었다.
 {% endcomment %}
-{% block subtitle %}- {% trans '회원 탈퇴' %}{% endblock %}
+{% block page_title %}{% trans '회원 탈퇴' %}{% endblock %}
 {% block auth_title %}{% trans '회원 탈퇴' %}{% endblock %}
 {% block auth_lead %}
 <div class="alert alert-danger" role="alert">

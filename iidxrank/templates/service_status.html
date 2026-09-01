@@ -8,7 +8,7 @@
   hitcount 가 조회 한 건마다 시각을 남기므로 추이를 그릴 수 있다.
   기간을 바꿔도 페이지를 다시 받지 않고 JSON 만 갈아 끼운다.
 {% endcomment %}
-{% block subtitle %}- {% trans '서비스 현황' %}{% endblock %}
+{% block page_title %}{% trans '서비스 현황' %}{% endblock %}
 
 {% block head %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js" defer></script>

@@ -1,6 +1,6 @@
 {% extends "common.html" %}
 {% load i18n %}
-{% block subtitle %} - {{ run.command }} 실행 로그{% endblock %}
+{% block page_title %}{% blocktrans with cmd=run.command %}{{ cmd }} 실행 로그{% endblocktrans %}{% endblock %}
 {% block body %}
 {% include "top.html" %}
 

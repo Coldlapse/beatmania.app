@@ -1,6 +1,6 @@
 {% extends "common.html" %}
 {% load i18n static %}
-{% block subtitle %}- {% trans '프로젝트 소개' %}{% endblock %}
+{% block page_title %}{% trans '프로젝트 소개' %}{% endblock %}
 
 {% block body %}
   {% include "top.html" %}
@@ -16,15 +16,20 @@
         명함처럼 사진과 이름을 왼쪽에 두고 소개를 오른쪽에 둔다.
         좁은 화면에서는 세로로 쌓인다.
 
-        프로필 사진은 github.com 에서 직접 불러오지 않고 받아 둔 파일을 쓴다.
-        외부에서 불러오면 이 페이지를 여는 사람의 접속 정보가 그쪽으로 간다.
-        개인정보처리방침에 "제3자는 reCAPTCHA 뿐" 이라고 적어 두었다.
-        GitHub 프로필 사진을 바꾸면 이 파일도 다시 받아야 한다.
+        프로필 사진은 저장소 안의 static 파일이다. 외부(github.com 등)에서
+        직접 불러오지 않는다 — 그러면 이 페이지를 여는 사람의 접속 정보가
+        그쪽으로 간다. 개인정보처리방침에 "제3자는 reCAPTCHA 뿐" 이라고
+        적어 두었으므로 그 문장을 지키려면 여기서 내야 한다.
+
+        2026-09-02 에 GitHub 아바타에서 캐릭터 일러스트로 바꿨다. 배경이 투명한
+        전신 그림이라 원형 크롭(border-radius:50% + cover)과 맞지 않는다.
+        CSS 를 둥근 사각 + contain 으로 바꿔 두었으니, 다시 얼굴 사진류로
+        바꾼다면 .bm-devcard-photo 도 같이 되돌릴 것.
       {% endcomment %}
       <div class="bm-devcard">
         <div class="bm-devcard-id">
           <img class="bm-devcard-photo" src="{% static 'img/coldlapse.png' %}"
-               alt="Coldlapse" width="96" height="96">
+               alt="Coldlapse" width="112" height="112">
           <div class="bm-devcard-name">Coldlapse</div>
         </div>
 
@@ -47,6 +52,17 @@
                target="_blank" rel="noopener">
               <i class="bi bi-discord" aria-hidden="true"></i>
               <span>{% trans '디스코드' %}</span>
+            </a>
+            {% comment %}
+              보쿠타치(BMS 인터넷 랭킹) 프로필. 아이콘이 Bootstrap Icons 에
+              없어서 로고 파일을 쓴다. 로고에 색이 들어 있어 아이콘 폰트처럼
+              hover 색을 따라가지 못하므로, .bm-devlink-ir 에서 크기만 맞춘다.
+            {% endcomment %}
+            <a class="bm-devlink bm-devlink-ir" href="https://boku.tachi.ac/u/Sadang"
+               target="_blank" rel="noopener">
+              <img src="{% static 'img/bokutachi.png' %}" alt="" aria-hidden="true"
+                   width="20" height="13">
+              <span>{% trans 'IR Profile' %}</span>
             </a>
             <a class="bm-devlink bm-devlink-gh" href="https://github.com/Coldlapse"
                target="_blank" rel="noopener">
@@ -71,24 +87,30 @@
   </div>
   </div>
   
+  {% comment %}
+    로드맵 타임라인 전용 스타일.
+
+    예전에는 여기 색이 전부 하드코딩돼 있었다(제목 #eee, 본문 #ccc, 점 #222).
+    "다크모드 기준" 이라는 주석이 붙어 있었는데, 말 그대로 다크에서만 맞고
+    라이트 모드에서는 흰 배경에 밝은 회색 글씨라 읽히지 않았다.
+    전부 var(--bm-*) 토큰으로 바꿨다. 토큰이 테마별로 정의돼 있으므로
+    여기서 라이트/다크를 따로 신경 쓸 필요가 없다.
+
+    .nav-tabs 규칙은 지웠다. 이 페이지에 nav-tabs 마크업이 없다.
+  {% endcomment %}
   <style>
-      /* 기존 탭 및 페이지네이션 스타일 유지 */
-      .nav-tabs { margin-top: 20px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #dee2e6; }
-      .nav-tabs a { display: inline-block; padding: 10px 15px; margin-right: 5px; text-decoration: none; color: #007bff; border: 1px solid transparent; border-radius: 0.25rem 0.25rem 0 0; }
-      .nav-tabs a.active { font-weight: bold; color: #495057; background-color: #fff; border-color: #dee2e6 #dee2e6 #fff; border-bottom: 2px solid #007bff; }
-      .nav-tabs a:hover { background-color: #f8f9fa; border-color: #e9ecef; }
       .content-section { padding: 15px; }
-      
-      /* 로드맵 타임라인 전용 스타일 */
+
       .roadmap-container {
           margin-top: 30px;
           padding-left: 20px;
-          border-left: 3px solid #dee2e6;
+          border-left: 3px solid var(--bm-border);
       }
       .roadmap-item {
           margin-bottom: 30px;
           position: relative;
       }
+      /* 타임라인의 점. 세로선을 가려야 하므로 배경색으로 칠한다 */
       .roadmap-item::before {
           content: '';
           position: absolute;
@@ -96,52 +118,60 @@
           top: 0;
           width: 15px;
           height: 15px;
-          background-color: #222; /* 다크모드 배경색 */
-          border: 3px solid #dee2e6;
+          background-color: var(--bm-bg);
+          border: 3px solid var(--bm-border);
           border-radius: 50%;
       }
-      
-      /* 완료된 항목 스타일 */
+
+      /* 완료된 항목 */
       .roadmap-item.completed::before {
-          border-color: #007bff;
-          background-color: #007bff;
+          border-color: var(--bm-accent);
+          background-color: var(--bm-accent);
       }
       .roadmap-item.completed .roadmap-date {
-          color: #007bff;
+          color: var(--bm-accent);
       }
 
-      /* 공백기(Hiatus) 스타일 - 흐리게, 점선 처리 */
+      /* 공백기 - 흐리게, 점선 */
       .roadmap-item.hiatus::before {
-          border-color: #555;
+          border-color: var(--bm-border-strong);
           background-color: transparent;
-          border-style: dashed; /* 점선으로 표현 */
+          border-style: dashed;
       }
-      .roadmap-item.hiatus .roadmap-date {
-          color: #666;
+      /* 공백기는 일부러 흐리게 둔다. 다만 읽지 말라는 뜻은 아니므로
+         faint(2.07:1) 까지 내리지 않고 subtle 에서 멈춘다. */
+      .roadmap-item.hiatus .roadmap-date,
+      .roadmap-item.hiatus .roadmap-title,
+      .roadmap-item.hiatus .roadmap-desc {
+          color: var(--bm-text-subtle);
       }
       .roadmap-item.hiatus .roadmap-title {
-          color: #777;
           font-style: italic;
       }
-      .roadmap-item.hiatus .roadmap-desc {
-          color: #555;
-      }
 
-      /* 공통 텍스트 스타일 (다크모드 기준) */
       .roadmap-date {
           font-weight: bold;
-          color: #888;
+          color: var(--bm-text-muted);
           margin-bottom: 5px;
       }
       .roadmap-title {
           font-size: 1.2em;
           font-weight: bold;
           margin-bottom: 10px;
-          color: #eee;
+          color: var(--bm-text);
       }
+      /* 본문은 muted 를 쓴다. subtle 은 라이트 모드에서 3.32:1 로 WCAG AA
+         (본문 4.5:1)에 못 미쳐 실제로 읽기 힘들다는 지적을 받았다.
+         muted 는 5.85:1 이다. */
       .roadmap-desc {
-          color: #ccc;
+          color: var(--bm-text-muted);
           line-height: 1.6;
+      }
+      /* 본문 안의 링크. 예전에는 style="color:#007bff" 를 인라인으로 박아
+         두었는데, 그러면 테마를 못 따라간다 */
+      .roadmap-desc a {
+          color: var(--bm-accent);
+          text-decoration: underline;
       }
   </style>
 
@@ -151,7 +181,7 @@
     <hr>
 
     <div class="content-section">
-        <p>{% trans 'IIDX INFINTIAS Rank Table 프로젝트의 개발 진행 상황과 앞으로 업데이트될 기능들입니다.' %}</p>
+        <p>{% trans 'beatmania.app 프로젝트의 개발 진행 상황과 앞으로 업데이트될 기능들입니다.' %}</p>
         
         <div class="roadmap-container">
             
@@ -212,7 +242,7 @@
                     {% comment %}
                       링크가 문장 안에 있어 blocktrans 로 잡고 주소는 변수로 뺐다.
                     {% endcomment %}
-                    {% blocktrans with url='https://github.com/Coldlapse/IIDXwidget' %}- <a href="{{ url }}" target="_blank" style="color: #007bff; text-decoration: underline;">IIDXwidget</a> 프로젝트 기반 타건 횟수 기록 일지 기능 구현{% endblocktrans %}
+                    {% blocktrans with url='https://github.com/Coldlapse/IIDXwidget' %}- <a href="{{ url }}" target="_blank">IIDXwidget</a> 프로젝트 기반 타건 횟수 기록 일지 기능 구현{% endblocktrans %}
                 
                   </div>
             </div>
