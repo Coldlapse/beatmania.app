@@ -189,14 +189,19 @@ class IIDXSheetParser:
         # ----------------------------------------------------
         print("🔍 구글 시트 데이터를 분석 중입니다...")
         for row in rows:
-            cells = row.find_all(['td', 'th'])
+            # th 는 구글 시트가 붙이는 행번호 여백이다(1, 2, 3...). 곡이 아니다.
+            # 예전에는 th 까지 훑어서 그 숫자가 곡 제목 매칭에 흘러들었다.
+            cells = row.find_all('td')
+
+            # 행을 통째로 먼저 읽는다. 머리글 행인지 판정하려면 행 전체를 봐야 한다.
+            row_cells = []
             for col_idx, cell in enumerate(cells):
-                
+
                 lines = []
                 current_text = ""
                 is_red = False
                 cell_classes = cell.get('class', [])
-                
+
                 for child in cell.descendants:
                     if child.name in ['br', 'div']:
                         if current_text.strip():
@@ -206,40 +211,62 @@ class IIDXSheetParser:
                     elif isinstance(child, NavigableString):
                         text_parts = str(child).split('\n')
                         for i, part in enumerate(text_parts):
-                            if i > 0: 
+                            if i > 0:
                                 if current_text.strip():
                                     lines.append((current_text.strip(), is_red))
                                 current_text = ""
                                 is_red = False
-                            
+
                             if part:
-                                current_text += part 
+                                current_text += part
                                 parent = child.parent
                                 parent_classes = parent.get('class', []) if parent else []
                                 parent_style = parent.get('style', '').lower() if parent else ''
                                 all_classes = set(parent_classes + cell_classes)
-                                
+
                                 if any(c in red_classes for c in all_classes) or \
                                    '#ff0000' in parent_style or '#f00' in parent_style or 'red' in parent_style or \
                                    '#cc0000' in parent_style or '#ea4335' in parent_style or '#e60000' in parent_style:
                                     is_red = True
-                                    
+
                 if current_text.strip():
                     lines.append((current_text.strip(), is_red))
 
+                if lines:
+                    row_cells.append((col_idx, lines))
+
+            if not row_cells:
+                continue
+
+            # --- 머리글 행인가 -------------------------------------------------
+            #
+            # 이 시트는 티어 이름(F E D C B B＋ A A＋ S S＋)이 열 머리글이고,
+            # 곡 제목 중에도 'A' 와 'F' 가 있다. 예전 코드는 "머리글과 같은 글자면
+            # 건너뛴다" 로 막았는데, 그러면 진짜 A·F 곡까지 사라져서 갱신 때마다
+            # Type 2(시트에서 안 보임)로 잡혔다.
+            #
+            # 글자가 아니라 **행 모양**으로 가른다. 머리글 행은 모든 셀이 딱 한 줄이고
+            # 그 줄이 그 열의 머리글과 같다. 데이터 행은 한 셀에 곡이 수십 줄씩 쌓인다.
+            # 그래서 F 열에 'A' 한 곡이 있어도, 나머지 열까지 전부 머리글과 같지 않은 한
+            # 데이터 행으로 남는다.
+            if not headers:
+                for col_idx, lines in row_cells:
+                    if len(lines) == 1 and len(lines[0][0]) < 15:
+                        headers[col_idx] = lines[0][0]
+                continue
+
+            if all(len(lines) == 1 and lines[0][0] == headers.get(col_idx)
+                   for col_idx, lines in row_cells):
+                continue
+
+            # --- 데이터 행 -----------------------------------------------------
+            for col_idx, lines in row_cells:
+                if col_idx not in headers:
+                    continue                      # 머리글이 없는 열은 분류할 수 없다
+
                 for raw_title, song_is_red in lines:
                     raw_title = raw_title.strip()
-                    if not raw_title: 
-                        continue
-
-                    if col_idx not in headers:
-                        if len(raw_title) < 15:
-                            headers[col_idx] = raw_title
-                        continue
-
-                    # 💡 A, F 수동 분류 보호 로직
-                    # 이 코드로 인해 실제 A, F 곡들이 시트 파싱에서 건너뛰어지고 DB 상에서는 Type 2(수동유지)가 됩니다.
-                    if raw_title in headers.values():
+                    if not raw_title:
                         continue
 
                     clean_title = raw_title.replace("[L]", "").replace("[H]", "").strip()
@@ -248,7 +275,7 @@ class IIDXSheetParser:
                     elif "[H]" in raw_title: song_type = "SPH"
 
                     match_result = process.extractOne(clean_title, self.db_titles, scorer=fuzz.ratio)
-                    
+
                     if match_result and match_result[1] >= self.match_threshold:
                         matched_title, score = match_result
                         target_song = Song.objects.filter(songtitle=matched_title, songtype=song_type).first()
