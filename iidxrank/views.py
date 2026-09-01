@@ -24,8 +24,6 @@ import base64
 import os
 import requests
 
-import update.parser_iidxme as iidxme
-from hitcount.views import HitCountDetailView
 
 from django.db.models.functions import TruncDay, TruncWeek, TruncMonth
 from django.db.models import Count
@@ -41,28 +39,7 @@ from django.core.paginator import Paginator
 
 
 
-def mainpage(request):
-    # get first notice
-    notice_board = board.models.Board.objects.get(title='notice')
-    post = notice_board.posts.order_by('-time').first()
-    # get recent 3 freetalk
-    freetalk_board = board.models.Board.objects.get(title='freetalk')
-    freetalk = freetalk_board.posts.order_by('-time')[:5]
-    comments = board.models.BoardComment.objects.order_by('-time')[:5]
-    votes = []
-    return render(request, 'index.html', {
-        'hidesearch': True, 'mobileview':True,
-        'noticepost': post,
-        'freetalk': freetalk,
-        'comments': comments,
-        'votes': votes,
-        })
 
-def userjson(request, username="!"):
-    j = {}
-    if (username != "!"):
-        j = iidxme.parse_iidxme_http("http://iidx.me/%s/sp/level/12" % username)
-    return JsonResponse(j)
 
 def userpage(request, username="!"):
     if (username == "!"):
@@ -89,13 +66,6 @@ def get_pdata(request,username,tablename):
         player = rp.get_player_from_request(request)
         pdata = rp.get_pdata_from_player(player,table)
     else:
-        #userjson_url = "http://json.iidx.me/%s/%s/level/%d/" % (username, table.type.lower(), table.level)
-        #iidxme_data = jsondata.loadJSONurl(userjson_url)
-        #userpage_url = "http://iidx.me/%s/%s/level/%d/" % (username, table.type.lower(), table.level)
-        #iidxme_data = iidxme.parse_iidxme_http(userpage_url)
-        #if (not checkValidPlayer(iidxme_data)):
-            #raise Http404
-        #    return None
         player = rp.find_player_from_id(username)
         if player == None:
             raise Http404
@@ -463,47 +433,8 @@ def imgdownload(request):
     r['Content-Disposition'] = 'attachment; filename=%s' % filename
     return r
 
-# iidx/imgtl/
-@csrf_exempt
-def imgtl(request):
-    if request.method != "POST":
-        # allow only POST method
-        raise PermissionDenied
 
-    filename = request.POST['name']
-    pngdata = base64.b64decode(request.POST['base64'])
-    print("got request: %s (%d byte)" % (request.POST['name'], len(pngdata)))
 
-    header = {'X-IMGTL-TOKEN': settings.imgtlkey}
-    r = requests.post('https://api.img.tl/upload', data={'desc': '', 'filename': filename}, \
-            files={'file': (filename, pngdata, 'application/octet-stream')}, headers=header)
-    return HttpResponse(r.text)
-
-# iidx/qpro/<iidxid>/
-def _qpro_static(name):
-    # MUST be absolute: under mod_wsgi the process CWD is not the project root
-    path = os.path.join(settings.BASE_DIR, 'static', 'qpro', name)
-    with open(path, 'rb') as f:
-        return HttpResponse(f.read(), content_type="image/png")
-
-@csrf_exempt
-def qpro(request, iidxid='!'):
-    digits = iidxid.replace('-', '')
-    if (iidxid == '!' or (digits.isdigit() and int(digits) == 0)):
-        return _qpro_static('noname.png')
-
-    qpro_url = iidxme.parse_qpro(iidxid)
-    if (qpro_url):
-        try:
-            resp = requests.get(qpro_url, timeout=5)
-            if (resp.status_code == 200 and
-                    resp.headers.get('Content-Type', '').startswith('image/')):
-                return HttpResponse(resp.content, content_type="image/png")
-        except requests.RequestException:
-            pass
-
-    # cannot found
-    return _qpro_static('blank.png')
 
 def rankpage_analytics(request):
     # 1. URL 파라미터 가져오기

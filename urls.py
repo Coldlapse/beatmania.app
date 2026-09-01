@@ -31,20 +31,16 @@ urlpatterns = [
 
 	url(r'', include([
         
-	# utilities (admin, imgtl ...)
+	# utilities (admin, image download ...)
 	    url(r'^admin/', admin.site.urls),
         # 언어 전환. URL 에 언어를 넣지 않고 쿠키/세션에 저장한다.
         # set_language 는 POST + next 로만 동작하므로 오픈 리다이렉트가 되지 않는다.
             url(r'^i18n/', include('django.conf.urls.i18n')),
         # JS 안의 번역 문자열용 카탈로그
             url(r'^jsi18n/$', JavaScriptCatalog.as_view(), name='javascript-catalog'),
-            url(r'^imgtl/$', views.imgtl),
             url(r'^imgdownload/$', views.imgdownload),
-            # IIDX IDs are stored hyphenated (e.g. 5241-1234), so \w+ is not enough
-            url(r'^qpro/(?P<iidxid>[\w-]+)/$', views.qpro),
-            url(r'^qpro/!/$', views.qpro),
 
-	# update (NOT WORKING NOW)
+	# 서열표 편집 (staff 전용)
             url(r'^update/', include([
                     url(r'^rankedit/(?P<tablename>\w+)/$', views.ranktableedit, name="ranktableedit"),
             ])),
@@ -91,10 +87,8 @@ urlpatterns = [
             url(r'^api/v1/update-typing-count/$', views.update_typing_count_api, name='update_typing_count_api'),
             # ▼ 대기 현황 Agent용 POST API 추가
             url(r'^api/v1/update-machine-status/$', views.update_machine_status_api, name='update_machine_status_api'),
-        # common urls (mainpage, userpage, rankpage)
-            #url(r'^$', views.mainpage, name="main"),
+        # common urls (userpage, rankpage)
             url(r'^$', RedirectView.as_view(url='/!/'), name="main"),
-            #url(r'^!/$', RedirectView.as_view(url='/')),
             url(r'^!/$', views.userpage),
             url(r'^!/songrank/$', views.songrank),
             url(r'^!/userrank/$', views.userrank),
@@ -123,7 +117,6 @@ urlpatterns = [
             # username
             url(r'^(?P<username>(\w|-)+)/', include([
                     url(r'^$', views.userpage),
-                    url(r'^json/$', views.userjson),
                     # /stat/recm/ and /stat/skill/ removed: both were served from
                     # json.iidx.me, whose DNS record no longer exists.
                     url(r'^(?P<tablename>\w+)/$', views.rankpage, name="rankpage"),

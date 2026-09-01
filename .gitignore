@@ -23,8 +23,9 @@ __pycache__/
 # ---------------------------------------------------------------------------
 # 런타임 생성물 — 소스가 아니다
 # ---------------------------------------------------------------------------
-# python manage.py collectstatic 산출물 (1.7MB). 배포 시 재생성한다.
+# python manage.py collectstatic 산출물. 배포 시 재생성한다.
 /static/admin
+/static/hijack
 
 # update/parser_textage.py 가 만드는 수록곡 캐시 (370KB)
 textage*.json
