@@ -91,10 +91,11 @@
           <a class="nav-link" href="https://discord.gg/RxjwbvWa8D" target="_blank" rel="noopener">
             {% trans '디스코드' %} <i class="bi bi-box-arrow-up-right small" aria-hidden="true"></i></a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="http://sadang.org/overjoy.html" target="_blank" rel="noopener">
-            {% trans '옵조 난이도표 백업' %} <i class="bi bi-box-arrow-up-right small" aria-hidden="true"></i></a>
-        </li>
+        {% comment %}
+          sadang.org 로 나가던 외부 링크였다. 그 도메인은 더 갱신하지 않으므로
+          표를 이 사이트로 옮겼다. 내부 주소이니 새 창으로 열지 않는다.
+        {% endcomment %}
+        <li class="nav-item"><a class="nav-link" href="/overjoy/">{% trans '옵조 난이도표 백업' %}</a></li>
       </ul>
     </div>
   </div>

@@ -1,0 +1,185 @@
+@charset "utf-8";
+
+body{
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  line-height: 1.3em;
+  
+  background-color: #FFFFFF;
+  color: #000000;
+}
+
+a{
+  color: #2222A0;
+}
+ 
+a:link{
+  color: #2222A0;
+}
+ 
+a:visited{
+  color: #A02222;
+}
+ 
+a:hover{
+  color: #2222A0;
+  text-decoration: none;
+}
+
+table, thead, tbody{
+  background-color: #ffffff;
+  border: none;
+  border-collapse: collapse;
+}
+
+tr, td, th{
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  line-height: 1.3em;
+  
+  background-color: #ffffff;
+}
+
+table{
+  margin: auto;
+  margin-top: 1em;
+  padding: 0px;
+  line-height: 1.25em;
+}
+
+th{
+  padding: 0.4em 0.25em 0.25em 0.5em;
+  font-weight: bold;
+  color: #FFFFFF;
+  background-color: #222222;
+}
+
+td{
+  padding: 0.4em 0.25em 0.25em 0.5em;
+}
+
+ul{
+  padding-left: 1.5em;
+  -webkit-padding-start: 1.5em;
+  padding-bottom: 1em;
+}
+
+h1{
+  width: 100%;
+  text-align: center;
+  margin-top: 1em;
+  
+  font-size: 24px;
+  font-weight: bold;
+}
+
+h2{
+  width: 100%;
+  margin-top: 1em;
+  
+  font-size: 20px;
+  font-weight: bold;
+}
+
+h3{
+  margin: 0em;
+}
+
+.overjoy{
+  color: #FF4040;
+  font-weight: bold;
+}
+
+legend{
+  margin: auto;
+}
+
+p{
+  margin: 0px;
+  padding-top: 1em;
+  padding-left: 1.5em;
+  clear: both;
+}
+
+div{
+  margin: 0px;
+  padding: 0px;
+}
+
+div.contents{
+  margin-bottom: 2em;
+}
+
+div.centertext{
+  text-align: left;
+  display:inline-table;
+  margin: auto;
+}
+
+div.info{
+  text-align: center;
+  margin: auto;
+  padding: 0.5em 0px;
+  clear: both;
+}
+
+table#bmslist{
+  margin-top: 1em;
+  margin-bottom: 2em;
+  width: 90%;
+}
+
+table#linklist{
+  margin-top: 1em;
+  width: 60%;
+}
+
+th#level{
+  width: 4%;
+}
+
+th#title{
+  width: 20%;
+}
+
+th#ir{
+  width: 2%;
+}
+
+th#artist{
+  width: 20%;
+}
+
+th#sabun{
+  width: 20%;
+}
+
+th#comment{
+  width: 25%;
+}
+
+th#misc{
+  width: 9%;
+}
+
+tr.header td{
+  font-weight: bold;
+  text-align: center;
+  vertical-align: bottom;
+  background-color: #555555;
+  
+  font-weight: bold;
+  color: #FFFFFF;
+}
+
+tr.main td{
+  font-size: 12px;
+}
+
+tr.new td{
+  background-color: #FFFFDD;
+}
+
+tr.separate {
+  height: 1em;
+}

@@ -32,6 +32,7 @@ import iidxrank.legacy as legacy
 import iidxrank.views as views
 import iidxrank.views_json as views_json
 import iidxrank.views_manage as views_manage
+import iidxrank.views_overjoy as views_overjoy
 
 # 서열표 한 개에 딸린 하위 경로. 내 것과 남의 것이 같은 모양을 갖도록 공유한다.
 table_patterns = [
@@ -61,6 +62,13 @@ urlpatterns = [
     url(r'^musiclist/$', views.musiclist, name='musiclist'),
     url(r'^converter/$', views.converter, name='converter'),
     url(r'^roadmap/$', views.roadmap, name='roadmap'),
+
+    # sadang.org 에서 옮겨온 Overjoy 난이도표.
+    # header.json 은 BMS 구동기가 읽는 규약 주소다. 사람이 보는 페이지보다
+    # 옮기기 어려우니(클라이언트 쪽 재등록이 필요) 주소를 함부로 바꾸지 말 것.
+    url(r'^overjoy/$', views_overjoy.page, name='overjoy'),
+    url(r'^overjoy/header\.json$', views_overjoy.header_json,
+        name='overjoy_header'),
     url(r'^analytics/$', views.rankpage_analytics, name='analytics'),
     url(r'^my-page/$', views.my_page_view, name='my_page'),
     url(r'^status/(?P<machine_id>[\w-]+)/$',
