@@ -18,6 +18,7 @@ from django.db.models.functions import TruncDate, TruncHour
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django.views.decorators.http import require_GET
 
 from hitcount.models import Hit
@@ -71,6 +72,34 @@ def _service_numbers():
 # 업타임 막대에 몇 칸을 보여 줄 것인가. 5분 간격 점검 기준으로 24시간.
 UPTIME_SLOTS = 48
 UPTIME_WINDOW = datetime.timedelta(hours=24)
+
+# 마지막 점검이 이보다 오래됐으면 화면을 열 때 한 번 돌린다.
+#
+# 점검은 원래 `manage.py healthcheck` 를 주기적으로 불러 쌓는 것이고, 화면은
+# 그것을 읽기만 한다. 그런데 그 주기 작업이 없거나 멈춰 있으면 지금 칸이
+# 계속 비어 회색으로 남는다 — 서비스는 멀쩡한데 화면만 고장 난 것처럼 보인다.
+# 그래서 오래됐을 때만 그 자리에서 한 번 채운다. 자주 열려도 이 간격보다
+# 잦게는 돌지 않는다.
+SELF_CHECK_AFTER = datetime.timedelta(minutes=5)
+
+
+def _refresh_if_stale():
+    """마지막 점검이 오래됐으면 한 번 돌려 기록한다."""
+    newest = (models.HealthCheck.objects
+              .order_by('-checked_at')
+              .values_list('checked_at', flat=True).first())
+    if newest and timezone.now() - newest < SELF_CHECK_AFTER:
+        return
+    try:
+        results = health.run_all()
+    except Exception:
+        # 상태 페이지가 점검 때문에 통째로 죽으면 안 된다.
+        return
+    models.HealthCheck.objects.bulk_create([
+        models.HealthCheck(target=r['target'], status=r['status'],
+                           latency_ms=r['latency_ms'], note=r['note'][:200],
+                           checked_at=r['checked_at'])
+        for r in results])
 
 
 def _uptime():
@@ -126,11 +155,14 @@ def _uptime():
 
 @require_GET
 def service_status(request):
+    _refresh_if_stale()
     return render(request, 'service_status.html', {
         'numbers': _service_numbers(),
-        'periods': [(k, PERIODS[k][0]) for k in ('today', 'week', 'month', 'year')],
+        'periods': [(k, _(PERIODS[k][0]))
+                    for k in ('today', 'week', 'month', 'year')],
         'default_period': DEFAULT_PERIOD,
         'health': _uptime(),
+        'health_stale_minutes': int(SELF_CHECK_AFTER.total_seconds() // 60),
         'health_window_hours': int(UPTIME_WINDOW.total_seconds() // 3600),
     })
 
@@ -239,6 +271,15 @@ def views_json(request):
         'labels': keys,
         'unit': 'hour' if hourly else 'day',
         'groups': groups,
-        'visits': {'data': visits, 'total': sum(visits),
-                   'period_label': sentence_label},
+        # 문장을 화면에서 이어 붙이지 않고 여기서 완성한다. 조각으로 넘기면
+        # 언어마다 어순이 달라 옮길 수가 없다(영어는 기간이 뒤에 온다).
+        'visits': {
+            'data': visits,
+            'total': sum(visits),
+            'sentence': _('beatmania.app 은 %(phrase)s <b>%(n)s</b> 번의 '
+                          '방문을 기록했습니다.') % {
+                'phrase': _(sentence_label),
+                'n': '{:,}'.format(sum(visits)),
+            },
+        },
     })

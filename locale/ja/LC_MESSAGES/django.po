@@ -3,248 +3,191 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ja\n"
 
-msgid "사이트뷰 분석"
-msgstr "アクセス解析"
+msgid "%(tool_name)s 연동에는 API 토큰이 필요합니다"
+msgstr "%(tool_name)s の連携には API トークンが必要です"
 
-msgid "오늘"
-msgstr "今日"
+msgid "%(when)s 전 점검"
+msgstr "%(when)s前に確認"
 
-msgid "지난 7일"
-msgstr "過去7日"
+msgid "(외부 점검기: 준비 중)"
+msgstr "（外部チェッカー: 準備中）"
 
-msgid "지난 30일"
-msgstr "過去30日"
+msgid "(준비 중입니다)"
+msgstr "（準備中です）"
 
-msgid "지난 365일"
-msgstr "過去365日"
+msgid "1. 수집하는 정보"
+msgstr "1. 収集する情報"
 
-msgid "서열표"
-msgstr "難易度表"
+msgid "1년"
+msgstr "1年"
 
-msgid "조회수"
-msgstr "閲覧数"
+msgid "2. 무엇에 쓰나"
+msgstr "2. 何に使うか"
 
-msgid "beatmania IIDX INFINITAS 비공식 난이도 서열표 사이트입니다."
-msgstr "beatmania IIDX INFINITAS の非公式難易度表サイトです。"
+msgid "3. 무엇이 공개되나"
+msgstr "3. 何が公開されるか"
 
-msgid "흰숫 변환기"
-msgstr "サドプラ変換"
+msgid "30일"
+msgstr "30日"
 
-msgid "비토라쟈 서든"
-msgstr "beatoraja SUDDEN+"
+msgid "4. 제3자 제공과 외부 서비스"
+msgstr "4. 第三者提供と外部サービス"
 
-msgid "리프트 변환 결과"
-msgstr "LIFT 換算結果"
+msgid "4자 이상"
+msgstr "4文字以上"
 
-msgid "투덱 서든"
-msgstr "IIDX SUDDEN+"
+msgid "5. 얼마나 보관하나"
+msgstr "5. どのくらい保管するか"
 
-msgid "리프트"
-msgstr "LIFT"
+msgid "6. 이용자의 권리"
+msgstr "6. 利用者の権利"
 
-msgid "공통"
-msgstr "共通"
+msgid "7. 보호를 위해 하는 것"
+msgstr "7. 保護のために行っていること"
 
-msgid "비토라쟈 · 투덱 리프트"
-msgstr "beatoraja / IIDX の LIFT"
+msgid "8. 문의"
+msgstr "8. お問い合わせ"
 
-msgid "변환할 리프트"
-msgstr "換算する LIFT"
+msgid "90일"
+msgstr "90日"
 
-msgid "beatoraja(비토라쟈)와 IIDX의 서든 플러스 수치를 서로 변환합니다."
-msgstr "beatoraja と IIDX のサドプラ数値を相互変換します。"
+msgid "<a href=\"%(kuna)s\" target=\"_blank\" rel=\"noopener\">@lazykuna</a> 님의 iidxranktable 레포를 클론하여 만들어졌습니다.<br>SP 난이도표 관리 : <a href=\"%(cold)s\" target=\"_blank\" rel=\"noopener\">@Coldlapse</a>, DP 난이도표 관리 : P."
+msgstr "<a href=\"%(kuna)s\" target=\"_blank\" rel=\"noopener\">@lazykuna</a> 氏の iidxranktable リポジトリをクローンして作られました。<br>SP 難易度表担当 : <a href=\"%(cold)s\" target=\"_blank\" rel=\"noopener\">@Coldlapse</a>、DP 難易度表担当 : P."
 
-msgid "대기 현황"
-msgstr "待ち状況"
+msgid "<a href=\"/privacy/\" target=\"_blank\" rel=\"noopener\">개인정보처리방침</a>을 읽었고 이에 동의합니다."
+msgstr "<a href=\"/privacy/\" target=\"_blank\" rel=\"noopener\">プライバシーポリシー</a>を読み、これに同意します。"
 
-msgid "곡 목록"
-msgstr "曲リスト"
+msgid "<b>비트매니아 IIDX INFINITAS</b>의 수록곡들만 제공합니다."
+msgstr "<b>beatmania IIDX INFINITAS</b> の収録曲のみを扱います。"
 
-msgid "일일 타건 기록"
-msgstr "日別打鍵記録"
+msgid "<b>재발급하면 지금 토큰은 그 즉시 쓸 수 없게 됩니다.</b> 이 토큰을 넣어 둔 프로그램은 전부 새 토큰으로 다시 설정해야 기록이 올라갑니다. 토큰이 남에게 알려졌을 때만 재발급하세요."
+msgstr "<b>再発行すると、現在のトークンは直ちに使えなくなります。</b>このトークンを入れてあるプログラムはすべて新しいトークンに設定し直さないと記録が上がりません。トークンが他人に知られたときだけ再発行してください。"
+
+msgid "?-0000-0000-0000 형식"
+msgstr "?-0000-0000-0000 の形式"
 
 msgid "API 연동 토큰"
 msgstr "API トークン"
 
-msgid "비밀번호처럼 취급해 주세요."
-msgstr "パスワードと同様に扱ってください。"
+msgid "API 토큰"
+msgstr "API トークン"
+
+msgid "API 토큰 발급"
+msgstr "API トークンを発行"
+
+msgid "API 토큰 보기"
+msgstr "API トークンを見る"
+
+msgid "Buy me a coffee"
+msgstr "Buy me a coffee"
+
+msgid "DJ NAME"
+msgstr "DJ NAME"
+
+msgid "DP 단위"
+msgstr "DP 段位"
+
+msgid "Google Sheets (서열표 출처)"
+msgstr "Google Sheets（難易度表データ元）"
+
+msgid "IIDX ID, DJ NAME — 계정 설정에서 입력하는 경우에만 저장합니다."
+msgstr "IIDX ID、DJ NAME — アカウント設定で入力した場合のみ保存します。"
+
+msgid "IIDX 닉네임"
+msgstr "IIDX DJ NAME"
 
 msgid "IIDXwidget 받기"
 msgstr "IIDXwidget を入手"
 
-msgid "복사"
-msgstr "コピー"
-
-msgid "지난 기록"
-msgstr "過去の記録"
-
-msgid "날짜"
-msgstr "日付"
-
-msgid "타건 수"
-msgstr "打鍵数"
-
-msgid "과거 기록이 없습니다."
-msgstr "過去の記録はありません。"
-
-msgid "이전"
-msgstr "前へ"
-
-msgid "다음"
-msgstr "次へ"
-
-msgid "오늘의 타건 수"
-msgstr "今日の打鍵数"
-
-msgid "IIDXwidget 앱과 연동하기 위한 개인 토큰입니다."
-msgstr "IIDXwidget アプリと連携するための個人トークンです。"
+msgid "IIDXwidget 설정에 위 토큰을 넣고 저장합니다."
+msgstr "IIDXwidget の設定に上のトークンを入れて保存します。"
 
 msgid "IIDXwidget 설정에 위 토큰을 입력하고 저장합니다."
 msgstr "IIDXwidget の設定に上のトークンを入力して保存します。"
 
-msgid "서열표 편집"
-msgstr "難易度表を編集"
-
-msgid "개발 로드맵"
-msgstr "ロードマップ"
-
-msgid "충분한 플레이 기록(FAIL이 없거나 전부 HC~EXHC 이상이거나)이 없을 경우에는 수치가 올바르게 표시되지 않을 수 있습니다."
-msgstr "プレー記録が十分でない場合（FAIL が無い、または全て HC〜EXHC 以上など）、数値が正しく表示されないことがあります。"
-
-msgid "언어 선택"
-msgstr "言語"
-
-msgid "다크 모드로 전환"
-msgstr "ダークモードに切替"
-
-msgid "테마 전환"
-msgstr "テーマ切替"
-
-msgid "설정"
-msgstr "設定"
-
-msgid "관리자 대시보드"
-msgstr "管理ダッシュボード"
-
-msgid "로그아웃"
-msgstr "ログアウト"
-
-msgid "로그인"
-msgstr "ログイン"
-
-msgid "메뉴 열기"
-msgstr "メニューを開く"
-
-msgid "디스코드"
-msgstr "Discord"
-
-msgid "옵조 난이도표 백업"
-msgstr "Overjoy 難易度表（バックアップ）"
-
-msgid "익하작도 점수에 반영됩니다. 즉 아무리 실력이 좋아도 익하(풀콤)작을 하지 않으면 점수가 생각보다 낮게 나올 수 있습니다!"
-msgstr "フルコンボもスコアに反映されます。実力があってもフルコン埋めをしていないとスコアが低く出ることがあります。"
-
-msgid "관리자"
-msgstr "管理"
-
-msgid "실행 기록"
-msgstr "実行履歴"
-
-msgid "시작"
-msgstr "開始"
-
-msgid "명령"
-msgstr "コマンド"
-
-msgid "옵션"
-msgstr "オプション"
-
-msgid "실행자"
-msgstr "実行者"
-
-msgid "소요"
-msgstr "所要時間"
-
-msgid "상태"
-msgstr "状態"
-
-msgid "로그"
-msgstr "ログ"
-
-msgid "자동 스크롤"
-msgstr "自動スクロール"
-
-msgid "계정 설정"
-msgstr "アカウント設定"
-
-msgid "프로필 사진"
-msgstr "プロフィール画像"
-
-msgid "현재 사진 삭제하고 기본 이미지로"
-msgstr "画像を削除して既定に戻す"
-
-msgid "저장"
-msgstr "保存"
-
-msgid "비밀번호 변경"
-msgstr "パスワード変更"
-
-msgid "회원 탈퇴"
-msgstr "退会"
-
-msgid "서열표로 돌아가기"
-msgstr "難易度表に戻る"
+msgid "IIDXwidget 앱과 연동하기 위한 개인 토큰입니다."
+msgstr "IIDXwidget アプリと連携するための個人トークンです。"
 
 msgid "JPG · PNG · GIF · WebP, 최대 2MB. 정사각형 이미지를 권장합니다."
 msgstr "JPG・PNG・GIF・WebP、最大2MB。正方形の画像を推奨します。"
 
-msgid "회원가입"
-msgstr "会員登録"
+msgid "SP 단위"
+msgstr "SP 段位"
 
-msgid "아이디는 공개 주소가 됩니다."
-msgstr "IDは公開URLになります。"
+msgid "X-0000-0000-0000"
+msgstr "X-0000-0000-0000"
+
+msgid "\"%(name)s\" 은(는) 사용할 수 없는 아이디입니다."
+msgstr "「%(name)s」は使用できない ID です。"
+
+msgid "beatmania IIDX INFINITAS 비공식 난이도 서열표 사이트입니다."
+msgstr "beatmania IIDX INFINITAS の非公式難易度表サイトです。"
+
+msgid "beatmania.app 건실 랭킹"
+msgstr "beatmania.app 精勤ランキング"
+
+msgid "beatmania.app 에는 <b>%(users)s명</b>의 유저가 있고, 그중 <b>%(players)s명</b>이 지금까지 <b>%(records)s개</b>의 플레이 기록을 남겼습니다.<br>등록된 채보는 <b>%(songs)s개</b>이며, <b>%(tables)s개</b>의 서열표가 있습니다."
+msgstr "beatmania.app には <b>%(users)s人</b>のユーザーがいて、そのうち <b>%(players)s人</b>がこれまでに <b>%(records)s件</b>のプレイ記録を残しました。<br>登録された譜面は <b>%(songs)s件</b>、難易度表は <b>%(tables)s個</b>です。"
+
+msgid "beatmania.app 은 %(phrase)s <b>%(n)s</b> 번의 방문을 기록했습니다."
+msgstr "beatmania.app は%(phrase)s <b>%(n)s</b> 回の訪問を記録しました。"
+
+msgid "beatmania.app(이하 '이 사이트')은 IIDX INFINITAS 서열표를 제공하는 개인 운영 사이트입니다. 아래는 이 사이트가 실제로 저장하고 사용하는 정보의 전부입니다."
+msgstr "beatmania.app（以下「当サイト」）は IIDX INFINITAS の難易度表を提供する個人運営のサイトです。以下は当サイトが実際に保存し利用する情報のすべてです。"
+
+msgid "beatoraja(비토라쟈)와 IIDX의 서든 플러스 수치를 서로 변환합니다."
+msgstr "beatoraja と IIDX のサドプラ数値を相互変換します。"
+
+msgid "textage.cc (수록곡 출처)"
+msgstr "textage.cc（楽曲データ元）"
+
+msgid "you@example.com"
+msgstr "you@example.com"
+
+msgid "가동 이력"
+msgstr "稼働履歴"
+
+msgid "가입하고 IIDXwidget 을 연결하면 하루에 몇 번 쳤는지가 여기에 쌓이고, 아래 순위에도 오릅니다."
+msgstr "登録して IIDXwidget を連携すると、1 日に何回叩いたかがここに溜まり、下のランキングにも載ります。"
 
 msgid "가입하기"
 msgstr "登録する"
 
-msgid "이미 계정이 있으신가요?"
-msgstr "すでにアカウントをお持ちの方は"
-
 msgid "가입하면 서열표에 자신의 클리어 램프와 점수를 기록할 수 있습니다."
 msgstr "登録すると、難易度表にクリアランプとスコアを記録できます。"
 
-msgid "입력한 아이디가 그대로 서열표 주소에 들어가며, 누구나 이 주소로 당신의 서열표를 볼 수 있습니다. 실명이나 다른 곳에서 쓰는 아이디는 피하세요."
-msgstr "入力したIDがそのまま難易度表のURLになり、誰でもそのURLであなたの表を閲覧できます。本名や他所で使っているIDは避けてください。"
+msgid "가입할 때"
+msgstr "登録時"
 
-msgid "공개를 원하지 않으면 가입 후 <b>설정 → 프로필 비공개</b>를 켜면 됩니다. 켜면 이 주소로 접속해도 아무것도 보이지 않고, 유저 목록에도 나타나지 않습니다. 언제든 다시 끌 수 있습니다."
-msgstr "公開したくない場合は、登録後に <b>設定 → プロフィール非公開</b> を有効にしてください。有効にするとこの URL では何も表示されず、ユーザー一覧にも出ません。いつでも解除できます。"
+msgid "같은 방문자가 여러 서열표를 봐도 한 번으로 셉니다"
+msgstr "同じ訪問者が複数の難易度表を見ても 1 回として数えます"
 
-msgid "공유 주소 복사"
-msgstr "共有URLをコピー"
+msgid "같은 토큰을 그대로 씁니다. 따로 발급받을 것은 없습니다."
+msgstr "同じトークンをそのまま使います。別途発行するものはありません。"
 
-msgid "정렬"
-msgstr "並べ替え"
+msgid "개발 로드맵"
+msgstr "ロードマップ"
 
-msgid "램프순"
-msgstr "ランプ順"
+msgid "개발 로드맵 보기"
+msgstr "開発ロードマップを見る"
 
-msgid "이름순"
-msgstr "名前順"
+msgid "개발자에 대해"
+msgstr "開発者について"
 
-msgid "점수순"
-msgstr "スコア順"
+msgid "개발자에게 커피 사주기"
+msgstr "開発者にコーヒーをおごる"
 
-msgid "표시 방식"
-msgstr "表示方式"
+msgid "개인정보와 관련한 문의는 <a href=\"https://discord.gg/RxjwbvWa8D\" target=\"_blank\" rel=\"noopener\">디스코드</a>로 연락해 주세요."
+msgstr "個人情報に関するお問い合わせは<a href=\"https://discord.gg/RxjwbvWa8D\" target=\"_blank\" rel=\"noopener\">Discord</a>までご連絡ください。"
 
-msgid "일반"
-msgstr "通常"
+msgid "개인정보처리방침"
+msgstr "プライバシーポリシー"
 
-msgid "다운로드"
-msgstr "ダウンロード"
+msgid "개인정보처리방침에 동의해야 가입할 수 있습니다."
+msgstr "プライバシーポリシーに同意しないと登録できません。"
 
-msgid "곡 제목 검색"
-msgstr "曲名検索"
+msgid "건의 및 난이도 갱신 요청, 서버 상태 등은"
+msgstr "ご意見・難易度更新の依頼・サーバー状況は"
 
 msgid "검색"
 msgstr "検索"
@@ -252,107 +195,221 @@ msgstr "検索"
 msgid "검색어 지우기"
 msgstr "検索をクリア"
 
-msgid "새 비밀번호를 설정해 주세요."
-msgstr "新しいパスワードを設定してください。"
+msgid "게시판에 글을 쓰는 경우 그 내용과 작성 시각."
+msgstr "掲示板に書き込む場合、その内容と書き込み時刻。"
 
-msgid "설정으로 돌아가기"
-msgstr "設定に戻る"
+msgid "게임 기록을 읽어 서열표를 자동으로 채웁니다."
+msgstr "ゲームの記録を読み取り、難易度表を自動で埋めます。"
 
-msgid "프로필을 볼 수 없음"
-msgstr "プロフィールを表示できません"
+msgid "게임 기록을 읽어 서열표의 클리어 램프와 점수를 자동으로 채워 넣는 기능입니다. 지금은 서열표에서 손으로 입력해야 하는 부분입니다."
+msgstr "ゲームの記録を読み取り、難易度表のクリアランプとスコアを自動で埋める機能です。今は難易度表で手入力している部分です。"
 
-msgid "프로필을 볼 수 없습니다"
-msgstr "プロフィールを表示できません"
+msgid "게임 기록을 읽어 서열표의 클리어 램프와 점수를 자동으로 채워 넣을 프로그램입니다. 지금은 손으로 입력해야 하는 부분입니다."
+msgstr "ゲームの記録を読み取り、難易度表のクリアランプとスコアを自動で埋めるプログラムです。今は手で入力する必要がある部分です。"
 
-msgid "비공개로 설정되어 있거나, 존재하지 않는 아이디입니다."
-msgstr "非公開に設定されているか、存在しない ID です。"
+msgid "계정 삭제(탈퇴)도 <a href=\"/account/\">계정 설정</a>에서 직접 할 수 있습니다."
+msgstr "アカウントの削除(退会)も<a href=\"/account/\">アカウント設定</a>から自分で行えます。"
 
-msgid "본인의 프로필이라면 로그인 후 설정에서 공개 여부를 확인해 보세요."
-msgstr "ご自身のプロフィールの場合は、ログイン後に設定で公開状態をご確認ください。"
+msgid "계정 설정"
+msgstr "アカウント設定"
 
-msgid "건의 및 난이도 갱신 요청, 서버 상태 등은"
-msgstr "ご意見・難易度更新の依頼・サーバー状況は"
+msgid "계정 식별과 로그인 유지"
+msgstr "アカウントの識別とログイン状態の維持"
 
-msgid "를 참조해주세요."
-msgstr "をご覧ください。"
+msgid "계정과 그에 딸린 기록은 탈퇴할 때까지 보관하고, 탈퇴하면 함께 지웁니다."
+msgstr "アカウントとそれに紐づく記録は退会するまで保管し、退会と同時に削除します。"
 
-msgid "프로젝트를 클론하여 수정한 후 운영되는 서열표 사이트입니다."
-msgstr "プロジェクトをクローンして改修し運営している難易度表サイトです。"
+msgid "계정마다 하나씩 발급되는 열쇠입니다. 아래 프로그램들이 이 토큰 하나로 계정을 확인합니다."
+msgstr "アカウントごとに 1 つ発行される鍵です。下のプログラムはこのトークン 1 つでアカウントを確認します。"
 
-msgid "<b>비트매니아 IIDX INFINITAS</b>의 수록곡들만 제공합니다."
-msgstr "<b>beatmania IIDX INFINITAS</b> の収録曲のみを扱います。"
+msgid "계정마다 하나씩 발급되며, 프로그램 설정에 넣으면 됩니다."
+msgstr "アカウントごとに 1 つ発行され、プログラムの設定に入れるだけです。"
 
-msgid "서열은 종전 본가 시트들을 기반으로 작성됩니다. SP의 경우 서열 미분류 곡에 대한 별도의 분류는 진행하지 않습니다."
-msgstr "難易度は従来のAC用シートを基に作成しています。SP は未分類曲の個別分類は行いません。"
+msgid "곡 목록"
+msgstr "曲リスト"
 
-msgid "탈퇴하면 저장된 서열표 기록이 영구적으로 삭제됩니다."
-msgstr "退会すると保存された難易度表の記録は完全に削除されます。"
+msgid "곡 제목 검색"
+msgstr "曲名検索"
 
-msgid "되돌릴 수 없습니다."
-msgstr "元に戻すことはできません。"
+msgid "공개를 원하지 않으면 가입 후 <b>설정 → 프로필 비공개</b>를 켜면 됩니다. 켜면 이 주소로 접속해도 아무것도 보이지 않고, 유저 목록에도 나타나지 않습니다. 언제든 다시 끌 수 있습니다."
+msgstr "公開したくない場合は、登録後に <b>設定 → プロフィール非公開</b> を有効にしてください。有効にするとこの URL では何も表示されず、ユーザー一覧にも出ません。いつでも解除できます。"
 
-msgid "탈퇴하기"
-msgstr "退会する"
+msgid "공유 주소 복사"
+msgstr "共有URLをコピー"
 
-msgid "아이디"
-msgstr "ID"
+msgid "공통"
+msgstr "共通"
 
-msgid "비밀번호"
-msgstr "パスワード"
+msgid "과거 기록이 없습니다."
+msgstr "過去の記録はありません。"
 
-msgid "영문·숫자·밑줄(_)만, 4자 이상. 가입 후에는 바꿀 수 없습니다."
-msgstr "英数字とアンダースコアのみ、4文字以上。登録後は変更できません。"
+msgid "관리자"
+msgstr "管理"
 
-msgid "영문/숫자 4자 이상"
-msgstr "英数字4文字以上"
+msgid "관리자 대시보드"
+msgstr "管理ダッシュボード"
 
-msgid "이메일"
-msgstr "メールアドレス"
+msgid "기간"
+msgstr "期間"
 
-msgid "회원가입 외 다른 용도로 사용하지 않습니다."
-msgstr "会員登録以外の用途には使用しません。"
+msgid "기록 없음"
+msgstr "記録なし"
 
-msgid "you@example.com"
-msgstr "you@example.com"
+msgid "기록한 날"
+msgstr "記録した日数"
 
-msgid "4자 이상"
-msgstr "4文字以上"
+msgid "날짜"
+msgstr "日付"
 
-msgid "비밀번호 확인"
-msgstr "パスワード（確認）"
+msgid "내 기록"
+msgstr "自分の記録"
 
-msgid "한 번 더 입력"
-msgstr "もう一度入力"
+msgid "내 기록은 로그인해야 볼 수 있습니다"
+msgstr "自分の記録はログインすると見られます"
+
+msgid "내 순위는 %(of)s명 중 <b>%(rank)s위</b>입니다. (%(phrase)s %(total)s타)"
+msgstr "あなたは %(of)s人中 <b>%(rank)s位</b>です。(%(phrase)s %(total)s 打鍵)"
+
+msgid "내 토큰"
+msgstr "自分のトークン"
+
+msgid "내려받기"
+msgstr "ダウンロード"
 
 msgid "닉네임"
 msgstr "表示名"
 
+msgid "다만 가입 화면에서 자동 가입을 막기 위해 Google reCAPTCHA를 씁니다. 이때 Google이 자체 정책에 따라 접속 정보를 처리합니다. 이 사이트는 그 과정에서 어떤 정보도 따로 받지 않습니다."
+msgstr "ただし登録画面では自動登録を防ぐため Google reCAPTCHA を使います。その際 Google が自社のポリシーに従ってアクセス情報を処理します。当サイトはその過程で情報を受け取ることはありません。"
+
+msgid "다운로드"
+msgstr "ダウンロード"
+
+msgid "다음"
+msgstr "次へ"
+
+msgid "다크 모드로 전환"
+msgstr "ダークモードに切替"
+
+msgid "대기 현황"
+msgstr "待ち状況"
+
+msgid "데이터 동기화"
+msgstr "データ同期"
+
+msgid "데이터 동기화 프로그램"
+msgstr "データ同期プログラム"
+
+msgid "데이터 연동"
+msgstr "データ連携"
+
+msgid "데이터베이스"
+msgstr "データベース"
+
+msgid "데이터베이스에 질의가 되는지."
+msgstr "データベースに問い合わせができるか。"
+
+msgid "되돌릴 수 없습니다."
+msgstr "元に戻すことはできません。"
+
+msgid "디스코드"
+msgstr "Discord"
+
+msgid "램프순"
+msgstr "ランプ順"
+
+msgid "로그"
+msgstr "ログ"
+
+msgid "로그아웃"
+msgstr "ログアウト"
+
+msgid "로그인"
+msgstr "ログイン"
+
+msgid "로그인 상태를 유지하기 위한 세션 정보와 마지막 로그인 시각."
+msgstr "ログイン状態を保つためのセッション情報と最終ログイン時刻。"
+
+msgid "를 참조해주세요."
+msgstr "をご覧ください。"
+
+msgid "리프트"
+msgstr "LIFT"
+
+msgid "리프트 변환 결과"
+msgstr "LIFT 換算結果"
+
+msgid "마지막 기록"
+msgstr "最後の記録"
+
+msgid "메뉴 열기"
+msgstr "メニューを開く"
+
+msgid "명령"
+msgstr "コマンド"
+
+msgid "발급일"
+msgstr "発行日"
+
+msgid "변환할 리프트"
+msgstr "換算する LIFT"
+
+msgid "복사"
+msgstr "コピー"
+
+msgid "복사됨"
+msgstr "コピーしました"
+
+msgid "본인의 프로필이라면 로그인 후 설정에서 공개 여부를 확인해 보세요."
+msgstr "ご自身のプロフィールの場合は、ログイン後に設定で公開状態をご確認ください。"
+
+msgid "비공개로 설정되어 있거나, 존재하지 않는 아이디입니다."
+msgstr "非公開に設定されているか、存在しない ID です。"
+
+msgid "비밀번호"
+msgstr "パスワード"
+
+msgid "비밀번호 — 원문을 저장하지 않습니다. 되돌릴 수 없는 해시로만 보관하므로 운영자도 알 수 없습니다."
+msgstr "パスワード — 平文では保存しません。元に戻せないハッシュのみを保管するため、運営者にも分かりません。"
+
+msgid "비밀번호 변경"
+msgstr "パスワード変更"
+
+msgid "비밀번호 확인"
+msgstr "パスワード（確認）"
+
+msgid "비밀번호는 되돌릴 수 없는 해시로만 저장합니다."
+msgstr "パスワードは元に戻せないハッシュのみで保存します。"
+
+msgid "비밀번호처럼 취급해 주세요."
+msgstr "パスワードと同様に扱ってください。"
+
+msgid "비토라쟈 · 투덱 리프트"
+msgstr "beatoraja / IIDX の LIFT"
+
+msgid "비토라쟈 서든"
+msgstr "beatoraja SUDDEN+"
+
+msgid "사이트 전체를 HTTPS로 제공합니다."
+msgstr "サイト全体を HTTPS で提供します。"
+
+msgid "사이트뷰"
+msgstr "サイトビュー"
+
+msgid "사이트뷰 분석"
+msgstr "アクセス解析"
+
+msgid "사이트뷰 추이"
+msgstr "サイトビューの推移"
+
 msgid "사이트에 표시될 이름"
 msgstr "サイト上の表示名"
 
-msgid "?-0000-0000-0000 형식"
-msgstr "?-0000-0000-0000 の形式"
+msgid "상태"
+msgstr "状態"
 
-msgid "X-0000-0000-0000"
-msgstr "X-0000-0000-0000"
-
-msgid "IIDX 닉네임"
-msgstr "IIDX DJ NAME"
-
-msgid "DJ NAME"
-msgstr "DJ NAME"
-
-msgid "SP 단위"
-msgstr "SP 段位"
-
-msgid "DP 단위"
-msgstr "DP 段位"
-
-msgid "프로필 비공개"
-msgstr "プロフィール非公開"
-
-msgid "켜면 다른 사람이 내 서열표와 유저 목록에서 나를 볼 수 없습니다."
-msgstr "有効にすると、他のユーザーから難易度表・ユーザー一覧に表示されなくなります。"
+msgid "상태 점검"
+msgstr "ステータス確認"
 
 msgid "새 비밀번호"
 msgstr "新しいパスワード"
@@ -360,8 +417,368 @@ msgstr "新しいパスワード"
 msgid "새 비밀번호 확인"
 msgstr "新しいパスワード（確認）"
 
-msgid "파일이 너무 큽니다. %(limit)dMB 이하로 올려주세요."
-msgstr "ファイルが大きすぎます。%(limit)dMB 以下にしてください。"
+msgid "새 비밀번호를 설정해 주세요."
+msgstr "新しいパスワードを設定してください。"
+
+msgid "서비스 현황"
+msgstr "サービス状況"
+
+msgid "서비스를 쓰면서 직접 입력하는 것"
+msgstr "サービス利用中に自分で入力するもの"
+
+msgid "서열은 종전 본가 시트들을 기반으로 작성됩니다. SP의 경우 서열 미분류 곡에 대한 별도의 분류는 진행하지 않습니다."
+msgstr "難易度は従来のAC用シートを基に作成しています。SP は未分類曲の個別分類は行いません。"
+
+msgid "서열표"
+msgstr "難易度表"
+
+msgid "서열표 조회수"
+msgstr "難易度表の閲覧数"
+
+msgid "서열표 조회수 추이"
+msgstr "難易度表 閲覧数の推移"
+
+msgid "서열표 편집"
+msgstr "難易度表を編集"
+
+msgid "서열표로 돌아가기"
+msgstr "難易度表に戻る"
+
+msgid "서열표를 긁어 오는 시트에 닿는지. 내려받아 표식까지 확인한다."
+msgstr "難易度表を取得するシートに到達できるか。取得して目印まで確認する。"
+
+msgid "서열표별 조회수 집계 (서비스 현황 페이지에 공개)"
+msgstr "難易度表ごとの閲覧数の集計（サービス状況ページで公開）"
+
+msgid "서열표와 개인 기록 표시"
+msgstr "難易度表と個人記録の表示"
+
+msgid "설정"
+msgstr "設定"
+
+msgid "설정으로 돌아가기"
+msgstr "設定に戻る"
+
+msgid "세션 정보는 만료되면 사라집니다."
+msgstr "セッション情報は有効期限が切れると消えます。"
+
+msgid "소요"
+msgstr "所要時間"
+
+msgid "수록곡을 긁어 오는 페이지에 닿는지. 내려받아 표식까지 확인한다."
+msgstr "楽曲データを取得するページに到達できるか。取得して目印まで確認する。"
+
+msgid "수집한 정보를 다른 곳에 팔거나 넘기지 않습니다."
+msgstr "収集した情報を他所に売ったり渡したりしません。"
+
+msgid "시작"
+msgstr "開始"
+
+msgid "실행 기록"
+msgstr "実行履歴"
+
+msgid "실행자"
+msgstr "実行者"
+
+msgid "아이디"
+msgstr "あなたのID"
+
+msgid "아이디 — 공개 프로필 주소가 됩니다. 가입 후 바꿀 수 없습니다."
+msgstr "ID — 公開プロフィールのアドレスになります。登録後は変更できません。"
+
+msgid "아이디, DJ NAME, 프로필 사진, 플레이 기록은 공개 프로필 주소에서 누구나 볼 수 있습니다. 계정 설정에서 <b>프로필 비공개</b>를 켜면 다른 사람이 볼 수 없습니다."
+msgstr "ID、DJ NAME、プロフィール写真、プレイ記録は公開プロフィールのアドレスで誰でも見られます。アカウント設定で <b>プロフィール非公開</b> をオンにすると他の人は見られません。"
+
+msgid "아이디는 공개 주소가 됩니다."
+msgstr "IDは公開URLになります。"
+
+msgid "아직 기록이 없습니다. IIDXwidget 을 연결하면 여기에 쌓입니다."
+msgstr "まだ記録がありません。IIDXwidget を connect すればここに溜まります。"
+
+msgid "언어 선택"
+msgstr "言語"
+
+msgid "연동에는 지금 쓰는 API 토큰을 그대로 씁니다. 따로 발급받을 것은 없습니다."
+msgstr "連携には今使っている API トークンをそのまま使います。別途発行は不要です。"
+
+msgid "영문/숫자 4자 이상"
+msgstr "英数字4文字以上"
+
+msgid "영문·숫자·밑줄(_)만, 4자 이상. 가입 후에는 바꿀 수 없습니다."
+msgstr "英数字とアンダースコアのみ、4文字以上。登録後は変更できません。"
+
+msgid "영문·숫자·밑줄(_)만, 4자 이상. 가입 후에는 바꿀 수 없습니다. 사이트가 쓰는 이름(admin, status 등)은 쓸 수 없습니다."
+msgstr "英数字とアンダースコア(_)のみ、4 文字以上。登録後は変更できません。サイトが使う名前(admin, status など)は使えません。"
+
+msgid "오늘"
+msgstr "今日"
+
+msgid "오늘의 타건 수"
+msgstr "今日の打鍵数"
+
+msgid "옵션"
+msgstr "オプション"
+
+msgid "옵조 난이도표 백업"
+msgstr "Overjoy 難易度表（バックアップ）"
+
+msgid "외부 도구 연동을 쓰는 경우 그 인증 토큰."
+msgstr "外部ツール連携を使う場合、その認証トークン。"
+
+msgid "웹 서비스"
+msgstr "ウェブサービス"
+
+msgid "위 목적 외에는 쓰지 않습니다. 광고에 쓰거나 프로파일링하지 않습니다."
+msgstr "上記の目的以外には使いません。広告に使ったりプロファイリングしたりしません。"
+
+msgid "이 방침이 바뀌면 이 페이지에서 알립니다."
+msgstr "この方針が変わった場合はこのページでお知らせします。"
+
+msgid "이 사이트가 마음에 드셨다면 <a href=\"https://buymeacoffee.com/sadang\" target=\"_blank\" rel=\"noopener\">커피 한 잔<i class=\"bi bi-cup-hot-fill ms-1\"></i></a> 부탁드립니다. 서버 유지에 보탬이 됩니다."
+msgstr "このサイトを気に入っていただけたら <a href=\"https://buymeacoffee.com/sadang\" target=\"_blank\" rel=\"noopener\">コーヒーを一杯<i class=\"bi bi-cup-hot-fill ms-1\"></i></a> いかがでしょうか。サーバー維持の助けになります。"
+
+msgid "이 사이트는 신용카드 정보나 주민등록번호 같은 정보를 받지 않으며, 저장할 자리도 두지 않았습니다."
+msgstr "当サイトはクレジットカード情報や住民登録番号のような情報を受け取らず、保存する場所も設けていません。"
+
+msgid "이 점검은 beatmania.app 안에서 스스로를 확인한 결과입니다. 사이트 자체가 내려가면 이 페이지도 열리지 않으므로, 바깥에서 같은 항목을 확인하는 점검기를 따로 둘 예정입니다."
+msgstr "この確認は beatmania.app 自身が内部で行った結果です。サイト自体が落ちればこのページも開けないため、外部から同じ項目を確認するチェッカーを別途用意する予定です。"
+
+msgid "이 페이지를 그려 주는 서버가 요청을 처리하고 있는지."
+msgstr "このページを返すサーバーがリクエストを処理できているか。"
+
+msgid "이름순"
+msgstr "名前順"
+
+msgid "이메일"
+msgstr "メールアドレス"
+
+msgid "이메일 주소"
+msgstr "メールアドレス"
+
+msgid "이메일 주소와 접속 IP는 어떤 경우에도 공개되지 않습니다."
+msgstr "メールアドレスとアクセス元 IP はいかなる場合も公開されません。"
+
+msgid "이미 계정이 있으신가요?"
+msgstr "すでにアカウントをお持ちの方は"
 
 msgid "이미지가 너무 큽니다. 가로·세로 %(side)dpx 이하로 올려주세요."
 msgstr "画像が大きすぎます。縦横 %(side)dpx 以下にしてください。"
+
+msgid "이전"
+msgstr "前へ"
+
+msgid "익하작도 점수에 반영됩니다. 즉 아무리 실력이 좋아도 익하(풀콤)작을 하지 않으면 점수가 생각보다 낮게 나올 수 있습니다!"
+msgstr "フルコンボもスコアに反映されます。実力があってもフルコン埋めをしていないとスコアが低く出ることがあります。"
+
+msgid "일반"
+msgstr "通常"
+
+msgid "일별 타건 수"
+msgstr "日別の打鍵数"
+
+msgid "일에는 기록이 없습니다. 기간을 늘려 보세요."
+msgstr "日間の記録はありません。期間を広げてみてください。"
+
+msgid "일일 타건 기록"
+msgstr "日別打鍵記録"
+
+msgid "일일 타건 기록 — 날짜별 타건 수."
+msgstr "デイリー打鍵記録 — 日付ごとの打鍵数。"
+
+msgid "입력한 아이디가 그대로 서열표 주소에 들어가며, 누구나 이 주소로 당신의 서열표를 볼 수 있습니다. 실명이나 다른 곳에서 쓰는 아이디는 피하세요."
+msgstr "入力したIDがそのまま難易度表のURLになり、誰でもそのURLであなたの表を閲覧できます。本名や他所で使っているIDは避けてください。"
+
+msgid "자동 스크롤"
+msgstr "自動スクロール"
+
+msgid "자동으로 남는 것"
+msgstr "自動的に残るもの"
+
+msgid "자신의 정보는 <a href=\"/account/\">계정 설정</a>에서 언제든 보고 고칠 수 있습니다."
+msgstr "自分の情報は<a href=\"/account/\">アカウント設定</a>でいつでも確認・修正できます。"
+
+msgid "재발급"
+msgstr "再発行"
+
+msgid "저장"
+msgstr "保存"
+
+msgid "전체"
+msgstr "全期間"
+
+msgid "점수순"
+msgstr "スコア順"
+
+msgid "접속 IP 주소, 브라우저 정보(User-Agent), 세션 식별자, 접속 시각 — 서열표 조회수를 세기 위해 남습니다. 같은 방문자를 4시간 안에 여러 번 세지 않기 위한 것으로, 이 값으로 개인을 특정하지 않으며 통계 외의 용도로 쓰지 않습니다."
+msgstr "アクセス元 IP アドレス、ブラウザ情報(User-Agent)、セッション識別子、アクセス時刻 — 難易度表の閲覧数を数えるために残ります。同じ訪問者を 4 時間以内に何度も数えないためのもので、これらの値で個人を特定することはなく、統計以外の用途には使いません。"
+
+msgid "정렬"
+msgstr "並べ替え"
+
+msgid "조회 기록은 서열표별 통계를 위해 기간 제한 없이 보관합니다."
+msgstr "閲覧記録は難易度表ごとの統計のため、期限を定めず保管します。"
+
+msgid "조회수"
+msgstr "閲覧数"
+
+msgid "조회수를 불러오지 못했습니다."
+msgstr "閲覧数を読み込めませんでした。"
+
+msgid "준비 중"
+msgstr "準備中"
+
+msgid "준비 중입니다"
+msgstr "準備中です"
+
+msgid "지금 토큰은 즉시 쓸 수 없게 됩니다. 새로 발급할까요?"
+msgstr "現在のトークンは直ちに使えなくなります。新しく発行しますか？"
+
+msgid "지금까지"
+msgstr "これまでに"
+
+msgid "지난 1년"
+msgstr "直近 1 年"
+
+msgid "지난 1년 동안"
+msgstr "直近 1 年間で"
+
+msgid "지난 30일"
+msgstr "過去30日"
+
+msgid "지난 30일 동안"
+msgstr "直近 30 日間で"
+
+msgid "지난 365일"
+msgstr "過去365日"
+
+msgid "지난 365일 동안"
+msgstr "直近 365 日間で"
+
+msgid "지난 7일"
+msgstr "過去7日"
+
+msgid "지난 7일 동안"
+msgstr "直近 7 日間で"
+
+msgid "지난 기록"
+msgstr "過去の記録"
+
+msgid "최근"
+msgstr "直近"
+
+msgid "최근 %(h)s시간 · %(m)s분마다 점검"
+msgstr "直近 %(h)s 時間・%(m)s 分ごとに確認"
+
+msgid "최종 수정일"
+msgstr "最終更新日"
+
+msgid "충분한 플레이 기록(FAIL이 없거나 전부 HC~EXHC 이상이거나)이 없을 경우에는 수치가 올바르게 표시되지 않을 수 있습니다."
+msgstr "プレー記録が十分でない場合（FAIL が無い、または全て HC〜EXHC 以上など）、数値が正しく表示されないことがあります。"
+
+msgid "켜면 다른 사람이 내 서열표와 유저 목록에서 나를 볼 수 없습니다."
+msgstr "有効にすると、他のユーザーから難易度表・ユーザー一覧に表示されなくなります。"
+
+msgid "타건 수"
+msgstr "打鍵数"
+
+msgid "탈퇴하기"
+msgstr "退会する"
+
+msgid "탈퇴하면 저장된 서열표 기록이 영구적으로 삭제됩니다."
+msgstr "退会すると保存された難易度表の記録は完全に削除されます。"
+
+msgid "테마 전환"
+msgstr "テーマ切替"
+
+msgid "토큰은 계정마다 하나씩 발급되는 열쇠라, 계정이 있어야 만들 수 있습니다. 가입하면 바로 발급되며 따로 신청할 것은 없습니다."
+msgstr "トークンはアカウントごとに発行される鍵なので、アカウントがないと作れません。登録すればすぐ発行され、別途申請は不要です。"
+
+msgid "토큰은 회원에게만 발급됩니다"
+msgstr "トークンは会員のみに発行されます"
+
+msgid "토큰은 회원에게만 발급됩니다."
+msgstr "トークンは会員のみに発行されます。"
+
+msgid "투덱 서든"
+msgstr "IIDX SUDDEN+"
+
+msgid "파일이 너무 큽니다. %(limit)dMB 이하로 올려주세요."
+msgstr "ファイルが大きすぎます。%(limit)dMB 以下にしてください。"
+
+msgid "표시 방식"
+msgstr "表示方式"
+
+msgid "프로그램을 켜 두면 타건 수가 자동으로 올라갑니다."
+msgstr "プログラムを起動しておけば打鍵数が自動で送られます。"
+
+msgid "프로젝트 소개"
+msgstr "プロジェクト紹介"
+
+msgid "프로젝트를 클론하여 수정한 후 운영되는 서열표 사이트입니다."
+msgstr "プロジェクトをクローンして改修し運営している難易度表サイトです。"
+
+msgid "프로필 공개 여부는 언제든 바꿀 수 있습니다."
+msgstr "プロフィールの公開・非公開はいつでも変更できます。"
+
+msgid "프로필 비공개"
+msgstr "プロフィール非公開"
+
+msgid "프로필 사진"
+msgstr "プロフィール画像"
+
+msgid "프로필 사진 — 올리는 경우에만 저장합니다."
+msgstr "プロフィール写真 — アップロードした場合のみ保存します。"
+
+msgid "프로필을 볼 수 없습니다"
+msgstr "プロフィールを表示できません"
+
+msgid "프로필을 볼 수 없음"
+msgstr "プロフィールを表示できません"
+
+msgid "프로필을 비공개로 두어 순위에 오르지 않습니다. 내 기록은 %(phrase)s <b>%(total)s타</b>입니다."
+msgstr "プロフィールが非公開のためランキングには載りません。あなたの記録は %(phrase)s <b>%(total)s 打鍵</b>です。"
+
+msgid "프로필을 비공개로 설정한 분은 순위에서 제외됩니다"
+msgstr "プロフィールを非公開にしている方はランキングから除外されます"
+
+msgid "플레이 기록 — 서열표에서 곡별로 기록한 클리어 램프와 점수."
+msgstr "プレイ記録 — 難易度表で曲ごとに記録したクリアランプとスコア。"
+
+msgid "플레이 모드"
+msgstr "プレイモード"
+
+msgid "하루에 몇 번 쳤는지 세어 보냅니다."
+msgstr "1 日に何回叩いたかを数えて送ります。"
+
+msgid "하루에 몇 번 쳤는지를 기록해 이 사이트로 보냅니다. 보낸 값은 '일일 타건 기록'에 쌓입니다."
+msgstr "1 日に何回叩いたかを記録してこのサイトに送ります。送った値は「デイリー打鍵記録」に溜まります。"
+
+msgid "한 번 더 입력"
+msgstr "もう一度入力"
+
+msgid "합계"
+msgstr "合計"
+
+msgid "해당 기간에 기록이 없습니다."
+msgstr "この期間の記録はありません。"
+
+msgid "해당 기간에 조회된 기록이 없습니다."
+msgstr "この期間の閲覧記録はありません。"
+
+msgid "현재 사진 삭제하고 기본 아이콘으로"
+msgstr "現在の写真を削除して既定のアイコンにする"
+
+msgid "현재 사진 삭제하고 기본 이미지로"
+msgstr "画像を削除して既定に戻す"
+
+msgid "회원 탈퇴"
+msgstr "退会"
+
+msgid "회원가입"
+msgstr "会員登録"
+
+msgid "회원가입 외 다른 용도로 사용하지 않습니다."
+msgstr "会員登録以外の用途には使用しません。"
+
+msgid "흰숫 변환기"
+msgstr "サドプラ変換"

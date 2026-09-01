@@ -87,7 +87,7 @@
       <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
         <h2 class="h6 mb-0">{% trans '상태 점검' %}</h2>
         <span class="small text-body-secondary">
-          {% blocktrans with h=health_window_hours %}최근 {{ h }}시간{% endblocktrans %}
+          {% blocktrans with h=health_window_hours m=health_stale_minutes %}최근 {{ h }}시간 · {{ m }}분마다 점검{% endblocktrans %}
         </span>
       </div>
 
@@ -112,6 +112,10 @@
         </div>
         <div class="bm-health-desc">
           {{ h.description }}
+          {% if h.checked_at %}
+          <span class="bm-health-when">
+            {% blocktrans with when=h.checked_at|timesince %}{{ when }} 전 점검{% endblocktrans %}</span>
+          {% endif %}
           {% if h.note %}<span class="bm-health-note">— {{ h.note }}</span>{% endif %}
         </div>
       </div>
@@ -159,11 +163,9 @@
     var tc = themeColors();
     var v = p.visits;
 
-    // period_label 은 '오늘' / '지난 7일 동안' 처럼 조사까지 포함한 구절이다.
-    // 여기서 '동안'을 붙이면 '오늘 동안'이 된다.
-    visitSentence.innerHTML =
-      'beatmania.app 은 ' + v.period_label + ' <b>' +
-      v.total.toLocaleString() + '</b> 번의 방문을 기록했습니다.';
+    // 문장은 서버가 완성해서 보낸다. 여기서 조각을 이어 붙이면 언어마다
+    // 어순이 달라 번역할 수가 없다.
+    visitSentence.innerHTML = v.sentence;
 
     if (visitChart) { visitChart.destroy(); }
     visitChart = new Chart(visitCanvas.getContext('2d'), {

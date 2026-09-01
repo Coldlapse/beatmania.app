@@ -14,6 +14,7 @@ from django.db.models import Sum
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django.views.decorators.http import require_GET, require_POST
 
 from iidxrank import models
@@ -110,7 +111,7 @@ def _leaderboard(key, request_user):
                 me = {'rank': None, 'total': total, 'of': len(rows),
                       'ranked': False}
 
-    return {'key': key, 'phrase': phrase, 'top': top, 'me': me,
+    return {'key': key, 'phrase': _(phrase), 'top': top, 'me': me,
             'players': len(rows)}
 
 
@@ -121,7 +122,7 @@ def my_page(request):
     board = _leaderboard(period, request.user)
 
     ctx = {
-        'periods': [(k, PERIODS[k][0]) for k in ('month', 'year', 'all')],
+        'periods': [(k, _(PERIODS[k][0])) for k in ('month', 'year', 'all')],
         'board': board,
         'active_rank': board['key'],
     }

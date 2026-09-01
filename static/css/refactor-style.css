@@ -645,3 +645,4 @@ body.bm-rankpage #rankimg { margin-top: .5rem; }
    flex-basis 를 두어 정말 좁아질 때만 아래로 내려가게 한다. */
 .bm-token-bar-text { flex: 1 1 260px; min-width: 0; }
 .bm-token-bar-actions { flex: 0 0 auto; margin-left: auto; }
+.bm-health-when { color: var(--bm-text-subtle); }

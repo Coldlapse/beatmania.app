@@ -17,6 +17,7 @@ import time
 
 import requests
 from django.db import connection
+from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 
 # 외부 점검은 오래 붙들지 않는다. 느린 것도 장애다.
@@ -39,18 +40,19 @@ DOWN = 'down'
 
 CHECKS = ['site', 'db', 'textage', 'sheet']
 
+# 화면에 나가는 글이라 번역 대상이다. lazy 로 두어 요청 언어에 맞춰 풀린다.
 LABELS = {
-    'site': '웹 서비스',
-    'db': '데이터베이스',
-    'textage': 'textage.cc (수록곡 출처)',
-    'sheet': 'Google Sheets (서열표 출처)',
+    'site': _('웹 서비스'),
+    'db': _('데이터베이스'),
+    'textage': _('textage.cc (수록곡 출처)'),
+    'sheet': _('Google Sheets (서열표 출처)'),
 }
 
 DESCRIPTIONS = {
-    'site': '이 페이지를 그려 주는 서버가 요청을 처리하고 있는지.',
-    'db': '데이터베이스에 질의가 되는지.',
-    'textage': '수록곡을 긁어 오는 페이지에 닿는지. 내려받아 표식까지 확인한다.',
-    'sheet': '서열표를 긁어 오는 시트에 닿는지. 내려받아 표식까지 확인한다.',
+    'site': _('이 페이지를 그려 주는 서버가 요청을 처리하고 있는지.'),
+    'db': _('데이터베이스에 질의가 되는지.'),
+    'textage': _('수록곡을 긁어 오는 페이지에 닿는지. 내려받아 표식까지 확인한다.'),
+    'sheet': _('서열표를 긁어 오는 시트에 닿는지. 내려받아 표식까지 확인한다.'),
 }
 
 

@@ -67,10 +67,11 @@
   {% block body %}{% endblock %}
 
   <footer id="footer">
-    <a href="https://github.com/kuna" target="_blank" rel="noopener">@lazykuna</a> 님의
-    iidxranktable 레포를 클론하여 만들어졌습니다.<br>
-    SP 난이도표 관리 : <a href="https://github.com/Coldlapse" target="_blank" rel="noopener">@Coldlapse</a>,
-    DP 난이도표 관리 : P.
+    {% comment %}
+      번역 대상이다. 링크가 문장 가운데 들어가므로 blocktrans 로 통째로 잡고
+      주소는 변수로 뺀다 — 번역자가 URL 을 건드리지 않게.
+    {% endcomment %}
+    {% blocktrans with kuna='https://github.com/kuna' cold='https://github.com/Coldlapse' %}<a href="{{ kuna }}" target="_blank" rel="noopener">@lazykuna</a> 님의 iidxranktable 레포를 클론하여 만들어졌습니다.<br>SP 난이도표 관리 : <a href="{{ cold }}" target="_blank" rel="noopener">@Coldlapse</a>, DP 난이도표 관리 : P.{% endblocktrans %}
     {% comment %}
       만든 사람 이야기와 문서 링크는 성격이 다르다. <br> 로 붙이지 않고
       한 줄 띄워 문단을 나눈다.

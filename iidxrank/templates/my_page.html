@@ -21,7 +21,8 @@
 <div id="container">
   <h1 class="bm-page-title">{% trans '일일 타건 기록' %}</h1>
 
-  {% include "_token_bar.html" with tool_name="IIDXwidget" tool_desc="하루에 몇 번 쳤는지 세어 보냅니다." %}
+  {% trans "하루에 몇 번 쳤는지 세어 보냅니다." as tool_desc %}
+  {% include "_token_bar.html" with tool_name="IIDXwidget" %}
 
   {% if user.is_authenticated %}
   <div class="card bm-panel mb-3">

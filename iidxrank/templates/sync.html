@@ -18,7 +18,9 @@
 <div id="container">
   <h1 class="bm-page-title">{% trans '데이터 동기화' %}</h1>
 
-  {% include "_token_bar.html" with tool_name="데이터 동기화 프로그램" tool_desc="게임 기록을 읽어 서열표를 자동으로 채웁니다." %}
+  {% trans "게임 기록을 읽어 서열표를 자동으로 채웁니다." as tool_desc %}
+  {% trans "데이터 동기화 프로그램" as tool_name %}
+  {% include "_token_bar.html" %}
 
   <div class="card bm-panel">
     <div class="card-body text-center py-5">

@@ -4,7 +4,13 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import RegexValidator
 from captcha.fields import ReCaptchaField
+from django.utils.functional import lazy
 from django.utils.safestring import mark_safe
+
+# mark_safe() 는 받은 값을 그 자리에서 문자열로 만든다. gettext_lazy 를 그대로
+# 넣으면 모듈을 읽는 시점(언어가 정해지기 전)에 번역이 굳어 버려, 어떤 언어로
+# 봐도 한국어가 나온다. 감싸는 일 자체를 미룬다.
+mark_safe_lazy = lazy(mark_safe, str)
 
 from iidxrank import reserved
 from django.contrib.auth import authenticate, login
@@ -68,7 +74,7 @@ class JoinForm(forms.Form):
     # 놓치기 쉽고, 놓치면 캡차를 다시 풀어야 한다.
     agree_privacy = forms.BooleanField(
         required=True,
-        label=mark_safe(_(
+        label=mark_safe_lazy(_(
             '<a href="/privacy/" target="_blank" rel="noopener">개인정보처리방침</a>'
             '을 읽었고 이에 동의합니다.')),
         error_messages={'required': _('개인정보처리방침에 동의해야 가입할 수 있습니다.')})
