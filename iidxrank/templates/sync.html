@@ -1,0 +1,41 @@
+{% extends "common.html" %}
+{% load i18n %}
+{% comment %}
+  데이터 동기화.
+
+  구성은 '일일 타건 기록'과 같다 — 맨 위에 토큰 안내 줄(_token_bar.html),
+  그 아래에 내용. 두 페이지가 같은 토큰을 쓰므로 들어오는 길도 같아야 한다.
+
+  세부 기능은 아직 정하지 않았다. 자리만 잡아 두고, 지금 할 수 있는 것과
+  없는 것을 분명히 적는다 — 빈 '준비 중' 화면만 두면 무엇을 기다려야 하는지
+  알 수 없다.
+{% endcomment %}
+{% block subtitle %}- {% trans '데이터 동기화' %}{% endblock %}
+
+{% block body %}
+{% include "top.html" %}
+
+<div id="container">
+  <h1 class="bm-page-title">{% trans '데이터 동기화' %}</h1>
+
+  {% include "_token_bar.html" with tool_name="데이터 동기화 프로그램" tool_desc="게임 기록을 읽어 서열표를 자동으로 채웁니다." %}
+
+  <div class="card bm-panel">
+    <div class="card-body text-center py-5">
+      <i class="bi bi-arrow-repeat bm-empty-icon" aria-hidden="true"></i>
+      <h2 class="h5 mt-3">{% trans '준비 중입니다' %}</h2>
+      <p class="text-body-secondary mb-0">
+        {% blocktrans %}게임 기록을 읽어 서열표의 클리어 램프와 점수를 자동으로 채워 넣는 기능입니다. 지금은 서열표에서 손으로 입력해야 하는 부분입니다.{% endblocktrans %}
+      </p>
+      <p class="text-body-secondary mt-2 mb-0">
+        {% blocktrans %}연동에는 지금 쓰는 API 토큰을 그대로 씁니다. 따로 발급받을 것은 없습니다.{% endblocktrans %}
+      </p>
+      <div class="mt-3">
+        <a class="btn btn-outline-secondary btn-sm" href="{% url 'about' %}">
+          {% trans '개발 로드맵 보기' %}
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -27,7 +27,7 @@ SITE_PATHS = frozenset("""
 about account admin analytics api board converter embed health i18n
 imgdownload join json jsi18n login logout manage media musiclist my-page
 overjoy privacy rankedit roadmap robots.txt favicon.ico songrank static
-status table u user userrank
+status sync table u user userrank
 """.split())
 
 # 위에 더해 가입만 막을 이름.

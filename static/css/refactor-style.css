@@ -624,3 +624,24 @@ body.bm-rankpage #rankimg { margin-top: .5rem; }
   font-family: "bootstrap-icons";
   font-size: 2rem;
 }
+
+/* --- 연동 안내 줄 (_token_bar.html) -------------------------------------- */
+/* 일일 타건 기록과 데이터 동기화가 같이 쓴다. 페이지 본문이 아니라 들어가는
+   길 안내라, 카드보다 한 단계 낮은 무게로 둔다. */
+.bm-token-bar { background: var(--bm-surface-2); }
+.bm-token-bar .card-body { padding: .85rem 1rem; }
+.bm-token-bar-icon { font-size: 1.5rem; color: var(--bm-text-muted); }
+.bm-token-bar-title { font-weight: 600; }
+.bm-token-bar-desc {
+  font-size: .84rem; color: var(--bm-text-muted); line-height: 1.5;
+}
+
+/* 푸터의 문서 링크. 만든 사람 이야기와 한 줄 띄워 둔다. */
+.bm-footer-legal { margin-top: .9rem; }
+
+/* 안내 줄의 글과 버튼.
+   min-width:0 이 없으면 글 상자가 제 내용 너비 아래로 줄지 않아서, 글이 조금만
+   길어도 버튼이 다음 줄로 밀린다(일일 타건 기록에서 실제로 그랬다).
+   flex-basis 를 두어 정말 좁아질 때만 아래로 내려가게 한다. */
+.bm-token-bar-text { flex: 1 1 260px; min-width: 0; }
+.bm-token-bar-actions { flex: 0 0 auto; margin-left: auto; }

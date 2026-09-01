@@ -88,6 +88,8 @@ urlpatterns = [
     url(r'^my-page/$', views_typing.my_page, name='my_page'),
     url(r'^my-page/typing\.json$', views_typing.typing_json,
         name='typing_json'),
+    # 데이터 동기화. 아직 내용은 자리만 잡아 두었다.
+    url(r'^sync/$', views_typing.data_sync, name='data_sync'),
     # API 토큰은 계정 설정에 가까워 따로 뺐다.
     url(r'^account/token/$', views_typing.api_token, name='api_token'),
     url(r'^account/token/reissue/$', views_typing.api_token_reissue,

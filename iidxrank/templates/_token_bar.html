@@ -1,0 +1,42 @@
+{% load i18n %}{% comment %}
+  연동 프로그램을 쓰는 페이지들 맨 위에 두는 안내 줄.
+
+  '일일 타건 기록'과 '데이터 동기화'가 같은 토큰을 쓰므로 같은 것을 보여 준다.
+  한쪽만 고치면 두 화면이 어긋나므로 조각으로 빼 두었다.
+
+  넘겨받는 값
+    tool_name  — 이 페이지에서 쓰는 프로그램 이름
+    tool_desc  — 한 줄 설명
+{% endcomment %}
+<div class="card bm-panel bm-token-bar mb-3">
+  <div class="card-body">
+    <div class="d-flex flex-wrap align-items-center gap-3">
+      <i class="bi bi-key bm-token-bar-icon" aria-hidden="true"></i>
+
+      <div class="bm-token-bar-text">
+        <div class="bm-token-bar-title">
+          {% blocktrans %}{{ tool_name }} 연동에는 API 토큰이 필요합니다{% endblocktrans %}
+        </div>
+        <div class="bm-token-bar-desc">
+          {{ tool_desc }}
+          {% if user.is_authenticated %}
+          {% blocktrans %}토큰은 계정마다 하나씩 발급되며, 프로그램 설정에 그 값을 넣으면 됩니다.{% endblocktrans %}
+          {% else %}
+          {% blocktrans %}토큰은 회원에게만 발급됩니다.{% endblocktrans %}
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="d-flex gap-2 bm-token-bar-actions">
+        {% if user.is_authenticated %}
+        <a class="btn btn-outline-secondary btn-sm" href="{% url 'api_token' %}">
+          <i class="bi bi-key me-1" aria-hidden="true"></i>{% trans 'API 토큰 보기' %}
+        </a>
+        {% else %}
+        <a class="btn btn-primary btn-sm" href="/join/">{% trans '회원가입' %}</a>
+        <a class="btn btn-outline-secondary btn-sm" href="/login/">{% trans '로그인' %}</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>

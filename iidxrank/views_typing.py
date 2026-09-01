@@ -167,6 +167,12 @@ def typing_json(request):
 
 
 @require_GET
+def data_sync(request):
+    """데이터 동기화. 구성은 일일 타건 기록과 같고 내용은 아직 자리만 있다."""
+    return render(request, 'sync.html')
+
+
+@require_GET
 def api_token(request):
     """API 토큰 발급 화면. 비회원에게는 가입을 안내한다."""
     ctx = {}
