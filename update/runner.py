@@ -15,7 +15,6 @@
    쓰도록 고친 뒤에 등록한다 — 그러면 CLI 와 웹 양쪽에서 동작한다.
 5. **동시 실행을 막는다.** 같은 DB 를 긁어 쓰는 작업이라 겹치면 데이터가 깨진다.
 """
-import contextlib
 import datetime
 import io
 import sys
@@ -125,55 +124,145 @@ COMMANDS_BY_NAME = {c.name: c for c in COMMANDS}
 
 
 class _DBLogStream(io.TextIOBase):
-    """call_command 의 출력을 받아 주기적으로 DB 에 밀어 넣는 스트림.
+    """명령의 출력을 받아 DB 에 옮기는 스트림.
 
-    매 write 마다 UPDATE 를 치면 수천 줄짜리 로그에서 DB 가 죽는다.
-    줄 수 / 바이트 기준으로 모았다가 쓴다.
+    **DB 쓰기를 명령의 실행 스택에서 떼어냈다.** 예전에는 write() 안에서 바로
+    UPDATE 를 쳤는데, 그 write() 는 파서가 DB 를 순회하는 도중에 print() 로
+    불린다. 같은 커넥션에 중첩해서 쓰다가 SQLite 에서 교착이 났다
+    (`updateSongInfinitas` 가 시트 매핑 단계에서 영영 멈췄다).
+
+    지금은 write() 가 메모리 버퍼에만 쌓고, 별도의 writer 스레드가 주기적으로
+    자기 커넥션으로 옮긴다. 명령 쪽 DB 작업과 로그 쓰기가 서로 얽히지 않는다.
     """
 
-    FLUSH_LINES = 5
-    FLUSH_BYTES = 2000
+    INTERVAL = 1.0           # writer 스레드가 옮기는 주기(초)
     MAX_LOG = 400_000        # 폭주하는 로그로 DB 를 채우지 않는다
 
     def __init__(self, run):
-        self.run = run
+        self.run_pk = run.pk
         self._buf = []
-        self._pending = 0
-        self._lines = 0
-        self._total = len(run.log)
+        self._lock = threading.Lock()
+        self._total = len(run.log or '')
+        self._truncated = False
+        self._stop = threading.Event()
+        self._thread = None
 
+    # --- 스트림 인터페이스 ------------------------------------------------
     def writable(self):
         return True
 
     def write(self, s):
         if not s:
             return 0
-        if self._total < self.MAX_LOG:
-            self._buf.append(s)
-            self._pending += len(s)
-            self._lines += s.count('\n')
-            if self._lines >= self.FLUSH_LINES or self._pending >= self.FLUSH_BYTES:
-                self.flush()
+        with self._lock:
+            if self._total < self.MAX_LOG:
+                self._buf.append(s)
+                self._total += len(s)
+            elif not self._truncated:
+                self._truncated = True
+                self._buf.append(
+                    '\n... 로그가 너무 길어 이후 출력은 생략합니다 ...\n')
         return len(s)
 
     def flush(self):
-        if not self._buf:
-            return
-        chunk = ''.join(self._buf)
-        self._buf = []
-        self._pending = 0
-        self._lines = 0
-        self._total += len(chunk)
-        if self._total >= self.MAX_LOG:
-            chunk += '\n... 로그가 너무 길어 이후 출력은 생략합니다 ...\n'
+        """버퍼를 즉시 DB 로 옮긴다. 프롬프트 직전 등에 명시적으로 부른다."""
+        self._drain()
+
+    # --- writer 스레드 ----------------------------------------------------
+    def start(self):
+        self._thread = threading.Thread(target=self._loop, name='logwriter-%d' % self.run_pk)
+        self._thread.daemon = True
+        self._thread.start()
+
+    def stop(self):
+        self._stop.set()
+        if self._thread:
+            self._thread.join(timeout=10)
+        self._drain()
+
+    def _loop(self):
+        while not self._stop.wait(self.INTERVAL):
+            self._drain()
+
+    def _drain(self):
+        with self._lock:
+            if not self._buf:
+                return
+            chunk = ''.join(self._buf)
+            self._buf = []
         from django.db.models import F, TextField, Value
         from django.db.models.functions import Concat
 
         from update.models import CommandRun
-        # 파이썬에서 읽어와 이어붙이지 않고 DB 안에서 붙인다.
-        # read-modify-write 사이에 다른 쓰기가 끼어들면 로그가 유실된다.
-        CommandRun.objects.filter(pk=self.run.pk).update(
-            log=Concat(F('log'), Value(chunk), output_field=TextField()))
+        try:
+            # 파이썬에서 읽어와 이어붙이지 않고 DB 안에서 붙인다.
+            # read-modify-write 사이에 다른 쓰기가 끼어들면 로그가 유실된다.
+            CommandRun.objects.filter(pk=self.run_pk).update(
+                log=Concat(F('log'), Value(chunk), output_field=TextField()))
+        except Exception:
+            # 로그를 못 남기는 것이 명령 자체를 죽이면 안 된다.
+            # 다음 주기에 다시 시도할 수 있게 버퍼 앞에 되돌린다.
+            with self._lock:
+                self._buf.insert(0, chunk)
+
+
+class _ThreadRoutedIO(object):
+    """명령을 돌리는 스레드의 출력만 가로채는 sys.stdout/stderr 대역.
+
+    `contextlib.redirect_stdout` 은 sys.stdout 을 **프로세스 전역으로** 바꾼다.
+    명령이 도는 동안 다른 스레드가 print() 한 것까지 명령 로그에 섞인다.
+    스레드 단위로 갈라서, 등록된 스레드의 출력만 로그로 보내고 나머지는
+    원래 stdout 으로 그대로 흘린다.
+    """
+
+    def __init__(self, original):
+        self._original = original
+        self._targets = {}
+
+    def bind(self, stream):
+        self._targets[threading.get_ident()] = stream
+
+    def unbind(self):
+        self._targets.pop(threading.get_ident(), None)
+
+    def _target(self):
+        return self._targets.get(threading.get_ident(), self._original)
+
+    def write(self, s):
+        t = self._target()
+        return t.write(s) if t is not None else len(s)
+
+    def flush(self):
+        t = self._target()
+        if t is not None:
+            t.flush()
+
+    def writable(self):
+        return True
+
+    def isatty(self):
+        return False
+
+    @property
+    def encoding(self):
+        return getattr(self._original, 'encoding', 'utf-8')
+
+
+# 프로세스당 한 번만 갈아 끼운다. 원래 stdout 은 안에 그대로 들고 있다.
+_stdout_router = None
+_stderr_router = None
+_router_lock = threading.Lock()
+
+
+def _install_routers():
+    global _stdout_router, _stderr_router
+    with _router_lock:
+        if _stdout_router is None:
+            _stdout_router = _ThreadRoutedIO(sys.stdout)
+            _stderr_router = _ThreadRoutedIO(sys.stderr)
+            sys.stdout = _stdout_router
+            sys.stderr = _stderr_router
+    return _stdout_router, _stderr_router
 
 
 def build_kwargs(cmd, raw):
@@ -215,6 +304,7 @@ def _run(run_pk, command_name, kwargs):
     close_old_connections()          # 스레드는 자기 커넥션을 쓴다
     run = CommandRun.objects.get(pk=run_pk)
     stream = _DBLogStream(run)
+    stream.start()
     status = CommandRun.SUCCESS
     try:
         CommandRun.objects.filter(pk=run_pk).update(status=CommandRun.RUNNING)
@@ -224,20 +314,22 @@ def _run(run_pk, command_name, kwargs):
         # call_command(stdout=...) 는 명령의 self.stdout.write 만 잡는다.
         # 이 프로젝트의 파서들은 대부분 맨 print() 를 쓰기 때문에, 그대로 두면
         # 진행 상황이 서버 콘솔로 새고 대시보드 로그는 텅 빈 채로 남는다.
-        # sys.stdout/stderr 도 같은 스트림으로 돌린다.
-        #
-        # 이 리다이렉트는 프로세스 전역이다. 동시 실행을 막아 두었기에
-        # (start() 의 잠금) 다른 요청의 출력을 삼킬 일이 없다.
-        # 그 잠금을 없애면 여기도 다시 봐야 한다.
-        with contextlib.redirect_stdout(stream), contextlib.redirect_stderr(stream):
+        # sys.stdout/stderr 도 같은 스트림으로 돌린다 — 단, 이 스레드에 한해서.
+        out, err = _install_routers()
+        out.bind(stream)
+        err.bind(stream)
+        try:
             call_command(command_name, stdout=stream, stderr=stream, **kwargs)
+        finally:
+            out.unbind()
+            err.unbind()
     except Exception:
         status = CommandRun.FAILED
         stream.write('\n\n=== 예외 발생 ===\n')
         stream.write(traceback.format_exc())
     finally:
         _prompt.unbind()
-        stream.flush()
+        stream.stop()
         CommandRun.objects.filter(pk=run_pk).update(
             status=status, finished_at=timezone.now(),
             prompt='', prompt_answer='', prompt_asked_at=None)

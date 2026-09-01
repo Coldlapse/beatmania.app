@@ -283,22 +283,22 @@ class IIDXSheetParser:
         # ----------------------------------------------------
         # 2단계: DB 갱신 분기 (RESET / UPDATE)
         # ----------------------------------------------------
-        with transaction.atomic():
-            rank_table, _ = RankTable.objects.get_or_create(
-                tablename=sheet_info['table_name'],
-                defaults={
-                    'tabletitle': sheet_info['table_title'],
-                    'level': sheet_info['level'],
-                    'type': sheet_info['default_type']
-                }
-            )
+        rank_table, _ = RankTable.objects.get_or_create(
+            tablename=sheet_info['table_name'],
+            defaults={
+                'tabletitle': sheet_info['table_title'],
+                'level': sheet_info['level'],
+                'type': sheet_info['default_type']
+            }
+        )
 
-            # --- [RESET 모드] ---
-            if mode == "RESET":
+        # --- [RESET 모드] ---
+        if mode == "RESET":
+            with transaction.atomic():
                 print(f"\n🧹 [초기화] 테이블 '{sheet_info['table_name']}'의 데이터를 모두 비우고 다시 작성합니다...")
                 RankItem.objects.filter(rankcategory__ranktable=rank_table).delete()
                 RankCategory.objects.filter(ranktable=rank_table).delete()
-                
+
                 new_count = 0
                 for sid, data in parsed_data.items():
                     category, _ = RankCategory.objects.get_or_create(
@@ -308,118 +308,131 @@ class IIDXSheetParser:
                     )
                     RankItem.objects.create(rankcategory=category, song=data['song'], info=f"Auto-mapped ({data['score']}%)")
                     new_count += 1
-                
+
                 rank_table.time = timezone.now()
                 rank_table.save()
-                print(f"✅ 초기화 완료: {new_count}곡 새로 매핑됨. (실패 {fail_count}건)")
-                return
+            print(f"✅ 초기화 완료: {new_count}곡 새로 매핑됨. (실패 {fail_count}건)")
+            return
 
-            # --- [UPDATE 모드] ---
-            current_items = {item.song_id: item for item in RankItem.objects.filter(rankcategory__ranktable=rank_table).select_related('rankcategory', 'song')}
-            
-            type_0_new = []
-            type_1_updates = []
-            type_2_missing = []
+        # --- [UPDATE 모드] ---
+        # 여기서부터 **트랜잭션을 열지 않는다.** 아래 Type 1 확인 질문 때문이다.
+        #
+        # 질문은 DB(CommandRun.prompt)를 거쳐 관리자 대시보드로 나간다. 질문을
+        # 트랜잭션 안에서 쓰면 커밋 전까지 다른 커넥션에서 보이지 않으므로,
+        # 웹에서는 질문이 영영 뜨지 않고 명령은 답을 기다리며 멈춘다. SQLite 는
+        # 그 위에 쓰기 잠금까지 물고 있어 로그 갱신마저 막힌다.
+        #
+        # 그래서 순서를 뒤집었다 — **읽어서 분석하고, 묻고, 답이 온 뒤에 한
+        # 트랜잭션으로 전부 적용한다.** 덤으로 Type 0 도 사용자가 결정하기 전에
+        # 먼저 반영되는 일이 없어진다.
+        current_items = {item.song_id: item for item in RankItem.objects.filter(rankcategory__ranktable=rank_table).select_related('rankcategory', 'song')}
 
-            for sid, p_data in parsed_data.items():
-                if sid not in current_items:
-                    type_0_new.append(p_data)
-                else:
-                    db_item = current_items[sid]
-                    if db_item.rankcategory.categoryname != p_data['cat_name']:
-                        type_1_updates.append({'item': db_item, 'old_cat': db_item.rankcategory.categoryname, 'new_data': p_data})
+        type_0_new = []
+        type_1_updates = []
+        type_2_missing = []
 
-            for sid, db_item in current_items.items():
-                if sid not in parsed_data:
-                    cat_name = db_item.rankcategory.categoryname
-                    # 전용곡/삭제곡은 제외
-                    if not ("INFINITAS" in cat_name.upper() and "전용" in cat_name) and "AC 삭제" not in cat_name:
-                        type_2_missing.append(db_item)
+        for sid, p_data in parsed_data.items():
+            if sid not in current_items:
+                type_0_new.append(p_data)
+            else:
+                db_item = current_items[sid]
+                if db_item.rankcategory.categoryname != p_data['cat_name']:
+                    type_1_updates.append({'item': db_item, 'old_cat': db_item.rankcategory.categoryname, 'new_data': p_data})
 
-            print("\n" + "="*60)
-            
-            # [Type 0] 
+        for sid, db_item in current_items.items():
+            if sid not in parsed_data:
+                cat_name = db_item.rankcategory.categoryname
+                # 전용곡/삭제곡은 제외
+                if not ("INFINITAS" in cat_name.upper() and "전용" in cat_name) and "AC 삭제" not in cat_name:
+                    type_2_missing.append(db_item)
+
+        print("\n" + "="*60)
+        print(f"✅ [Type 0] 미분류에서 갱신(새로 추가)될 곡: {len(type_0_new)}곡")
+
+        # [Type 1] 무엇을 적용할지 먼저 정한다 (아직 아무것도 쓰지 않는다)
+        indices = []
+        if type_1_updates:
+            print(f"\n⚠️ [Type 1] 서열표 안에서 위치가 변경된 곡들이 있습니다 ({len(type_1_updates)}건).")
+            print("-" * 60)
+            for idx, update in enumerate(type_1_updates, 1):
+                song = update['item'].song
+                print(f"  [{idx}] {song.songtitle} ({song.songtype})")
+                print(f"      {update['old_cat']} ➔ {update['new_data']['cat_name']}")
+
+            print("-" * 60)
+
+            # CLI 에서는 예전 그대로 input() 을 쓰고, 웹 대시보드에서 돌고 있으면
+            # 질문을 DB 에 써 두고 답을 기다린다. update/prompt.py 참조.
+            from update import prompt as _prompt
+            _choices = []
+            for _i, _u in enumerate(type_1_updates, 1):
+                _song = _u['item'].song
+                _choices.append({
+                    'value': str(_i),
+                    'label': '%s (%s)' % (_song.songtitle, _song.songtype),
+                    'detail': '%s ➜ %s' % (_u['old_cat'],
+                                                _u['new_data']['cat_name']),
+                })
+            choice = _prompt.ask(
+                question='[%s] 위치가 변경된 곡 %d건을 적용할까요?'
+                         % (sheet_info['table_title'], len(type_1_updates)),
+                choices=_choices,
+                kind='multi',
+                default='',
+                help='체크한 곡만 새 카테고리로 옮깁니다. 아무것도 고르지 않고 '
+                     '넘기면 이번 회차에는 전부 기존 분류를 유지합니다.',
+                cli_prompt="\n🔄 변경을 적용할 번호를 입력하세요 "
+                           "(쉼표(,)로 구분 / 전부 'all' / 넘기려면 Enter): ",
+            ).strip()
+
+            if choice.lower() == 'all':
+                indices = list(range(1, len(type_1_updates) + 1))
+            elif choice:
+                try:
+                    indices = [int(x.strip()) for x in choice.split(',')]
+                except ValueError:
+                    print("❌ 잘못된 입력입니다. 갱신을 건너뜁니다.")
+                    indices = []
+
+        # 결정이 끝났다. 이제 한 트랜잭션으로 전부 적용한다.
+        updated_count = 0
+        with transaction.atomic():
+            # [Type 0]
             for d in type_0_new:
                 cat, _ = RankCategory.objects.get_or_create(
                     ranktable=rank_table, categoryname=d['cat_name'],
                     defaults={'categorytype': d['c_type'], 'sortindex': d['c_sort']}
                 )
                 RankItem.objects.create(rankcategory=cat, song=d['song'], info=f"Added via Update ({d['score']}%)")
-            print(f"✅ [Type 0] 미분류에서 갱신(새로 추가)된 곡: {len(type_0_new)}곡")
 
-            # [Type 1] 
-            updated_count = 0
-            if type_1_updates:
-                print(f"\n⚠️ [Type 1] 서열표 안에서 위치가 변경된 곡들이 있습니다 ({len(type_1_updates)}건).")
-                print("-" * 60)
-                for idx, update in enumerate(type_1_updates, 1):
-                    song = update['item'].song
-                    print(f"  [{idx}] {song.songtitle} ({song.songtype})")
-                    print(f"      {update['old_cat']} ➔ {update['new_data']['cat_name']}")
-                
-                print("-" * 60)
+            # [Type 1]
+            for i in indices:
+                if 1 <= i <= len(type_1_updates):
+                    u_data = type_1_updates[i-1]
+                    item = u_data['item']
+                    n_data = u_data['new_data']
 
-                # CLI 에서는 예전 그대로 input() 을 쓰고, 웹 대시보드에서 돌고 있으면
-                # 질문을 DB 에 써 두고 답을 기다린다. update/prompt.py 참조.
-                from update import prompt as _prompt
-                _choices = []
-                for _i, _u in enumerate(type_1_updates, 1):
-                    _song = _u['item'].song
-                    _choices.append({
-                        'value': str(_i),
-                        'label': '%s (%s)' % (_song.songtitle, _song.songtype),
-                        'detail': '%s ➜ %s' % (_u['old_cat'],
-                                                    _u['new_data']['cat_name']),
-                    })
-                choice = _prompt.ask(
-                    question='[%s] 위치가 변경된 곡 %d건을 적용할까요?'
-                             % (sheet_info['table_title'], len(type_1_updates)),
-                    choices=_choices,
-                    kind='multi',
-                    default='',
-                    help='체크한 곡만 새 카테고리로 옮깁니다. 아무것도 고르지 않고 '
-                         '넘기면 이번 회차에는 전부 기존 분류를 유지합니다.',
-                    cli_prompt="\n🔄 변경을 적용할 번호를 입력하세요 "
-                               "(쉼표(,)로 구분 / 전부 'all' / 넘기려면 Enter): ",
-                ).strip()
-                
-                if choice.lower() == 'all':
-                    indices = list(range(1, len(type_1_updates) + 1))
-                elif choice:
-                    try:
-                        indices = [int(x.strip()) for x in choice.split(',')]
-                    except ValueError:
-                        print("❌ 잘못된 입력입니다. 갱신을 건너뜁니다.")
-                        indices = []
-                else:
-                    indices = []
-
-                for i in indices:
-                    if 1 <= i <= len(type_1_updates):
-                        u_data = type_1_updates[i-1]
-                        item = u_data['item']
-                        n_data = u_data['new_data']
-                        
-                        cat, _ = RankCategory.objects.get_or_create(
-                            ranktable=rank_table, categoryname=n_data['cat_name'],
-                            defaults={'categorytype': n_data['c_type'], 'sortindex': n_data['c_sort']}
-                        )
-                        item.rankcategory = cat
-                        item.info = f"Updated via CLI ({n_data['score']}%)"
-                        item.save()
-                        updated_count += 1
-                
-                print(f"   => 🎯 [승인 완료] 총 {updated_count}곡 위치가 변경되었습니다.")
-
-            # [Type 2] 
-            if type_2_missing:
-                print(f"\n❌ [Type 2] 서열표엔 존재하나 시트에서 안 보이는 곡 (기존 분류 유지): {len(type_2_missing)}곡")
-                for item in type_2_missing:
-                    print(f"  - {item.song.songtitle} ({item.song.songtype}) [현재: {item.rankcategory.categoryname}]")
+                    cat, _ = RankCategory.objects.get_or_create(
+                        ranktable=rank_table, categoryname=n_data['cat_name'],
+                        defaults={'categorytype': n_data['c_type'], 'sortindex': n_data['c_sort']}
+                    )
+                    item.rankcategory = cat
+                    item.info = f"Updated via Update ({n_data['score']}%)"
+                    item.save()
+                    updated_count += 1
 
             # 시간 갱신
             rank_table.time = timezone.now()
             rank_table.save()
-            
-            print("\n" + "="*60)
-            print(f"🎉 갱신(UPDATE) 프로세스 완료 (테이블 시간 갱신됨: {rank_table.time.strftime('%Y-%m-%d %H:%M:%S')})")
+
+        if type_1_updates:
+            print(f"   => 🎯 [승인 완료] 총 {updated_count}곡 위치가 변경되었습니다.")
+
+        # [Type 2]
+        if type_2_missing:
+            print(f"\n❌ [Type 2] 서열표엔 존재하나 시트에서 안 보이는 곡 (기존 분류 유지): {len(type_2_missing)}곡")
+            for item in type_2_missing:
+                print(f"  - {item.song.songtitle} ({item.song.songtype}) [현재: {item.rankcategory.categoryname}]")
+
+        print("\n" + "="*60)
+        print(f"🎉 갱신(UPDATE) 프로세스 완료 (테이블 시간 갱신됨: {rank_table.time.strftime('%Y-%m-%d %H:%M:%S')})")
