@@ -33,11 +33,14 @@ SP_TABLES = ['SP12H', 'SP12N', 'SP11H', 'SP11N', 'SP10H', 'SP10R', 'SP12TEST']
 DP_TABLES = ['DP12', 'DP11', 'DP10', 'DBR', '11DBR', 'onehand']
 
 PERIODS = {
-    # key: (라벨, 거슬러 갈 길이, 시간 단위인가)
-    'today': ('오늘', datetime.timedelta(days=1), True),
-    'week': ('지난 7일', datetime.timedelta(days=7), False),
-    'month': ('지난 30일', datetime.timedelta(days=30), False),
-    'year': ('지난 365일', datetime.timedelta(days=365), False),
+    # key: (버튼에 쓸 이름, 문장에 쓸 이름, 거슬러 갈 길이, 시간 단위인가)
+    #
+    # 이름을 둘로 나눈 이유: 버튼은 '오늘'이 짧고 자연스럽지만, 문장에 넣으면
+    # "오늘 동안 313번" 처럼 어색해진다. 문장에서는 '지난 1일'로 읽는다.
+    'today': ('오늘', '지난 1일', datetime.timedelta(days=1), True),
+    'week': ('지난 7일', '지난 7일', datetime.timedelta(days=7), False),
+    'month': ('지난 30일', '지난 30일', datetime.timedelta(days=30), False),
+    'year': ('지난 365일', '지난 365일', datetime.timedelta(days=365), False),
 }
 DEFAULT_PERIOD = 'week'
 
@@ -141,7 +144,7 @@ def views_json(request):
     key = request.GET.get('period', DEFAULT_PERIOD)
     if key not in PERIODS:
         key = DEFAULT_PERIOD
-    _label, span, hourly = PERIODS[key]
+    _btn_label, sentence_label, span, hourly = PERIODS[key]
 
     now = timezone.localtime()
     if hourly:
@@ -236,5 +239,5 @@ def views_json(request):
         'unit': 'hour' if hourly else 'day',
         'groups': groups,
         'visits': {'data': visits, 'total': sum(visits),
-                   'period_label': _label},
+                   'period_label': sentence_label},
     })
