@@ -1,12 +1,12 @@
-/* 캔버스 배경을 사이트 배경(theme.css 의 --bm-bg)과 맞춘다.
-   예전에는 라이트 #FFF / 다크 #1F1F23 로 고정돼 있어서, 다크 모드에서
-   사이트 배경(#0f172a)과 색이 달라 서열표만 다른 판때기처럼 떠 보였다.
-   CSS 변수에서 읽으므로 팔레트를 바꾸면 자동으로 따라온다.
-   다운로드한 PNG 도 같은 색이 되어 공유했을 때 이질감이 없다. */
-function bmSiteBackground(fallback) {
+/* 캔버스 배경색을 theme.css 의 --bm-canvas-bg 에서 읽는다.
+   캔버스는 다운로드되어 공유되는 결과물이라 색을 바꾸지 않는다(라이트 #FFF,
+   다크 #1F1F23). 대신 서열표 페이지의 배경이 같은 토큰을 쓰도록 해서
+   캔버스가 페이지 위에 다른 판때기처럼 떠 보이지 않게 한다.
+   두 값이 한 곳에서 나오므로 어긋날 수 없다. */
+function bmCanvasBackground(fallback) {
   try {
     var v = getComputedStyle(document.documentElement)
-              .getPropertyValue('--bm-bg').trim();
+              .getPropertyValue('--bm-canvas-bg').trim();
     if (v) { return v; }
   } catch (e) {}
   return fallback;
@@ -193,7 +193,7 @@ function Default2Renderer(ctx) {
     self.rank_count = [0,0,0,0,0,0,0,0];
 
     // 사이트 배경과 같은 색으로 채운다
-    self.ctx.fillStyle = bmSiteBackground("#ffffff");
+    self.ctx.fillStyle = bmCanvasBackground("#ffffff");
     self.ctx.fillRect(0, 0, self.ctx.canvas.width, self.ctx.canvas.height);
 
     // render tablename (as background)
@@ -548,7 +548,7 @@ function DefaultDarkRenderer(ctx) {
     self.rank_count = [0,0,0,0,0,0,0,0];
 
     // 사이트 배경과 같은 색으로 채운다
-    self.ctx.fillStyle = bmSiteBackground("#0f172a");
+    self.ctx.fillStyle = bmCanvasBackground("#1F1F23");
     self.ctx.fillRect(0, 0, self.ctx.canvas.width, self.ctx.canvas.height);
 
     // render tablename (as background)

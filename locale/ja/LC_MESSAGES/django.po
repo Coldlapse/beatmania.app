@@ -3,6 +3,9 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ja\n"
 
+msgid "사이트뷰 분석"
+msgstr "アクセス解析"
+
 msgid "오늘"
 msgstr "今日"
 
@@ -21,20 +24,53 @@ msgstr "難易度表"
 msgid "조회수"
 msgstr "閲覧数"
 
+msgid "beatmania IIDX INFINITAS 비공식 난이도 서열표 사이트입니다."
+msgstr "beatmania IIDX INFINITAS の非公式難易度表サイトです。"
+
 msgid "흰숫 변환기"
 msgstr "サドプラ変換"
 
 msgid "비토라쟈 서든"
 msgstr "beatoraja SUDDEN+"
 
+msgid "리프트 변환 결과"
+msgstr "LIFT 換算結果"
+
 msgid "투덱 서든"
 msgstr "IIDX SUDDEN+"
+
+msgid "리프트"
+msgstr "LIFT"
+
+msgid "공통"
+msgstr "共通"
+
+msgid "비토라쟈 · 투덱 리프트"
+msgstr "beatoraja / IIDX の LIFT"
+
+msgid "변환할 리프트"
+msgstr "換算する LIFT"
+
+msgid "beatoraja(비토라쟈)와 IIDX의 서든 플러스 수치를 서로 변환합니다."
+msgstr "beatoraja と IIDX のサドプラ数値を相互変換します。"
+
+msgid "대기 현황"
+msgstr "待ち状況"
+
+msgid "곡 목록"
+msgstr "曲リスト"
 
 msgid "일일 타건 기록"
 msgstr "日別打鍵記録"
 
 msgid "API 연동 토큰"
 msgstr "API トークン"
+
+msgid "비밀번호처럼 취급해 주세요."
+msgstr "パスワードと同様に扱ってください。"
+
+msgid "IIDXwidget 받기"
+msgstr "IIDXwidget を入手"
 
 msgid "복사"
 msgstr "コピー"
@@ -48,8 +84,32 @@ msgstr "日付"
 msgid "타건 수"
 msgstr "打鍵数"
 
+msgid "과거 기록이 없습니다."
+msgstr "過去の記録はありません。"
+
+msgid "이전"
+msgstr "前へ"
+
+msgid "다음"
+msgstr "次へ"
+
 msgid "오늘의 타건 수"
 msgstr "今日の打鍵数"
+
+msgid "IIDXwidget 앱과 연동하기 위한 개인 토큰입니다."
+msgstr "IIDXwidget アプリと連携するための個人トークンです。"
+
+msgid "IIDXwidget 설정에 위 토큰을 입력하고 저장합니다."
+msgstr "IIDXwidget の設定に上のトークンを入力して保存します。"
+
+msgid "서열표 편집"
+msgstr "難易度表を編集"
+
+msgid "개발 로드맵"
+msgstr "ロードマップ"
+
+msgid "충분한 플레이 기록(FAIL이 없거나 전부 HC~EXHC 이상이거나)이 없을 경우에는 수치가 올바르게 표시되지 않을 수 있습니다."
+msgstr "プレー記録が十分でない場合（FAIL が無い、または全て HC〜EXHC 以上など）、数値が正しく表示されないことがあります。"
 
 msgid "언어 선택"
 msgstr "言語"
@@ -75,17 +135,17 @@ msgstr "ログイン"
 msgid "메뉴 열기"
 msgstr "メニューを開く"
 
-msgid "사이트뷰 분석"
-msgstr "アクセス解析"
-
-msgid "개발 로드맵"
-msgstr "ロードマップ"
-
 msgid "디스코드"
 msgstr "Discord"
 
 msgid "옵조 난이도표 백업"
 msgstr "Overjoy 難易度表（バックアップ）"
+
+msgid "익하작도 점수에 반영됩니다. 즉 아무리 실력이 좋아도 익하(풀콤)작을 하지 않으면 점수가 생각보다 낮게 나올 수 있습니다!"
+msgstr "フルコンボもスコアに反映されます。実力があってもフルコン埋めをしていないとスコアが低く出ることがあります。"
+
+msgid "관리자"
+msgstr "管理"
 
 msgid "실행 기록"
 msgstr "実行履歴"
@@ -159,23 +219,77 @@ msgstr "入力したIDがそのまま難易度表のURLになり、誰でもそ�
 msgid "공개를 원하지 않으면 가입 후 <b>설정 → 프로필 비공개</b>를 켜면 됩니다. 켜면 이 주소로 접속해도 아무것도 보이지 않고, 유저 목록에도 나타나지 않습니다. 언제든 다시 끌 수 있습니다."
 msgstr "公開したくない場合は、登録後に <b>設定 → プロフィール非公開</b> を有効にしてください。有効にするとこの URL では何も表示されず、ユーザー一覧にも出ません。いつでも解除できます。"
 
-msgid "비공개 프로필"
-msgstr "非公開プロフィール"
+msgid "공유 주소 복사"
+msgstr "共有URLをコピー"
 
-msgid "비공개 프로필입니다"
-msgstr "このプロフィールは非公開です"
+msgid "정렬"
+msgstr "並べ替え"
 
-msgid "이 사용자는 프로필을 비공개로 설정했습니다."
-msgstr "このユーザーはプロフィールを非公開に設定しています。"
+msgid "램프순"
+msgstr "ランプ順"
 
-msgid "주소가 틀린 것이 아니라, 본인이 공개하지 않기로 선택한 것입니다."
-msgstr "URL が間違っているのではなく、本人が公開しないことを選んでいます。"
+msgid "이름순"
+msgstr "名前順"
+
+msgid "점수순"
+msgstr "スコア順"
+
+msgid "표시 방식"
+msgstr "表示方式"
+
+msgid "일반"
+msgstr "通常"
+
+msgid "다운로드"
+msgstr "ダウンロード"
+
+msgid "곡 제목 검색"
+msgstr "曲名検索"
+
+msgid "검색"
+msgstr "検索"
+
+msgid "검색어 지우기"
+msgstr "検索をクリア"
 
 msgid "새 비밀번호를 설정해 주세요."
 msgstr "新しいパスワードを設定してください。"
 
 msgid "설정으로 돌아가기"
 msgstr "設定に戻る"
+
+msgid "프로필을 볼 수 없음"
+msgstr "プロフィールを表示できません"
+
+msgid "프로필을 볼 수 없습니다"
+msgstr "プロフィールを表示できません"
+
+msgid "비공개로 설정되어 있거나, 존재하지 않는 아이디입니다."
+msgstr "非公開に設定されているか、存在しない ID です。"
+
+msgid "본인의 프로필이라면 로그인 후 설정에서 공개 여부를 확인해 보세요."
+msgstr "ご自身のプロフィールの場合は、ログイン後に設定で公開状態をご確認ください。"
+
+msgid "건의 및 난이도 갱신 요청, 서버 상태 등은"
+msgstr "ご意見・難易度更新の依頼・サーバー状況は"
+
+msgid "를 참조해주세요."
+msgstr "をご覧ください。"
+
+msgid "프로젝트를 클론하여 수정한 후 운영되는 서열표 사이트입니다."
+msgstr "プロジェクトをクローンして改修し運営している難易度表サイトです。"
+
+msgid "<b>비트매니아 IIDX INFINITAS</b>의 수록곡들만 제공합니다."
+msgstr "<b>beatmania IIDX INFINITAS</b> の収録曲のみを扱います。"
+
+msgid "서열은 종전 본가 시트들을 기반으로 작성됩니다. SP의 경우 서열 미분류 곡에 대한 별도의 분류는 진행하지 않습니다."
+msgstr "難易度は従来のAC用シートを基に作成しています。SP は未分類曲の個別分類は行いません。"
+
+msgid "탈퇴하면 저장된 서열표 기록이 영구적으로 삭제됩니다."
+msgstr "退会すると保存された難易度表の記録は完全に削除されます。"
+
+msgid "되돌릴 수 없습니다."
+msgstr "元に戻すことはできません。"
 
 msgid "탈퇴하기"
 msgstr "退会する"

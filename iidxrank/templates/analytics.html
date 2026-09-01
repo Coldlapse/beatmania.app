@@ -4,7 +4,7 @@
   이전 버전은 스타일을 {% templatetag openblock %} block custom_head {% templatetag closeblock %} 에 넣었는데
   부모에 그 블록이 없어 적용된 적이 없다. BS5 컴포넌트로 대체한다.
 {% endcomment %}
-{% block subtitle %} - 사이트뷰 분석{% endblock %}
+{% block subtitle %}- {% trans '사이트뷰 분석' %}{% endblock %}
 {% block body %}
 {% include "top.html" %}
 

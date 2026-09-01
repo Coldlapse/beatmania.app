@@ -63,6 +63,13 @@
   --bm-widget-border:   #4b5563;
   --bm-widget-head-bg:  #374151;
 
+  /* 서열표 캔버스의 배경색.
+     캔버스는 다운로드되어 커뮤니티에 공유되는 결과물이라 팔레트를 함부로
+     바꾸지 않는다. 대신 서열표 페이지의 배경을 이 값에 맞춰,
+     캔버스가 다른 판때기처럼 떠 보이지 않게 한다.
+     table.default2.skin.js 가 이 변수를 읽는다. */
+  --bm-canvas-bg:       #ffffff;
+
   /* 서열표 셀 배경 (난이도별 옅은 틴트) */
   --bm-tint-a:          #fdeeee;
   --bm-tint-h:          #fdfbe8;
@@ -113,6 +120,8 @@
   --bm-widget-text:     #f1f5f9;
   --bm-widget-border:   #475569;
   --bm-widget-head-bg:  #1e293b;
+
+  --bm-canvas-bg:       #1F1F23;
 
   --bm-tint-a:          #3a2226;
   --bm-tint-h:          #35331f;

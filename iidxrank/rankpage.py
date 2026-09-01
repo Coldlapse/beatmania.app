@@ -16,24 +16,33 @@ def get_ranktable(tablename):
         return None
     return ranktable
 
-# find_player_from_id 가 돌려주는 '못 찾음'의 이유.
-# 없는 사용자와 비공개 사용자를 같은 None 으로 뭉개면 화면에서 구별할 수 없다.
-NOT_FOUND = 'not_found'
-PRIVATE = 'private'
+# 프로필을 볼 수 없는 이유.
+#
+# **없는 계정과 비공개 계정을 구별해서 알려주지 않는다.** 구별해 주면
+# 아이디를 무차별 대입해 "이 아이디는 존재한다"를 알아낼 수 있다(계정 열거).
+# 화면도 상태코드도 같게 만들고, 이 상수 하나로만 다룬다.
+UNAVAILABLE = 'unavailable'
+
+# 서열표 자체가 없을 때는 계정과 무관하므로 그냥 404 다.
+NO_SUCH_TABLE = 'no_such_table'
 
 
 def find_player_from_id(username):
-    """(player, reason) 를 돌려준다. player 가 None 이면 reason 에 이유가 담긴다."""
+    """(player, reason) 를 돌려준다.
+
+    볼 수 없으면 이유는 항상 UNAVAILABLE 이다 — 없는 계정인지 비공개인지
+    호출자에게도 알려주지 않는다. 그래야 실수로 화면에 새어 나가지 않는다.
+    """
     try:
         user = models.User.objects.get(username=username)
     except models.User.DoesNotExist:
-        return None, NOT_FOUND
+        return None, UNAVAILABLE
     player = models.Player.objects.filter(user=user).first()
     # 사용자는 있는데 Player 행이 없을 수 있다 (예: /admin/ 에서 만든 계정)
     if player is None:
-        return None, NOT_FOUND
+        return None, UNAVAILABLE
     if player.private:
-        return None, PRIVATE
+        return None, UNAVAILABLE
     return player, None
 
 def get_player_from_user(username):

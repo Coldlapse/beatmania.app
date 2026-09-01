@@ -49,12 +49,8 @@ def userpage(request, username=None):
     else:
         player, reason = rp.find_player_from_id(username)
         if player is None:
-            if reason == rp.PRIVATE:
-                # 비공개는 '없음'과 다르다. 404 로 뭉개면 왜 안 보이는지
-                # 알 수 없어 사용자가 오타를 의심하게 된다.
-                return render(request, 'user/private.html',
-                              {'username': username}, status=403)
-            raise Http404
+            # 없는 계정인지 비공개인지 구별해 주지 않는다 — 구별이 곧 계정 열거다
+            return _unavailable(request, username)
         userinfo = rp.get_udata_from_player(player, username)
     return render(request, 'user/userpage.html', {'userdata': userinfo})
 
@@ -67,7 +63,7 @@ def get_pdata(request, username, tablename):
     """
     table = rp.get_ranktable(tablename)
     if table is None:
-        return rp.NOT_FOUND
+        return rp.NO_SUCH_TABLE
 
     if username is None:
         player = rp.get_player_from_request(request)
@@ -83,12 +79,21 @@ def get_pdata(request, username, tablename):
     return pdata
 
 
+def _unavailable(request, username):
+    """프로필을 볼 수 없을 때의 응답.
+
+    없는 계정과 비공개 계정에 **같은 화면, 같은 상태코드**를 준다.
+    다르게 응답하면 아이디를 무차별 대입해 존재 여부를 알아낼 수 있다.
+    """
+    return render(request, 'user/unavailable.html',
+                  {'username': username}, status=404)
+
+
 def _pdata_or_response(request, pdata, username):
     """get_pdata 결과가 실패 사유면 알맞은 응답을 만든다. 아니면 None."""
-    if pdata == rp.PRIVATE:
-        return render(request, 'user/private.html',
-                      {'username': username}, status=403)
-    if pdata == rp.NOT_FOUND or pdata is None:
+    if pdata == rp.UNAVAILABLE:
+        return _unavailable(request, username)
+    if pdata == rp.NO_SUCH_TABLE or pdata is None:
         raise Http404
     return None
 

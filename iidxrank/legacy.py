@@ -12,8 +12,6 @@
 """
 import re
 
-from django.contrib.auth.models import User
-from django.http import Http404
 from django.shortcuts import redirect
 
 # 옛 `/!/...` 경로 → 새 경로.
@@ -66,12 +64,11 @@ def redirect_bang(request, rest):
 def redirect_user(request, username, rest):
     """옛 최상위 사용자 경로 `/sadang/SP12H/` → `/u/sadang/table/SP12H/`.
 
-    실제로 존재하는 사용자일 때만 넘긴다. 그러지 않으면 오타나 없는 경로가
-    전부 리다이렉트되어 404 가 사라진다.
+    계정 존재 여부를 확인하지 않고 무조건 넘긴다. 여기서 확인하면
+    "리다이렉트되면 존재하는 계정"이라는 신호가 되어 계정 열거가 가능해진다.
+    존재 여부 판단은 새 주소의 뷰가 하고, 없는 계정과 비공개 계정에
+    같은 화면을 준다.
     """
-    if not User.objects.filter(username=username).exists():
-        raise Http404
-
     rest = rest.strip('/')
     base = '/u/%s/' % username
     if not rest:

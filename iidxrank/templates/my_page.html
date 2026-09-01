@@ -5,7 +5,7 @@
   부모(common.html)에 그런 블록이 없어서 한 번도 적용된 적이 없다.
   이제 Bootstrap 5 컴포넌트와 theme.css 토큰을 쓴다.
 {% endcomment %}
-{% block subtitle %} - 일일 타건 기록{% endblock %}
+{% block subtitle %}- {% trans '일일 타건 기록' %}{% endblock %}
 
 {% block body %}
 {% include "top.html" %}
@@ -18,11 +18,11 @@
       <h2 class="bm-panel-title">
         <i class="bi bi-key me-2" aria-hidden="true"></i>{% trans 'API 연동 토큰' %}</h2>
       <p class="text-body-secondary mb-3">
-        IIDXwidget 앱과 연동하기 위한 개인 토큰입니다.
-        <b>비밀번호처럼 취급해 주세요.</b><br>
+        {% blocktrans %}IIDXwidget 앱과 연동하기 위한 개인 토큰입니다.{% endblocktrans %}
+        <b>{% trans '비밀번호처럼 취급해 주세요.' %}</b><br>
         <a href="https://github.com/Coldlapse/IIDXwidget/releases/latest"
            target="_blank" rel="noopener">
-          IIDXwidget 받기 <i class="bi bi-box-arrow-up-right small" aria-hidden="true"></i></a>
+          {% trans 'IIDXwidget 받기' %} <i class="bi bi-box-arrow-up-right small" aria-hidden="true"></i></a>
       </p>
 
       <div class="input-group">
@@ -33,7 +33,7 @@
       </div>
 
       <ol class="bm-steps mt-3">
-        <li>IIDXwidget 설정에 위 토큰을 입력하고 저장합니다.</li>
+        <li>{% blocktrans %}IIDXwidget 설정에 위 토큰을 입력하고 저장합니다.{% endblocktrans %}</li>
         <li>위젯 메뉴의 <b>“타건 기록 서버로 전송”</b>을 누르면 기록이 전송되고
           앱 화면의 타건 수는 0으로 초기화됩니다.
           <span class="text-body-secondary">(OBS의 타건 기록은 그대로 유지됩니다.)</span></li>
@@ -68,7 +68,7 @@
             </tr>
             {% empty %}
             <tr><td colspan="2" class="text-center text-body-secondary py-4">
-              과거 기록이 없습니다.</td></tr>
+              {% trans '과거 기록이 없습니다.' %}</td></tr>
             {% endfor %}
           </tbody>
         </table>
@@ -80,11 +80,11 @@
           <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
             <a class="page-link" href="?tab=history&page=1">&laquo;</a></li>
           <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
-            <a class="page-link" href="?tab=history&page={{ page_obj.previous_page_number }}">이전</a></li>
+            <a class="page-link" href="?tab=history&page={{ page_obj.previous_page_number }}">{% trans '이전' %}</a></li>
           <li class="page-item active"><span class="page-link">
             {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span></li>
           <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
-            <a class="page-link" href="?tab=history&page={{ page_obj.next_page_number }}">다음</a></li>
+            <a class="page-link" href="?tab=history&page={{ page_obj.next_page_number }}">{% trans '다음' %}</a></li>
           <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
             <a class="page-link" href="?tab=history&page={{ page_obj.paginator.num_pages }}">&raquo;</a></li>
         </ul>

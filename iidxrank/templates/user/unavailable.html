@@ -1,0 +1,29 @@
+{% extends "common.html" %}
+{% load i18n %}
+{% comment %}
+  프로필을 볼 수 없을 때의 화면.
+
+  **없는 계정과 비공개 계정에 같은 화면을 보여준다.** 구별해서 알려주면
+  아이디를 무차별 대입해 "이 아이디는 존재한다"를 알아낼 수 있다(계정 열거).
+  문구도 두 경우를 함께 적는다.
+{% endcomment %}
+{% block subtitle %} - {% trans '프로필을 볼 수 없음' %}{% endblock %}
+{% block body %}
+{% include "top.html" %}
+
+<main class="bm-auth">
+  <div class="bm-auth-card card text-center">
+    <div class="card-body">
+      <i class="bi bi-person-slash bm-private-icon" aria-hidden="true"></i>
+      <h1 class="bm-auth-title mt-3">{% trans '프로필을 볼 수 없습니다' %}</h1>
+      <p class="text-body-secondary mb-1">
+        {% blocktrans %}비공개로 설정되어 있거나, 존재하지 않는 아이디입니다.{% endblocktrans %}
+      </p>
+      <p class="text-body-secondary small">
+        {% blocktrans %}본인의 프로필이라면 로그인 후 설정에서 공개 여부를 확인해 보세요.{% endblocktrans %}
+      </p>
+      <a href="/" class="btn btn-primary mt-3">{% trans '서열표로 돌아가기' %}</a>
+    </div>
+  </div>
+</main>
+{% endblock %}

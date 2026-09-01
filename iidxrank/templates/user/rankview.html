@@ -5,7 +5,7 @@
 {% load static %}
 
 
-<script type="text/javascript" src="{% static 'js/table.default2.skin.js' %}?v=260901"></script>
+<script type="text/javascript" src="{% static 'js/table.default2.skin.js' %}?v=260901b"></script>
 <script type="text/javascript" src="{% static 'js/table.js' %}?v=260901"></script>
 
 <link href='https://fonts.googleapis.com/css?family=Comfortaa' rel='stylesheet' type='text/css'>
@@ -226,6 +226,7 @@ $(function () { dorender("clear"); });
 </script>
 
 {% endblock %}
+{% block body_class %}bm-rankpage{% endblock %}
 {% block body %}
 
 {% include "top.html" %}
@@ -245,36 +246,36 @@ $(function () { dorender("clear"); });
     <div class="bm-rank-toolbar">
       {% if request.user.is_staff %}
       <a href="/update/rankedit/{{ tableinfo.tablename }}/"
-         class="btn btn-sm btn-outline-secondary" title="서열표 편집">
+         class="btn btn-sm btn-outline-secondary" title="{% trans '서열표 편집' %}">
         <i class="bi bi-pencil-square" aria-hidden="true"></i></a>
       {% endif %}
       {% if editable %}
-      <button id="share" type="button" class="btn btn-sm btn-outline-secondary" title="공유 주소 복사">
+      <button id="share" type="button" class="btn btn-sm btn-outline-secondary" title="{% trans '공유 주소 복사' %}">
         <i class="bi bi-share" aria-hidden="true"></i></button>
       {% endif %}
 
-      <div class="btn-group btn-group-sm" role="group" aria-label="정렬">
-        <button id="ranksort_clear" type="button" class="btn btn-outline-secondary">램프순</button>
-        <button id="ranksort_name"  type="button" class="btn btn-outline-secondary">이름순</button>
-        <button id="ranksort_score" type="button" class="btn btn-outline-secondary">점수순</button>
+      <div class="btn-group btn-group-sm" role="group" aria-label="{% trans '정렬' %}">
+        <button id="ranksort_clear" type="button" class="btn btn-outline-secondary">{% trans '램프순' %}</button>
+        <button id="ranksort_name"  type="button" class="btn btn-outline-secondary">{% trans '이름순' %}</button>
+        <button id="ranksort_score" type="button" class="btn btn-outline-secondary">{% trans '점수순' %}</button>
       </div>
 
-      <ul class="list theme" aria-label="표시 방식">
-        <a href="#"><li class="sel" data-value="clear">일반</li></a>
+      <ul class="list theme" aria-label="{% trans '표시 방식' %}">
+        <a href="#"><li class="sel" data-value="clear">{% trans '일반' %}</li></a>
         <a href="#"><li data-value="wide">WIDE</li></a>
       </ul>
 
       <button id="capture" type="button" class="btn btn-sm btn-outline-secondary">
-        <i class="bi bi-download me-1" aria-hidden="true"></i>다운로드</button>
+        <i class="bi bi-download me-1" aria-hidden="true"></i>{% trans '다운로드' %}</button>
 
       <div class="input-group input-group-sm bm-song-search">
         <input type="text" class="form-control prevent-zoom" id="search-input"
-               placeholder="곡 제목 검색" aria-label="곡 제목 검색">
-        <button class="btn btn-primary" type="button" id="search-button" aria-label="검색">
+               placeholder="{% trans '곡 제목 검색' %}" aria-label="{% trans '곡 제목 검색' %}">
+        <button class="btn btn-primary" type="button" id="search-button" aria-label="{% trans '검색' %}">
           <i class="bi bi-search" aria-hidden="true"></i>
         </button>
         <button type="button" class="btn btn-outline-secondary" id="clear-button"
-                aria-label="검색어 지우기" style="display:none">
+                aria-label="{% trans '검색어 지우기' %}" style="display:none">
           <i class="bi bi-x-lg" aria-hidden="true"></i>
         </button>
       </div>

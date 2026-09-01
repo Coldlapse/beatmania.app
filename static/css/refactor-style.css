@@ -433,3 +433,12 @@ body {
   line-height: 1.6;
   color: var(--bm-text);
 }
+
+/* --- 서열표 페이지의 배경을 캔버스에 맞춘다 ------------------------------
+   서열표는 <canvas> 라 CSS 가 닿지 않고, 다운로드되어 공유되는 결과물이라
+   팔레트를 바꿀 수 없다. 그래서 페이지 쪽을 캔버스 색에 맞춘다.
+   두 값 모두 theme.css 의 --bm-canvas-bg 한 곳에서 나온다.
+   서열표 화면에만 적용되고 나머지 페이지는 그대로다. */
+body.bm-rankpage { background-color: var(--bm-canvas-bg); }
+/* 캔버스와 페이지 사이의 경계가 사라지므로 툴바가 뜨지 않게 여백을 준다 */
+body.bm-rankpage #rankimg { margin-top: .5rem; }

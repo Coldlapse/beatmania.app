@@ -4,12 +4,12 @@
   이전 버전은 {% templatetag openblock %} extends {% templatetag closeblock %} 자체가 없어서
   네비바도 CSS 도 없이 알몸으로 렌더되고 있었다.
 {% endcomment %}
-{% block subtitle %} - 회원 탈퇴{% endblock %}
-{% block auth_title %}회원 탈퇴{% endblock %}
+{% block subtitle %}- {% trans '회원 탈퇴' %}{% endblock %}
+{% block auth_title %}{% trans '회원 탈퇴' %}{% endblock %}
 {% block auth_lead %}
 <div class="alert alert-danger" role="alert">
   <i class="bi bi-exclamation-triangle-fill me-1" aria-hidden="true"></i>
-  <b>탈퇴하면 저장된 서열표 기록이 영구적으로 삭제됩니다.</b> 되돌릴 수 없습니다.
+  <b>{% trans '탈퇴하면 저장된 서열표 기록이 영구적으로 삭제됩니다.' %}</b> {% trans '되돌릴 수 없습니다.' %}
 </div>
 {% endblock %}
 {% block auth_body %}
