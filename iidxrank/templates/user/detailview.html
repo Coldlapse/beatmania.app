@@ -1,5 +1,6 @@
 {% extends "common.html" %}
-{% block subtitle %} - {{ pageinfo.title }}{% endblock %}
+{% load i18n %}
+{% block subtitle %} - {{ tableinfo.title }}{% endblock %}
 {% block head %}
 {% load static %}
 <!-- 
@@ -14,7 +15,7 @@
 
 <div id="container" class="fixed">
   <div class="left">
-    <a href="../" class="btn btn-default">되돌아가기</a>
+    <a href="../" class="btn btn-outline-secondary">되돌아가기</a>
   </div>
   <div class="clear"></div>
 

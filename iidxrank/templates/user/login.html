@@ -1,32 +1,18 @@
-{% extends "common.html" %}
-{% block subtitle %}- Login{% endblock %}
-{% block head %}
-
-{% endblock %}
-{% block body %}
-
-{% include "top.html" %}
-
-<div id="container">
-{% if not form.is_valid %}
-  <div class="form_error">
-  {{ form.errors }}
-  </div>
-{% endif %}
-
-<form method="POST" action="./">
+{% extends "user/_authbase.html" %}
+{% load django_bootstrap5 i18n %}
+{% block subtitle %} - 로그인{% endblock %}
+{% block auth_title %}로그인{% endblock %}
+{% block auth_body %}
+<form method="POST" action="./" novalidate>
   {% csrf_token %}
-  <div class="row">
-    <label>ID {{ form.id }}</label>
-  </div>
-  <div class="row">
-    <label>PASS {{ form.password }}</label>
-  </div>
-  <a href="../../"><button type="button" class="btn btn-default">돌아가기</button></a>
-  <a href="../join/"><button type="button" class="btn btn-default">가입하기</button></a>
-  <button class="btn btn-primary">로그인하기</button>
+  {% bootstrap_form form layout='vertical' %}
+  <button type="submit" class="btn btn-primary w-100 mt-2">{% trans '로그인' %}</button>
 </form>
-</div>
-
 {% endblock %}
-{% block etc %}{% endblock %}
+{% block auth_after %}
+<p class="bm-auth-foot">
+  아직 계정이 없으신가요? <a href="/!/join/">{% trans '가입하기' %}</a>
+  <span class="bm-auth-sep">·</span>
+  <a href="/!/">{% trans '서열표로 돌아가기' %}</a>
+</p>
+{% endblock %}

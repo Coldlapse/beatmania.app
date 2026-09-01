@@ -26,3 +26,6 @@ Dockerfile  text eol=lf
 *.otf   binary
 *.pdf   binary
 *.zip   binary
+
+# gettext 컴파일 산출물. 줄바꿈 변환이 끼어들면 조용히 깨진다.
+*.mo    binary

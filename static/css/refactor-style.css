@@ -1,112 +1,418 @@
-/* --- 다크/라이트 모드 색상 변수 정의 --- */
-:root, html[data-theme="light"] {
-  --body-bg: #ffffff;
-  --header-bg: linear-gradient(135deg, #e0f2ff 0%, #a0e2fc 50%, #1fbfff 100%); /* 1. 라이트모드: 밝은 하늘색 그라데이션 */
-  --header-text-color: #212529;
-  --rank-nav-bg: rgba(0, 0, 0, 0.03);
-  --rank-nav-pill-color: #495057;
-  --rank-nav-pill-bg: rgba(0, 0, 0, 0.05);
-  --rank-nav-pill-active-bg: #0d6efd;
-  --rank-nav-pill-hover-bg: rgba(13, 110, 253, 0.1);
-  --top-nav-bg: #a0e2fc; /* 1. 라이트모드: 밝은 하늘색 */
-  --top-nav-link-color: #495057;
-  --top-nav-link-hover-color: #000000;
-  --dropdown-bg: #ffffff;
-  --dropdown-link-color: #212529;
-  --dropdown-divider-color: #e9ecef;
-  --dropdown-link-hover-bg: #f8f9fa; /* 라이트 모드 hover 배경색 */
-  --dropdown-link-hover-color: #000000; /* 라이트 모드 hover 글자색 */
-}
-html[data-theme="dark"] {
-  --body-bg: #0f172a;
-  --header-bg: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #3b82f6 100%); /* 2. 다크모드: 기존 그라데이션 유지 */
-  --header-text-color: #ffffff;
-  --rank-nav-bg: rgba(15, 23, 42, 0.5);
-  --rank-nav-pill-color: #e2e8f0;
-  --rank-nav-pill-bg: rgba(255, 255, 255, 0.08);
-  --rank-nav-pill-active-bg: #3b82f6;
-  --rank-nav-pill-hover-bg: rgba(59, 130, 246, 0.3);
-  --top-nav-bg: #1e293b; /* 2. 다크모드: 어두운 군청색 */
-  --top-nav-link-color: #adb5bd;
-  --top-nav-link-hover-color: #ffffff;
-  --dropdown-bg: #343a40;
-  --dropdown-link-color: #f8f9fa;
-  --dropdown-link-hover-bg: #495057; /* 다크 모드 hover 배경색 */
-  --dropdown-link-hover-color: #ffffff; /* 다크 모드 hover 글자색 */
-  --dropdown-divider-color: #495057;
-}
+/* ===========================================================================
+ * refactor-style.css — 사이트 고유 컴포넌트 (네비바 / 프로필 헤더 / 서열표 내비)
+ *
+ * 색 변수 정의는 theme.css 로 옮겼다. 여기서는 var(--bm-*) 를 쓰기만 한다.
+ * Bootstrap 5 마크업 기준으로 재작성됨 (이전에는 BS3 셀렉터였다).
+ * =========================================================================== */
 
-/* --- 기존 스타일 초기화 --- */
+/* 2016년 레이아웃(#top, #header)의 잔재를 무력화한다.
+   해당 마크업을 쓰는 템플릿이 남아 있어 선택자는 유지한다. */
 #top, #header { all: unset !important; display: block !important; }
-body { background: var(--body-bg); background-attachment: fixed; }
 
-/* --- Top Navbar (top.html) --- */
+body {
+  /* background-attachment: fixed 를 쓰고 있었으나 배경이 단색이라 얻는 것이 없고,
+     스크롤마다 전체 재합성을 유발한다. 1200x3670 캔버스가 있는 서열표
+     페이지에서는 렌더러가 멎을 정도로 비쌌다. */
+  background-color: var(--bm-bg);
+  color: var(--bm-text);
+  min-height: 100%;
+}
+
+/* --- Top Navbar (top.html) ---------------------------------------------- */
 #refactor-navbar {
-    background-image: none !important;
-    background-color: var(--top-nav-bg) !important; /* 배경색을 변수로 교체 */
-    margin-bottom: 0 !important;
-    border: 0 !important;
-    border-radius: 0;
+  background-color: var(--bm-nav-bg);
+  border-bottom: 1px solid rgba(0, 0, 0, .06);
+  box-shadow: var(--bm-shadow-sm);
+  padding-top: .35rem;
+  padding-bottom: .35rem;
 }
-#refactor-navbar .navbar-brand { font-family: 'Kreon', serif; font-weight: bold; height: auto; color: var(--top-nav-link-hover-color) !important; }
-@media (min-width: 768px) {
-    #refactor-navbar .navbar-nav > li > a { padding-top: 15px; padding-bottom: 15px; }
-    #refactor-navbar .navbar-btn { margin-top: 8px; margin-bottom: 8px; }
+[data-bs-theme="dark"] #refactor-navbar {
+  border-bottom-color: rgba(255, 255, 255, .06);
 }
-#refactor-navbar .dropdown-menu > li > a:hover {
-    background-color: var(--dropdown-link-hover-bg) !important;
-    color: var(--dropdown-link-hover-color) !important;
+#refactor-navbar .navbar-brand {
+  font-family: 'Kreon', Georgia, serif;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  color: var(--bm-nav-link-hover);
 }
-#refactor-navbar .bi { vertical-align: -0.125em; margin-right: 0.25rem; }
-#refactor-navbar .navbar-nav > li > a { color: var(--top-nav-link-color) !important; }
-#refactor-navbar .navbar-nav > li > a:hover { color: var(--top-nav-link-hover-color) !important; }
-#refactor-navbar .dropdown-menu { background-color: var(--dropdown-bg) !important; }
-#refactor-navbar .dropdown-menu > li > a { color: var(--dropdown-link-color) !important; }
-#refactor-navbar .dropdown-menu > .divider { background-color: var(--dropdown-divider-color) !important; }
-#refactor-navbar .navbar-toggle .icon-bar { background-color: #fff; }
-#refactor-navbar .navbar-toggle { border-color: #333 !important; }
+#refactor-navbar .navbar-nav .nav-link {
+  color: var(--bm-nav-link);
+  font-weight: 500;
+  border-radius: .5rem;
+  padding: .4rem .75rem;
+  transition: background-color .15s ease-out, color .15s ease-out;
+}
+#refactor-navbar .navbar-nav .nav-link:hover,
+#refactor-navbar .navbar-nav .nav-link:focus-visible {
+  color: var(--bm-nav-link-hover);
+  background-color: var(--bm-pill-hover-bg);
+}
+#refactor-navbar .navbar-toggler {
+  border-color: var(--bm-border-strong);
+  padding: .25rem .5rem;
+}
+#refactor-navbar .navbar-toggler:focus { box-shadow: none; }
 
-/* --- Profile Header (profileheader.html) --- */
-.profile-header-container { background: var(--header-bg) !important; color: var(--header-text-color) !important; padding: 0; margin-bottom: 20px; }
-.profile-header-container h3, .profile-header-container p { color: var(--header-text-color) !important; }
-.profile-header-container .text-muted { color: var(--header-text-color) !important; opacity: 0.75; }
-.refactored-inner-container { width: 1000px; margin: 0 auto; padding-bottom: 1rem; }
-@media (max-width: 1024px) { .refactored-inner-container { width: auto; margin: 0 15px; } }
-.profile-main-info { display: flex; align-items: center; padding: 2rem 0; }
+/* 아이콘 전용 버튼 (테마 토글) */
+.bm-icon-btn {
+  color: var(--bm-nav-link);
+  border: 1px solid transparent;
+  border-radius: .5rem;
+  line-height: 1;
+  padding: .4rem .55rem;
+}
+.bm-icon-btn:hover,
+.bm-icon-btn:focus-visible {
+  color: var(--bm-nav-link-hover);
+  background-color: var(--bm-pill-hover-bg);
+}
+.bm-user-btn {
+  color: var(--bm-nav-link);
+  border: 1px solid transparent;
+  border-radius: .5rem;
+  font-weight: 500;
+}
+.bm-user-btn:hover,
+.bm-user-btn:focus-visible,
+.bm-user-btn.show {
+  color: var(--bm-nav-link-hover);
+  background-color: var(--bm-pill-hover-bg);
+}
+
+/* --- Profile Header (profileheader.html) -------------------------------- */
+.profile-header-container {
+  background: var(--bm-header-bg);
+  color: var(--bm-header-text);
+  padding: 0;
+  margin-bottom: 1.5rem;
+}
+.profile-header-container h3,
+.profile-header-container p { color: var(--bm-header-text); }
+.profile-header-container .text-muted { color: var(--bm-header-text); opacity: .75; }
+
+/* 이전에는 width:1000px 고정이라 769~1024px 구간에서 가로 스크롤이 났다.
+   max-width 로 바꿔 그 구간을 없앤다. */
+.refactored-inner-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 1rem 1rem;
+}
+
+.profile-main-info { display: flex; align-items: center; gap: 1.5rem; padding: 2rem 0; }
 .profile-avatar-wrapper { flex-shrink: 0; }
-.profile-text-wrapper { flex-grow: 1; margin-left: 1.5rem; }
-.profile-avatar { width: 100px; height: 100px; border-radius: 50%; border: 3px solid #60a5fa; background-color: #334155; padding: 5px; }
-.profile-djname { font-weight: bold; text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); font-size: 2rem; margin: 0; }
-.profile-iidxid { font-size: 1rem; opacity: 0.8; }
-.profile-dan-wrapper { display: flex; align-items: center; margin-top: 0.5rem; }
-.profile-dan { padding: 0.25em 0.8em; font-size: 0.8rem; font-weight: bold; border-radius: 20px; color: #fff; text-align: center; min-width: 60px; margin-right: 0.5rem; }
-.profile-dan.dan1 { background-color: #6c757d !important; }
+.profile-text-wrapper { flex-grow: 1; min-width: 0; }
+.profile-avatar {
+  width: 100px; height: 100px;
+  border-radius: 50%;
+  border: 3px solid var(--bm-accent);
+  background-color: #334155;
+  padding: 5px;
+}
+.profile-djname {
+  font-weight: 700;
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, .35);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.profile-iidxid { font-size: .95rem; opacity: .8; margin: 0; }
+.profile-dan-wrapper { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
+.profile-dan {
+  padding: .25em .8em;
+  font-size: .8rem; font-weight: 700;
+  border-radius: 20px;
+  color: #fff; text-align: center; min-width: 60px;
+}
+.profile-dan.dan1 { background-color: #6c757d; }
 
-/* --- Rank Table Navigation --- */
-.rank-nav-container { padding: 0.75rem 1rem; background-color: var(--rank-nav-bg); border-radius: 12px; width: fit-content; }
-.rank-nav-container ul.nav-pills { display: flex; flex-wrap: nowrap; align-items: center; padding-left: 0; margin: 0.25rem 0; list-style: none; }
-.rank-nav-container .rank-nav-title { flex-shrink: 0; width: 110px; text-align: right; padding-right: 1rem; font-weight: bold; color: #94a3b8; }
-.rank-nav-container .nav-pills li { margin: 0.125rem; }
-.rank-nav-container .nav-pills li a { display: block; padding: 0.4rem 0.8rem; color: var(--rank-nav-pill-color); text-decoration: none; border-radius: 0.5rem; transition: all 0.2s ease-in-out; background-color: var(--rank-nav-pill-bg) !important; white-space: nowrap; }
-.rank-nav-container .nav-pills li a:hover { background-color: var(--rank-nav-pill-hover-bg) !important; }
-.rank-nav-container .nav-pills li.sel a { color: #ffffff !important; background-color: var(--rank-nav-pill-active-bg) !important; }
-@media (max-width: 1024px) {
-    .rank-nav-container { width: auto; }
-    .rank-nav-container ul.nav-pills { flex-wrap: wrap; }
+@media (max-width: 575.98px) {
+  .profile-main-info { gap: 1rem; padding: 1.25rem 0; }
+  .profile-avatar { width: 64px; height: 64px; padding: 3px; border-width: 2px; }
 }
 
-/* --- 로그인 버튼 세로 크기 조절 --- */
-@media (min-width: 768px) {
-    #refactor-navbar .navbar-btn.btn-sm { margin-top: 10px; margin-bottom: 10px; padding-top: 4px; padding-bottom: 4px; }
+/* --- Rank Table Navigation ---------------------------------------------- */
+.rank-nav-container {
+  padding: .75rem 1rem;
+  background-color: var(--bm-pill-rail-bg);
+  border-radius: 12px;
 }
-/* static/css/refactor-style.css 파일 맨 아래에 추가 */
+.rank-nav-container ul.nav-pills {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: .25rem;
+  padding-left: 0; margin: .25rem 0; list-style: none;
+}
+.rank-nav-container .rank-nav-title {
+  flex-shrink: 0; width: 110px;
+  text-align: right; padding-right: 1rem;
+  font-weight: 700; color: var(--bm-text-subtle);
+}
+.rank-nav-container .nav-pills li a {
+  display: block;
+  padding: .4rem .8rem;
+  color: var(--bm-pill-color);
+  text-decoration: none;
+  border-radius: .5rem;
+  background-color: var(--bm-pill-bg);
+  white-space: nowrap;
+  transition: background-color .15s ease-out, color .15s ease-out;
+}
+.rank-nav-container .nav-pills li a:hover,
+.rank-nav-container .nav-pills li a:focus-visible {
+  background-color: var(--bm-pill-hover-bg);
+}
+.rank-nav-container .nav-pills li.sel a {
+  color: var(--bm-text-on-accent);
+  background-color: var(--bm-pill-active-bg);
+}
 
-/* ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼ */
-/* 모바일 환경에서 드롭다운 메뉴 스크롤바 제거 및 자동 높이 조절 */
-@media (max-width: 767px) {
-    #refactor-navbar .navbar-collapse {
-        max-height: none !important; /* 최대 높이 제한 해제 */
-        overflow-y: visible !important; /* 스크롤바 제거 */
-    }
+@media (max-width: 575.98px) {
+  .rank-nav-container .rank-nav-title {
+    width: 100%; text-align: left; padding-right: 0;
+    font-size: .8rem; opacity: .85;
+  }
 }
-/* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ */
+
+/* --- 서열표 툴바 (rankview.html) ---------------------------------------- */
+/* 이전에는 float + <br> 로 줄을 넘겨서 좁은 화면에서 버튼이 겹쳤다.
+   flex-wrap 으로 바꿔 폭에 맞춰 자연스럽게 접히게 한다. */
+.bm-rank-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .5rem;
+  margin-bottom: 1rem;
+}
+.bm-rank-toolbar .list.theme { margin: 0; overflow: visible; }
+.bm-rank-toolbar .list.theme li { font-size: 12px; padding: .3rem .7rem; }
+.bm-song-search { width: min(280px, 100%); }
+
+@media (max-width: 575.98px) {
+  .bm-rank-toolbar { justify-content: stretch; }
+  .bm-song-search { width: 100%; }
+}
+
+/* 서열표 캔버스 크기는 common.css 의 `#rankimg canvas { width:100% !important }`
+   하나로만 정한다. 여기에 max-width 를 겹쳐 두면 overflow 컨테이너와 순환
+   레이아웃이 생긴다. */
+#rankimg canvas { display: block; }
+
+/* --- 안내 카드 (userpage.html) ------------------------------------------ */
+.bm-intro-card {
+  background-color: var(--bm-surface);
+  border: 1px solid var(--bm-border);
+  border-radius: 14px;
+  box-shadow: var(--bm-shadow-sm);
+}
+.bm-intro-list { list-style: none; padding: 0; margin: 0; }
+.bm-intro-list li {
+  display: flex;
+  gap: .85rem;
+  align-items: flex-start;
+  padding: .7rem 0;
+  line-height: 1.65;
+  color: var(--bm-text);
+}
+.bm-intro-list li + li { border-top: 1px solid var(--bm-border); }
+.bm-intro-list li > i {
+  flex-shrink: 0;
+  color: var(--bm-accent);
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+/* --- 인증 페이지 (login / join / account / setpassword / withdraw) ------- */
+.bm-auth {
+  max-width: 440px;
+  margin: 3rem auto;
+  padding: 0 1rem;
+}
+.bm-auth-card {
+  background-color: var(--bm-surface);
+  border: 1px solid var(--bm-border);
+  border-radius: 16px;
+  box-shadow: var(--bm-shadow);
+}
+.bm-auth-card .card-body { padding: 2rem; }
+.bm-auth-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 .35rem;
+  color: var(--bm-text);
+}
+.bm-auth-lead {
+  color: var(--bm-text-muted);
+  font-size: .9rem;
+  margin-bottom: 1.5rem;
+}
+.bm-auth-foot {
+  text-align: center;
+  margin-top: 1.25rem;
+  font-size: .9rem;
+  color: var(--bm-text-muted);
+}
+.bm-auth-sep { opacity: .4; margin: 0 .4rem; }
+
+/* reCAPTCHA 위젯은 폭이 302px 로 고정이라 좁은 화면에서 카드를 밀어낸다 */
+.bm-auth .g-recaptcha,
+.bm-auth div[class^="captcha"] { margin-bottom: 1rem; }
+@media (max-width: 400px) {
+  .bm-auth .g-recaptcha { transform: scale(.87); transform-origin: 0 0; }
+}
+
+@media (max-width: 575.98px) {
+  .bm-auth { margin: 1.5rem auto; }
+  .bm-auth-card .card-body { padding: 1.5rem; }
+}
+
+/* 메뉴 항목이 7개라 좁은 폭에서 글자 중간이 잘려 줄바꿈됐다.
+   nowrap 으로 막고, 접히는 기준을 xl(1200px)로 올렸다(top.html). */
+#refactor-navbar .navbar-nav .nav-link { white-space: nowrap; }
+/* 접힌 메뉴(모바일)에서는 세로로 쌓이므로 좌우 여백을 준다 */
+@media (max-width: 1199.98px) {
+  #refactor-navbar .navbar-collapse { padding-top: .5rem; padding-bottom: .25rem; }
+  #refactor-navbar .navbar-nav .nav-link { padding: .55rem .75rem; }
+}
+
+/* --- 공용 페이지 요소 ----------------------------------------------------- */
+.bm-page-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--bm-text);
+  margin: 1.5rem 0 1.25rem;
+}
+.bm-panel {
+  background-color: var(--bm-surface);
+  border: 1px solid var(--bm-border);
+  border-radius: 14px;
+  box-shadow: var(--bm-shadow-sm);
+}
+.bm-panel-flush-top { border-top-left-radius: 0; border-top-right-radius: 0; }
+.bm-panel-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--bm-text);
+  margin: 0 0 .75rem;
+}
+.bm-steps { padding-left: 1.2rem; margin: 0; color: var(--bm-text); }
+.bm-steps li { margin-bottom: .5rem; line-height: 1.65; }
+
+.bm-today { text-align: center; padding: 2rem 1rem; }
+.bm-today-label { color: var(--bm-text-muted); font-size: .9rem; margin-bottom: .35rem; }
+.bm-today-count {
+  font-size: clamp(2.5rem, 8vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--bm-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Bootstrap 의 secondary 계열은 다크 모드에서 대비가 모자라 글자가 묻힌다.
+   사이트 토큰으로 다시 잡는다. */
+.btn-outline-secondary {
+  --bs-btn-color: var(--bm-text);
+  --bs-btn-border-color: var(--bm-border-strong);
+  --bs-btn-hover-color: var(--bm-text-on-accent);
+  --bs-btn-hover-bg: var(--bm-accent);
+  --bs-btn-hover-border-color: var(--bm-accent);
+  --bs-btn-active-color: var(--bm-text-on-accent);
+  --bs-btn-active-bg: var(--bm-accent-hover);
+  --bs-btn-active-border-color: var(--bm-accent-hover);
+  --bs-btn-disabled-color: var(--bm-text-faint);
+  --bs-btn-disabled-border-color: var(--bm-border);
+}
+
+/* 카드/패널 안의 BS5 컴포넌트가 사이트 토큰을 따르게 한다 */
+.card { --bs-card-bg: var(--bm-surface); --bs-card-border-color: var(--bm-border); }
+.nav-tabs {
+  --bs-nav-tabs-border-color: var(--bm-border);
+  --bs-nav-tabs-link-active-bg: var(--bm-surface);
+  --bs-nav-tabs-link-active-color: var(--bm-text);
+  --bs-nav-tabs-link-active-border-color: var(--bm-border) var(--bm-border) var(--bm-surface);
+  --bs-nav-link-color: var(--bm-text-muted);
+  --bs-nav-link-hover-color: var(--bm-accent);
+  border-bottom: 0;
+}
+.table {
+  --bs-table-color: var(--bm-text);
+  --bs-table-bg: transparent;
+  --bs-table-border-color: var(--bm-border);
+}
+.form-control, .form-select {
+  background-color: var(--bm-surface-2);
+  border-color: var(--bm-border);
+  color: var(--bm-text);
+}
+.form-control:focus, .form-select:focus {
+  background-color: var(--bm-surface-2);
+  border-color: var(--bm-accent);
+  color: var(--bm-text);
+  box-shadow: 0 0 0 .2rem var(--bm-accent-soft);
+}
+.form-control::placeholder { color: var(--bm-text-faint); }
+.input-group-text {
+  background-color: var(--bm-surface-3);
+  border-color: var(--bm-border);
+  color: var(--bm-text-muted);
+}
+.dropdown-menu {
+  --bs-dropdown-bg: var(--bm-surface);
+  --bs-dropdown-border-color: var(--bm-border);
+  --bs-dropdown-link-color: var(--bm-text);
+  --bs-dropdown-link-hover-bg: var(--bm-surface-2);
+  --bs-dropdown-link-hover-color: var(--bm-text);
+  --bs-dropdown-divider-bg: var(--bm-border);
+  box-shadow: var(--bm-shadow);
+}
+
+/* --- 흰숫 변환기 (converter.html) --------------------------------------- */
+.bm-conv-row { margin-bottom: 1.25rem; }
+.bm-conv-row .form-label { font-weight: 600; color: var(--bm-text); }
+.bm-conv-pair {
+  display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+}
+.bm-conv-pair .form-control { flex: 1 1 180px; min-width: 0; }
+.bm-conv-arrow { color: var(--bm-text-subtle); flex-shrink: 0; }
+
+/* --- 관리자 대시보드 ------------------------------------------------------ */
+.bm-cmd-meta code {
+  background-color: var(--bm-surface-3);
+  color: var(--bm-text);
+  padding: .15rem .4rem;
+  border-radius: .25rem;
+}
+.bm-status { font-weight: 600; }
+.bm-status-pending { background-color: var(--bm-text-faint); color: #fff; }
+.bm-status-running { background-color: var(--bm-accent); color: #fff; }
+.bm-status-success { background-color: #198754; color: #fff; }
+.bm-status-failed  { background-color: #dc3545; color: #fff; }
+
+.bm-runmeta { display: grid; grid-template-columns: 5rem 1fr; gap: .4rem 1rem; margin: 0; }
+.bm-runmeta dt { color: var(--bm-text-muted); font-weight: 600; font-size: .9rem; }
+.bm-runmeta dd { margin: 0; color: var(--bm-text); overflow-wrap: anywhere; }
+
+.bm-log {
+  background-color: #0b1120;
+  color: #d7e0ea;
+  border: 1px solid var(--bm-border);
+  border-radius: 10px;
+  padding: 1rem;
+  max-height: 60vh;
+  overflow: auto;
+  font-size: .85rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 0;
+}
+
+/* --- 명령 실행 중 질문 (manage/run.html) -------------------------------- */
+.bm-prompt { border-color: #f0ad4e; }
+.bm-prompt-list { display: flex; flex-direction: column; gap: .25rem; max-height: 45vh; overflow-y: auto; }
+.bm-prompt-item {
+  display: flex; align-items: flex-start; gap: .6rem;
+  padding: .5rem .6rem; border-radius: .5rem; cursor: pointer;
+}
+.bm-prompt-item:hover { background-color: var(--bm-surface-2); }
+.bm-prompt-text { display: flex; flex-direction: column; line-height: 1.4; min-width: 0; }
+.bm-prompt-text small { color: var(--bm-text-muted); font-family: ui-monospace, monospace; }

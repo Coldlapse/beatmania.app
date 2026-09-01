@@ -1,4 +1,5 @@
-{% extends "index.html" %}
+{% extends "common.html" %}
+{% block subtitle %} - 곡 목록{% endblock %}
 {% block head %}
 <meta name="viewport" content="width=600px, user-scalable=yes">
 
@@ -170,8 +171,8 @@ $(function() {
 function changeDiff(obj) {
 	obj = $(obj);
 	$("#header .diffmode button").removeClass("btn-primary");
-	$("#header .diffmode button").addClass("btn-default");
-	obj.removeClass("btn-default");
+	$("#header .diffmode button").addClass("btn-outline-secondary");
+	obj.removeClass("btn-outline-secondary");
 	obj.addClass("btn-primary");
 	current_mode = obj.text();
 }
@@ -179,8 +180,8 @@ function changeDiff(obj) {
 function changeAction(obj) {
 	obj = $(obj);
 	$("#header .actionmode button").removeClass("btn-primary");
-	$("#header .actionmode button").addClass("btn-default");
-	obj.removeClass("btn-default");
+	$("#header .actionmode button").addClass("btn-outline-secondary");
+	obj.removeClass("btn-outline-secondary");
 	obj.addClass("btn-primary");
 	current_action = obj.text();		// store current status in global var
 	if (current_action == "None") {
@@ -245,20 +246,21 @@ $(window).resize(function() {
 
 {% endblock %}
 {% block body %}
+{% include "top.html" %}
 <canvas id="animated_background"></canvas>
 <div id="header">
 	<div class="clear diffmode">
 		<button id="spn_mode" class="btn btn-primary" onclick="changeDiff(this)">SPN</button>
-		<button id="sph_mode" class="btn btn-default" onclick="changeDiff(this)">SPH</button>
-		<button id="spa_mode" class="btn btn-default" onclick="changeDiff(this)">SPA</button>
-		<button id="dpn_mode" class="btn btn-default" onclick="changeDiff(this)">DPN</button>
-		<button id="dph_mode" class="btn btn-default" onclick="changeDiff(this)">DPH</button>
-		<button id="dpa_mode" class="btn btn-default" onclick="changeDiff(this)">DPA</button>
+		<button id="sph_mode" class="btn btn-outline-secondary" onclick="changeDiff(this)">SPH</button>
+		<button id="spa_mode" class="btn btn-outline-secondary" onclick="changeDiff(this)">SPA</button>
+		<button id="dpn_mode" class="btn btn-outline-secondary" onclick="changeDiff(this)">DPN</button>
+		<button id="dph_mode" class="btn btn-outline-secondary" onclick="changeDiff(this)">DPH</button>
+		<button id="dpa_mode" class="btn btn-outline-secondary" onclick="changeDiff(this)">DPA</button>
 	</div>
 	<div class="clear actionmode" style="margin-top: 10px;">
 		<button id="action_none" class="btn btn-primary" onclick="changeAction(this)">None</button>
-		<button id="action_youtube" class="btn btn-default" onclick="changeAction(this)">Youtube</button>
-		<button id="action_textage" class="btn btn-default" onclick="changeAction(this)">Textage</button>
+		<button id="action_youtube" class="btn btn-outline-secondary" onclick="changeAction(this)">Youtube</button>
+		<button id="action_textage" class="btn btn-outline-secondary" onclick="changeAction(this)">Textage</button>
 	</div>
 </div>
 <div id="lists">

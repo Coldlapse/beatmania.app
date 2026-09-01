@@ -1,28 +1,64 @@
 {% extends "common.html" %}
+{% load i18n %}
+{% load static %}
+{% comment %}
+  이전 버전은 <div> 안에 <head>/<body> 태그가 중첩돼 있었다(유효하지 않은 HTML).
+{% endcomment %}
+{% block subtitle %} - 흰숫 변환기{% endblock %}
 {% block head %}
-
+<script src="{% static 'js/converter.js' %}"></script>
 {% endblock %}
 {% block body %}
 
 {% include "top.html" %}
-{% load static %}
 
 <div id="container">
-    <head>
-		<script type="text/javascript" src="{% static 'js/converter.js' %}"></script>
-	</head>
-    <body>
-        # 비토라쟈 서든 입력<br>
-		<input type="text" Id="beatoraja_sudden" placeholder="비토라쟈 서든"> → <input type="text" Id="converted_beatoraja" placeholder="비토라쟈 서든 (리프트 변환)" disabled><br><br>
-        # 투덱 서든 입력<br>
-        <input type="text" Id="iidx_sudden" placeholder="투덱 서든"> → <input type="text" Id="converted_iidx" placeholder="투덱 서든 (리프트 변환)" disabled><br><br>
-        # 리프트 입력 (공통)<br>
-        <input type="text" Id="lift" placeholder="비토라쟈, 투덱 리프트"> → <input type="text" Id="converted_lift" placeholder="변환할 리프트"><br><br>
-		<input type="button" value="비토라쟈 → 투덱 변환" onclick="bms2iidx();">
-        <input type="button" value="투덱 → 비토라쟈 변환" onclick="iidx2bms();">
-        <input type="button" value="리프트 변환" onclick="liftconvert();">
-	</body>
+  <h1 class="bm-page-title">{% trans '흰숫 변환기' %}</h1>
+  <p class="text-body-secondary mb-4">
+    beatoraja(비토라쟈)와 IIDX의 서든 플러스 수치를 서로 변환합니다.
+  </p>
+
+  <div class="card bm-panel">
+    <div class="card-body">
+      <div class="bm-conv-row">
+        <label class="form-label" for="beatoraja_sudden">{% trans '비토라쟈 서든' %}</label>
+        <div class="bm-conv-pair">
+          <input type="text" class="form-control" id="beatoraja_sudden" placeholder="비토라쟈 서든">
+          <span class="bm-conv-arrow" aria-hidden="true">→</span>
+          <input type="text" class="form-control" id="converted_beatoraja"
+                 placeholder="리프트 변환 결과" disabled>
+        </div>
+      </div>
+
+      <div class="bm-conv-row">
+        <label class="form-label" for="iidx_sudden">{% trans '투덱 서든' %}</label>
+        <div class="bm-conv-pair">
+          <input type="text" class="form-control" id="iidx_sudden" placeholder="투덱 서든">
+          <span class="bm-conv-arrow" aria-hidden="true">→</span>
+          <input type="text" class="form-control" id="converted_iidx"
+                 placeholder="리프트 변환 결과" disabled>
+        </div>
+      </div>
+
+      <div class="bm-conv-row">
+        <label class="form-label" for="lift">리프트 <span class="text-body-secondary">(공통)</span></label>
+        <div class="bm-conv-pair">
+          <input type="text" class="form-control" id="lift" placeholder="비토라쟈 · 투덱 리프트">
+          <span class="bm-conv-arrow" aria-hidden="true">→</span>
+          <input type="text" class="form-control" id="converted_lift" placeholder="변환할 리프트">
+        </div>
+      </div>
+
+      <div class="d-flex flex-wrap gap-2 mt-4">
+        <button type="button" class="btn btn-primary" onclick="bms2iidx();">
+          비토라쟈 → 투덱</button>
+        <button type="button" class="btn btn-primary" onclick="iidx2bms();">
+          투덱 → 비토라쟈</button>
+        <button type="button" class="btn btn-outline-secondary" onclick="liftconvert();">
+          리프트 변환</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% endblock %}
-{% block etc %}{% endblock %}

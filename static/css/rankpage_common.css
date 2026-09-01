@@ -1,13 +1,23 @@
+/*
+ * rankpage_common.css — 서열표 페이지 공통
+ *
+ * 클리어 램프·랭크·단위 색은 IIDX 의 약속이라 테마와 무관하게 고정한다.
+ * (다크 모드라고 EASY 를 다른 색으로 칠하면 오독을 부른다.)
+ * 면·글자·테두리만 theme.css 의 var() 를 쓴다.
+ *
+ * BS5 reboot 와 충돌하던 `* { padding:0; margin:0 }` 전역 리셋은 제거했다.
+ */
 
-
-* { padding:0; margin:0; }
-body { font-family: 'M+ 1c medium', 'Malgun Gothic', NanumBarunGothicOTF,"Helvetica Neue",Arial,"Apple SD Gothic Neo",Dotum,"돋움",sans-serif; font-size: 14px; }
-#container .inner { padding:10px; overflow:hidden; }
-
+body {
+  font-family: 'M+ 1c medium', 'Malgun Gothic', NanumBarunGothicOTF,
+               "Helvetica Neue", Arial, "Apple SD Gothic Neo", Dotum, "돋움", sans-serif;
+  font-size: 14px;
+}
+#container .inner { padding: 10px; overflow: hidden; }
 
 /* cell clear lamp */
-.lamp_category { display:block; height:20px; width:24px; background: url('../img/clearlamp.png') no-repeat; }
-.lamp_category.NO_PLAY { display:none; }
+.lamp_category { display: block; height: 20px; width: 24px; background: url('../img/clearlamp.png') no-repeat; }
+.lamp_category.NO_PLAY { display: none; }
 .lamp_category.FAILED { background-position: 0 6px; }
 .lamp_category.ASSIST_CLEAR { background-position: 0 -24px; }
 .lamp_category.EASY_CLEAR { background-position: 0 -54px; }
@@ -16,87 +26,94 @@ body { font-family: 'M+ 1c medium', 'Malgun Gothic', NanumBarunGothicOTF,"Helvet
 .lamp_category.EX-HARD_CLEAR { background-position: 0 -144px; }
 .lamp_category.FULL_COMBO { background-position: 0 -174px; }
 
-/* category(group) clear lamp */
-.lamp_group { display:block; width:11px; height:11px; background: url('../img/righttriangle.png') no-repeat -1px -1px; position:absolute; right:0; top:0; }
-.lamp_group.NO_PLAY {  }
-.lamp_group.FAILED { background-color:#999; color:#fff; }
-.lamp_group.ASSIST_CLEAR { background-color:#97b; color:#fff; }
-.lamp_group.EASY_CLEAR { background-color:#693; color:#fff; }
-.lamp_group.CLEAR { background-color:#369; color:#fff }
-.lamp_group.HARD_CLEAR { background-color:#c66; color:#fff; }
-.lamp_group.EX-HARD_CLEAR { background-color:#cc6; color:#fff; }
-.lamp_group.FULL_COMBO { background-color:#0cc; color:#fff; }
+/* category(group) clear lamp — 게임 고유색 */
+.lamp_group {
+  display: block; width: 11px; height: 11px;
+  background: url('../img/righttriangle.png') no-repeat -1px -1px;
+  position: absolute; right: 0; top: 0;
+}
+.lamp_group.FAILED         { background-color: var(--bm-clear-failed); color: #fff; }
+.lamp_group.ASSIST_CLEAR   { background-color: var(--bm-clear-assist); color: #fff; }
+.lamp_group.EASY_CLEAR     { background-color: var(--bm-clear-easy);   color: #fff; }
+.lamp_group.CLEAR          { background-color: var(--bm-clear-normal); color: #fff; }
+.lamp_group.HARD_CLEAR     { background-color: var(--bm-clear-hard);   color: #fff; }
+.lamp_group.EX-HARD_CLEAR  { background-color: var(--bm-clear-exhard); color: #fff; }
+.lamp_group.FULL_COMBO     { background-color: var(--bm-clear-fc);     color: #fff; }
 
 /* rank show */
-.rank { position: absolute; width:16px; height:10px; top:7px; right:3px; 
-	display: none; background: url('../img/rank.png') no-repeat; }
+.rank {
+  position: absolute; width: 16px; height: 10px; top: 7px; right: 3px;
+  display: none; background: url('../img/rank.png') no-repeat;
+}
 .rank.AAA { background-position: 0 0; }
-.rank.AA { background-position: 0 -17px; }
-.rank.A { background-position: 0 -34px; }
-.rank.B { background-position: 0 -50px; }
-.rank.C { background-position: 0 -67px; }
-.rank.D { background-position: 0 -82px; }
-.rank.E { background-position: 0 -98px; }
-.rank.F { background-position: 0 -116px; }
+.rank.AA  { background-position: 0 -17px; }
+.rank.A   { background-position: 0 -34px; }
+.rank.B   { background-position: 0 -50px; }
+.rank.C   { background-position: 0 -67px; }
+.rank.D   { background-position: 0 -82px; }
+.rank.E   { background-position: 0 -98px; }
+.rank.F   { background-position: 0 -116px; }
 
-.songlist .graph { display:block; height:100%; position:absolute; left:0; top:0; z-index:-999;}
-.songlist .graph.A { background-color:#fee; }
-.songlist .graph.H { background-color:#ffe; }
-.songlist .graph.N { background-color:#eef; }
+/* 난이도별 옅은 배경 틴트 — 다크에서는 어두운 쪽으로 뒤집힌다 */
+.songlist .graph { display: block; height: 100%; position: absolute; left: 0; top: 0; z-index: -999; }
+.songlist .graph.A { background-color: var(--bm-tint-a); }
+.songlist .graph.H { background-color: var(--bm-tint-h); }
+.songlist .graph.N { background-color: var(--bm-tint-n); }
 
-.songlist .grid { position:absolute; display:none; background-color: #ccc; height:5px; width:1px !important; }
+.songlist .grid {
+  position: absolute; display: none;
+  background-color: var(--bm-border); height: 5px; width: 1px !important;
+}
 .A.gA, .AA.gA, .AAA.gA,
-.AA.gAA, .AAA.gAA, .AAA.gAAA { display:block; }
-.gA { left:66.66%; }
-.gAA { left:77.77%; }
-.gAAA { left:88.88%; }
+.AA.gAA, .AAA.gAA, .AAA.gAAA { display: block; }
+.gA   { left: 66.66%; }
+.gAA  { left: 77.77%; }
+.gAAA { left: 88.88%; }
 
 /* user pic */
-#userimage { display:none; }
+#userimage { display: none; }
 
 /* clear status (sample for top) */
-#preview { float:right; list-style:none; }
-#preview li { width:50px; height:23px; float:left; display:block; padding:3px 0 0 15px; background: url('../img/clearlamp.png') no-repeat; font-size: 8pt; }
+#preview { float: right; list-style: none; }
+#preview li {
+  width: 50px; height: 23px; float: left; display: block;
+  padding: 3px 0 0 15px; background: url('../img/clearlamp.png') no-repeat; font-size: 8pt;
+}
 #preview li.failed { background-position: 0 6px; }
 #preview li.assist { background-position: 0 -24px; }
-#preview li.easy { background-position: 0 -54px; }
+#preview li.easy   { background-position: 0 -54px; }
 #preview li.normal { background-position: 0 -84px; }
-#preview li.hard { background-position: 0 -114px; }
-#preview li.exh { background-position: 0 -144px; }
-#preview li.fc { background-position: 0 -174px; }
+#preview li.hard   { background-position: 0 -114px; }
+#preview li.exh    { background-position: 0 -144px; }
+#preview li.fc     { background-position: 0 -174px; }
 
 /* user infos */
-#user { float:left; }
-#user span { font-weight: bold; font-size:13px; }
-#user .label { display:block; float:left; padding:7px 10px; }
-#user .name { background-color: #000; margin-right:15px; }
-#user .spdan, #user .dpdan { background-color: #bbb; opacity:0.6; width: 42px; padding: 7px 0; }
-#user .spdan { border-top-right-radius:0; border-bottom-right-radius:0; }
-#user .dpdan { border-top-left-radius:0; border-bottom-left-radius:0; }
-#user .iidxid { color:#666; margin-left:8px; }
-.SP.spdan, .DP.dpdan { font-weight: bold; opacity:1 !important; }
-.dan2,
-.dan3,
-.dan4,
-.dan5,
-.dan6,
-.dan7,
-.dan8 { background-color: #6c0 !important; }
-.dan9,
-.dan10,
-.dan11,
-.dan12,
-.dan13,
-.dan14,
-.dan15,
-.dan16 { background-color: #06c !important; }
-.dan17,
-.dan18 { background-color: #c00 !important; }
-.dan19 { background-color: #ccb !important; }
-.dan20 { background-color: #cc0 !important; }
+#user { float: left; }
+#user span { font-weight: bold; font-size: 13px; }
+#user .label { display: block; float: left; padding: 7px 10px; }
+#user .name { background-color: var(--bm-text); color: var(--bm-bg); margin-right: 15px; }
+#user .spdan, #user .dpdan {
+  background-color: var(--bm-text-faint); opacity: .6; width: 42px; padding: 7px 0;
+}
+#user .spdan { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+#user .dpdan { border-top-left-radius: 0; border-bottom-left-radius: 0; }
+#user .iidxid { color: var(--bm-text-muted); margin-left: 8px; }
+.SP.spdan, .DP.dpdan { font-weight: bold; opacity: 1 !important; }
 
-#url { width:200px; }
+/* 단위 색 — 게임 고유색 */
+.dan2, .dan3, .dan4, .dan5, .dan6, .dan7, .dan8 { background-color: var(--bm-dan-kyu) !important; }
+.dan9, .dan10, .dan11, .dan12,
+.dan13, .dan14, .dan15, .dan16 { background-color: var(--bm-dan-dan) !important; }
+.dan17, .dan18 { background-color: var(--bm-dan-high) !important; }
+.dan19 { background-color: var(--bm-dan-chuden) !important; }
+.dan20 { background-color: var(--bm-dan-kaiden) !important; }
 
+#url { width: 200px; }
 
-#container_saveload { position:fixed; padding:20px; border-radius:10px; top:50%; left:50%;
-	width:480px; height:600px; margin-left:-240px; margin-top:-300px; background-color:#fff; box-shadow:#000 0 0 20px; z-index:9999; }
+#container_saveload {
+  position: fixed; padding: 20px; border-radius: 12px; top: 50%; left: 50%;
+  width: min(480px, 92vw); max-height: 80vh; overflow-y: auto;
+  transform: translate(-50%, -50%);
+  background-color: var(--bm-surface); color: var(--bm-text);
+  box-shadow: var(--bm-shadow); z-index: 1090;
+}

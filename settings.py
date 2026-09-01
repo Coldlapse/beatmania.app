@@ -92,6 +92,10 @@ INSTALLED_APPS = (
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
+    # LocaleMiddleware 는 Session 뒤, Common 앞에 와야 한다.
+    # 세션·쿠키에 저장된 언어를 읽어야 하고, Common 이 URL 을 확정하기 전에
+    # 언어가 정해져 있어야 하기 때문이다.
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -144,7 +148,28 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+# ---------------------------------------------------------------------------
+# 다국어
+#
+# URL 에는 언어를 넣지 않는다(i18n_patterns 미사용). /!/SP12H/ 같은 기존 주소가
+# 전부 리다이렉트되고 245명의 북마크와 외부 링크가 깨지기 때문이다.
+# 대신 세션·쿠키(django_language)에 저장한다.
+# ---------------------------------------------------------------------------
+LANGUAGE_CODE = 'ko'
+
+LANGUAGES = [
+    ('ko', '한국어'),
+    ('en', 'English'),
+    ('ja', '日本語'),
+    ('zh-hans', '简体中文'),
+]
+
+LOCALE_PATHS = [os.path.join(BASE_DIR, 'locale')]
+
+# 쿠키로도 유지되게 한다. 세션만 쓰면 로그아웃 시 언어가 초기화된다.
+LANGUAGE_COOKIE_NAME = 'django_language'
+LANGUAGE_COOKIE_AGE = 60 * 60 * 24 * 365
+LANGUAGE_COOKIE_SAMESITE = 'Lax'
 
 TIME_ZONE = 'Asia/Seoul'
 
@@ -153,6 +178,23 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+
+# ---------------------------------------------------------------------------
+# 업로드 파일 (프로필 사진)
+#
+# 운영에서는 Apache 가 /media/ 를 직접 서빙해야 한다. Django 로 파일을
+# 흘려보내면 WSGI 워커가 이미지 전송에 묶인다.
+#   Alias /media/ /srv/beatmania/media/
+# ---------------------------------------------------------------------------
+MEDIA_URL = '/media/'
+MEDIA_ROOT = env('MEDIA_ROOT', os.path.join(BASE_DIR, 'media'))
+
+# 업로드 상한. 넘으면 Django 가 요청 단계에서 거부한다.
+# 폼에서도 따로 검사하지만, 여기서 막아야 디스크·메모리를 안 쓴다.
+MAX_AVATAR_BYTES = 2 * 1024 * 1024          # 2MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024
 
 
 # Static files (CSS, JavaScript, Images)

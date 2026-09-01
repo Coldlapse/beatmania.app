@@ -1,42 +1,95 @@
-{% load static %}
-<nav class="navbar navbar-inverse navbar-static-top" id="refactor-navbar">
+{% load static i18n %}
+{% comment %}
+  Bootstrap 5 네비바.
+  이전에는 BS3 마크업(navbar-inverse / navbar-static-top / data-toggle / nav>li)이었다.
+  링크는 전부 끝 슬래시를 붙였다 — 없으면 APPEND_SLASH 리다이렉트가 한 번씩 더 돈다.
+{% endcomment %}
+<nav class="navbar navbar-expand-xl sticky-top" id="refactor-navbar">
   <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mainNav" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
+    <a class="navbar-brand" href="/">IIDX INFINITAS Rank Table</a>
+
+    <div class="d-flex align-items-center order-xl-last">
+      {% get_current_language as CUR_LANG %}
+      {% get_available_languages as LANGS %}
+      <div class="dropdown me-1">
+        <button class="btn bm-icon-btn dropdown-toggle bm-lang-btn" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                title="{% trans '언어 선택' %}" aria-label="{% trans '언어 선택' %}">
+          <i class="bi bi-translate" aria-hidden="true"></i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          {% for code, name in LANGS %}
+          <li>
+            <form action="{% url 'set_language' %}" method="post" class="d-inline">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+              <input type="hidden" name="language" value="{{ code }}">
+              <button type="submit" class="dropdown-item {% if code == CUR_LANG %}active{% endif %}">
+                {% if code == CUR_LANG %}<i class="bi bi-check2 me-1"></i>{% else %}<span class="bm-lang-pad"></span>{% endif %}{{ name }}
+              </button>
+            </form>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      {% comment %} 테마 토글. 예전에는 서열표 페이지에만 있었다. {% endcomment %}
+      <button type="button" class="btn bm-icon-btn me-2"
+              data-bm-theme-toggle aria-pressed="false"
+              title="{% trans '다크 모드로 전환' %}" aria-label="{% trans '테마 전환' %}">
+        <i class="bi bi-moon-stars-fill" aria-hidden="true"></i>
       </button>
-      <a class="navbar-brand" href="/">IIDX INFINITAS Rank Table</a>
+
+      {% if user.is_authenticated %}
+        <div class="dropdown">
+          <button class="btn bm-user-btn dropdown-toggle" type="button"
+                  data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle" aria-hidden="true"></i>
+            <span class="d-none d-sm-inline ms-1">{{ user.username }}</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="/!/account/">
+              <i class="bi bi-gear me-2" aria-hidden="true"></i>{% trans '설정' %}</a></li>
+            <li><a class="dropdown-item" href="/!/my-page/">
+              <i class="bi bi-keyboard me-2" aria-hidden="true"></i>{% trans '일일 타건 기록' %}</a></li>
+            {% if user.is_staff %}
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/!/manage/">
+              <i class="bi bi-sliders me-2" aria-hidden="true"></i>{% trans '관리자 대시보드' %}</a></li>
+            <li><a class="dropdown-item" href="/admin/">
+              <i class="bi bi-database me-2" aria-hidden="true"></i>Django admin</a></li>
+            {% endif %}
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/!/logout/">
+              <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>{% trans '로그아웃' %}</a></li>
+          </ul>
+        </div>
+      {% else %}
+        <a class="btn btn-primary btn-sm" href="/!/login/">{% trans '로그인' %}</a>
+      {% endif %}
+
+      <button class="navbar-toggler ms-2" type="button"
+              data-bs-toggle="collapse" data-bs-target="#mainNav"
+              aria-controls="mainNav" aria-expanded="false" aria-label="{% trans '메뉴 열기' %}">
+        <span class="navbar-toggler-icon"></span>
+      </button>
     </div>
 
     <div class="collapse navbar-collapse" id="mainNav">
-      <ul class="nav navbar-nav">
-        <li><a href="/!/">서열표</a></li>
-        <li><a href="/!/analytics">사이트뷰 분석</a></li>
-        <li><a href="/!/my-page">일일 타건 기록</a></li>
-        <li><a href="/!/roadmap">개발 로드맵</a></li>
-        <li><a href="https://discord.gg/RxjwbvWa8D">디스코드</a></li>
-        <li><a href="/!/converter/">흰숫 변환기</a></li>
-        <li><a href="http://sadang.org/overjoy.html">옵조 난이도표 백업</a></li>
-        <!--<li><a href="/!/status/IIDXLM/">화정 라투 대기현황</a></li>-->
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        {% if user.is_authenticated %}
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-              <i class="bi bi-person-circle"></i> {{ user.username }} <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-              <li><a href="/!/account/">설정</a></li>
-              <li role="separator" class="divider"></li>
-              <li><a href="/!/logout/">로그아웃</a></li>
-            </ul>
-          </li>
-        {% else %}
-          <li><a class="btn btn-primary btn-sm navbar-btn" href="/!/login/">로그인</a></li>
-        {% endif %}
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="/!/">{% trans '서열표' %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="/!/analytics/">{% trans '사이트뷰 분석' %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="/!/my-page/">{% trans '일일 타건 기록' %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="/!/roadmap">{% trans '개발 로드맵' %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="/!/converter/">{% trans '흰숫 변환기' %}</a></li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://discord.gg/RxjwbvWa8D" target="_blank" rel="noopener">
+            {% trans '디스코드' %} <i class="bi bi-box-arrow-up-right small" aria-hidden="true"></i></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="http://sadang.org/overjoy.html" target="_blank" rel="noopener">
+            {% trans '옵조 난이도표 백업' %} <i class="bi bi-box-arrow-up-right small" aria-hidden="true"></i></a>
+        </li>
       </ul>
     </div>
   </div>

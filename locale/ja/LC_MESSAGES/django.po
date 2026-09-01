@@ -1,0 +1,241 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: ja\n"
+
+msgid "오늘"
+msgstr "今日"
+
+msgid "지난 7일"
+msgstr "過去7日"
+
+msgid "지난 30일"
+msgstr "過去30日"
+
+msgid "지난 365일"
+msgstr "過去365日"
+
+msgid "서열표"
+msgstr "難易度表"
+
+msgid "조회수"
+msgstr "閲覧数"
+
+msgid "흰숫 변환기"
+msgstr "サドプラ変換"
+
+msgid "비토라쟈 서든"
+msgstr "beatoraja SUDDEN+"
+
+msgid "투덱 서든"
+msgstr "IIDX SUDDEN+"
+
+msgid "일일 타건 기록"
+msgstr "日別打鍵記録"
+
+msgid "API 연동 토큰"
+msgstr "API トークン"
+
+msgid "복사"
+msgstr "コピー"
+
+msgid "지난 기록"
+msgstr "過去の記録"
+
+msgid "날짜"
+msgstr "日付"
+
+msgid "타건 수"
+msgstr "打鍵数"
+
+msgid "오늘의 타건 수"
+msgstr "今日の打鍵数"
+
+msgid "언어 선택"
+msgstr "言語"
+
+msgid "다크 모드로 전환"
+msgstr "ダークモードに切替"
+
+msgid "테마 전환"
+msgstr "テーマ切替"
+
+msgid "설정"
+msgstr "設定"
+
+msgid "관리자 대시보드"
+msgstr "管理ダッシュボード"
+
+msgid "로그아웃"
+msgstr "ログアウト"
+
+msgid "로그인"
+msgstr "ログイン"
+
+msgid "메뉴 열기"
+msgstr "メニューを開く"
+
+msgid "사이트뷰 분석"
+msgstr "アクセス解析"
+
+msgid "개발 로드맵"
+msgstr "ロードマップ"
+
+msgid "디스코드"
+msgstr "Discord"
+
+msgid "옵조 난이도표 백업"
+msgstr "Overjoy 難易度表（バックアップ）"
+
+msgid "실행 기록"
+msgstr "実行履歴"
+
+msgid "시작"
+msgstr "開始"
+
+msgid "명령"
+msgstr "コマンド"
+
+msgid "옵션"
+msgstr "オプション"
+
+msgid "실행자"
+msgstr "実行者"
+
+msgid "소요"
+msgstr "所要時間"
+
+msgid "상태"
+msgstr "状態"
+
+msgid "로그"
+msgstr "ログ"
+
+msgid "자동 스크롤"
+msgstr "自動スクロール"
+
+msgid "계정 설정"
+msgstr "アカウント設定"
+
+msgid "프로필 사진"
+msgstr "プロフィール画像"
+
+msgid "현재 사진 삭제하고 기본 이미지로"
+msgstr "画像を削除して既定に戻す"
+
+msgid "저장"
+msgstr "保存"
+
+msgid "비밀번호 변경"
+msgstr "パスワード変更"
+
+msgid "회원 탈퇴"
+msgstr "退会"
+
+msgid "서열표로 돌아가기"
+msgstr "難易度表に戻る"
+
+msgid "JPG · PNG · GIF · WebP, 최대 2MB. 정사각형 이미지를 권장합니다."
+msgstr "JPG・PNG・GIF・WebP、最大2MB。正方形の画像を推奨します。"
+
+msgid "회원가입"
+msgstr "会員登録"
+
+msgid "아이디는 공개 주소가 됩니다."
+msgstr "IDは公開URLになります。"
+
+msgid "가입하기"
+msgstr "登録する"
+
+msgid "이미 계정이 있으신가요?"
+msgstr "すでにアカウントをお持ちの方は"
+
+msgid "가입하면 서열표에 자신의 클리어 램프와 점수를 기록할 수 있습니다."
+msgstr "登録すると、難易度表にクリアランプとスコアを記録できます。"
+
+msgid "입력한 아이디가 그대로 서열표 주소에 들어가며, 누구나 이 주소로 당신의 서열표를 볼 수 있습니다. 실명이나 다른 곳에서 쓰는 아이디는 피하세요."
+msgstr "入力したIDがそのまま難易度表のURLになり、誰でもそのURLであなたの表を閲覧できます。本名や他所で使っているIDは避けてください。"
+
+msgid "공개를 원하지 않으면 가입 후 설정에서 '프로필 비공개'를 켤 수 있습니다."
+msgstr "公開したくない場合は、登録後に設定から「プロフィール非公開」を有効にできます。"
+
+msgid "새 비밀번호를 설정해 주세요."
+msgstr "新しいパスワードを設定してください。"
+
+msgid "설정으로 돌아가기"
+msgstr "設定に戻る"
+
+msgid "탈퇴하기"
+msgstr "退会する"
+
+msgid "아이디"
+msgstr "ID"
+
+msgid "비밀번호"
+msgstr "パスワード"
+
+msgid "영문·숫자·밑줄(_)만, 4자 이상. 가입 후에는 바꿀 수 없습니다."
+msgstr "英数字とアンダースコアのみ、4文字以上。登録後は変更できません。"
+
+msgid "영문/숫자 4자 이상"
+msgstr "英数字4文字以上"
+
+msgid "이메일"
+msgstr "メールアドレス"
+
+msgid "회원가입 외 다른 용도로 사용하지 않습니다."
+msgstr "会員登録以外の用途には使用しません。"
+
+msgid "you@example.com"
+msgstr "you@example.com"
+
+msgid "4자 이상"
+msgstr "4文字以上"
+
+msgid "비밀번호 확인"
+msgstr "パスワード（確認）"
+
+msgid "한 번 더 입력"
+msgstr "もう一度入力"
+
+msgid "닉네임"
+msgstr "表示名"
+
+msgid "사이트에 표시될 이름"
+msgstr "サイト上の表示名"
+
+msgid "?-0000-0000-0000 형식"
+msgstr "?-0000-0000-0000 の形式"
+
+msgid "X-0000-0000-0000"
+msgstr "X-0000-0000-0000"
+
+msgid "IIDX 닉네임"
+msgstr "IIDX DJ NAME"
+
+msgid "DJ NAME"
+msgstr "DJ NAME"
+
+msgid "SP 단위"
+msgstr "SP 段位"
+
+msgid "DP 단위"
+msgstr "DP 段位"
+
+msgid "프로필 비공개"
+msgstr "プロフィール非公開"
+
+msgid "켜면 다른 사람이 내 서열표와 유저 목록에서 나를 볼 수 없습니다."
+msgstr "有効にすると、他のユーザーから難易度表・ユーザー一覧に表示されなくなります。"
+
+msgid "새 비밀번호"
+msgstr "新しいパスワード"
+
+msgid "새 비밀번호 확인"
+msgstr "新しいパスワード（確認）"
+
+msgid "파일이 너무 큽니다. %(limit)dMB 이하로 올려주세요."
+msgstr "ファイルが大きすぎます。%(limit)dMB 以下にしてください。"
+
+msgid "이미지가 너무 큽니다. 가로·세로 %(side)dpx 이하로 올려주세요."
+msgstr "画像が大きすぎます。縦横 %(side)dpx 以下にしてください。"

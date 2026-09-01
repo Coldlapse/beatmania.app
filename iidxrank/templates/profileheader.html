@@ -3,7 +3,8 @@
   <div class="refactored-inner-container">
     <div class="profile-main-info">
       <div class="profile-avatar-wrapper">
-        <img src="{% static 'qpro/infinitas.png' %}" alt="DJ Avatar" class="profile-avatar">
+        <img src="{{ userdata.avatar_url }}" alt="DJ Avatar" class="profile-avatar"
+             onerror="this.onerror=null;this.src='{% static 'qpro/infinitas.png' %}'">
       </div>
       <div class="profile-text-wrapper">
         <h3 class="profile-djname">DJ {{ userdata.djname }}</h3>

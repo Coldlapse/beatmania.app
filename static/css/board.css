@@ -1,64 +1,99 @@
+/*
+ * board.css — 게시판 / 댓글
+ * 색은 theme.css 의 var(--bm-*) 만 쓴다.
+ * 고정폭(px) 이 많아 좁은 화면에서 넘치던 것을 flex 로 바꿨다.
+ */
+
 /* comment part */
-.comment.child { margin-top: 10px; padding-top:10px; }
-.comment .writer { font-weight:bold; }
-.comment .admin { color:#933; }
-.comment .title { clear:both; font-weight:bold; margin-bottom:5px; border-bottom:1px solid #ccc; padding-bottom:5px; font-size:9pt; }
-.comment .ranktabletitle { font-weight:normal; font-style:italic; color:#666; }
-.comment .info { padding-bottom:8px; overflow:hidden; }
-.comment .info .detail { font-size: 9pt; display:inline; }
-.comment .info .left { float:left; }	/* writer, etc... */
-.comment .info .right .input-group { width: 120px; } /* password to remove */
-.comment .info .right .input-group input { padding: 0 12px; height:18px; border:0 none; border-radius:0; border-bottom:1px solid #ccc; box-shadow: none; float: left; width: 60px; }
-.comment .info .right .input-group .btn { font-size:5px; float:right; }
-.comment .info .date { color:#666; }
-.comment .info .score { margin-left:5px; }
-.comment .info .ip { color:#999; font-size:9pt; }
+.comment.child { margin-top: 10px; padding-top: 10px; padding-left: 1.25rem; border-left: 2px solid var(--bm-border); }
+.comment .writer { font-weight: bold; color: var(--bm-text); }
+.comment .admin { color: var(--bm-danger); }
+.comment .title {
+  clear: both; font-weight: bold; margin-bottom: 5px;
+  border-bottom: 1px solid var(--bm-border); padding-bottom: 5px; font-size: 9pt;
+}
+.comment .ranktabletitle { font-weight: normal; font-style: italic; color: var(--bm-text-muted); }
+.comment .info { padding-bottom: 8px; overflow: hidden; }
+.comment .info .detail { font-size: 9pt; display: inline; }
+.comment .info .left { float: left; }
+.comment .info .right .input-group { width: 160px; }
+.comment .info .right .input-group input {
+  padding: 0 8px; height: 26px;
+  border: 0; border-radius: 0; border-bottom: 1px solid var(--bm-border);
+  box-shadow: none; background-color: transparent; color: var(--bm-text);
+}
+.comment .info .date { color: var(--bm-text-muted); }
+.comment .info .score { margin-left: 5px; }
+.comment .info .ip { color: var(--bm-text-subtle); font-size: 9pt; }
 
-.navigation { text-align: right; overflow:hidden; margin-bottom: 20px; }
-.navigation .right .btn { margin-left:10px; float:right; }
+.navigation { text-align: right; overflow: hidden; margin-bottom: 20px; }
+.navigation .right .btn { margin-left: 10px; float: right; }
 
-.board .postlist { list-style:none; padding: 0; }
-.board .postlist a { color: #333; }
-.board .postlist li { padding: 10px 10px; border-bottom: 1px solid #ccc; overflow:hidden; }
-.board .postlist li:hover { background-color: #f0f0f0; }
-.board .postlist a:last-child li { border-bottom: none; padding-bottom: 0; }
-.board .postlist li div { float:left; padding: 0 10px; }
-.board .postlist li .title { width: 600px; }
-.board .postlist li .no { width:50px; text-align: center; color:#999; font-size:9pt; }
-.board .postlist li .detail { width: auto; float: right; font-size: 9pt; }
-.board .postlist li .cnt { color:#666; color:#999; }
-.board .postlist li .writer { color:#999; }
-.board .postlist li .date { letter-spacing:-1px; color:#999; }
-@media screen and (max-width: 768px) {
-  .board .postlist li .title { max-width: 240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .board .postlist li .detail { clear: both; font-size: 8pt; padding-top: 5px; }
+/* 게시글 목록 — 고정폭(title 600px)을 걷어내고 flex 로 바꿨다 */
+.board .postlist { list-style: none; padding: 0; margin: 0; }
+.board .postlist a { color: var(--bm-text); text-decoration: none; }
+.board .postlist li {
+  display: flex; align-items: center; gap: .75rem;
+  padding: .85rem 1rem;
+  border-bottom: 1px solid var(--bm-border);
+}
+.board .postlist li:hover { background-color: var(--bm-surface-2); }
+.board .postlist a:last-child li { border-bottom: none; }
+.board .postlist li div { float: none; padding: 0; }
+.board .postlist li .no {
+  width: 48px; flex-shrink: 0; text-align: center;
+  color: var(--bm-text-subtle); font-size: 9pt;
+}
+.board .postlist li .title {
+  flex: 1 1 auto; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.board .postlist li .detail {
+  flex-shrink: 0; display: flex; gap: .75rem;
+  font-size: 9pt; color: var(--bm-text-subtle);
+}
+.board .postlist li .cnt,
+.board .postlist li .writer,
+.board .postlist li .date { color: var(--bm-text-subtle); }
+.board .postlist li .date { letter-spacing: -.5px; }
+
+@media screen and (max-width: 575.98px) {
+  .board .postlist li { flex-wrap: wrap; gap: .35rem .75rem; }
+  .board .postlist li .detail { width: 100%; justify-content: flex-end; font-size: 8pt; }
 }
 
-.post .info { overflow: hidden; padding-bottom: 10px; border-bottom: 1px solid #999; margin-bottom:20px; }
-.post .info .title {  }
-.post .info .writer { float: left; }
-.post .info .detail { float: right; color: #999; }
-.post .body { margin-bottom: 20px; }
+.post .info {
+  overflow: hidden; padding-bottom: 10px;
+  border-bottom: 1px solid var(--bm-border-strong); margin-bottom: 20px;
+}
+.post .info .writer { float: left; color: var(--bm-text); }
+.post .info .detail { float: right; color: var(--bm-text-subtle); }
+.post .body { margin-bottom: 20px; color: var(--bm-text); }
 .post .body table { margin-bottom: 5px; }
-.admin { font-weight:bold; color:#933; }
+.admin { font-weight: bold; color: var(--bm-danger); }
 
-/* writeform part */
-.writeform { background-color:#f0f0f0; font-size:9pt; overflow:hidden; }
-.writeform .writer { width: 300px; float: left; }
-.writeform .password { width: 300px; float: left; margin-left: 20px; }
-.writeform .text { width: 620px; float: left;}
-.writeform textarea { height: 60px; }
-.writeform .submit { width: 100px; float: right; }
-#richedit { height:280px; }
-.mooeditable-container { background-color:#fff; }
-.recaptcha { clear:left; transform:scale(0.7); transform-origin:0; float:left; }
-
-/* for small screen, or songcomment */
-@media screen and (max-width: 768px) {
-  .writeform .text { width: 100%; margin-bottom: 20px; }
-  .writeform .writer { width: 40%; }
-  .writeform .password { width: 40%; }
-  .password .control-label { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .recaptcha { transform:scale(1);  }
+/* writeform part — 고정폭 대신 flex 로 접히게 한다 */
+.writeform {
+  background-color: var(--bm-surface-2);
+  border: 1px solid var(--bm-border);
+  border-radius: 12px;
+  padding: 1rem;
+  font-size: 9pt;
+  display: flex; flex-wrap: wrap; gap: .75rem;
 }
+.writeform form { display: contents; }
+.writeform .writer,
+.writeform .password { flex: 1 1 220px; min-width: 0; float: none; width: auto; margin: 0; }
+.writeform .text { flex: 1 1 100%; float: none; width: auto; }
+.writeform textarea { height: 80px; }
+.writeform .submit { flex: 0 0 auto; margin-left: auto; float: none; width: auto; }
+.writeform .form-label { color: var(--bm-text-muted); margin-bottom: .25rem; }
 
+#richedit { height: 280px; }
+.mooeditable-container { background-color: var(--bm-surface); }
+
+/* reCAPTCHA 는 302px 고정이라 좁은 화면에서 넘친다 */
+.recaptcha { flex: 1 1 100%; }
+@media screen and (max-width: 360px) {
+  .recaptcha { transform: scale(.85); transform-origin: 0 0; }
+}

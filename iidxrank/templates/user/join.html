@@ -1,40 +1,49 @@
-{% extends "common.html" %}
-{% block subtitle %}- Join{% endblock %}
-{% block head %}
-
+{% extends "user/_authbase.html" %}
+{% load django_bootstrap5 i18n %}
+{% block subtitle %} - {% trans '회원가입' %}{% endblock %}
+{% block auth_title %}{% trans '회원가입' %}{% endblock %}
+{% block auth_lead %}
+<p class="bm-auth-lead">
+  {% blocktrans %}가입하면 서열표에 자신의 클리어 램프와 점수를 기록할 수 있습니다.{% endblocktrans %}
+</p>
 {% endblock %}
-{% block body %}
-
-{% include "top.html" %}
-
-<div id="container">
-{% if not form.is_valid %}
-  <div class="form_error">
-  {{ form.errors }}
+{% block auth_body %}
+<div class="alert alert-warning bm-id-warning" role="alert">
+  <i class="bi bi-exclamation-triangle-fill me-1" aria-hidden="true"></i>
+  <b>{% trans '아이디는 공개 주소가 됩니다.' %}</b><br>
+  {% blocktrans %}입력한 아이디가 그대로 서열표 주소에 들어가며, 누구나 이 주소로 당신의 서열표를 볼 수 있습니다. 실명이나 다른 곳에서 쓰는 아이디는 피하세요.{% endblocktrans %}
+  <div class="bm-url-preview mt-2">
+    <code>https://beatmania.app/<span id="url-preview">아이디</span>/SP12H/</code>
   </div>
-{% endif %}
-
-<p>이메일은 회원가입 외 다른 용도(제 3자에게 제공 등)로 사용되지 않습니다.</p>
-
-<form method="POST" action="./">
-  {% csrf_token %}
-  <div class="row">
-    <label>ID {{ form.id }}</label>
+  <div class="form-text mt-1">
+    {% blocktrans %}공개를 원하지 않으면 가입 후 설정에서 '프로필 비공개'를 켤 수 있습니다.{% endblocktrans %}
   </div>
-  <div class="row">
-    <label>EMAIL {{ form.email }}</label>
-  </div>
-  <div class="row">
-    <label>PASS {{ form.password }}</label>
-  </div>
-  <div class="row">
-    <label>PASS AGAIN {{ form.password_again }}</label>
-  </div>
-  {{ form.captcha }}
-  <a href="../../"><button type="button" class="btn btn-default">돌아가기</button></a>
-  <button class="btn btn-primary">가입하기</button>
-</form>
 </div>
 
+<form method="POST" action="./" novalidate>
+  {% csrf_token %}
+  {% bootstrap_form form layout='vertical' %}
+  <button type="submit" class="btn btn-primary w-100 mt-2">{% trans '가입하기' %}</button>
+</form>
+
+<script>
+  // 아이디를 입력하는 동안 실제 주소가 어떻게 되는지 바로 보여준다.
+  // 경고문만으로는 잘 안 읽힌다.
+  (function () {
+    var input = document.querySelector('[data-url-preview]');
+    var out = document.getElementById('url-preview');
+    if (!input || !out) { return; }
+    var placeholder = out.textContent;
+    input.addEventListener('input', function () {
+      out.textContent = input.value.trim() || placeholder;
+    });
+  })();
+</script>
 {% endblock %}
-{% block etc %}{% endblock %}
+{% block auth_after %}
+<p class="bm-auth-foot">
+  {% trans '이미 계정이 있으신가요?' %} <a href="/!/login/">{% trans '로그인' %}</a>
+  <span class="bm-auth-sep">·</span>
+  <a href="/!/">{% trans '서열표로 돌아가기' %}</a>
+</p>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "common.html" %}
+{% load i18n %}
+{% comment %}
+  인증 계열 페이지(로그인/가입/설정/비밀번호/탈퇴)의 공통 껍데기.
+  각 페이지는 이 템플릿을 extends 하고 auth_title / auth_body 만 채운다.
+  폼 렌더링은 django_bootstrap5 에 맡긴다 — INSTALLED_APPS 에 있었지만
+  그동안 쓰이지 않고 있었다.
+  주의: {% templatetag openblock %} extends {% templatetag closeblock %} 는 반드시 파일의 첫 태그여야 한다.
+{% endcomment %}
+{% block body %}
+
+{% include "top.html" %}
+
+<main class="bm-auth">
+  <div class="bm-auth-card card">
+    <div class="card-body">
+      <h1 class="bm-auth-title">{% block auth_title %}{% endblock %}</h1>
+      {% block auth_lead %}{% endblock %}
+      {% block auth_body %}{% endblock %}
+    </div>
+  </div>
+  {% block auth_after %}{% endblock %}
+</main>
+
+{% endblock %}

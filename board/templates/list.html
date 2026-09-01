@@ -1,4 +1,4 @@
-{% extends "index.html" %}
+{% extends "common.html" %}
 {% block subtitle %} - board{% endblock %}
 {% block head %}
 {% load static %}
@@ -22,8 +22,8 @@ $(function () {
 <!-- board list -->
 <div id="container"><div class="inner board">
   <!-- posts -->
-	<div class="panel panel-default">
-		<div class="panel-heading">{{ board.title }}</div>
+	<div class="card">
+		<div class="card-header">{{ board.title }}</div>
 		<div class="list-group">
       <ul class="postlist">
       {% block postlist %}
@@ -48,7 +48,7 @@ $(function () {
   <!-- navigation -->
   <div class="navigation clear">
     {% if writeable %}
-    <a href="/board/{{ board.title }}/write/"><button class="btn btn-default">Write</button></a>
+    <a href="/board/{{ board.title }}/write/"><button class="btn btn-outline-secondary">Write</button></a>
     {% endif %}
   </div>
   <!-- navigation ends -->
@@ -58,14 +58,14 @@ $(function () {
 		<div class="prev">
 		{% if posts.has_previous %}
 			<a href="../{{ posts.previous_page_number }}/">
-			<span class="glyphicon glyphicon-chevron-left"></span>
+			<i class="bi bi-chevron-left" aria-hidden="true"></i>
 			</a>
 		{% endif %}
 		</div>
 		<div class="next">
 		{% if posts.has_next %}
 			<a href="../{{ posts.next_page_number }}/">
-			<span class="glyphicon glyphicon-chevron-right"></span>
+			<i class="bi bi-chevron-right" aria-hidden="true"></i>
 			</a>
 		{% endif %}
 		</div>

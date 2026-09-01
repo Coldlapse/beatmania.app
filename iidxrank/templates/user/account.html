@@ -1,46 +1,61 @@
-{% extends "common.html" %}
-{% block subtitle %}- Login{% endblock %}
-{% block head %}
-
-{% endblock %}
-{% block body %}
-
-{% include "top.html" %}
-
-<div id="container">
-
-{% if not form.is_valid %}
-  <div class="form_error">
-  {{ form.errors }}
-  </div>
-{% endif %}
-
-<form method="POST" action="./">
+{% extends "user/_authbase.html" %}
+{% load django_bootstrap5 i18n %}
+{% block subtitle %} - {% trans '설정' %}{% endblock %}
+{% block auth_title %}{% trans '계정 설정' %}{% endblock %}
+{% block auth_body %}
+<form method="POST" action="./" enctype="multipart/form-data" novalidate>
   {% csrf_token %}
-  <div class="row">
-    <label>NICKNAME {{ form.first_name }}</label>
+
+  <div class="bm-avatar-edit">
+    <img src="{{ player.avatar_url }}" alt="{% trans '프로필 사진' %}"
+         class="profile-avatar bm-avatar-preview" id="avatar-preview">
+    <div class="bm-avatar-controls">
+      <label class="form-label" for="id_avatar">{% trans '프로필 사진' %}</label>
+      <input type="file" name="avatar" id="id_avatar" accept="image/*"
+             class="form-control form-control-sm">
+      <div class="form-text">{% blocktrans %}JPG · PNG · GIF · WebP, 최대 2MB. 정사각형 이미지를 권장합니다.{% endblocktrans %}</div>
+      {% if player.avatar %}
+      <div class="form-check mt-2">
+        <input class="form-check-input" type="checkbox" name="avatar-clear" id="avatar-clear">
+        <label class="form-check-label small" for="avatar-clear">
+          {% trans '현재 사진 삭제하고 기본 이미지로' %}</label>
+      </div>
+      {% endif %}
+      {% if avatar_form.avatar.errors %}
+      <div class="text-danger small mt-1">{{ avatar_form.avatar.errors|join:" " }}</div>
+      {% endif %}
+    </div>
   </div>
-  <div class="row">
-    <label>IIDX ID (?-0000-0000-0000) {{ form.iidxid }}</label>
-  </div>
-  <div class="row">
-    <label>IIDX NICKNAME {{ form.iidxnick }}</label>
-  </div>
-  <div class="row">
-    <label>IIDX SP CLASS {{ form.spclass }}</label>
-  </div>
-  <div class="row">
-    <label>IIDX DP CLASS {{ form.dpclass }}</label>
-  </div>
-  <div class="row">
-    <label>프로필 비공개 설정 {{ form.private }}</label>
-  </div>
-  <a href="../../"><button type="button" class="btn btn-default">돌아가기</button></a>
-  <a href="../setpassword/"><button type="button" class="btn btn-default">패스워드 변경하기</button></a>
-  <a href="../withdraw/"><button type="button" class="btn btn-default">탈퇴하기</button></a>
-  <button class="btn btn-primary">수정하기</button>
+
+  <hr class="my-4">
+
+  {% bootstrap_form form layout='vertical' %}
+  <button type="submit" class="btn btn-primary w-100 mt-2">{% trans '저장' %}</button>
 </form>
+
+<hr class="my-4">
+
+<div class="d-grid gap-2">
+  <a href="/!/setpassword/" class="btn btn-outline-secondary">
+    <i class="bi bi-key me-1" aria-hidden="true"></i>{% trans '비밀번호 변경' %}</a>
+  <a href="/!/my-page/" class="btn btn-outline-secondary">
+    <i class="bi bi-keyboard me-1" aria-hidden="true"></i>{% trans '일일 타건 기록' %}</a>
+  <a href="/!/withdraw/" class="btn btn-outline-danger">
+    <i class="bi bi-person-x me-1" aria-hidden="true"></i>{% trans '회원 탈퇴' %}</a>
 </div>
 
+<script>
+  // 고른 파일을 올리기 전에 미리 보여준다
+  document.getElementById('id_avatar').addEventListener('change', function (e) {
+    var f = e.target.files && e.target.files[0];
+    if (!f) { return; }
+    var url = URL.createObjectURL(f);
+    var img = document.getElementById('avatar-preview');
+    img.src = url;
+    img.onload = function () { URL.revokeObjectURL(url); };
+  });
+</script>
 {% endblock %}
-{% block etc %}{% endblock %}
+{% block auth_after %}
+<p class="bm-auth-foot"><a href="/!/">{% trans '서열표로 돌아가기' %}</a></p>
+{% endblock %}

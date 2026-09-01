@@ -1,0 +1,154 @@
+{% extends "common.html" %}
+{% load i18n %}
+{% block subtitle %} - {{ run.command }} 실행 로그{% endblock %}
+{% block body %}
+{% include "top.html" %}
+
+<div id="container">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb small mt-3">
+      <li class="breadcrumb-item"><a href="{% url 'manage_dashboard' %}">{% trans '관리자 대시보드' %}</a></li>
+      <li class="breadcrumb-item active" aria-current="page">실행 #{{ run.pk }}</li>
+    </ol>
+  </nav>
+
+  <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+    <h1 class="bm-page-title m-0">{% if cmd %}{{ cmd.label }}{% else %}{{ run.command }}{% endif %}</h1>
+    <span class="badge bm-status bm-status-{{ run.status }}" id="run-status"
+          data-done="{{ run.is_done|yesno:'1,0' }}">{{ run.get_status_display }}</span>
+  </div>
+
+  <div class="card bm-panel mb-3">
+    <div class="card-body">
+      <dl class="bm-runmeta mb-0">
+        <dt>{% trans '명령' %}</dt><dd><code>manage.py {{ run.command }} {{ run.options }}</code></dd>
+        <dt>{% trans '시작' %}</dt><dd>{{ run.started_at|date:"Y-m-d H:i:s" }}</dd>
+        <dt>{% trans '실행자' %}</dt><dd>{{ run.started_by.username|default:"-" }}</dd>
+        <dt>{% trans '소요' %}</dt><dd id="run-duration">
+          {% if run.duration_seconds is not None %}{{ run.duration_seconds }}초{% else %}진행 중{% endif %}</dd>
+      </dl>
+    </div>
+  </div>
+
+  {% comment %}
+    명령이 물어보는 지점. 평소에는 숨어 있다가 상태가 '입력 대기'가 되면
+    폴링이 이 영역을 채운다. CLI 의 input() 자리와 같은 역할이다.
+  {% endcomment %}
+  <div id="prompt-box" class="card bm-panel bm-prompt mb-3" hidden>
+    <div class="card-body">
+      <h2 class="bm-panel-title d-flex align-items-center gap-2">
+        <i class="bi bi-question-circle-fill text-warning" aria-hidden="true"></i>
+        <span id="prompt-question"></span>
+      </h2>
+      <p class="text-body-secondary small" id="prompt-help"></p>
+      <form method="POST" action="{% url 'manage_run_answer' run.pk %}" id="prompt-form">
+        {% csrf_token %}
+        <div id="prompt-choices" class="bm-prompt-list"></div>
+        <div class="d-flex flex-wrap gap-2 mt-3">
+          <button type="submit" class="btn btn-primary btn-sm" id="prompt-apply">
+            선택 항목 적용</button>
+          <button type="submit" class="btn btn-outline-secondary btn-sm"
+                  name="all" value="1">전부 적용</button>
+          <button type="submit" class="btn btn-outline-secondary btn-sm ms-auto"
+                  formnovalidate>건너뛰기</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="d-flex align-items-center justify-content-between mb-2">
+    <h2 class="bm-panel-title m-0">{% trans '로그' %}</h2>
+    <div class="d-flex align-items-center gap-3">
+      <div class="form-check form-switch m-0">
+        <input class="form-check-input" type="checkbox" id="autoscroll" checked>
+        <label class="form-check-label small" for="autoscroll">{% trans '자동 스크롤' %}</label>
+      </div>
+      <button type="button" class="btn btn-sm btn-outline-secondary" id="copy-log">
+        <i class="bi bi-clipboard me-1" aria-hidden="true"></i>{% trans '복사' %}</button>
+    </div>
+  </div>
+
+  <pre class="bm-log" id="log" aria-live="polite">{{ run.log }}</pre>
+</div>
+
+<script>
+(function () {
+  var el = document.getElementById('log');
+  var statusEl = document.getElementById('run-status');
+  var durationEl = document.getElementById('run-duration');
+  var autoscroll = document.getElementById('autoscroll');
+  var offset = el.textContent.length;
+  var done = statusEl.dataset.done === '1';
+
+  document.getElementById('copy-log').addEventListener('click', function () {
+    var b = this;
+    navigator.clipboard.writeText(el.textContent).then(function () {
+      b.innerHTML = '<i class="bi bi-check-lg me-1"></i>복사됨';
+      setTimeout(function () { b.innerHTML = '<i class="bi bi-clipboard me-1"></i>복사'; }, 1600);
+    });
+  });
+
+  if (autoscroll.checked) { el.scrollTop = el.scrollHeight; }
+  if (done) { return; }
+
+  var box = document.getElementById('prompt-box');
+  var qEl = document.getElementById('prompt-question');
+  var helpEl = document.getElementById('prompt-help');
+  var listEl = document.getElementById('prompt-choices');
+  var shownKey = null;
+
+  function renderPrompt(p) {
+    if (!p) { box.hidden = true; shownKey = null; return; }
+    var key = p.question + '|' + (p.choices || []).length;
+    if (key === shownKey) { box.hidden = false; return; }  // 이미 그린 질문
+    shownKey = key;
+    qEl.textContent = p.question;
+    helpEl.textContent = p.help || '';
+    listEl.innerHTML = '';
+    (p.choices || []).forEach(function (c, i) {
+      var id = 'pc-' + i;
+      var row = document.createElement('label');
+      row.className = 'bm-prompt-item';
+      row.htmlFor = id;
+      var cb = document.createElement('input');
+      cb.type = 'checkbox'; cb.name = 'choice'; cb.value = c.value;
+      cb.id = id; cb.className = 'form-check-input mt-0';
+      var txt = document.createElement('span');
+      txt.className = 'bm-prompt-text';
+      txt.innerHTML = '<b></b><small></small>';
+      txt.querySelector('b').textContent = c.label;
+      txt.querySelector('small').textContent = c.detail || '';
+      row.appendChild(cb); row.appendChild(txt);
+      listEl.appendChild(row);
+    });
+    box.hidden = false;
+    box.scrollIntoView({behavior: 'smooth', block: 'center'});
+  }
+
+  // 폴링 간격을 조금씩 늘린다. 수 분짜리 작업에 1초 폴링을 유지하면
+  // 요청만 수백 건이 쌓인다.
+  var delay = 1000;
+  function poll() {
+    fetch('{% url "manage_run_log" run.pk %}?offset=' + offset, {credentials: 'same-origin'})
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d.append) {
+          el.textContent += d.append;
+          offset = d.offset;
+          if (autoscroll.checked) { el.scrollTop = el.scrollHeight; }
+        }
+        renderPrompt(d.prompt);
+        statusEl.textContent = d.status_display;
+        statusEl.className = 'badge bm-status bm-status-' + d.status;
+        if (d.duration !== null) { durationEl.textContent = d.duration + '초'; }
+        if (d.done) { return; }
+        // 입력 대기 중에는 답을 넣자마자 반응해야 하므로 간격을 되돌린다
+        delay = d.prompt ? 1000 : Math.min(delay * 1.25, 5000);
+        setTimeout(poll, delay);
+      })
+      .catch(function () { setTimeout(poll, 5000); });
+  }
+  setTimeout(poll, delay);
+})();
+</script>
+{% endblock %}

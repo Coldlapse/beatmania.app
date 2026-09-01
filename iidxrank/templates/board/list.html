@@ -22,8 +22,8 @@ $(function () {
 <!-- board list -->
 <div id="container"><div class="inner board">
   <!-- posts -->
-	<div class="panel panel-default">
-		<div class="panel-heading">{{ board.title }}</div>
+	<div class="card">
+		<div class="card-header">{{ board.title }}</div>
 		<div class="list-group">
       <ul>
 			{% for post in posts %}
@@ -43,7 +43,7 @@ $(function () {
 
   <!-- navigation -->
   <div class="navigation clear">
-    <a href="/board/{{ board.title }}/write/"><button class="btn btn-default">Write</button></a>
+    <a href="/board/{{ board.title }}/write/"><button class="btn btn-outline-secondary">Write</button></a>
   </div>
   <!-- navigation ends -->
 
@@ -52,14 +52,14 @@ $(function () {
 		<div class="prev">
 		{% if comments.has_previous %}
 			<a href="../{{ comments.previous_page_number }}/">
-			<span class="glyphicon glyphicon-chevron-left"></span>
+			<i class="bi bi-chevron-left" aria-hidden="true"></i>
 			</a>
 		{% endif %}
 		</div>
 		<div class="next">
 		{% if comments.has_next %}
 			<a href="../{{ comments.next_page_number }}/">
-			<span class="glyphicon glyphicon-chevron-right"></span>
+			<i class="bi bi-chevron-right" aria-hidden="true"></i>
 			</a>
 		{% endif %}
 		</div>

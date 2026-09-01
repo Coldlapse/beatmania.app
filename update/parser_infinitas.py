@@ -358,7 +358,30 @@ class IIDXSheetParser:
                     print(f"      {update['old_cat']} ➔ {update['new_data']['cat_name']}")
                 
                 print("-" * 60)
-                choice = input("\n🔄 변경을 적용할 번호를 입력하세요 (쉼표(,)로 구분 / 전부 'all' / 넘기려면 Enter): ").strip()
+
+                # CLI 에서는 예전 그대로 input() 을 쓰고, 웹 대시보드에서 돌고 있으면
+                # 질문을 DB 에 써 두고 답을 기다린다. update/prompt.py 참조.
+                from update import prompt as _prompt
+                _choices = []
+                for _i, _u in enumerate(type_1_updates, 1):
+                    _song = _u['item'].song
+                    _choices.append({
+                        'value': str(_i),
+                        'label': '%s (%s)' % (_song.songtitle, _song.songtype),
+                        'detail': '%s ➜ %s' % (_u['old_cat'],
+                                                    _u['new_data']['cat_name']),
+                    })
+                choice = _prompt.ask(
+                    question='[%s] 위치가 변경된 곡 %d건을 적용할까요?'
+                             % (sheet_info['table_title'], len(type_1_updates)),
+                    choices=_choices,
+                    kind='multi',
+                    default='',
+                    help='체크한 곡만 새 카테고리로 옮깁니다. 아무것도 고르지 않고 '
+                         '넘기면 이번 회차에는 전부 기존 분류를 유지합니다.',
+                    cli_prompt="\n🔄 변경을 적용할 번호를 입력하세요 "
+                               "(쉼표(,)로 구분 / 전부 'all' / 넘기려면 Enter): ",
+                ).strip()
                 
                 if choice.lower() == 'all':
                     indices = list(range(1, len(type_1_updates) + 1))

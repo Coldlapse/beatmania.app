@@ -1,4 +1,5 @@
 {% extends "common.html" %}
+{% block subtitle %} - 서열표 편집{% endblock %}
 {% load static %}
 {% block head %}
 <link rel=stylesheet type=text/css href="{% static 'dragula/dragula.min.css' %}">
@@ -119,10 +120,10 @@ $(function () {
   <!-- easy marker utility -->
   <div class="form-group tagging" id="tagging">
     <h5>Simple tool for faster song label tagging.</h5>
-    <label class="col-xs-4 control-label">Label</label>
-    <div class="col-xs-8"><input class="form-control input-sm" id="songlabel" /></div>
-    <label class="col-xs-4 control-label">SongTitles (multiline)</label>
-    <div class="col-xs-8"><textarea id="songtexts" style="width: 100%; height: 240px;"></textarea></div>
+    <label class="col-4 form-label">Label</label>
+    <div class="col-8"><input class="form-control input-sm" id="songlabel" /></div>
+    <label class="col-4 form-label">SongTitles (multiline)</label>
+    <div class="col-8"><textarea id="songtexts" style="width: 100%; height: 240px;"></textarea></div>
     <button id="tagging-submit">apply</button>
   </div>
 

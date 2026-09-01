@@ -1,5 +1,6 @@
 {% extends "common.html" %}
-{% block subtitle %} - {{ pageinfo.title }}{% endblock %}
+{% load i18n %}
+{% block subtitle %} - {{ tableinfo.title }}{% endblock %}
 {% block head %}
 {% load static %}
 
@@ -28,7 +29,7 @@ var username = "{{ user.username }}"
 var tabledata = {{ tabledata_json|safe }};
 //console.log(tabledata);
 var tabledata_orig = tabledata;
-var darkmode = false;
+// darkmode 전역 변수는 제거했다. 테마는 theme.js(BMTheme)가 단독으로 소유한다.
 var searchtext = "";
 
 function sortTabledata(type) {
@@ -121,25 +122,10 @@ $(function () {
     dorender();
   })
 
-  $("#dark").click(function () {
-    if (darkmode == false) {
-      darkmode = true;
-      setCookie('darkmode', 'true', '365');
-      //alert(document.cookie);
-      dorender("dark");
-      document.body.style.backgroundColor = "#1F1F23"
-    }
-    else {
-      darkmode = false;
-      setCookie('darkmode', 'false', '365');
-      //alert(document.cookie);
-      dorender("white");
-      document.body.style.backgroundColor = "#FFFFFF"
-    }
-    //darkmode = true;
-    //dorender("dark");
-    //document.body.style.backgroundColor = "#1F1F23"
-    //document.getElementsByClassName("btn btn-default").backgroundColor = "#1F1F23"
+  // 테마 토글은 네비바(top.html)로 옮겼다. theme.js 가 테마를 바꾸면
+  // bm:themechange 가 날아오고, 그때 캔버스만 다시 그리면 된다.
+  document.addEventListener('bm:themechange', function () {
+    dorender(rendermode_current);
   });
 
   $("#share").click(function () {
@@ -154,70 +140,27 @@ sortTabledata();
 
 
 
-function setCookie(cookie_name, value, days) {
-  var exdate = new Date();
-  exdate.setDate(exdate.getDate() + days);
-  // 설정 일수만큼 현재시간에 만료값으로 지정
-
-  var cookie_value = escape(value) + ((days == null) ? '' : '; expires=' + exdate.toUTCString());
-  document.cookie = cookie_name + '=' + cookie_value + '; path=/;';
-}
-
-function getCookie(cookie_name) {
-  var x, y;
-  var val = document.cookie.split(';');
-
-  for (var i = 0; i < val.length; i++) {
-    x = val[i].substr(0, val[i].indexOf('='));
-    y = val[i].substr(val[i].indexOf('=') + 1);
-    x = x.replace(/^\s+|\s+$/g, ''); // 앞과 뒤의 공백 제거하기
-    if (x == cookie_name) {
-      return unescape(y); // unescape로 디코딩 후 값 리턴
-    }
-  }
-}
+// 서열표는 <canvas> 라 CSS 변수가 닿지 않는다. 팔레트를 JS 에서 골라야 한다.
+// 테마의 출처는 theme.js(BMTheme) 하나뿐이다 — 여기서 쿠키를 다시 읽지 마라.
+// rendermode 는 표시 방식('clear' 기본 / 'wide' 넓게)이고 테마와 직교한다.
+var rendermode_current = 'clear';
 
 function dorender(rendermode)
 {
+    if (rendermode) { rendermode_current = rendermode; }
+    else { rendermode = rendermode_current; }
+
     // clear previous object
     $('#rankimg').empty();
 
-    // mode check
-    //var ttheme;
-    if (rendermode == "dark") {
-      document.body.style.backgroundColor = "#1F1F23"
-      ttheme = new DefaultDarkRenderer();
+    var isDark = window.BMTheme ? window.BMTheme.isDark() : false;
+    var ttheme = isDark ? new DefaultDarkRenderer() : new Default2Renderer();
+
+    if (rendermode == "wide") {
+      ttheme.width = 1800;
+      ttheme.itemcol = 10;
+    } else {
       ttheme.drawscore = true;
-    }
-    if (rendermode == "white") {
-      ttheme = new Default2Renderer();
-      ttheme.drawscore = true;
-    }
-    if (darkmode == true) {
-      if (rendermode == "clear") {
-        ttheme = new DefaultDarkRenderer();
-        ttheme.drawscore = true;
-      } else if (rendermode == "score") {
-        ttheme = new DefaultDarkRenderer();
-        ttheme.drawscore = true;
-      } else if (rendermode == "wide") {
-        ttheme = new DefaultDarkRenderer();
-        ttheme.width = 1800;
-        ttheme.itemcol = 10;
-      }
-    }
-    else {
-      if (rendermode == "clear") {
-        ttheme = new Default2Renderer();
-        ttheme.drawscore = true;
-      } else if (rendermode == "score") {
-        ttheme = new Default2Renderer();
-        ttheme.drawscore = true;
-      } else if (rendermode == "wide") {
-        ttheme = new Default2Renderer();
-        ttheme.width = 1800;
-        ttheme.itemcol = 10;
-      }
     }
 
     // generate renderer and render
@@ -275,17 +218,7 @@ function dorender(rendermode)
     {% endif %}
 }
 
-if (getCookie('darkmode') == 'true') {
-  darkmode = true;
-  //document.body.style.backgroundColor = "#1F1F23"
-  $(function() { dorender("dark"); });
-  //document.body.style.backgroundColor = "#1F1F23"
-}
-else {
-  darkmode = false;
-  $(function() { dorender("clear"); });
-}
-//$(function() { dorender("clear"); }); 
+$(function () { dorender("clear"); });
 
 
 
@@ -299,47 +232,51 @@ else {
 
 <div id="container" class="fixed">
   <div class="left">
-    <!--<a href="./detail/" class="btn btn-default">난이도 제안 & 자세한 정보</a>-->
+    <!--<a href="./detail/" class="btn btn-outline-secondary">난이도 제안 & 자세한 정보</a>-->
   </div>
   <div class="right">
     <!--
-    <button id="send" class="btn btn-default" data-loading-text="uploading..."><span class="glyphicon glyphicon-upload"></span> upload for url/twitter</button>
+    <button id="send" class="btn btn-outline-secondary" data-loading-text="uploading..."><i class="bi bi-upload" aria-hidden="true"></i> upload for url/twitter</button>
     <input type="text" id="url" value="" class="form-control" readonly>
-    <button id="twitter" class="btn btn-info"><span class="glyphicon glyphicon-send"></span> twitter</button>
+    <button id="twitter" class="btn btn-info"><i class="bi bi-send" aria-hidden="true"></i> twitter</button>
     -->
-    {% if request.user.is_staff %}
-    <a href="/update/rankedit/{{ tableinfo.tablename }}/" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span></a>
-    {% endif %}
-    <button id="dark" class="btn btn-default" data-loading-text="please wait..." ><span class="glyphicon glyphicon-adjust"></span></button>
-    {% if editable %}
-    <button id="share" class="btn btn-default" data-loading-text="please wait..." ><span class="glyphicon glyphicon-share"></span></button>
-    {% endif %}
-    <div class="btn-group btn-group-sm">
-      <button id="ranksort_clear" class="btn btn-default">램프순 정렬</button>
-      <!--<button id="ranksort_rate" class="btn btn-default">rate</button>-->
-      <button id="ranksort_name" class="btn btn-default">이름순 정렬</button>
-      <button id="ranksort_score" class="btn btn-default">점수순 정렬</button>
-    </div>
-    <button id="capture" class="btn btn-default" data-loading-text="please wait..." ><span class="glyphicon glyphicon-camera"></span> 다운로드</button>
-    <ul class="list theme">
-      <a href="#"><li class="sel" data-value="clear">일반</li></a>
-      <!--<a href="#"><li data-value="score">점수</li></a>-->
-      <a href="#"><li data-value="wide">WIDE</li></a>
-    </ul>
-    <br>
-    <div class="search" style="float: right;">
-      <div class="input-group input-group-sm">
-        <input type="text" class="form-control prevent-zoom" id="search-input" placeholder="곡 제목 검색">
-        <span class="input-group-btn">
-          <button class="btn btn-primary" type="button" id="search-button">
-            <span class="glyphicon glyphicon-search"></span>
-          </button>
-          <button type="button" class="btn-clear close" id="clear-button" aria-label="Close" style="display: none;">
-            <span aria-hidden="true">×</span>
-          </button>
-        </span>
+    {% comment %} 테마 토글(#dark)은 네비바(top.html)로 옮겼다 {% endcomment %}
+    <div class="bm-rank-toolbar">
+      {% if request.user.is_staff %}
+      <a href="/update/rankedit/{{ tableinfo.tablename }}/"
+         class="btn btn-sm btn-outline-secondary" title="서열표 편집">
+        <i class="bi bi-pencil-square" aria-hidden="true"></i></a>
+      {% endif %}
+      {% if editable %}
+      <button id="share" type="button" class="btn btn-sm btn-outline-secondary" title="공유 주소 복사">
+        <i class="bi bi-share" aria-hidden="true"></i></button>
+      {% endif %}
+
+      <div class="btn-group btn-group-sm" role="group" aria-label="정렬">
+        <button id="ranksort_clear" type="button" class="btn btn-outline-secondary">램프순</button>
+        <button id="ranksort_name"  type="button" class="btn btn-outline-secondary">이름순</button>
+        <button id="ranksort_score" type="button" class="btn btn-outline-secondary">점수순</button>
       </div>
-      
+
+      <ul class="list theme" aria-label="표시 방식">
+        <a href="#"><li class="sel" data-value="clear">일반</li></a>
+        <a href="#"><li data-value="wide">WIDE</li></a>
+      </ul>
+
+      <button id="capture" type="button" class="btn btn-sm btn-outline-secondary">
+        <i class="bi bi-download me-1" aria-hidden="true"></i>다운로드</button>
+
+      <div class="input-group input-group-sm bm-song-search">
+        <input type="text" class="form-control prevent-zoom" id="search-input"
+               placeholder="곡 제목 검색" aria-label="곡 제목 검색">
+        <button class="btn btn-primary" type="button" id="search-button" aria-label="검색">
+          <i class="bi bi-search" aria-hidden="true"></i>
+        </button>
+        <button type="button" class="btn btn-outline-secondary" id="clear-button"
+                aria-label="검색어 지우기" style="display:none">
+          <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
+      </div>
     </div>
   </div>
 

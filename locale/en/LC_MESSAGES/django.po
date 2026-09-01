@@ -1,0 +1,241 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: en\n"
+
+msgid "오늘"
+msgstr "Today"
+
+msgid "지난 7일"
+msgstr "Last 7 days"
+
+msgid "지난 30일"
+msgstr "Last 30 days"
+
+msgid "지난 365일"
+msgstr "Last 365 days"
+
+msgid "서열표"
+msgstr "Rank Tables"
+
+msgid "조회수"
+msgstr "Views"
+
+msgid "흰숫 변환기"
+msgstr "Sudden+ Converter"
+
+msgid "비토라쟈 서든"
+msgstr "beatoraja SUDDEN+"
+
+msgid "투덱 서든"
+msgstr "IIDX SUDDEN+"
+
+msgid "일일 타건 기록"
+msgstr "Daily Keystrokes"
+
+msgid "API 연동 토큰"
+msgstr "API token"
+
+msgid "복사"
+msgstr "Copy"
+
+msgid "지난 기록"
+msgstr "History"
+
+msgid "날짜"
+msgstr "Date"
+
+msgid "타건 수"
+msgstr "Keystrokes"
+
+msgid "오늘의 타건 수"
+msgstr "Today's keystrokes"
+
+msgid "언어 선택"
+msgstr "Language"
+
+msgid "다크 모드로 전환"
+msgstr "Switch to dark mode"
+
+msgid "테마 전환"
+msgstr "Toggle theme"
+
+msgid "설정"
+msgstr "Settings"
+
+msgid "관리자 대시보드"
+msgstr "Admin Dashboard"
+
+msgid "로그아웃"
+msgstr "Log out"
+
+msgid "로그인"
+msgstr "Log in"
+
+msgid "메뉴 열기"
+msgstr "Open menu"
+
+msgid "사이트뷰 분석"
+msgstr "Analytics"
+
+msgid "개발 로드맵"
+msgstr "Roadmap"
+
+msgid "디스코드"
+msgstr "Discord"
+
+msgid "옵조 난이도표 백업"
+msgstr "Overjoy Table (backup)"
+
+msgid "실행 기록"
+msgstr "Run history"
+
+msgid "시작"
+msgstr "Started"
+
+msgid "명령"
+msgstr "Command"
+
+msgid "옵션"
+msgstr "Options"
+
+msgid "실행자"
+msgstr "Started by"
+
+msgid "소요"
+msgstr "Duration"
+
+msgid "상태"
+msgstr "Status"
+
+msgid "로그"
+msgstr "Log"
+
+msgid "자동 스크롤"
+msgstr "Auto-scroll"
+
+msgid "계정 설정"
+msgstr "Account settings"
+
+msgid "프로필 사진"
+msgstr "Profile picture"
+
+msgid "현재 사진 삭제하고 기본 이미지로"
+msgstr "Remove photo and use the default image"
+
+msgid "저장"
+msgstr "Save"
+
+msgid "비밀번호 변경"
+msgstr "Change password"
+
+msgid "회원 탈퇴"
+msgstr "Delete account"
+
+msgid "서열표로 돌아가기"
+msgstr "Back to rank tables"
+
+msgid "JPG · PNG · GIF · WebP, 최대 2MB. 정사각형 이미지를 권장합니다."
+msgstr "JPG, PNG, GIF or WebP, up to 2MB. A square image works best."
+
+msgid "회원가입"
+msgstr "Sign up"
+
+msgid "아이디는 공개 주소가 됩니다."
+msgstr "Your username becomes a public URL."
+
+msgid "가입하기"
+msgstr "Sign up"
+
+msgid "이미 계정이 있으신가요?"
+msgstr "Already have an account?"
+
+msgid "가입하면 서열표에 자신의 클리어 램프와 점수를 기록할 수 있습니다."
+msgstr "Sign up to record your clear lamps and scores on the rank tables."
+
+msgid "입력한 아이디가 그대로 서열표 주소에 들어가며, 누구나 이 주소로 당신의 서열표를 볼 수 있습니다. 실명이나 다른 곳에서 쓰는 아이디는 피하세요."
+msgstr "Your username goes straight into the rank table URL, and anyone with that link can view your table. Avoid your real name or a username you reuse elsewhere."
+
+msgid "공개를 원하지 않으면 가입 후 설정에서 '프로필 비공개'를 켤 수 있습니다."
+msgstr "If you would rather not be listed, turn on \"Private profile\" in Settings after signing up."
+
+msgid "새 비밀번호를 설정해 주세요."
+msgstr "Choose a new password."
+
+msgid "설정으로 돌아가기"
+msgstr "Back to settings"
+
+msgid "탈퇴하기"
+msgstr "Delete my account"
+
+msgid "아이디"
+msgstr "Username"
+
+msgid "비밀번호"
+msgstr "Password"
+
+msgid "영문·숫자·밑줄(_)만, 4자 이상. 가입 후에는 바꿀 수 없습니다."
+msgstr "Letters, digits and underscore only, 4+ characters. Cannot be changed later."
+
+msgid "영문/숫자 4자 이상"
+msgstr "4+ letters or digits"
+
+msgid "이메일"
+msgstr "Email"
+
+msgid "회원가입 외 다른 용도로 사용하지 않습니다."
+msgstr "Used only for your account. Never shared."
+
+msgid "you@example.com"
+msgstr "you@example.com"
+
+msgid "4자 이상"
+msgstr "4 or more characters"
+
+msgid "비밀번호 확인"
+msgstr "Confirm password"
+
+msgid "한 번 더 입력"
+msgstr "Enter it again"
+
+msgid "닉네임"
+msgstr "Display name"
+
+msgid "사이트에 표시될 이름"
+msgstr "Shown on the site"
+
+msgid "?-0000-0000-0000 형식"
+msgstr "Format: ?-0000-0000-0000"
+
+msgid "X-0000-0000-0000"
+msgstr "X-0000-0000-0000"
+
+msgid "IIDX 닉네임"
+msgstr "IIDX DJ name"
+
+msgid "DJ NAME"
+msgstr "DJ NAME"
+
+msgid "SP 단위"
+msgstr "SP class"
+
+msgid "DP 단위"
+msgstr "DP class"
+
+msgid "프로필 비공개"
+msgstr "Private profile"
+
+msgid "켜면 다른 사람이 내 서열표와 유저 목록에서 나를 볼 수 없습니다."
+msgstr "When on, others cannot see you in rank tables or the user list."
+
+msgid "새 비밀번호"
+msgstr "New password"
+
+msgid "새 비밀번호 확인"
+msgstr "Confirm new password"
+
+msgid "파일이 너무 큽니다. %(limit)dMB 이하로 올려주세요."
+msgstr "That file is too large. Please upload %(limit)dMB or less."
+
+msgid "이미지가 너무 큽니다. 가로·세로 %(side)dpx 이하로 올려주세요."
+msgstr "That image is too large. Please keep it under %(side)dpx on each side."

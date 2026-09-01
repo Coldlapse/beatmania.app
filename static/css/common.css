@@ -1,23 +1,21 @@
 /*
-font from
-http://mplus.font-face.jp/#/
-*/
+ * common.css — 사이트 공통 스타일
+ *
+ * 색은 전부 theme.css 의 var(--bm-*) 를 쓴다. 하드코딩하지 마라.
+ * 예외는 게임 고유색(클리어 램프, 난이도, 단위)뿐이며 그것도 theme.css 에 있다.
+ *
+ * font from http://mplus.font-face.jp/#/
+ */
 @font-face {
-    font-family: 'M+ 1c medium';
-    src: url('../fonts/mplus-1c-medium-sub.eot');
-    src: url('../fonts/mplus-1c-medium-sub.eot?#iefix') format('embedded-opentype'),
-    url('../fonts/mplus-1c-medium-sub.woff') format('woff'),
-    url('../fonts/mplus-1c-medium-sub.ttf') format('truetype');
+  font-family: 'M+ 1c medium';
+  src: url('../fonts/mplus-1c-medium-sub.eot');
+  src: url('../fonts/mplus-1c-medium-sub.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/mplus-1c-medium-sub.woff') format('woff'),
+       url('../fonts/mplus-1c-medium-sub.ttf') format('truetype');
+  font-display: swap;
 }
 
-* {
-  padding:0;
-  margin:0;
-}
-
-html,body { height:100%; }
-
-.hidden { display:none; }
+.hidden { display: none; }
 
 /* index & post style */
 .notice_inner .list-group .text ul,
@@ -25,133 +23,163 @@ html,body { height:100%; }
 .notice_inner .list-group .text li,
 .post .body li { margin-bottom: 10px; }
 
-.notice-boards { width: 100%; padding: 0 20px 0px; overflow:hidden; }
-.notice-boards .board-title { 
-  font-weight: bold; font-size: 11pt; 
-  padding: 10px 0; border-bottom: 1px solid #ccc; }
+.notice-boards { width: 100%; padding: 0 20px; overflow: hidden; }
+.notice-boards .board-title {
+  font-weight: bold; font-size: 11pt;
+  padding: 10px 0; border-bottom: 1px solid var(--bm-border);
+}
 .notice-boards ul { list-style: none; font-size: 10pt; }
-.notice-boards ul a { color: #666; }
-.notice-boards ul a:hover { color: #999; }
-.notice-boards ul li { clear:both; overflow:hidden; }
+.notice-boards ul a { color: var(--bm-text-muted); }
+.notice-boards ul a:hover { color: var(--bm-text-subtle); }
+.notice-boards ul li { clear: both; overflow: hidden; }
 .notice-boards ul li .title {
-  float: left;max-width:200px;
-  display: block; white-space:nowrap; overflow: hidden; text-overflow: ellipsis;}
+  float: left; max-width: 200px;
+  display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
 .notice-boards ul li .writer {
   max-width: 50px;
-  display: block; white-space:nowrap; overflow: hidden;text-overflow: ellipsis;
-  float:right; margin-right: 5px; }
-.notice-boards ul li .date { float:right; letter-spacing: -1px; }
+  display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  float: right; margin-right: 5px;
+}
+.notice-boards ul li .date { float: right; letter-spacing: -1px; }
 
-/* top */
-#top { width:100%; background-color:#346; height:50px; padding: 16px 0; color:#fff; }
-#top .inner { width: 1000px; margin: 0 auto; }
-#top #logo { font-weight:bold; float:left; }
-#top #search { width:200px; margin-right:10px; margin-top:-5px; float:right; }
-#topmenu { list-style:none; margin:0; padding:0; }
-#topmenu li { float:left; margin-right: 40px; }
-#topmenu li a { color:#ccc; }
-#topmenu li a:hover { color:#fff; }
+/* top — 2016년 레이아웃. refactor-style.css 가 무력화하지만 선택자는 남긴다 */
+#top { width: 100%; background-color: var(--bm-surface-3); height: 50px; padding: 16px 0; color: var(--bm-text); }
+#top .inner { max-width: 1000px; margin: 0 auto; }
+#top #logo { font-weight: bold; float: left; }
+#top #search { width: 200px; margin-right: 10px; margin-top: -5px; float: right; }
+#topmenu { list-style: none; margin: 0; padding: 0; }
+#topmenu li { float: left; margin-right: 40px; }
+#topmenu li a { color: var(--bm-text-muted); }
+#topmenu li a:hover { color: var(--bm-text); }
 
-/* container */
-#container { width: 1000px; margin:0 auto; padding-top:10px; }
+/* container
+   이전에는 width:1000px 고정이고 max-width:768px 오버라이드만 있어서
+   769~999px 구간에서 가로 스크롤이 났다(870px 에서 scrollWidth=1000 실측).
+   max-width 로 바꿔 그 구간을 없앤다. */
+#container { max-width: 1000px; margin: 0 auto; padding: 10px 1rem 0; }
 #container .row { margin: 0 0 30px; }
 #container .notice_inner { max-width: 480px; margin: 100px auto 0; }
-#footer { font-size:11px; color:#ccc; text-align: center; width:100%;cursor:default; margin-top: 80px; clear:both; }
+
+#footer {
+  font-size: 12px; color: var(--bm-text-faint);
+  text-align: center; width: 100%; cursor: default;
+  margin-top: 5rem; padding: 2rem 1rem; clear: both;
+}
+#footer a { color: var(--bm-text-subtle); }
 
 /* recentuser */
 div.recentuser,
-div.recentuser a { font-size: 9pt; color:#aaa; cursor:pointer; }
-div.recentuser li { list-style:none; clear:both; margin:0 auto 10px; width:120px; }
-div.recentuser li.info { width:auto; text-align:center; }
-div.recentuser a.rmlink { float:right; color:#966; font-size:8pt; }
+div.recentuser a { font-size: 9pt; color: var(--bm-text-faint); cursor: pointer; }
+div.recentuser li { list-style: none; clear: both; margin: 0 auto 10px; width: 120px; }
+div.recentuser li.info { width: auto; text-align: center; }
+div.recentuser a.rmlink { float: right; color: var(--bm-danger); font-size: 8pt; }
 
 /* paging part (container) */
-#container .paging { font-size:9pt; overflow:hidden; color:#666; height:45px; width: 240px; margin: 0 auto; }
-#container .paging .prev { float:left; padding:0 10px; width:100px; height:10px; text-align:left; }
-#container .paging .next { float:right; padding:0 10px; width:100px; height:10px; text-align:right; }
-#container .paging .center { float:left; width:100%; margin-top:-10px; text-align:center; }
+#container .paging { font-size: 9pt; overflow: hidden; color: var(--bm-text-muted); height: 45px; width: 240px; margin: 0 auto; }
+#container .paging .prev { float: left; padding: 0 10px; width: 100px; height: 10px; text-align: left; }
+#container .paging .next { float: right; padding: 0 10px; width: 100px; height: 10px; text-align: right; }
+#container .paging .center { float: left; width: 100%; margin-top: -10px; text-align: center; }
 
-/* table */
-table { width:100%; margin-bottom: 100px; }
-table tbody tr { border-bottom: 1px solid #ccc; }
-table tbody tr:hover { background-color:#eee; }
-table thead { border-bottom:1px solid #333; }
-table th, table td { padding:10px; }
-table thead th.small { width:1%; }
-table .t0 { background-color:#fcfcfc; }
-table .t1 { background-color:#efefef; }
-table .loading { color:#999; text-align: center; padding:20px; }
-
+/* table — 넓은 표는 자기 안에서 가로 스크롤 하도록 감싼다 */
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table { width: 100%; margin-bottom: 3rem; color: var(--bm-text); }
+table tbody tr { border-bottom: 1px solid var(--bm-border); }
+table tbody tr:hover { background-color: var(--bm-surface-2); }
+table thead { border-bottom: 1px solid var(--bm-border-strong); }
+table th, table td { padding: 10px; }
+table thead th.small { width: 1%; }
+table .t0 { background-color: var(--bm-surface); }
+table .t1 { background-color: var(--bm-surface-2); }
+table .loading { color: var(--bm-text-subtle); text-align: center; padding: 20px; }
 
 /* userpage (profile) */
-#goto { cursor:pointer; cursor:hand;/*fallback*/ }
+#goto { cursor: pointer; }
 #container .notice_inner .row { width: 100%; }
 #container .notice_inner .list-group { padding: 10px; }
-#container .notice_inner .title { font-weight:bold; }
-#container .notice_inner .time { float:right; color: #ccc; }
-#container .notice_inner .text { }
+#container .notice_inner .title { font-weight: bold; }
+#container .notice_inner .time { float: right; color: var(--bm-text-faint); }
 
-#header { width: 100%; height: 236px; background: #336699; }
-#header .inner { width: 1000px; margin: 0 auto; overflow:hidden; }
-.user { position:absolute; margin-top: 40px; }
-.user .userimage img { width:216px; height:216px; margin-top:0px; padding:20px; background-color:#444; }
-.user .userimage { float:left; }
-.user .userinfo { float:left; margin-left: 28px; }
-.user .userid { float:left; margin-left:10px; color:#ccc; cursor:default; margin-top:2px; }
-.user .username {  float:left; color: #fff; margin:0; }
-.user .usergrade { float:left; margin-left: 50px; }
-.user .userlevel { float:left; margin-left: 10px; }
-.user .userlevel .level { cursor:pointer; margin:0; }
-#header #menu { position:absolute; margin-top: 88px; margin-left: 240px; }
-#rankimg canvas { width: 100% !important; }
+#header { width: 100%; height: 236px; background: var(--bm-header-bg); }
+#header .inner { max-width: 1000px; margin: 0 auto; overflow: hidden; }
+.user { position: absolute; margin-top: 40px; }
+.user .userimage img { width: 216px; height: 216px; padding: 20px; background-color: var(--bm-surface-3); }
+.user .userimage { float: left; }
+.user .userinfo { float: left; margin-left: 28px; }
+.user .userid { float: left; margin-left: 10px; color: var(--bm-text-faint); cursor: default; margin-top: 2px; }
+.user .username { float: left; color: var(--bm-header-text); margin: 0; }
+.user .usergrade { float: left; margin-left: 50px; }
+.user .userlevel { float: left; margin-left: 10px; }
+.user .userlevel .level { cursor: pointer; margin: 0; }
+#header #menu { position: absolute; margin-top: 88px; margin-left: 240px; }
+#rankimg canvas { width: 100% !important; height: auto !important; }
+
 @media screen and (max-width: 768px) {
   .user { margin-top: 10px; padding-left: 15px; }
-  .user .userimage img { width: 64px; height: 64px; padding:6px; }
-  .user .usergrade { clear:left; float:left; margin-left: 0px; }
+  .user .userimage img { width: 64px; height: 64px; padding: 6px; }
+  .user .usergrade { clear: left; float: left; margin-left: 0; }
   .user .usergrade, .user .userlevel { margin-top: 10px; }
   #header #menu { margin-left: 15px; }
 }
-#sidemenu { position:absolute; margin-top: 40px; width: 1000px; }
-#sidemenu button { float:right; }
-#sidemenu #search { width:200px; margin-right:10px; float:right; }
-.list { list-style:none; margin-bottom:10px; clear:both; overflow:hidden; }
-.list li { float:left; display:block; font-size:11px; padding:4px 6px; border:2px solid #036; border-right: none; }
-.list a:last-child li { border-right: 2px solid #036; }
-.list a { color:#FFF; }
 
-#edittool { border-radius:5px; background-color:#fff; border:1px solid #999; padding: 10px 20px; width: 450px; position:fixed; opacity:0.8; right:50px; bottom:100px; }
+#sidemenu { position: absolute; margin-top: 40px; max-width: 1000px; width: 100%; }
+#sidemenu button { float: right; }
+#sidemenu #search { width: 200px; margin-right: 10px; float: right; }
 
-.list li.sel { background-color:#036 !important; font-weight:bold; }
-.list li { background-color:#69c; }
-.list.theme li { background-color:#96c; }
-.list.table li { background-color:#c69; }
-#container .list { float:left; margin-top:4px; margin-right:20px; }
+.list { list-style: none; margin-bottom: 10px; clear: both; overflow: hidden; }
+.list li {
+  float: left; display: block; font-size: 11px; padding: 4px 6px;
+  border: 2px solid var(--bm-accent); border-right: none;
+  background-color: var(--bm-accent); color: var(--bm-text-on-accent);
+}
+.list a:last-child li { border-right: 2px solid var(--bm-accent); }
+.list a { color: var(--bm-text-on-accent); }
+.list li.sel { background-color: var(--bm-accent-hover); font-weight: bold; }
+.list.theme li { background-color: #8866cc; border-color: #8866cc; }
+.list.table li { background-color: #cc6699; border-color: #cc6699; }
+#container .list { float: left; margin-top: 4px; margin-right: 20px; }
+
+#edittool {
+  border-radius: 8px; background-color: var(--bm-surface);
+  border: 1px solid var(--bm-border-strong); padding: 10px 20px;
+  max-width: 450px; width: 100%; position: fixed; opacity: .95;
+  right: 50px; bottom: 100px; box-shadow: var(--bm-shadow);
+}
 
 /* rankedit & detail page */
-.ranktable .title { margin-bottom: 40px; border-bottom: 1px solid #ccc; text-align: center; }
-.ranktable .category_title { background-color: #000; padding:10px; font-weight: bold; color: #fff; cursor: pointer; }
-.ranktable .ctype0 { background-color: #999 !important; }
-.ranktable .category { border: 1px solid #999; padding: 10px 10px 0 0 ; background-color: #ccc; overflow: hidden; margin-bottom: 20px; cursor: pointer; }
-.ranktable .item { border: 1px solid #999; padding: 5px 10px; background-color: #fff; margin: 0 0 10px 10px; height: 30px; width: 180px; float: left; font-size: 10px; }
-
+.ranktable .title { margin-bottom: 40px; border-bottom: 1px solid var(--bm-border); text-align: center; }
+.ranktable .category_title {
+  background-color: var(--bm-text); padding: 10px; font-weight: bold;
+  color: var(--bm-bg); cursor: pointer;
+}
+.ranktable .ctype0 { background-color: var(--bm-text-subtle) !important; }
+.ranktable .category {
+  border: 1px solid var(--bm-border-strong); padding: 10px 10px 0 0;
+  background-color: var(--bm-surface-2); overflow: hidden; margin-bottom: 20px; cursor: pointer;
+}
+.ranktable .item {
+  border: 1px solid var(--bm-border); padding: 5px 10px;
+  background-color: var(--bm-surface); color: var(--bm-text);
+  margin: 0 0 10px 10px; height: 30px; width: 180px; float: left; font-size: 10px;
+}
 .ranktable .category.detail { padding: 15px; }
-.ranktable .category.detail a { color:#fff; font-weight: bold; }
-.ranktable .itemdetail { 
-  padding: 10px 10px 10px 30px; clear:both;
+.ranktable .category.detail a { color: var(--bm-text); font-weight: bold; }
+.ranktable .itemdetail {
+  padding: 10px 10px 10px 30px; clear: both;
   width: 100%; height: 40px;
   background: url('/static/img/item_bar_bg.png') 0 0 no-repeat;
 }
 .ranktable .itemdetail div { float: left; }
-.ranktable .itemdetail .lamp { 
+.ranktable .itemdetail .lamp {
   margin: -14px 0 0 -35px; display: block;
   width: 30px; height: 50px;
   background: url('/static/img/item_clearlamp.png');
 }
 .ranktable .itemdetail .lamp.clear0 { background: none; }
-.ranktable .itemdetail .lamp.clear1 { background-position: -96px 0; opacity: 0.6; }
-.ranktable .itemdetail .lamp.clear2 { background-position: -96px 0; opacity: 0.6;  }
+.ranktable .itemdetail .lamp.clear1 { background-position: -96px 0; opacity: .6; }
+.ranktable .itemdetail .lamp.clear2 { background-position: -96px 0; opacity: .6; }
 .ranktable .itemdetail .lamp.clear3 { background-position: -128px 0; }
-.ranktable .itemdetail .lamp.clear4 { background-position: -64px 0; opacity: 0.6; }
+.ranktable .itemdetail .lamp.clear4 { background-position: -64px 0; opacity: .6; }
 .ranktable .itemdetail .lamp.clear5 { background-position: -96px 0; }
 .ranktable .itemdetail .lamp.clear6 { background-position: 0 0; }
 .ranktable .itemdetail .lamp.clear7 { background-position: -64px 0; }
@@ -160,126 +188,104 @@ table .loading { color:#999; text-align: center; padding:20px; }
 .ranktable .itemdetail .type span {
   display: block; float: left; margin-right: 10px;
   font-size: 11px; font-weight: bold; color: #fff;
-  border-radius: 3px; background-color: #ccc; padding: 3px 5px; cursor: default;
+  border-radius: 3px; background-color: var(--bm-text-faint); padding: 3px 5px; cursor: default;
 }
 .ranktable .itemdetail .rate {
-  display:block;
-  margin-left: 30px;
-  width: 380px; height: 27px;
-  margin-top: -4px; position:relative;
+  display: block; margin-left: 30px;
+  width: 380px; height: 27px; margin-top: -4px; position: relative;
 }
-.ranktable .itemdetail .rate .bg { 
-  position: absolute;
-  margin-left: -10px;
+.ranktable .itemdetail .rate .bg {
+  position: absolute; margin-left: -10px;
   width: 400px; height: 100%;
   background: url('/static/img/item_rate.png') 0 0 no-repeat;
 }
-.ranktable .itemdetail .rate .bar {
-  position:absolute;
-  background-color: #9cf;
-  height: 24px;
-}
+.ranktable .itemdetail .rate .bar { position: absolute; background-color: #99ccff; height: 24px; }
 
-#editor { position: absolute; background:rgba(0,0,0,0.8); width: 380px; height:220px; border-radius: 5px; padding: 10px; display: none; color: #ccc; border: 5px solid #fff; box-shadow: 0 0 5px #000; }
+/* 편집 위젯 — 본문 위에 뜨는 반투명 오버레이라 테마와 무관하게 어둡다 */
+#editor {
+  position: absolute; background: var(--bm-widget-bg);
+  width: 380px; height: 220px; border-radius: 8px; padding: 10px; display: none;
+  color: var(--bm-widget-text); border: 4px solid var(--bm-widget-border);
+  box-shadow: var(--bm-shadow);
+}
 #editor .title { color: #fff; font-weight: bold; }
 #editor .row { clear: both; margin-bottom: 10px; }
 #editor .name { display: block; clear: both; margin-bottom: 10px; }
 
-#editwidget>a { color: #fff; }
-#editwidget.beforeedit .afteredit { display:none; }
-#editwidget.afteredit .beforeedit { display:none; }
-/*mobile: full screen*/
-#editwidget { position: fixed; left:none; right:60px; width:420px; bottom: 0px; background: rgba(0,0,0,0.95);
-  color: #fff; font-size:12pt; }
-#editsonglist { padding: 0; overflow-y: scroll; max-height: 560px; font-weight: normal; }
+#editwidget > a { color: var(--bm-widget-text); }
+#editwidget.beforeedit .afteredit { display: none; }
+#editwidget.afteredit .beforeedit { display: none; }
+#editwidget {
+  position: fixed; right: 60px; width: 420px; bottom: 0;
+  background: var(--bm-widget-bg); color: var(--bm-widget-text); font-size: 12pt;
+  display: none;
+}
+#editsonglist { padding: 0; overflow-y: auto; max-height: 560px; font-weight: normal; }
 #editwidget .widget-click { cursor: pointer; }
 #editwidget .widget-title { font-weight: bold; padding: 10px; }
 #editsonglist .rank-category,
-#editsonglist .rank-item { padding: 6px 0px; overflow: hidden; clear: both; }
-#editsonglist .rank-category { background-color: #666; padding-left: 20px; padding-right: 20px; }
-#editsonglist .rank-item .level { cursor:default; letter-spacing:-1px; text-align: center; display: block; width:40px; float: left; font-weight:bold; }
-#editsonglist .rank-item .title { cursor:default; font-weight: normal; display: block; width:200px; float: left; overflow:hidden; white-space:nowrap; text-overflow: ellipsis; }
-#editsonglist .rank-item-L .level { color:#633; }
-#editsonglist .rank-item-A .level { color:#C99; }
-#editsonglist .rank-item-H .level { color:#CC9; }
-#editsonglist .rank-item-N .level { color:#69C; }
-.edit-button { background:none; border: 1px solid #666; line-height: 10px; padding: 5px; width: 80px; text-align: center; float: right; margin-right: 10px; }
+#editsonglist .rank-item { padding: 6px 0; overflow: hidden; clear: both; }
+#editsonglist .rank-category { background-color: var(--bm-widget-head-bg); padding-left: 20px; padding-right: 20px; }
+#editsonglist .rank-item .level { cursor: default; letter-spacing: -1px; text-align: center; display: block; width: 40px; float: left; font-weight: bold; }
+#editsonglist .rank-item .title { cursor: default; font-weight: normal; display: block; width: 200px; float: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+#editsonglist .rank-item-L .level { color: #cc8866; }
+#editsonglist .rank-item-A .level { color: #cc9999; }
+#editsonglist .rank-item-H .level { color: #cccc99; }
+#editsonglist .rank-item-N .level { color: #6699cc; }
+
+.edit-button {
+  background: none; border: 1px solid var(--bm-widget-border); color: var(--bm-widget-text);
+  line-height: 10px; padding: 5px; width: 80px; text-align: center; float: right; margin-right: 10px;
+  border-radius: .25rem;
+}
 .rank-item .edit-rank { width: 45px; }
-.rank-item .edit-clear-0:before { content:'NOPLAY'; color:#666; }
-.rank-item .edit-clear-1:before { content:'FAILED'; color:#999; }
-.rank-item .edit-clear-2:before { content:'ASSIST'; color:#CAA; }
-.rank-item .edit-clear-3:before { content:'EASY'; color:#9C6; }
-.rank-item .edit-clear-4:before { content:'NORMAL'; color:#69C; }
-.rank-item .edit-clear-5:before { content:'HARD'; color:#C99; }
-.rank-item .edit-clear-6:before { content:'EXHARD'; color:#CC9; }
-.rank-item .edit-clear-7:before { content:'FC'; color:#FFF; }
-.rank-item .edit-rank-F:before { content:'F'; color:#666; }
-.rank-item .edit-rank-E:before { content:'E'; color:#666; }
-.rank-item .edit-rank-D:before { content:'D'; color:#666; }
-.rank-item .edit-rank-C:before { content:'C'; color:#666; }
-.rank-item .edit-rank-B:before { content:'B'; color:#CCC; }
-.rank-item .edit-rank-A:before { content:'A'; color:#FCC; }
-.rank-item .edit-rank-AA:before { content:'AA'; color:#FFC; }
-.rank-item .edit-rank-AAA:before { content:'AAA'; color:#FFF; }
-.rank-item .edit-rank-MAX:before { content:'MAX-'; color:#EFF; }
-
-.input-group-btn {
-  position: relative;
-  font-size: 0;
-  white-space: nowrap;
-}
-
-button.close {
-  padding: 0;
-  cursor: pointer;
-  background: transparent;
-  border: 0;
-  -webkit-appearance: none;
-  appearance: none;
-}
+.rank-item .edit-clear-0:before { content: 'NOPLAY'; color: #9aa3ad; }
+.rank-item .edit-clear-1:before { content: 'FAILED'; color: #b9c0c7; }
+.rank-item .edit-clear-2:before { content: 'ASSIST'; color: #ccaaaa; }
+.rank-item .edit-clear-3:before { content: 'EASY';   color: #99cc66; }
+.rank-item .edit-clear-4:before { content: 'NORMAL'; color: #6699cc; }
+.rank-item .edit-clear-5:before { content: 'HARD';   color: #cc9999; }
+.rank-item .edit-clear-6:before { content: 'EXHARD'; color: #cccc99; }
+.rank-item .edit-clear-7:before { content: 'FC';     color: #ffffff; }
+.rank-item .edit-rank-F:before   { content: 'F';    color: #9aa3ad; }
+.rank-item .edit-rank-E:before   { content: 'E';    color: #9aa3ad; }
+.rank-item .edit-rank-D:before   { content: 'D';    color: #9aa3ad; }
+.rank-item .edit-rank-C:before   { content: 'C';    color: #9aa3ad; }
+.rank-item .edit-rank-B:before   { content: 'B';    color: #cccccc; }
+.rank-item .edit-rank-A:before   { content: 'A';    color: #ffcccc; }
+.rank-item .edit-rank-AA:before  { content: 'AA';   color: #ffffcc; }
+.rank-item .edit-rank-AAA:before { content: 'AAA';  color: #ffffff; }
+.rank-item .edit-rank-MAX:before { content: 'MAX-'; color: #eeffff; }
 
 .btn-clear {
-  position: absolute!important;
-  width: 32px!important;
-  height: 26px!important;
-  right: 35px!important;
-  z-index: 1000!important;
-  color: #666!important;
+  position: absolute !important;
+  width: 32px !important; height: 26px !important;
+  right: 35px !important; z-index: 1000 !important;
+  color: var(--bm-text-muted) !important;
 }
 
-#editwidget { display:none; }
 @media screen and (max-width: 768px) {
-  #editwidget { display:block; }
-  #editwidget { width: 100%; left: 0%; right: 0;}
-  #editsonglist { max-height: 980px; }
-
-  #editsonglist .rank-item .title { width: 400px; }
-  #editsonglist .edit-button { width: 150px; line-height: 20px; }
-  #editsonglist .edit-rank { width: 100px; }
+  #editwidget { display: block; width: 100%; left: 0; right: 0; }
+  #editsonglist { max-height: 60vh; }
+  #editsonglist .rank-item .title { width: 45%; }
+  #editsonglist .edit-button { width: 120px; line-height: 20px; }
+  #editsonglist .edit-rank { width: 90px; }
 }
 @media screen and (max-width: 420px) {
-  #editor { transform-origin: top left; transform: scale(0.4); }
-  #editsonglist .rank-item .title { width: 180px; }
-  #editsonglist { max-height: 600px; }
-  #editsonglist .edit-button { width: 100px;  }
+  #editor { transform-origin: top left; transform: scale(.5); }
+  #editsonglist .rank-item .title { width: 40%; }
+  #editsonglist .edit-button { width: 90px; }
   #editsonglist .edit-rank { width: 50px; }
 }
-@media screen and (max-width: 360px) {
-  #editsonglist .rank-item .title { width: 150px; }
-  #editsonglist { max-height: 560px; }
-}
 
-
-/* some nasty things ... */
+/* 곡 특성 태그 */
 .type span:before { content: "미정"; }
-
 .type span.scratch:before { content: "血"; }
 .type span.charge:before { content: "CN"; }
 .type span.hellcharge:before { content: "HCN"; }
 .type span.scratch,
 .type span.charge,
-.type span.hellcharge
-{ background-color: #c33 !important; }
+.type span.hellcharge { background-color: #cc3333 !important; }
 
 .type span.roll:before { content: "연타"; }
 .type span.axis:before { content: "축연타"; }
@@ -295,22 +301,10 @@ button.close {
 .type span.first:before { content: "초살"; }
 .type span.middle:before { content: "중살"; }
 .type span.last:before { content: "후살"; }
-.type span.roll,
-.type span.axis,
-.type span.trill,
-.type span.stair,
-.type span.tempo,
-.type span.tatsu,
-.type span.complex,
-.type span.bpm,
-.type span.fast,
-.type span.strength,
-.type span.rush,
-.type span.first,
-.type span.middle,
-.type span.last
-{ background-color: #c93 !important; }
-
+.type span.roll, .type span.axis, .type span.trill, .type span.stair,
+.type span.tempo, .type span.tatsu, .type span.complex, .type span.bpm,
+.type span.fast, .type span.strength, .type span.rush, .type span.first,
+.type span.middle, .type span.last { background-color: #cc9933 !important; }
 
 .type span.normal1p:before { content: "1P정배"; }
 .type span.normal2p:before { content: "2P정배"; }
@@ -318,65 +312,62 @@ button.close {
 .type span.mirror2p:before { content: "2P미러"; }
 .type span.random1p:before { content: "1P랜덤"; }
 .type span.random2p:before { content: "2P랜덤"; }
-.type span.normal1p,
-.type span.normal2p,
-.type span.mirror1p,
-.type span.mirror2p,
-.type span.random1p,
-.type span.random2p
-{ background-color: #3c3 !important; }
+.type span.normal1p, .type span.normal2p, .type span.mirror1p,
+.type span.mirror2p, .type span.random1p,
+.type span.random2p { background-color: #33cc33 !important; }
 
-
-
-
-/* in case of mobile */
 @media screen and (max-width: 768px) {
   #top { height: auto; }
-  #top .inner { width: 100%; margin: 0; padding:5px 20px; }
+  #top .inner { width: 100%; margin: 0; padding: 5px 20px; }
   #search { display: none; }
-  #topmenu li { margin-top: 10px; float:none; clear:both; overflow:hidden; }
+  #topmenu li { margin-top: 10px; float: none; clear: both; overflow: hidden; }
   #header .inner { width: 100%; margin: 0; }
-  #container { width:100%; }
   #container .notice_inner { max-width: 80%; margin: 50px auto 0; }
 }
 
-/* about difficulty color */
-.SPA, .DPA { color:#b33; }
-.SPH, .DPH { color:#bb3; }
-.SPN, .DPN { color:#36b; }
-.SPA_l, .DPA_l { color:#FAA; }
-.SPH_l, .DPH_l { color:#FFA; }
-.SPN_l, .DPN_l { color:#AAF; }
-.SPA_s, .DPA_s { text-shadow:0px 0px 3px #f66; }
-.SPH_s, .DPH_s { text-shadow: 0px 0px 3px #ff6; }
-.SPN_s, .DPN_s { text-shadow: 0px 0px 3px #66f; }
+/* 난이도 글자색 — theme.css 에서 라이트/다크 값이 갈린다 */
+.SPA, .DPA { color: var(--bm-diff-a); }
+.SPH, .DPH { color: var(--bm-diff-h); }
+.SPN, .DPN { color: var(--bm-diff-n); }
 
 /* others (common) */
-.clear { clear:both; margin-bottom:10px; }
-.right { float:right; }
-.left { float:left; }
-.center { text-align:center; }
-.row { clear:both; margin-bottom:10px; }
-.row button 
-{ margin-right:6px; margin-bottom:6px; }
+.clear { clear: both; margin-bottom: 10px; }
+.right { float: right; }
+.left { float: left; }
+.center { text-align: center; }
+.row button { margin-right: 6px; margin-bottom: 6px; }
 
-.btn-recommend { background-color:#366; color:#fff; font-weight:bold; }
-.btn-recommend:hover { text-shadow:#ffe 0 0 10px; }
+.btn-recommend { background-color: #336666; color: #fff; font-weight: bold; }
+.btn-recommend:hover { color: #fff; text-shadow: 0 0 10px #ffffee; }
 
-#message { position:fixed; display:block; right:0px; top:0px; height:auto; width:auto; background-color:#cc6; color:#fff; font-size:12px; padding: 7px; z-index:999; }
-#loading_background { background-color: rgba(0,0,0,0.5); position:fixed; width:100%; height:100%; top:0; left:0; z-index:999; }
-#loading_message { background-color: #fff; position:fixed; width:240px; height:60px; text-align: center; padding:20px; top:50%; left:50%; border-radius:20px; margin-left:-120px; margin-top:-30px; box-shadow:#000 0 0 20px; cursor:default; z-index:1000; }
-
-.panel-notice .panel-text { line-height:1.6; font-size: 9pt; display:block; border-top: 1px solid #ccc; padding-top: 5px; }
-.panel-notice .panel-text p { margin:0; }
-.panel-notice .panel-text li { margin-bottom: 0px !important; }
-.panel-notice .panel-text table { margin:3px 0; }
-.panel-notice .panel-text table th,
-.panel-notice .panel-text table td { padding:3px; }
-
-.form_error { color:#c66;  }
-
-.search {
-  margin-top: 6px;
-  width: 363px;
+#message {
+  position: fixed; right: 1rem; top: 1rem;
+  background-color: var(--bm-accent); color: var(--bm-text-on-accent);
+  font-size: 13px; padding: .6rem .9rem; border-radius: .5rem;
+  box-shadow: var(--bm-shadow); z-index: 1080;
 }
+#loading_background {
+  background-color: var(--bm-overlay);
+  position: fixed; inset: 0; z-index: 1080;
+}
+#loading_message {
+  background-color: var(--bm-surface); color: var(--bm-text);
+  position: fixed; width: 240px; min-height: 60px; text-align: center;
+  padding: 20px; top: 50%; left: 50%; border-radius: 16px;
+  margin-left: -120px; margin-top: -30px;
+  box-shadow: var(--bm-shadow); cursor: default; z-index: 1090;
+}
+
+.panel-notice .panel-text {
+  line-height: 1.6; font-size: 9pt; display: block;
+  border-top: 1px solid var(--bm-border); padding-top: 5px;
+}
+.panel-notice .panel-text p { margin: 0; }
+.panel-notice .panel-text li { margin-bottom: 0 !important; }
+.panel-notice .panel-text table { margin: 3px 0; }
+.panel-notice .panel-text table th,
+.panel-notice .panel-text table td { padding: 3px; }
+
+.form_error { color: var(--bm-danger); }
+
+.search { margin-top: 6px; max-width: 363px; width: 100%; }

@@ -1,72 +1,48 @@
 {% extends "common.html" %}
-
-{% block custom_head %}
-{# 간단한 탭 UI를 위한 스타일 #}
-<style>
-    .nav-tabs {
-        margin-bottom: 20px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid #dee2e6;
-    }
-    .nav-tabs a {
-        display: inline-block;
-        padding: 10px 15px;
-        margin-right: 5px;
-        text-decoration: none;
-        color: #007bff;
-        border: 1px solid transparent;
-        border-radius: 0.25rem 0.25rem 0 0;
-    }
-    .nav-tabs a.active {
-        font-weight: bold;
-        color: #495057;
-        background-color: #fff;
-        border-color: #dee2e6 #dee2e6 #fff;
-        border-bottom: 2px solid #007bff;
-    }
-    .nav-tabs a:hover {
-        background-color: #f8f9fa;
-        border-color: #e9ecef;
-    }
-</style>
-{% endblock %}
-
+{% load i18n %}
+{% comment %}
+  이전 버전은 스타일을 {% templatetag openblock %} block custom_head {% templatetag closeblock %} 에 넣었는데
+  부모에 그 블록이 없어 적용된 적이 없다. BS5 컴포넌트로 대체한다.
+{% endcomment %}
+{% block subtitle %} - 사이트뷰 분석{% endblock %}
 {% block body %}
-  {% include "top.html" %}
-  <div id="container">
-    {# 1. View에서 전달받은 동적 제목을 출력합니다. #}
-    <h2>{{ title }}</h2>
+{% include "top.html" %}
 
-    {# 2. 탭 방식 네비게이션 #}
-    <div class="nav-tabs">
-        <a href="?period=daily"   class="{% if active_period == 'daily' %}active{% endif %}">오늘</a>
-        <a href="?period=weekly"  class="{% if active_period == 'weekly' %}active{% endif %}">지난 7일</a>
-        <a href="?period=monthly" class="{% if active_period == 'monthly' %}active{% endif %}">지난 30일</a>
-        <a href="?period=yearly"  class="{% if active_period == 'yearly' %}active{% endif %}">지난 365일</a>
+<div id="container">
+  <h1 class="bm-page-title">{{ title }}</h1>
+
+  <ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item"><a class="nav-link {% if active_period == 'daily' %}active{% endif %}"
+      href="?period=daily">{% trans '오늘' %}</a></li>
+    <li class="nav-item"><a class="nav-link {% if active_period == 'weekly' %}active{% endif %}"
+      href="?period=weekly">{% trans '지난 7일' %}</a></li>
+    <li class="nav-item"><a class="nav-link {% if active_period == 'monthly' %}active{% endif %}"
+      href="?period=monthly">{% trans '지난 30일' %}</a></li>
+    <li class="nav-item"><a class="nav-link {% if active_period == 'yearly' %}active{% endif %}"
+      href="?period=yearly">{% trans '지난 365일' %}</a></li>
+  </ul>
+
+  <div class="card bm-panel bm-panel-flush-top">
+    <div class="card-body">
+      <div class="table-scroll">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr><th scope="col">{% trans '서열표' %}</th><th scope="col" class="text-end">{% trans '조회수' %}</th></tr>
+          </thead>
+          <tbody>
+            {% for stat in stats %}
+            <tr>
+              <td><a href="/!/{{ stat.tablename }}/">{{ stat.tablename }}</a></td>
+              <td class="text-end font-monospace">{{ stat.views }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="2" class="text-center text-body-secondary py-4">
+              해당 기간에 조회된 기록이 없습니다.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
-
-    {# 3. 단순화된 통계 테이블 #}
-    <table class="table">
-      <thead>
-        <tr>
-          <th>서열표</th>
-          <th>조회수</th>
-        </tr>
-      </thead>
-      <tbody>
-        {# for 루프는 동일하지만, 더 이상 '날짜' 열은 없습니다. #}
-        {% for stat in stats %}
-          <tr>
-            <td><a href="/!/{{ stat.tablename }}/">{{ stat.tablename }}</a></td>
-            <td>{{ stat.views }}</td>
-          </tr>
-        {# 해당 기간에 데이터가 없을 경우 메시지를 보여줍니다. #}
-        {% empty %}
-          <tr>
-            <td colspan="2" style="text-align: center;">해당 기간에 조회된 기록이 없습니다.</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
   </div>
+</div>
 {% endblock %}

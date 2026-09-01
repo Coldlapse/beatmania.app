@@ -307,6 +307,21 @@ def account(request):
     player = rp.get_player_from_request(request)
     if (request.method == "POST"):
         form = forms.AccountForm(request.POST)
+        avatar_form = forms.AvatarForm(request.POST, request.FILES)
+
+        # 사진 삭제는 폼 유효성과 무관하게 처리한다
+        if (request.POST.get('avatar-clear') and player.avatar):
+            player.avatar.delete(save=False)
+            player.avatar = None
+            player.save()
+
+        if (avatar_form.is_valid() and avatar_form.cleaned_data.get('avatar')):
+            # 새 사진을 올리면 이전 파일은 지운다. 안 그러면 디스크에 계속 쌓인다.
+            if (player.avatar):
+                player.avatar.delete(save=False)
+            player.avatar = avatar_form.cleaned_data['avatar']
+            player.save()
+
         if (form.is_valid()):
             user.first_name = form.data['first_name']
             player.iidxid = form.data['iidxid']
@@ -322,6 +337,7 @@ def account(request):
             player.save()
             return redirect('main')
     else:
+        avatar_form = forms.AvatarForm()
         form = forms.AccountForm(initial={
             'first_name': user.first_name,
             'iidxid': player.iidxid,
@@ -330,7 +346,8 @@ def account(request):
             'dpclass': player.dpclass,
             'private' : player.private
             })
-    return render(request, 'user/account.html', {'form': form})
+    return render(request, 'user/account.html', {
+        'form': form, 'avatar_form': avatar_form, 'player': player})
 
 # /!/set_password/
 def set_password(request):

@@ -67,7 +67,25 @@ class Command(BaseCommand):
                 print(f"  [{i}] ID: {song.id:<10} | 제목: {song.songtitle}")
 
             while True:
-                choice = input("\n🗑️  삭제할 번호를 입력하세요 (여러 개면 쉼표(,)로 구분 / 건너뛰려면 Enter): ").strip()
+                # CLI 에서는 예전 그대로 input(), 웹 대시보드에서는 DB 를 경유해
+                # 묻는다. update/prompt.py 참조.
+                from update import prompt as _prompt
+                _choices = [{
+                    'value': str(_i),
+                    'label': _song.songtitle,
+                    'detail': 'ID %s · %s' % (_song.id, _song.songtype),
+                } for _i, _song in enumerate(group, 1)]
+                choice = _prompt.ask(
+                    question='[%d/%d] 중복 의심 그룹 (%s) — 삭제할 곡을 고르세요'
+                             % (idx, total_groups, group[0].songtype),
+                    choices=_choices,
+                    kind='multi',
+                    default='',
+                    help='체크한 곡을 삭제합니다. 연결된 서열표 항목도 함께 사라집니다. '
+                         '되돌릴 수 없으니 신중히 고르세요. 아무것도 안 고르면 건너뜁니다.',
+                    cli_prompt="\n🗑️  삭제할 번호를 입력하세요 "
+                               "(여러 개면 쉼표(,)로 구분 / 건너뛰려면 Enter): ",
+                ).strip()
                 
                 if not choice:
                     print("⏭️  건너뜁니다.\n")

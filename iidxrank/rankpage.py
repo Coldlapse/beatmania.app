@@ -297,6 +297,8 @@ def get_pdata_from_iidxme(data, ranktable):
 get only userdata from player object
 """
 def get_udata_from_player(player):
+    from django.conf import settings
+    default_avatar = settings.STATIC_URL + 'qpro/infinitas.png'
     userdata = {}
     if (player == None):
         userdata['djname'] = 'NONAME'
@@ -306,6 +308,7 @@ def get_udata_from_player(player):
         userdata['dpclass'] = 1
         userdata['spclassstr'] = iidx.getdanstring(1)
         userdata['dpclassstr'] = iidx.getdanstring(1)
+        userdata['avatar_url'] = default_avatar
     else:
         userdata['djname'] = player.iidxnick
         userdata['iidxid'] = player.iidxid.replace('-','')
@@ -314,6 +317,7 @@ def get_udata_from_player(player):
         userdata['dpclass'] = player.dpclass
         userdata['spclassstr'] = iidx.getdanstring(player.spclass)
         userdata['dpclassstr'] = iidx.getdanstring(player.dpclass)
+        userdata['avatar_url'] = player.avatar_url()
     return userdata
 
 """

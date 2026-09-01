@@ -1,0 +1,241 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: zh_Hans\n"
+
+msgid "오늘"
+msgstr "今天"
+
+msgid "지난 7일"
+msgstr "最近7天"
+
+msgid "지난 30일"
+msgstr "最近30天"
+
+msgid "지난 365일"
+msgstr "最近365天"
+
+msgid "서열표"
+msgstr "难度表"
+
+msgid "조회수"
+msgstr "浏览量"
+
+msgid "흰숫 변환기"
+msgstr "Sudden+ 换算器"
+
+msgid "비토라쟈 서든"
+msgstr "beatoraja SUDDEN+"
+
+msgid "투덱 서든"
+msgstr "IIDX SUDDEN+"
+
+msgid "일일 타건 기록"
+msgstr "每日击键记录"
+
+msgid "API 연동 토큰"
+msgstr "API 令牌"
+
+msgid "복사"
+msgstr "复制"
+
+msgid "지난 기록"
+msgstr "历史记录"
+
+msgid "날짜"
+msgstr "日期"
+
+msgid "타건 수"
+msgstr "击键数"
+
+msgid "오늘의 타건 수"
+msgstr "今日击键数"
+
+msgid "언어 선택"
+msgstr "语言"
+
+msgid "다크 모드로 전환"
+msgstr "切换到深色模式"
+
+msgid "테마 전환"
+msgstr "切换主题"
+
+msgid "설정"
+msgstr "设置"
+
+msgid "관리자 대시보드"
+msgstr "管理后台"
+
+msgid "로그아웃"
+msgstr "登出"
+
+msgid "로그인"
+msgstr "登录"
+
+msgid "메뉴 열기"
+msgstr "打开菜单"
+
+msgid "사이트뷰 분석"
+msgstr "访问统计"
+
+msgid "개발 로드맵"
+msgstr "开发路线图"
+
+msgid "디스코드"
+msgstr "Discord"
+
+msgid "옵조 난이도표 백업"
+msgstr "Overjoy 难度表（备份）"
+
+msgid "실행 기록"
+msgstr "执行记录"
+
+msgid "시작"
+msgstr "开始"
+
+msgid "명령"
+msgstr "命令"
+
+msgid "옵션"
+msgstr "选项"
+
+msgid "실행자"
+msgstr "执行者"
+
+msgid "소요"
+msgstr "耗时"
+
+msgid "상태"
+msgstr "状态"
+
+msgid "로그"
+msgstr "日志"
+
+msgid "자동 스크롤"
+msgstr "自动滚动"
+
+msgid "계정 설정"
+msgstr "账号设置"
+
+msgid "프로필 사진"
+msgstr "头像"
+
+msgid "현재 사진 삭제하고 기본 이미지로"
+msgstr "删除当前头像并恢复默认"
+
+msgid "저장"
+msgstr "保存"
+
+msgid "비밀번호 변경"
+msgstr "修改密码"
+
+msgid "회원 탈퇴"
+msgstr "注销账号"
+
+msgid "서열표로 돌아가기"
+msgstr "返回难度表"
+
+msgid "JPG · PNG · GIF · WebP, 최대 2MB. 정사각형 이미지를 권장합니다."
+msgstr "JPG、PNG、GIF 或 WebP，最大 2MB。建议使用正方形图片。"
+
+msgid "회원가입"
+msgstr "注册"
+
+msgid "아이디는 공개 주소가 됩니다."
+msgstr "用户名会成为公开网址。"
+
+msgid "가입하기"
+msgstr "注册"
+
+msgid "이미 계정이 있으신가요?"
+msgstr "已经有账号了？"
+
+msgid "가입하면 서열표에 자신의 클리어 램프와 점수를 기록할 수 있습니다."
+msgstr "注册后即可在难度表上记录自己的通关灯与分数。"
+
+msgid "입력한 아이디가 그대로 서열표 주소에 들어가며, 누구나 이 주소로 당신의 서열표를 볼 수 있습니다. 실명이나 다른 곳에서 쓰는 아이디는 피하세요."
+msgstr "你输入的用户名会直接出现在难度表网址中，任何人都可以通过该网址查看你的难度表。请避免使用真实姓名或在其他平台使用的用户名。"
+
+msgid "공개를 원하지 않으면 가입 후 설정에서 '프로필 비공개'를 켤 수 있습니다."
+msgstr "如果不希望被公开，可在注册后于设置中开启「资料不公开」。"
+
+msgid "새 비밀번호를 설정해 주세요."
+msgstr "请设置新密码。"
+
+msgid "설정으로 돌아가기"
+msgstr "返回设置"
+
+msgid "탈퇴하기"
+msgstr "注销账号"
+
+msgid "아이디"
+msgstr "用户名"
+
+msgid "비밀번호"
+msgstr "密码"
+
+msgid "영문·숫자·밑줄(_)만, 4자 이상. 가입 후에는 바꿀 수 없습니다."
+msgstr "仅限字母、数字和下划线，4位以上。注册后不可更改。"
+
+msgid "영문/숫자 4자 이상"
+msgstr "4位以上字母或数字"
+
+msgid "이메일"
+msgstr "邮箱"
+
+msgid "회원가입 외 다른 용도로 사용하지 않습니다."
+msgstr "仅用于注册，不作他用。"
+
+msgid "you@example.com"
+msgstr "you@example.com"
+
+msgid "4자 이상"
+msgstr "4位以上"
+
+msgid "비밀번호 확인"
+msgstr "确认密码"
+
+msgid "한 번 더 입력"
+msgstr "请再输入一次"
+
+msgid "닉네임"
+msgstr "显示名称"
+
+msgid "사이트에 표시될 이름"
+msgstr "在站内显示的名称"
+
+msgid "?-0000-0000-0000 형식"
+msgstr "格式：?-0000-0000-0000"
+
+msgid "X-0000-0000-0000"
+msgstr "X-0000-0000-0000"
+
+msgid "IIDX 닉네임"
+msgstr "IIDX DJ NAME"
+
+msgid "DJ NAME"
+msgstr "DJ NAME"
+
+msgid "SP 단위"
+msgstr "SP 段位"
+
+msgid "DP 단위"
+msgstr "DP 段位"
+
+msgid "프로필 비공개"
+msgstr "资料不公开"
+
+msgid "켜면 다른 사람이 내 서열표와 유저 목록에서 나를 볼 수 없습니다."
+msgstr "开启后，他人将无法在难度表和用户列表中看到你。"
+
+msgid "새 비밀번호"
+msgstr "新密码"
+
+msgid "새 비밀번호 확인"
+msgstr "确认新密码"
+
+msgid "파일이 너무 큽니다. %(limit)dMB 이하로 올려주세요."
+msgstr "文件太大，请上传 %(limit)dMB 以内的文件。"
+
+msgid "이미지가 너무 큽니다. 가로·세로 %(side)dpx 이하로 올려주세요."
+msgstr "图片太大，请将宽高控制在 %(side)dpx 以内。"

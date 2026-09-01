@@ -14,11 +14,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
 
+from django.conf import settings
 from django.conf.urls import include, url
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.views.generic import RedirectView
+from django.views.i18n import JavaScriptCatalog
 import iidxrank.views as views
 import iidxrank.views_json as views_json
+import iidxrank.views_manage as views_manage
 import board.views as views_board
 
 
@@ -29,6 +33,11 @@ urlpatterns = [
         
 	# utilities (admin, imgtl ...)
 	    url(r'^admin/', admin.site.urls),
+        # 언어 전환. URL 에 언어를 넣지 않고 쿠키/세션에 저장한다.
+        # set_language 는 POST + next 로만 동작하므로 오픈 리다이렉트가 되지 않는다.
+            url(r'^i18n/', include('django.conf.urls.i18n')),
+        # JS 안의 번역 문자열용 카탈로그
+            url(r'^jsi18n/$', JavaScriptCatalog.as_view(), name='javascript-catalog'),
             url(r'^imgtl/$', views.imgtl),
             url(r'^imgdownload/$', views.imgdownload),
             # IIDX IDs are stored hyphenated (e.g. 5241-1234), so \w+ is not enough
@@ -99,6 +108,15 @@ urlpatterns = [
             # 실시간 갱신용 JSON: /!/status/hwajeong_iidx_1/json/
             url(r'^!/status/(?P<machine_id>[\w-]+)/json/$', views.get_machine_status_json, name="get_machine_status_json"),
             url(r'^!/my-page/$', views.my_page_view, name="my_page"),
+
+        # 관리자 대시보드 (staff 전용). 서버에서 명령을 실행하므로
+        # tablename 패턴(^!/(\w+)/$)보다 반드시 위에 있어야 한다.
+            url(r'^!/manage/$', views_manage.dashboard, name="manage_dashboard"),
+            url(r'^!/manage/run/$', views_manage.run_command, name="manage_run_command"),
+            url(r'^!/manage/run/(?P<run_id>[0-9]+)/$', views_manage.run_detail, name="manage_run"),
+            url(r'^!/manage/run/(?P<run_id>[0-9]+)/log/$', views_manage.run_log, name="manage_run_log"),
+            url(r'^!/manage/run/(?P<run_id>[0-9]+)/abort/$', views_manage.abort_run, name="manage_run_abort"),
+            url(r'^!/manage/run/(?P<run_id>[0-9]+)/answer/$', views_manage.answer_prompt, name="manage_run_answer"),
             url(r'^!/(?P<tablename>\w+)/$', views.rankpage, name="rankpage"),
             url(r'^!/(?P<tablename>\w+)/table/$', views.ranktable),
             url(r'^!/(?P<tablename>\w+)/json/$', views.rankjson),
@@ -115,3 +133,9 @@ urlpatterns = [
 
 	])),
 ]
+
+# 개발 서버에서만 업로드 파일을 Django 가 서빙한다.
+# 운영에서는 Apache 가 /media/ 를 Alias 로 직접 서빙해야 한다 —
+# WSGI 워커가 이미지 전송에 묶이면 안 된다.
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

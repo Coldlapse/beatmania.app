@@ -1,27 +1,41 @@
 {% extends "common.html" %}
-<!--{% block subtitle %}- recommendation{% endblock %}-->
-{% block head %}
-
-{% endblock %}
+{% load i18n %}
+{% comment %}
+  이전 2행은 <!--{% templatetag openblock %} block subtitle {% templatetag closeblock %}- recommendation ... --> 였다.
+  HTML 주석 안이어도 Django 태그는 실행되므로 제목에 "- recommendation" 이 새어나왔다.
+{% endcomment %}
+{% block subtitle %} - {{ userdata.djname }}{% endblock %}
 {% block body %}
 
 {% include "top.html" %}
 {% include "profileheader.html" %}
 
-<style>
-.dexp li { margin-bottom: 13px; }
-</style>
-
 <div id="container">
-  <div class="clear">
-    <ul class="dexp">
-      <li><a href="https://github.com/kuna/iidxranktable/">kuna/iidxranktable</a> 프로젝트를 클론하여 수정한 후 운영되는 서열표 사이트입니다.</li>
-      <li><b>비트매니아 IIDX INFINITAS</b>의 수록곡들만 제공합니다.</li>
-      <li>서열은 종전 본가 시트들을 기반으로 작성됩니다.<br>SP의 경우 서열 미분류 곡에 대한 별도의 분류는 진행하지 않습니다.</li>
-      <li>건의 및 난이도 갱신 요청, 서버 상태 등은 <a href="https://discord.gg/xJVNQcFwJf">디스코드</a>를 참조해주세요.</li>
-    </ul>
+  <div class="card bm-intro-card">
+    <div class="card-body">
+      <ul class="bm-intro-list">
+        <li>
+          <i class="bi bi-git" aria-hidden="true"></i>
+          <span><a href="https://github.com/kuna/iidxranktable/" target="_blank" rel="noopener">kuna/iidxranktable</a>
+            프로젝트를 클론하여 수정한 후 운영되는 서열표 사이트입니다.</span>
+        </li>
+        <li>
+          <i class="bi bi-music-note-list" aria-hidden="true"></i>
+          <span><b>비트매니아 IIDX INFINITAS</b>의 수록곡들만 제공합니다.</span>
+        </li>
+        <li>
+          <i class="bi bi-bar-chart-steps" aria-hidden="true"></i>
+          <span>서열은 종전 본가 시트들을 기반으로 작성됩니다.<br>
+            SP의 경우 서열 미분류 곡에 대한 별도의 분류는 진행하지 않습니다.</span>
+        </li>
+        <li>
+          <i class="bi bi-discord" aria-hidden="true"></i>
+          <span>건의 및 난이도 갱신 요청, 서버 상태 등은
+            <a href="https://discord.gg/RxjwbvWa8D" target="_blank" rel="noopener">디스코드</a>를 참조해주세요.</span>
+        </li>
+      </ul>
+    </div>
   </div>
 </div>
 
 {% endblock %}
-{% block etc %}{% endblock %}

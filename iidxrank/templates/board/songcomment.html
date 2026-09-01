@@ -41,8 +41,8 @@ $(function () {
 {% endif %}
 
 <!-- song comment board body -->
-<div class="panel panel-default">
-	<div class="panel-heading {{ board.songinfo.songtype }}_s">{{ board.songinfo.songtitle }} (☆{{ board.songinfo.songlevel }} / {{ board.songinfo.songtype }}{% if board.rankinfo %} / {{ board.rankinfo.rankcategory.categoryname }}{% endif %})</div>
+<div class="card">
+	<div class="card-header {{ board.songinfo.songtype }}_s">{{ board.songinfo.songtitle }} (☆{{ board.songinfo.songlevel }} / {{ board.songinfo.songtype }}{% if board.rankinfo %} / {{ board.rankinfo.rankcategory.categoryname }}{% endif %})</div>
 	<div class="list-group">
 		<!-- new comment -->
 		<div class="list-group-item" id="writeform">
@@ -52,21 +52,21 @@ $(function () {
 				<input type="hidden" name="mode" value="add">
 
 				<div class="form-group">
-					<label for="writer" class="col-xs-4 control-label">name</label>
-					<div class="col-xs-8">
+					<label for="writer" class="col-4 form-label">name</label>
+					<div class="col-8">
 					<input type="text" id="writer" name="writer" class="form-control input-sm" value="{{ board.writer }}">
 					</div>
 				</div>
 				<div class="form-group">
-					<label for="password" class="col-xs-4 control-label">password (비우면 ip로 인증됩니다)</label>
-					<div class="col-xs-8">
+					<label for="password" class="col-4 form-label">password (비우면 ip로 인증됩니다)</label>
+					<div class="col-8">
 					<input type="password" id="password" name="password" class="form-control input-sm" value="">
 					</div>
 				</div>
 
 				<div class="form-group">
-					<label class="col-xs-4 control-label">난이도 제안</label>
-					<div class="radio col-xs-8">
+					<label class="col-4 form-label">난이도 제안</label>
+					<div class="radio col-8">
 						<label><input type="radio" name="score" value="99" checked> [관련없음]</label>
 						<label><input type="radio" name="score" value="0"> [=]</label>
 						<label><input type="radio" name="score" value="1"> [+]</label>
@@ -75,13 +75,13 @@ $(function () {
 					</div>
 				</div>
 				<div class="form-group">
-					<div class="col-xs-12">
+					<div class="col-12">
 					<textarea class="form-control" name="text" placeholder="댓글을 입력하세요" rows=4 cols=50></textarea>
 					</div>
 				</div>
 				<div class="form-group">
-					<div class="col-xs-12">
-					<input class="form-control btn-default" type="submit" value="OK">
+					<div class="col-12">
+					<input class="form-control btn-outline-secondary" type="submit" value="OK">
 					</div>
 				</div>
 			</form>

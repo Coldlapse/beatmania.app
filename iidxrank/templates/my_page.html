@@ -1,110 +1,121 @@
 {% extends "common.html" %}
-
-{% block custom_head %}
-{# ... (스타일은 그대로 유지) ... #}
-<style>
-    /* ... 이전 답변의 스타일 코드는 여기에 그대로 유지됩니다 ... */
-    .nav-tabs { margin-top: 20px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #dee2e6; }
-    .nav-tabs a { display: inline-block; padding: 10px 15px; margin-right: 5px; text-decoration: none; color: #007bff; border: 1px solid transparent; border-radius: 0.25rem 0.25rem 0 0; }
-    .nav-tabs a.active { font-weight: bold; color: #495057; background-color: #fff; border-color: #dee2e6 #dee2e6 #fff; border-bottom: 2px solid #007bff; }
-    .nav-tabs a:hover { background-color: #f8f9fa; border-color: #e9ecef; }
-    .content-section { padding: 15px; }
-    .pagination { margin-top: 20px; text-align: center; }
-    .pagination a, .pagination .current { display: inline-block; padding: 5px 10px; margin: 0 2px; border: 1px solid #ddd; text-decoration: none; color: #007bff; }
-    .pagination .current { font-weight: bold; background-color: #007bff; color: white; border-color: #007bff; }
-    .pagination .disabled { color: #ccc; pointer-events: none; border-color: #eee; }
-</style>
-{% endblock %}
+{% load i18n %}
+{% comment %}
+  이전 버전은 스타일을 {% templatetag openblock %} block custom_head {% templatetag closeblock %} 에 넣었는데
+  부모(common.html)에 그런 블록이 없어서 한 번도 적용된 적이 없다.
+  이제 Bootstrap 5 컴포넌트와 theme.css 토큰을 쓴다.
+{% endcomment %}
+{% block subtitle %} - 일일 타건 기록{% endblock %}
 
 {% block body %}
-  {% include "top.html" %}
-  <div id="container">
-    <h2>일일 타건 기록 페이지</h2>
+{% include "top.html" %}
 
-    <hr>
+<div id="container">
+  <h1 class="bm-page-title">{% trans '일일 타건 기록' %}</h1>
 
-    <h3>API 연동 토큰</h3>
-    <p>
-        IIDXwidget 앱과 연동하기 위한 개인 API 토큰입니다. (비밀번호처럼 안전하게 보관하세요!)
-        <br>
-        {# "IIDXwidget 받기" 링크를 굵게 처리합니다. #}
-        <strong><a href="https://github.com/Coldlapse/IIDXwidget/releases/latest" target="_blank">IIDXwidget 받기</a></strong>
-    </p>
-    <input type="text" value="{{ token }}" readonly style="width: 400px;">
-    
-    {# 토큰 텍스트 박스 밑에 가로줄을 추가합니다. #}
-    <hr style="margin-top: 20px; margin-bottom: 20px;">
-    
-    <h4>적용 방법</h4>
-    {# li 태그를 제거하고 번호 텍스트로 변경합니다. #}
-    <p>1. IIDXwidget의 설정에 위 토큰을 입력하고 저장하세요.</p>
-    <p>2. 위젯의 메뉴에서 "타건 기록 서버로 전송" 버튼을 누르시면 타건 기록이 서버로 전송되고 앱 화면의 타건 기록은 0으로 초기화됩니다. (OBS의 타건 기록은 그대로 남아있습니다.)</p>
+  <div class="card bm-panel mb-4">
+    <div class="card-body">
+      <h2 class="bm-panel-title">
+        <i class="bi bi-key me-2" aria-hidden="true"></i>{% trans 'API 연동 토큰' %}</h2>
+      <p class="text-body-secondary mb-3">
+        IIDXwidget 앱과 연동하기 위한 개인 토큰입니다.
+        <b>비밀번호처럼 취급해 주세요.</b><br>
+        <a href="https://github.com/Coldlapse/IIDXwidget/releases/latest"
+           target="_blank" rel="noopener">
+          IIDXwidget 받기 <i class="bi bi-box-arrow-up-right small" aria-hidden="true"></i></a>
+      </p>
 
-    <hr>
-    
-    <h3>타건 기록</h3>
+      <div class="input-group">
+        <input type="text" class="form-control font-monospace" id="api-token"
+               value="{{ token }}" readonly aria-label="API 토큰">
+        <button class="btn btn-outline-secondary" type="button" id="copy-token">
+          <i class="bi bi-clipboard me-1" aria-hidden="true"></i>{% trans '복사' %}</button>
+      </div>
 
-    {# 탭 방식 네비게이션 #}
-    <div class="nav-tabs">
-        <a href="?tab=today" class="{% if request.GET.tab != 'history' %}active{% endif %}">오늘</a>
-        <a href="?tab=history" class="{% if request.GET.tab == 'history' %}active{% endif %}">지난 기록</a>
+      <ol class="bm-steps mt-3">
+        <li>IIDXwidget 설정에 위 토큰을 입력하고 저장합니다.</li>
+        <li>위젯 메뉴의 <b>“타건 기록 서버로 전송”</b>을 누르면 기록이 전송되고
+          앱 화면의 타건 수는 0으로 초기화됩니다.
+          <span class="text-body-secondary">(OBS의 타건 기록은 그대로 유지됩니다.)</span></li>
+      </ol>
     </div>
-
-    {# 탭 선택에 따라 보여줄 콘텐츠 #}
-    <div class="content-section">
-        {% if request.GET.tab == 'history' %}
-            {# 지난 기록 탭 #}
-            <h4>지난 기록</h4>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>날짜</th>
-                        <th>타건 수</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for log in page_obj %}
-                        <tr>
-                            <td>{{ log.date|date:"Y년 m월 d일" }}</td>
-                            <td>{{ log.count }}타</td>
-                        </tr>
-                    {% empty %}
-                        <tr>
-                            <td colspan="2" style="text-align: center;">과거 기록이 없습니다.</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-
-            {# 페이징 네비게이션 UI #}
-            <div class="pagination">
-                {% if page_obj.has_previous %}
-                    <a href="?tab=history&page=1">&laquo; 처음</a>
-                    <a href="?tab=history&page={{ page_obj.previous_page_number }}">이전</a>
-                {% else %}
-                    <span class="disabled">&laquo; 처음</span>
-                    <span class="disabled">이전</span>
-                {% endif %}
-
-                <span class="current">
-                    {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
-                </span>
-
-                {% if page_obj.has_next %}
-                    <a href="?tab=history&page={{ page_obj.next_page_number }}">다음</a>
-                    <a href="?tab=history&page={{ page_obj.paginator.num_pages }}">마지막 &raquo;</a>
-                {% else %}
-                    <span class="disabled">다음</span>
-                    <span class="disabled">마지막 &raquo;</span>
-                {% endif %}
-            </div>
-            
-        {% else %}
-            {# 오늘 탭 (기본) #}
-            <h4>오늘의 타건 수</h4>
-            <p style="font-size: 1.5em;"><strong>{{ today_count }}</strong></p>
-        {% endif %}
-    </div>
-
   </div>
+
+  <ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link {% if request.GET.tab != 'history' %}active{% endif %}"
+         href="?tab=today">{% trans '오늘' %}</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if request.GET.tab == 'history' %}active{% endif %}"
+         href="?tab=history">{% trans '지난 기록' %}</a>
+    </li>
+  </ul>
+
+  <div class="card bm-panel bm-panel-flush-top">
+    <div class="card-body">
+    {% if request.GET.tab == 'history' %}
+      <div class="table-scroll">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr><th scope="col">{% trans '날짜' %}</th><th scope="col" class="text-end">{% trans '타건 수' %}</th></tr>
+          </thead>
+          <tbody>
+            {% for log in page_obj %}
+            <tr>
+              <td>{{ log.date|date:"Y년 m월 d일" }}</td>
+              <td class="text-end font-monospace">{{ log.count }}타</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="2" class="text-center text-body-secondary py-4">
+              과거 기록이 없습니다.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      {% if page_obj.paginator.num_pages > 1 %}
+      <nav class="mt-3" aria-label="기록 페이지">
+        <ul class="pagination pagination-sm justify-content-center mb-0">
+          <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+            <a class="page-link" href="?tab=history&page=1">&laquo;</a></li>
+          <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+            <a class="page-link" href="?tab=history&page={{ page_obj.previous_page_number }}">이전</a></li>
+          <li class="page-item active"><span class="page-link">
+            {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span></li>
+          <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+            <a class="page-link" href="?tab=history&page={{ page_obj.next_page_number }}">다음</a></li>
+          <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+            <a class="page-link" href="?tab=history&page={{ page_obj.paginator.num_pages }}">&raquo;</a></li>
+        </ul>
+      </nav>
+      {% endif %}
+
+    {% else %}
+      <div class="bm-today">
+        <div class="bm-today-label">{% trans '오늘의 타건 수' %}</div>
+        <div class="bm-today-count">{{ today_count }}</div>
+      </div>
+    {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('copy-token').addEventListener('click', function () {
+    var input = document.getElementById('api-token');
+    var btn = this;
+    var done = function () {
+      btn.innerHTML = '<i class="bi bi-check-lg me-1"></i>복사됨';
+      setTimeout(function () {
+        btn.innerHTML = '<i class="bi bi-clipboard me-1"></i>복사';
+      }, 1800);
+    };
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(input.value).then(done);
+    } else {
+      input.select(); document.execCommand('copy'); done();
+    }
+  });
+</script>
 {% endblock %}

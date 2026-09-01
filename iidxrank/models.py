@@ -9,7 +9,21 @@ from django.utils.timezone import now
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericRelation
 from hitcount.models import HitCount
+import os
 import secrets # 파이썬 내장 라이브러리
+import uuid
+
+
+def avatar_upload_to(instance, filename):
+    """업로드 파일명을 그대로 쓰지 않는다.
+
+    사용자가 준 이름에는 경로 조작(../)·스크립트 확장자·다른 사람의 이름이
+    들어올 수 있다. 확장자만 화이트리스트에서 고르고 이름은 새로 만든다.
+    """
+    ext = os.path.splitext(filename)[1].lower()
+    if ext not in ('.jpg', '.jpeg', '.png', '.gif', '.webp'):
+        ext = '.png'
+    return 'avatar/%s%s' % (uuid.uuid4().hex, ext)
 
 # 1. API 인증을 위한 커스텀 토큰 모델
 class ApiToken(models.Model):
@@ -99,6 +113,9 @@ class Player(models.Model):
 
     private = models.BooleanField(default=False)
 
+    # 프로필 사진. 비어 있으면 기본 이미지를 쓴다.
+    avatar = models.ImageField(upload_to=avatar_upload_to, null=True, blank=True)
+
     splevel = models.FloatField(default=0)  # need to calculate
     dplevel = models.FloatField(default=0)  # need to calculate
 
@@ -114,6 +131,15 @@ class Player(models.Model):
         return ((now() - self.time).total_seconds() / 60 / 60 / 24) >= 1
     def get_playrecord_count(self):
         return self.playrecord_set.count()
+
+    def avatar_url(self):
+        """템플릿에서 쓸 아바타 주소. 없으면 기본 이미지."""
+        if self.avatar:
+            try:
+                return self.avatar.url
+            except ValueError:
+                pass
+        return settings.STATIC_URL + 'qpro/infinitas.png'
 
 class PlayRecord(models.Model):
     # MUST use db_index for performance

@@ -1,0 +1,170 @@
+/* ===========================================================================
+ * theme.css — 디자인 토큰 단일 출처
+ *
+ * 이 파일이 사이트의 모든 색을 정의한다. 다른 CSS 는 var() 로만 참조한다.
+ * 하드코딩된 색을 다른 파일에 다시 넣지 마라 — 다크 모드가 그만큼 깨진다.
+ *
+ * 테마 전환은 <html data-bs-theme="dark|light"> 하나로 한다.
+ * Bootstrap 5.3 이 같은 속성을 보므로 BS 컴포넌트와 자동으로 맞물린다.
+ * 값을 넣는 주체는 static/js/theme.js 하나뿐이다.
+ *
+ * 색 톤은 기존 사이트를 그대로 유지한다:
+ *   라이트  nav #a0e2fc / header #e0f2ff→#a0e2fc→#1fbfff / body #ffffff
+ *   다크    nav #1e293b / header #0f172a→#1e293b→#3b82f6 / body #0f172a
+ * =========================================================================== */
+
+/* --- 라이트 (기본값) ---------------------------------------------------- */
+:root,
+[data-bs-theme="light"] {
+  /* 면 */
+  --bm-bg:              #ffffff;
+  --bm-surface:         #ffffff;   /* 카드·패널·모달 */
+  --bm-surface-2:       #f6f8fa;   /* 한 단계 들어간 면 */
+  --bm-surface-3:       #eef1f4;   /* 더 들어간 면 (테이블 줄무늬 등) */
+  --bm-overlay:         rgba(0, 0, 0, 0.5);
+
+  /* 글자 */
+  --bm-text:            #212529;
+  --bm-text-muted:      #5c6670;
+  --bm-text-subtle:     #868e96;
+  --bm-text-faint:      #adb5bd;
+  --bm-text-on-accent:  #ffffff;
+
+  /* 선 */
+  --bm-border:          #dee2e6;
+  --bm-border-strong:   #adb5bd;
+
+  /* 브랜드 — 사이트 정체성. 톤 유지 */
+  --bm-accent:          #0d6efd;
+  --bm-accent-hover:    #0b5ed7;
+  --bm-accent-soft:     rgba(13, 110, 253, 0.10);
+
+  --bm-nav-bg:          #a0e2fc;
+  --bm-nav-link:        #495057;
+  --bm-nav-link-hover:  #000000;
+
+  --bm-header-bg:       linear-gradient(135deg, #e0f2ff 0%, #a0e2fc 50%, #1fbfff 100%);
+  --bm-header-text:     #212529;
+
+  --bm-pill-bg:         rgba(0, 0, 0, 0.05);
+  --bm-pill-color:      #495057;
+  --bm-pill-hover-bg:   rgba(13, 110, 253, 0.12);
+  --bm-pill-active-bg:  #0d6efd;
+  --bm-pill-rail-bg:    rgba(0, 0, 0, 0.03);
+
+  /* 상태 */
+  --bm-danger:          #c9364a;
+  --bm-shadow:          0 .5rem 1rem rgba(0, 0, 0, .12);
+  --bm-shadow-sm:       0 .125rem .25rem rgba(0, 0, 0, .075);
+
+  /* 서열표 편집 위젯 (반투명 오버레이라 항상 어둡다) */
+  --bm-widget-bg:       rgba(17, 24, 39, 0.95);
+  --bm-widget-text:     #f8f9fa;
+  --bm-widget-border:   #4b5563;
+  --bm-widget-head-bg:  #374151;
+
+  /* 서열표 셀 배경 (난이도별 옅은 틴트) */
+  --bm-tint-a:          #fdeeee;
+  --bm-tint-h:          #fdfbe8;
+  --bm-tint-n:          #eef1fd;
+
+  color-scheme: light;
+}
+
+/* --- 다크 --------------------------------------------------------------- */
+[data-bs-theme="dark"] {
+  --bm-bg:              #0f172a;
+  --bm-surface:         #1e293b;
+  --bm-surface-2:       #24334a;
+  --bm-surface-3:       #2c3d57;
+  --bm-overlay:         rgba(0, 0, 0, 0.65);
+
+  --bm-text:            #e2e8f0;
+  --bm-text-muted:      #a8b4c4;
+  --bm-text-subtle:     #94a3b8;
+  --bm-text-faint:      #64748b;
+  --bm-text-on-accent:  #ffffff;
+
+  --bm-border:          #334155;
+  --bm-border-strong:   #475569;
+
+  --bm-accent:          #3b82f6;
+  --bm-accent-hover:    #60a5fa;
+  --bm-accent-soft:     rgba(59, 130, 246, 0.18);
+
+  --bm-nav-bg:          #1e293b;
+  --bm-nav-link:        #cbd5e1;
+  --bm-nav-link-hover:  #ffffff;
+
+  --bm-header-bg:       linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #3b82f6 100%);
+  --bm-header-text:     #ffffff;
+
+  --bm-pill-bg:         rgba(255, 255, 255, 0.08);
+  --bm-pill-color:      #e2e8f0;
+  --bm-pill-hover-bg:   rgba(59, 130, 246, 0.32);
+  --bm-pill-active-bg:  #3b82f6;
+  --bm-pill-rail-bg:    rgba(15, 23, 42, 0.5);
+
+  --bm-danger:          #f87171;
+  --bm-shadow:          0 .5rem 1rem rgba(0, 0, 0, .45);
+  --bm-shadow-sm:       0 .125rem .25rem rgba(0, 0, 0, .3);
+
+  --bm-widget-bg:       rgba(2, 6, 23, 0.95);
+  --bm-widget-text:     #f1f5f9;
+  --bm-widget-border:   #475569;
+  --bm-widget-head-bg:  #1e293b;
+
+  --bm-tint-a:          #3a2226;
+  --bm-tint-h:          #35331f;
+  --bm-tint-n:          #1f2a44;
+
+  color-scheme: dark;
+}
+
+/* ---------------------------------------------------------------------------
+ * 게임 고유색 — 테마와 무관하게 고정한다.
+ * 클리어 램프와 단위 색은 IIDX 의 약속이라, 다크 모드라고 바꾸면 오독을 부른다.
+ * ------------------------------------------------------------------------- */
+:root {
+  --bm-clear-failed:    #999999;
+  --bm-clear-assist:    #9977bb;
+  --bm-clear-easy:      #669933;
+  --bm-clear-normal:    #336699;
+  --bm-clear-hard:      #cc6666;
+  --bm-clear-exhard:    #cccc66;
+  --bm-clear-fc:        #00cccc;
+
+  --bm-diff-a:          #bb3333;   /* ANOTHER */
+  --bm-diff-h:          #bbbb33;   /* HYPER */
+  --bm-diff-n:          #3366bb;   /* NORMAL */
+
+  --bm-dan-kyu:         #66cc00;
+  --bm-dan-dan:         #0066cc;
+  --bm-dan-high:        #cc0000;
+  --bm-dan-chuden:      #ccccbb;
+  --bm-dan-kaiden:      #cccc00;
+}
+
+/* 다크 모드에서 난이도 글자색은 배경 대비가 모자라 밝은 쪽으로 올린다.
+   색상(hue)은 유지해 식별성을 지킨다. */
+[data-bs-theme="dark"] {
+  --bm-diff-a:          #ff9b9b;
+  --bm-diff-h:          #f0e68c;
+  --bm-diff-n:          #8fb6ff;
+}
+
+/* ---------------------------------------------------------------------------
+ * 테마 전환 시 색이 튀지 않게 한다.
+ * transition 을 * 에 걸면 캔버스 재렌더와 겹쳐 버벅이므로 면과 글자에만 준다.
+ * prefers-reduced-motion 은 존중한다.
+ * ------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  body,
+  .card,
+  .bm-panel,
+  .navbar,
+  table tbody tr {
+    transition: background-color .15s ease-out, color .15s ease-out,
+                border-color .15s ease-out;
+  }
+}

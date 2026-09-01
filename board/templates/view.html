@@ -1,4 +1,4 @@
-{% extends "index.html" %}
+{% extends "common.html" %}
 {% block subtitle %} - board{% endblock %}
 {% block head %}
 {% load static %}
@@ -48,7 +48,7 @@ function doDelete() {
     {% block navigation %}
     <div class="clear navigation">
       <div class="left" style="float:left;">
-        <a class="btn btn-default" href="/board/{{ board.title }}/{{ page_num }}/">목록</a>
+        <a class="btn btn-outline-secondary" href="/board/{{ board.title }}/{{ page_num }}/">목록</a>
       </div>
       <div class="right">
         <form class="right" action="/board/delete/{{ post.id }}/" method="post" id="del">
@@ -56,10 +56,10 @@ function doDelete() {
           <input type="hidden" name="mode" value="delete">
           <input type="hidden" name="id" value="{{ post.id }}">
           <input type="hidden" name="password" id="password" value="">
-          <button type="button" class="btn btn-default"
+          <button type="button" class="btn btn-outline-secondary"
             onclick="doDelete(); return false;">삭제</button>
         </form>
-        <a class="btn btn-default" href="/board/modify/{{ post.id }}/">수정</a>
+        <a class="btn btn-outline-secondary" href="/board/modify/{{ post.id }}/">수정</a>
       </div>
     </div>
     {% endblock %}

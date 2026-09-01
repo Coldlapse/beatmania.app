@@ -22,11 +22,11 @@ function childComment(id) {
         {{ form.parent }}
 
 				<div class="writer">
-					<label for="writer" class="control-label">name</label>
+					<label for="writer" class="form-label">name</label>
           {{ form.writer }}
 				</div>
 				<div class="password">
-					<label for="password" class="control-label">password (비우면 ip로 인증됩니다)</label>
+					<label for="password" class="form-label">password (비우면 ip로 인증됩니다)</label>
           {{ form.password }}
 				</div>
         <div class="clear"></div>
@@ -34,7 +34,7 @@ function childComment(id) {
           {{ form.text }}
 				</div>
 				<div class="submit">
-					<input class="form-control btn-default" type="submit" value="OK">
+					<input class="form-control btn-outline-secondary" type="submit" value="OK">
 				</div>
         <div class="recaptcha">
           {{ form.captcha }}
@@ -62,8 +62,8 @@ function childComment(id) {
               <input id="id" type="hidden" name="id" value="{{ comment.id }}">
               <div class="input-group">
                   <input id="password" type="password" name="password" value="" class="form-control">
-                  <button type="submit" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span></button>
-                  <button type="button" class="btn btn-default btn-xs" onclick="childComment({{ comment.id }}); return false;"><span class="glyphicon glyphicon glyphicon-registration-mark"></span></button>
+                  <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" onclick="childComment({{ comment.id }}); return false;"><i class="bi bi-reply" aria-hidden="true"></i></button>
               </div>
             </form>
           </div>
@@ -89,7 +89,7 @@ function childComment(id) {
               <input id="id" type="hidden" name="id" value="{{ comment.id }}">
               <div class="input-group">
                   <input id="password" type="password" name="password" value="" class="form-control">
-                  <button type="submit" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span></button>
+                  <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
               </div>
             </form>
           </div>
