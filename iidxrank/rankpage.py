@@ -368,8 +368,21 @@ def generate_pr(songs, player=None):
             process_prdata(music)
             musicdata.append(music)
     else:
+        # 곡마다 PlayRecord 를 따로 조회하면 서열표 한 장에 550 쿼리가 나간다
+        # (SP12H 실측: 550회 / 516ms). 한 번에 읽어서 곡 id 로 찾아 쓴다.
+        #
+        # pk 오름차순으로 도는 이유: 예전 코드의 .first() 는 정렬이 없는
+        # 쿼리셋이라 Django 가 pk 순으로 정렬해서 첫 행을 준다. (player, song)
+        # 에 유니크 제약이 없어 중복 행이 있을 수 있으므로, 같은 것을 고르도록
+        # setdefault 로 가장 낮은 pk 를 남긴다.
+        pr_by_song = {}
+        for _pr in (models.PlayRecord.objects
+                    .filter(player=player, song_id__in=[s.pk for s in songs])
+                    .order_by('pk')):
+            pr_by_song.setdefault(_pr.song_id, _pr)
+
         for song in songs:
-            pr = models.PlayRecord.objects.filter(player=player,song=song).first()
+            pr = pr_by_song.get(song.pk)
 
             clear = 0
             score = 0
@@ -462,9 +475,12 @@ def categorize_musicdata(musicdata, ranktable, remove_empty_category=True):
         # (all songs in that category will pushed into 'others' category)
         if (category.categoryname.startswith('delete')):
             continue
+        # item.song.id 는 Song 을 통째로 읽어 온다 — 항목마다 한 번씩,
+        # 서열표 한 장에 550 쿼리(실측 440ms). id 만 쓸 것이므로 FK 컬럼을
+        # 그대로 읽는다. song_id 는 RankItem 행에 이미 들어 있어 조회가 없다.
         for item in category.rankitem_set.all():
-            item_to_category[item.song.id] = category.id
-            item_itemid[item.song.id] = item.id
+            item_to_category[item.song_id] = category.id
+            item_itemid[item.song_id] = item.id
         sortindex = category.get_sortindex()
         if (not sortindex):
             sortindex = 0
