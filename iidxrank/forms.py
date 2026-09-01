@@ -5,6 +5,8 @@ from django.utils.translation import gettext_lazy as _
 from django.core.validators import RegexValidator
 from captcha.fields import ReCaptchaField
 from django.utils.safestring import mark_safe
+
+from iidxrank import reserved
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from iidxrank import models
@@ -43,7 +45,7 @@ class LoginForm(forms.Form):
 class JoinForm(forms.Form):
     id = forms.CharField(
             label=_('아이디'), min_length=4, validators=[alphanumeric],
-            help_text=_('영문·숫자·밑줄(_)만, 4자 이상. 가입 후에는 바꿀 수 없습니다.'),
+            help_text=_('영문·숫자·밑줄(_)만, 4자 이상. 가입 후에는 바꿀 수 없습니다. 사이트가 쓰는 이름(admin, status 등)은 쓸 수 없습니다.'),
             widget=forms.TextInput(attrs={
                 'autocomplete': 'username', 'autofocus': True,
                 'placeholder': _('영문/숫자 4자 이상'),
@@ -72,6 +74,18 @@ class JoinForm(forms.Form):
         error_messages={'required': _('개인정보처리방침에 동의해야 가입할 수 있습니다.')})
     # 선언 순서가 곧 렌더 순서다. 캡차는 마지막에 와야 자연스럽다.
     captcha = ReCaptchaField(label='')
+
+    def clean_id(self):
+        # 아이디는 그대로 공개 주소(/u/<아이디>/)가 된다. 사이트가 쓰는 이름을
+        # 가져가면 그 사람의 프로필이 사이트 페이지에 가려지거나, 반대로
+        # 사이트 페이지가 개인 프로필로 오해된다. 사칭에 쓰이기 쉬운 이름도
+        # 같이 막는다. 목록은 iidxrank/reserved.py 에 있다.
+        name = self.cleaned_data['id']
+        if reserved.is_blocked_username(name):
+            raise forms.ValidationError(
+                _('"%(name)s" 은(는) 사용할 수 없는 아이디입니다.'),
+                params={'name': name})
+        return name
 
     def clean(self):
         cleaned_data = super(JoinForm, self).clean()
