@@ -1,0 +1,28 @@
+{% extends "user/_authbase.html" %}
+{% load django_bootstrap5 i18n static %}
+{% block page_title %}{% trans '이메일 변경' %}{% endblock %}
+{% block auth_title %}{% trans '이메일 변경' %}{% endblock %}
+{% block auth_lead %}
+<p class="bm-auth-lead">{% blocktrans %}새 이메일을 인증해야 바뀝니다. 지금 주소는 인증하지 않아도 됩니다.{% endblocktrans %}</p>
+{% endblock %}
+{% block auth_body %}
+<p class="small text-body-secondary mb-3">
+  {% trans '지금 등록된 이메일' %}: <code>{{ current_email }}</code>
+</p>
+{% if form.errors %}
+  <div class="alert alert-danger" role="alert">
+    <i class="bi bi-exclamation-circle-fill me-1" aria-hidden="true"></i>
+    {% trans '입력한 내용을 다시 확인해 주세요.' %}
+  </div>
+{% endif %}
+<form method="POST" action="./" novalidate>
+  {% csrf_token %}
+  {% bootstrap_field form.email layout='vertical' %}
+  {% include "user/_verify_email.html" with purpose=purpose email_field='email' %}
+  <button type="submit" class="btn btn-primary w-100 mt-3">{% trans '이메일 바꾸기' %}</button>
+</form>
+<script src="{% static 'js/verify-email.js' %}?v=20260902a"></script>
+{% endblock %}
+{% block auth_after %}
+<p class="bm-auth-foot"><a href="/account/">{% trans '설정으로 돌아가기' %}</a></p>
+{% endblock %}

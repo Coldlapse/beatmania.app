@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.core.paginator import Paginator
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.models import User
 from django.db.models import F
 from iidxrank import models
@@ -261,7 +261,7 @@ def join(request):
     if (request.user.is_authenticated):
         return redirect('home')
     if (request.method == "POST"):
-        form = forms.JoinForm(request.POST)
+        form = forms.JoinForm(request, request.POST)
         if (form.is_valid()):
             user = User.objects.create_user(
                     username=form.data['id'],
@@ -275,7 +275,7 @@ def join(request):
             login_django(request, user)
             return redirect('home')
     else:
-        form = forms.JoinForm()
+        form = forms.JoinForm(request)
     return render(request, 'user/join.html', {'form': form})
 
 # /!/logout/
@@ -307,6 +307,12 @@ def account(request):
         return redirect('home')
     user = request.user
     player = rp.get_player_from_request(request)
+    # Player 가 없는 계정이 있다. 가입 흐름은 rp.newplayer 로 만들어 주지만
+    # createsuperuser 나 admin 으로 만든 계정에는 없다. 가드가 없어서 이
+    # 화면이 통째로 500 이었다(AttributeError: 'NoneType' ... 'iidxid').
+    # 여기서 만들어 준다 - 가입 때와 같은 함수라 결과도 같다.
+    if (player is None):
+        player = rp.newplayer(user)
     if (request.method == "POST"):
         form = forms.AccountForm(request.POST)
         avatar_form = forms.AvatarForm(request.POST, request.FILES)
@@ -356,14 +362,22 @@ def set_password(request):
     if not request.user.is_authenticated:
         return redirect('home')
     if (request.method == "POST"):
-        form = forms.SetPasswordForm(request.POST)
+        # 첫 인자가 user 다. 폼이 현재 비밀번호를 대조해야 하기 때문이다.
+        form = forms.SetPasswordForm(request.user, request.POST)
         if (form.is_valid()):
             user = request.user
-            user.set_password(form.data['new_password'])
+            # form.data(생 POST) 가 아니라 cleaned_data 를 쓴다.
+            user.set_password(form.cleaned_data['new_password'])
             user.save()
-            return redirect('home')
+            # 비밀번호가 바뀌면 세션 인증 해시가 달라져 그 계정의 모든 세션이
+            # 끊긴다. 그것이 옳다 — 탈취된 세션도 같이 끊겨야 비밀번호를 바꾼
+            # 의미가 있다. 다만 지금 바꾸고 있는 본인까지 튕기면 "바꿨는데 왜
+            # 로그아웃되지" 가 된다(실제로 그랬다). 이 한 줄이 현재 세션만
+            # 새 해시로 갱신한다.
+            update_session_auth_hash(request, user)
+            return redirect('account')
     else:
-        form = forms.SetPasswordForm()
+        form = forms.SetPasswordForm(request.user)
     return render(request, 'user/setpassword.html', {'form':form})
 
 # /!/update/
@@ -521,23 +535,74 @@ def update_typing_count_api(request):
 # --- 대기 현황 API ---
 @csrf_exempt
 def update_machine_status_api(request):
-    """Agent(PC)로부터 데이터를 받는 POST API"""
+    """오프라인 기계의 대기 인원을 에이전트(현장 PC)가 올리는 API.
+
+    인증: Authorization: Token <키>. 그리고 그 토큰의 주인이 superuser 여야 한다.
+
+    왜 토큰만으로는 부족한가 — 이 사이트의 API 토큰은 타건 기록을 올리려고
+    사용자 누구나 발급받는다(현재 55명). 그 토큰으로 남의 오락실 대기열까지
+    바꿀 수 있으면 안 된다.
+
+    왜 is_staff 가 아니라 is_superuser 인가 — staff 는 서열표를 편집하는
+    사람들이라 지금 세 명이다. 대기열은 서버를 직접 굴리는 사람의 몫이고
+    그건 superuser 한 명이다. 아이디를 코드에 박지 않은 이유는, 계정 이름이
+    바뀌거나 넘어갈 때 코드를 고쳐야 하는 상황을 만들지 않기 위해서다.
+
+    예전에는 인증이 아예 없어서 주소만 알면 누구나 아무 숫자를 넣을 수 있었다.
+    """
     if request.method != 'POST':
-        return JsonResponse({'error': 'POST method required'}, status=405)
+        return JsonResponse({'error': 'POST method is required.'}, status=405)
+
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Token '):
+        return JsonResponse(
+            {'error': 'Authorization header is missing or invalid.'}, status=401)
+
+    token_key = auth_header.split(' ', 1)[1].strip()
+    try:
+        api_token = models.ApiToken.objects.select_related('user').get(key=token_key)
+    except models.ApiToken.DoesNotExist:
+        return JsonResponse({'error': 'Invalid token.'}, status=401)
+
+    user = api_token.user
+    # 유효한 토큰이지만 권한이 없는 경우다. 401(누구인지 모르겠다)이 아니라
+    # 403(누구인지는 알겠는데 안 된다)이 맞다.
+    if not (user.is_active and user.is_superuser):
+        return JsonResponse(
+            {'error': 'This token is not allowed to update machine status.'},
+            status=403)
+
+    # 예전에는 이 아래가 통째로 bare except 로 감싸여 있었다. 그러면
+    # KeyboardInterrupt 까지 삼키고, 무엇이 잘못됐는지도 알려 주지 못한다.
     try:
         data = json.loads(request.body)
-        m_id = data.get('machine_id')
-        count = data.get('waiting_count')
-        
-        if m_id is not None and count is not None:
-            # DB에 상태 업데이트 (모델은 미리 정의되어 있다고 가정)
-            status, created = models.MachineStatus.objects.update_or_create(
-                machine_id=m_id,
-                defaults={'waiting_count': count}
-            )
-            return JsonResponse({"status": "success"})
-    except:
-        return JsonResponse({"status": "error"}, status=400)
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return JsonResponse({'error': 'Invalid JSON format.'}, status=400)
+    if not isinstance(data, dict):
+        return JsonResponse({'error': 'Body must be a JSON object.'}, status=400)
+
+    machine_id = data.get('machine_id')
+    count = data.get('waiting_count')
+
+    if not isinstance(machine_id, str) or not machine_id.strip():
+        return JsonResponse(
+            {'error': "'machine_id' must be a non-empty string."}, status=400)
+    machine_id = machine_id.strip()
+    # 모델의 max_length 와 맞춘다. 넘으면 DB 가 자르거나 터진다.
+    if len(machine_id) > 50:
+        return JsonResponse(
+            {'error': "'machine_id' must be 50 characters or fewer."}, status=400)
+
+    # isinstance(True, int) 가 True 라 bool 을 따로 걸러야 한다.
+    if isinstance(count, bool) or not isinstance(count, int) or count < 0:
+        return JsonResponse(
+            {'error': "'waiting_count' must be a non-negative integer."}, status=400)
+
+    models.MachineStatus.objects.update_or_create(
+        machine_id=machine_id, defaults={'waiting_count': count})
+
+    # 예전에는 조건이 안 맞으면 함수가 아무것도 반환하지 않고 끝나 500 이 났다.
+    return JsonResponse({'status': 'success'}, status=200)
 
 def get_machine_status_json(request, machine_id):
     try:

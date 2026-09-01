@@ -1,0 +1,60 @@
+{% extends "user/_authbase.html" %}
+{% load django_bootstrap5 i18n static %}
+{% block page_title %}{% trans '계정 인증' %}{% endblock %}
+{% block auth_title %}{% trans '계정 인증' %}{% endblock %}
+{% block auth_lead %}
+<p class="bm-auth-lead">
+  {% blocktrans %}보안 규정이 바뀌어 계정마다 한 번씩 확인이 필요합니다. 이 화면은 한 번만 나옵니다.{% endblocktrans %}
+</p>
+{% endblock %}
+{% block auth_body %}
+
+<div class="alert alert-info" role="alert">
+  <b>{% trans '무엇을 하나요' %}</b>
+  <ul class="mb-0 mt-1 ps-3">
+    <li>{% blocktrans %}이메일 인증 — 아이디·비밀번호를 잊었을 때 되찾는 유일한 수단입니다.{% endblocktrans %}</li>
+    <li>{% blocktrans %}비밀번호를 규정에 맞게 다시 정하기 — <b>꼭 바꾸실 필요는 없습니다.</b> 쓰시던 비밀번호가 규정(8자 이상)에 맞으면 그대로 입력하셔도 됩니다.{% endblocktrans %}</li>
+  </ul>
+</div>
+
+{% if form.errors %}
+  <div class="alert alert-danger" role="alert">
+    <i class="bi bi-exclamation-circle-fill me-1" aria-hidden="true"></i>
+    {% trans '입력한 내용을 다시 확인해 주세요.' %}
+    <div class="small mt-1">{% trans '비밀번호는 보안을 위해 다시 입력하셔야 합니다.' %}</div>
+  </div>
+{% endif %}
+
+<form method="POST" action="./" novalidate>
+  {% csrf_token %}
+
+  {% if current_email %}
+    <p class="small text-body-secondary mb-1">
+      {% blocktrans %}지금 등록된 이메일{% endblocktrans %}:
+      <code>{{ current_email }}</code>
+    </p>
+    {% if not current_email_usable %}
+      <div class="alert alert-warning py-2 small" role="alert">
+        {% blocktrans %}이 주소는 다른 계정과 겹치거나 형식이 올바르지 않아 그대로 쓸 수 없습니다. 쓰실 수 있는 다른 주소를 넣어 주세요.{% endblocktrans %}
+      </div>
+    {% endif %}
+  {% endif %}
+
+  {% bootstrap_field form.email layout='vertical' %}
+  {% include "user/_verify_email.html" with purpose=purpose email_field='email' %}
+
+  <hr class="my-3">
+
+  {% bootstrap_field form.new_password layout='vertical' %}
+  {% bootstrap_field form.new_password_again layout='vertical' %}
+
+  <button type="submit" class="btn btn-primary w-100 mt-2">{% trans '인증 마치기' %}</button>
+</form>
+<script src="{% static 'js/verify-email.js' %}?v=20260902a"></script>
+{% endblock %}
+{% block auth_after %}
+<p class="bm-auth-foot">
+  {% blocktrans %}지금 하지 않으시면 서열표 열람은 되지만 기록 저장·설정은 쓸 수 없습니다.{% endblocktrans %}
+  <span class="bm-auth-sep">·</span><a href="/logout/">{% trans '로그아웃' %}</a>
+</p>
+{% endblock %}

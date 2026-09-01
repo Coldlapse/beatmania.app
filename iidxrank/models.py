@@ -245,3 +245,78 @@ class HealthCheck(models.Model):
 
     def __str__(self):
         return '%s %s @%s' % (self.target, self.status, self.checked_at)
+
+
+class AccountSecurity(models.Model):
+    """계정의 보안 상태.
+
+    Player 에 얹지 않은 이유: Player.user 가 OneToOne 이 아니라 ForeignKey 라
+    한 사용자에 여러 Player 가 붙을 수 있다. 계정당 하나여야 하는 값을 거기
+    두면 어느 것이 진짜인지 알 수 없다.
+
+    newrulepassed
+        2026-09 에 도입한 규칙(이메일 인증 완료 + 8자 이상 비밀번호)을 지났는지.
+        기존 269명은 0 으로 시작한다. 로그인하면 마이그레이션 화면으로 보내
+        한 번만 통과시킨다.
+
+        이 값이 1 인 계정만 이메일이 유일하다고 보장된다. 그래서 아이디/비밀번호
+        찾기의 기준으로 쓴다 — 다만 기존 사용자가 비밀번호를 잊으면 로그인도
+        찾기도 못 해 영구히 잠기므로, 이메일이 유일하고 형식이 맞는 경우에는
+        0 이어도 찾기를 허용한다(iidxrank/accounts.py).
+    """
+
+    user = models.OneToOneField(
+        User, on_delete=CASCADE, related_name='security')
+    newrulepassed = models.BooleanField(default=False, db_index=True)
+    # 이 계정의 현재 이메일이 인증된 시각. 이메일을 바꾸면 다시 비워진다.
+    email_verified_at = models.DateTimeField(null=True, blank=True)
+    migrated_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return '%s newrulepassed=%s' % (self.user.username, self.newrulepassed)
+
+
+class EmailVerification(models.Model):
+    """이메일로 보낸 인증 코드 한 건.
+
+    코드를 세션이 아니라 DB 에 두는 이유가 둘 있다.
+      - 재발송 간격(5분)을 세션으로 재면 쿠키를 지우는 것만으로 우회된다.
+      - 메일을 다른 기기에서 확인하고 코드를 옮겨 적는 흐름을 막지 않는다.
+
+    반대로 '인증에 성공했다'는 사실은 세션에도 같이 남긴다. 그래야 가입 폼이
+    비밀번호 오류 등으로 다시 그려져도 인증이 풀리지 않는다.
+    """
+
+    SIGNUP = 'signup'
+    CHANGE = 'change'
+    FIND_ID = 'find_id'
+    RESET_PW = 'reset_pw'
+    MIGRATE = 'migrate'
+    PURPOSES = [
+        (SIGNUP, 'signup'), (CHANGE, 'change'), (FIND_ID, 'find_id'),
+        (RESET_PW, 'reset_pw'), (MIGRATE, 'migrate'),
+    ]
+
+    email = models.EmailField(db_index=True)
+    purpose = models.CharField(max_length=16, choices=PURPOSES)
+    # 6자리 숫자. 해시하지 않는다 - 수명이 1시간이고 시도 횟수가 5회로 막혀
+    # 있어, 유출 시 피해보다 디버깅 편의가 크다고 봤다.
+    code = models.CharField(max_length=8)
+
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    last_sent_at = models.DateTimeField()
+    verified_at = models.DateTimeField(null=True, blank=True)
+    attempts = models.IntegerField(default=0)
+    send_count = models.IntegerField(default=1)
+
+    # 어느 브라우저에서 시작했는지. 코드만 알아낸 제3자가 다른 세션에서
+    # 쓰지 못하게 한다.
+    session_key = models.CharField(max_length=40, blank=True, default='')
+
+    class Meta:
+        index_together = [('email', 'purpose')]
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return '%s %s %s' % (self.email, self.purpose,
+                             'verified' if self.verified_at else 'pending')

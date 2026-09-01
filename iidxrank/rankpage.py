@@ -71,7 +71,9 @@ def newplayer(user, create_if_none=True):
         if (models.Player.objects.filter(iidxmeid=pid).count()):
             # maybe previous modeled data exists, link it
             player = models.Player.objects.get(iidxmeid=pid)
-            player.user = request.user
+            # request 는 이 함수에 없다. 예전에는 request.user 라고 적혀 있어서
+            # 이 분기를 타는 순간 NameError 였다.
+            player.user = user
             player.save()
         else:
             player = models.Player.objects.create(

@@ -22,7 +22,6 @@ _DEV_DEFAULTS = {
     # reCAPTCHA 怨듦컻 ?뚯뒪???? ??긽 ?듦낵?섎?濡?媛???쇱쓣 ?ㅽ봽?쇱씤?먯꽌 ?뚮윭 蹂????덈떎.
     'RECAPTCHA_PUBLIC_KEY': '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
     'RECAPTCHA_PRIVATE_KEY': '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe',
-    'IMGTL_KEY': 'dev-unused',
     'DB_PASSWORD': 'devpassword',
 }
 for _k, _v in _DEV_DEFAULTS.items():
@@ -52,3 +51,23 @@ DATABASES = {
 MEDIA_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'media')
 
 SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
+
+# ---------------------------------------------------------------------------
+# 메일 발송은 기본적으로 콘솔로 떨어뜨린다.
+#
+# dev DB 에는 라이브 덤프가 익명화 없이 올라가 있다. 실제 사용자 269명의
+# 이메일이 그대로 들어 있다는 뜻이다. 여기서 SMTP 를 켜 둔 채로 무언가를
+# 잘못 돌리면 그 사람들에게 진짜 메일이 나간다. 되돌릴 수 없는 종류의 사고다.
+#
+# 그래서 .env 에 Gmail 자격증명이 들어 있어도 dev 는 콘솔을 쓴다.
+# 실제 발송을 한 번 시험해야 할 때만 명시적으로 켠다.
+#
+#   set DEV_REAL_EMAIL=1  &&  python manage.py runserver ...
+#
+# 켤 때는 반드시 자기 주소로만 보낸다.
+# ---------------------------------------------------------------------------
+if os.environ.get('DEV_REAL_EMAIL') == '1':
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    print('[dev] 실제 메일 발송이 켜져 있습니다. 자기 주소로만 시험하세요.')
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

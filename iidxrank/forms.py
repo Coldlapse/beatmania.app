@@ -3,6 +3,7 @@ from django import forms
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import RegexValidator
+from django.contrib.auth import password_validation
 from captcha.fields import ReCaptchaField
 from django.utils.functional import lazy
 from django.utils.safestring import mark_safe
@@ -59,13 +60,17 @@ class JoinForm(forms.Form):
                 'data-url-preview': '1'}))
     email = forms.CharField(
             label=_('이메일'),
-            help_text=_('회원가입 외 다른 용도로 사용하지 않습니다.'),
+            help_text=_('계정 인증과 아이디·비밀번호 찾기에만 씁니다. 인증을 끝내야 가입할 수 있습니다.'),
             widget=forms.EmailInput(attrs={
                 'autocomplete': 'email', 'placeholder': _('you@example.com')}))
+    # min_length 를 여기에도 두는 이유: 검증기가 잡기 전에 브라우저와 폼이
+    # 먼저 알려 주는 편이 친절하다. 값은 AUTH_PASSWORD_VALIDATORS 와 맞춘다 —
+    # 어긋나면 "4자 이상" 이라 써 놓고 8자에서 거부하는 화면이 된다.
     password = forms.CharField(
-            label=_('비밀번호'), min_length=4,
+            label=_('비밀번호'), min_length=8,
+            help_text=_('8자 이상. 영문·숫자·기호를 쓸 수 있고 조합 규칙은 없습니다.'),
             widget=forms.PasswordInput(attrs={
-                'autocomplete': 'new-password', 'placeholder': _('4자 이상')}))
+                'autocomplete': 'new-password', 'placeholder': _('8자 이상')}))
     password_again = forms.CharField(
             label=_('비밀번호 확인'),
             widget=forms.PasswordInput(attrs={
@@ -79,7 +84,44 @@ class JoinForm(forms.Form):
             '을 읽었고 이에 동의합니다.')),
         error_messages={'required': _('개인정보처리방침에 동의해야 가입할 수 있습니다.')})
     # 선언 순서가 곧 렌더 순서다. 캡차는 마지막에 와야 자연스럽다.
-    captcha = ReCaptchaField(label='')
+    #
+    # 기본 오류 문구는 "필수 항목입니다." 인데, 캡차는 라벨이 비어 있어서
+    # 무엇이 필수라는 것인지 화면에서 알 수 없었다. 캡차를 안 풀고 가입을
+    # 누르면 그냥 새로고침된 것처럼 보였다.
+    captcha = ReCaptchaField(
+        label='',
+        error_messages={
+            'required': _('로봇이 아님을 확인해 주세요.'),
+            'invalid': _('로봇 확인에 실패했습니다. 다시 시도해 주세요.'),
+        })
+
+    def __init__(self, request=None, *args, **kwargs):
+        # 이메일 인증 결과가 세션에 있으므로 request 가 필요하다. 기본값을
+        # 둔 이유는 이 폼을 request 없이 만들어 쓰는 자리(테스트 등)를
+        # 깨뜨리지 않기 위해서다 - 그때는 인증 확인이 실패한다.
+        self.request = request
+        super(JoinForm, self).__init__(*args, **kwargs)
+
+    def clean_email(self):
+        from iidxrank import accounts
+        email = accounts.normalize(self.cleaned_data['email'])
+        if not accounts.is_email_shaped(email):
+            raise forms.ValidationError(_('이메일 주소 형식이 올바르지 않습니다.'))
+        if accounts.email_taken(email):
+            raise forms.ValidationError(_('이미 다른 계정이 쓰고 있는 이메일입니다.'))
+        done = accounts.verified_email(self.request, 'signup') if self.request else None
+        if done != email:
+            raise forms.ValidationError(
+                _('이메일 인증을 먼저 끝내 주세요. 주소를 바꾸셨다면 다시 인증해야 합니다.'))
+        return email
+
+    def clean_password(self):
+        # settings.AUTH_PASSWORD_VALIDATORS 는 저절로 돌지 않는다. 그것을
+        # 적용해 주는 것은 django.contrib.auth 의 기본 폼들인데 이 폼은
+        # 직접 만든 것이다. 여기서 부르지 않으면 설정이 통째로 무효다.
+        password = self.cleaned_data['password']
+        password_validation.validate_password(password)
+        return password
 
     def clean_id(self):
         # 아이디는 그대로 공개 주소(/u/<아이디>/)가 된다. 사이트가 쓰는 이름을
@@ -94,13 +136,17 @@ class JoinForm(forms.Form):
         return name
 
     def clean(self):
+        # self.data 를 직접 읽으면 필드가 빠진 POST 에 KeyError -> 500 이 난다.
+        # 게다가 그 500 이 아이디 중복 검사보다 먼저 터져 검사 자체를 건너뛴다.
         cleaned_data = super(JoinForm, self).clean()
-        username = self.data['id']
-        user = User.objects.filter(username=username).first()
-        if (user != None):
-            raise forms.ValidationError('%s is already exists' % username)
-        if (self.data['password'] != self.data['password_again']):
-            raise forms.ValidationError('Password does not match!')
+        username = cleaned_data.get('id')
+        if username and User.objects.filter(username=username).exists():
+            self.add_error('id', _('이미 사용 중인 아이디입니다.'))
+        password = cleaned_data.get('password')
+        again = cleaned_data.get('password_again')
+        if password and again and password != again:
+            self.add_error('password_again', _('비밀번호가 서로 다릅니다.'))
+        return cleaned_data
 
 class IIDXIDWidget(forms.MultiWidget):
     """IIDX ID 를 '앞글자 + 네 자리 3칸' 으로 받는다.
@@ -196,19 +242,70 @@ class AccountForm(forms.Form):
 
 
 class SetPasswordForm(forms.Form):
-    new_password = forms.CharField(
-            label=_('새 비밀번호'), min_length=4,
+    """비밀번호 변경.
+
+    현재 비밀번호를 반드시 함께 받는다. 예전에는 새 비밀번호 두 칸만 있었는데,
+    그러면 로그인된 세션을 손에 넣은 사람이 비밀번호를 바꿔 계정을 영구히
+    가져갈 수 있었다(실측함). 세션 탈취는 세션이 만료되면 끝나지만 비밀번호
+    변경은 되돌릴 수 없다 — 현재 비밀번호를 물어 그 상승을 막는다.
+
+    같은 사이트의 탈퇴 폼은 이미 비밀번호를 확인하고 있었다. 계정을 지우는
+    쪽은 막혀 있고 빼앗는 쪽은 열려 있던 셈이다.
+
+    Django 의 PasswordChangeForm 과 같은 호출 방식을 쓴다: 첫 인자가 user 다.
+    """
+
+    old_password = forms.CharField(
+            label=_('현재 비밀번호'),
             widget=forms.PasswordInput(attrs={
-                'autocomplete': 'new-password', 'autofocus': True,
-                'placeholder': _('4자 이상')}))
+                'autocomplete': 'current-password', 'autofocus': True,
+                'placeholder': _('지금 쓰는 비밀번호')}))
+    new_password = forms.CharField(
+            label=_('새 비밀번호'), min_length=8,
+            help_text=_('8자 이상. 영문·숫자·기호를 쓸 수 있고 조합 규칙은 없습니다.'),
+            widget=forms.PasswordInput(attrs={
+                'autocomplete': 'new-password',
+                'placeholder': _('8자 이상')}))
     new_password_again = forms.CharField(
             label=_('새 비밀번호 확인'),
             widget=forms.PasswordInput(attrs={
                 'autocomplete': 'new-password', 'placeholder': _('한 번 더 입력')}))
 
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super(SetPasswordForm, self).__init__(*args, **kwargs)
+
+    def clean_old_password(self):
+        old = self.cleaned_data['old_password']
+        if not self.user.check_password(old):
+            raise forms.ValidationError(_('현재 비밀번호가 맞지 않습니다.'))
+        return old
+
+    def clean_new_password(self):
+        # JoinForm 과 같은 이유로 여기서 직접 부른다. user 를 넘기면
+        # UserAttributeSimilarityValidator 가 아이디·이메일과 비교할 수 있다.
+        new = self.cleaned_data['new_password']
+        password_validation.validate_password(new, self.user)
+        return new
+
     def clean(self):
-        if (self.data['new_password'] != self.data['new_password_again']):
-            raise forms.ValidationError('Password does not match!')
+        # cleaned_data 를 쓴다. self.data 를 직접 읽으면 필드가 빠진 POST 하나에
+        # KeyError 로 500 이 난다.
+        cleaned_data = super(SetPasswordForm, self).clean()
+        new = cleaned_data.get('new_password')
+        again = cleaned_data.get('new_password_again')
+        old = cleaned_data.get('old_password')
+
+        # 오류는 해당 칸 옆에 붙인다. 폼 전체 오류로 던지면 어느 칸이
+        # 잘못됐는지 화면에서 알 수 없다.
+        if new and again and new != again:
+            self.add_error('new_password_again',
+                           _('새 비밀번호가 서로 다릅니다.'))
+        if new and old and new == old:
+            self.add_error('new_password',
+                           _('지금 쓰는 비밀번호와 다른 것으로 정해 주세요.'))
+        return cleaned_data
+
 
 class WithdrawForm(forms.Form):
     id = forms.CharField(
@@ -224,11 +321,16 @@ class WithdrawForm(forms.Form):
 
     def clean(self):
         cleaned_data = super(WithdrawForm, self).clean()
-        if (self.data['password'] != self.data['password_again']):
-            raise forms.ValidationError('Password does not match!')
-        user = authenticate(username=self.data['id'], password=self.data['password'])
-        if (user==None):
-            raise forms.ValidationError('ID or Password does not exists.')
+        username = cleaned_data.get('id')
+        password = cleaned_data.get('password')
+        again = cleaned_data.get('password_again')
+        if password and again and password != again:
+            self.add_error('password_again', _('비밀번호가 서로 다릅니다.'))
+            return cleaned_data
+        if username and password and authenticate(
+                username=username, password=password) is None:
+            self.add_error('password', _('비밀번호가 맞지 않습니다.'))
+        return cleaned_data
 
 
 class AvatarForm(forms.Form):
@@ -261,3 +363,134 @@ class AvatarForm(forms.Form):
                 _('이미지가 너무 큽니다. 가로·세로 %(side)dpx 이하로 올려주세요.')
                 % {'side': self.MAX_SIDE})
         return f
+
+
+# ---------------------------------------------------------------------------
+# 이메일 인증이 붙는 폼들
+#
+# 공통 규칙: 이메일 칸의 값이 **이 세션에서 인증이 끝난 주소와 같아야** 한다.
+# 인증은 AJAX 로 먼저 끝내고, 폼 제출은 그 사실을 확인만 한다. 그래야
+# 비밀번호 오류로 폼이 다시 그려져도 인증이 풀리지 않는다.
+# ---------------------------------------------------------------------------
+class _VerifiedEmailForm(forms.Form):
+    """request 를 받아 세션의 인증 결과를 확인하는 폼의 공통 부분."""
+
+    PURPOSE = None
+
+    def __init__(self, request, *args, **kwargs):
+        self.request = request
+        super(_VerifiedEmailForm, self).__init__(*args, **kwargs)
+
+    def clean_email(self):
+        from iidxrank import accounts
+        email = accounts.normalize(self.cleaned_data['email'])
+        if not accounts.is_email_shaped(email):
+            raise forms.ValidationError(_('이메일 주소 형식이 올바르지 않습니다.'))
+        done = accounts.verified_email(self.request, self.PURPOSE)
+        if done != email:
+            raise forms.ValidationError(
+                _('이메일 인증을 먼저 끝내 주세요. 주소를 바꾸셨다면 다시 인증해야 합니다.'))
+        return email
+
+
+class ChangeEmailForm(_VerifiedEmailForm):
+    PURPOSE = 'change'
+    email = forms.CharField(
+        label=_('새 이메일'),
+        widget=forms.EmailInput(attrs={
+            'autocomplete': 'email', 'placeholder': _('you@example.com')}))
+
+    def clean(self):
+        from iidxrank import accounts
+        cleaned_data = super(ChangeEmailForm, self).clean()
+        email = cleaned_data.get('email')
+        if email and accounts.email_taken(email, exclude_user=self.request.user):
+            self.add_error('email', _('이미 다른 계정이 쓰고 있는 이메일입니다.'))
+        return cleaned_data
+
+
+class FindIdForm(_VerifiedEmailForm):
+    PURPOSE = 'find_id'
+    email = forms.CharField(
+        label=_('가입할 때 쓴 이메일'),
+        widget=forms.EmailInput(attrs={
+            'autocomplete': 'email', 'autofocus': True,
+            'placeholder': _('you@example.com')}))
+
+
+class ResetPasswordForm(_VerifiedEmailForm):
+    PURPOSE = 'reset_pw'
+    email = forms.CharField(
+        label=_('가입할 때 쓴 이메일'),
+        widget=forms.EmailInput(attrs={
+            'autocomplete': 'email', 'autofocus': True,
+            'placeholder': _('you@example.com')}))
+    new_password = forms.CharField(
+        label=_('새 비밀번호'), min_length=8,
+        help_text=_('8자 이상. 영문·숫자·기호를 쓸 수 있고 조합 규칙은 없습니다.'),
+        widget=forms.PasswordInput(attrs={
+            'autocomplete': 'new-password', 'placeholder': _('8자 이상')}))
+    new_password_again = forms.CharField(
+        label=_('새 비밀번호 확인'),
+        widget=forms.PasswordInput(attrs={
+            'autocomplete': 'new-password', 'placeholder': _('한 번 더 입력')}))
+
+    def clean_new_password(self):
+        from iidxrank import accounts
+        new = self.cleaned_data['new_password']
+        # 아이디·이메일과 비슷한지 보려면 대상 계정이 필요하다. 이 시점에는
+        # 이메일 인증이 끝나 있으므로 계정을 특정할 수 있다.
+        email = accounts.verified_email(self.request, self.PURPOSE)
+        user = accounts.recoverable_user(email) if email else None
+        password_validation.validate_password(new, user)
+        return new
+
+    def clean(self):
+        cleaned_data = super(ResetPasswordForm, self).clean()
+        new = cleaned_data.get('new_password')
+        again = cleaned_data.get('new_password_again')
+        if new and again and new != again:
+            self.add_error('new_password_again', _('새 비밀번호가 서로 다릅니다.'))
+        return cleaned_data
+
+
+class MigrateForm(_VerifiedEmailForm):
+    """기존 사용자 1회 인증.
+
+    비밀번호는 '바꾸는' 것이 아니라 '규칙을 지키는 값으로 다시 정하는' 것이다.
+    쓰던 비밀번호가 이미 규칙을 지킨다면 같은 값을 그대로 넣어도 된다 -
+    기존 비밀번호와 같은지 검사하지 않는다.
+    """
+
+    PURPOSE = 'migrate'
+
+    email = forms.CharField(
+        label=_('이메일'),
+        widget=forms.EmailInput(attrs={
+            'autocomplete': 'email', 'placeholder': _('you@example.com')}))
+    new_password = forms.CharField(
+        label=_('비밀번호'), min_length=8,
+        help_text=_('8자 이상. 영문·숫자·기호를 쓸 수 있고 조합 규칙은 없습니다. 쓰시던 비밀번호가 규칙에 맞으면 그대로 입력하셔도 됩니다.'),
+        widget=forms.PasswordInput(attrs={
+            'autocomplete': 'new-password', 'placeholder': _('8자 이상')}))
+    new_password_again = forms.CharField(
+        label=_('비밀번호 확인'),
+        widget=forms.PasswordInput(attrs={
+            'autocomplete': 'new-password', 'placeholder': _('한 번 더 입력')}))
+
+    def clean_new_password(self):
+        new = self.cleaned_data['new_password']
+        password_validation.validate_password(new, self.request.user)
+        return new
+
+    def clean(self):
+        from iidxrank import accounts
+        cleaned_data = super(MigrateForm, self).clean()
+        email = cleaned_data.get('email')
+        if email and accounts.email_taken(email, exclude_user=self.request.user):
+            self.add_error('email', _('이미 다른 계정이 쓰고 있는 이메일입니다.'))
+        new = cleaned_data.get('new_password')
+        again = cleaned_data.get('new_password_again')
+        if new and again and new != again:
+            self.add_error('new_password_again', _('비밀번호가 서로 다릅니다.'))
+        return cleaned_data

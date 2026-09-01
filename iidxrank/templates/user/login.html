@@ -1,6 +1,6 @@
 {% extends "user/_authbase.html" %}
 {% load django_bootstrap5 i18n %}
-{% block subtitle %}- {% trans '로그인' %}{% endblock %}
+{% block page_title %}{% trans '로그인' %}{% endblock %}
 {% block auth_title %}{% trans '로그인' %}{% endblock %}
 {% block auth_body %}
 <form method="POST" action="./" novalidate>
@@ -11,8 +11,13 @@
 {% endblock %}
 {% block auth_after %}
 <p class="bm-auth-foot">
-  아직 계정이 없으신가요? <a href="/join/">{% trans '가입하기' %}</a>
+  {% trans '아직 계정이 없으신가요?' %} <a href="/join/">{% trans '가입하기' %}</a>
   <span class="bm-auth-sep">·</span>
   <a href="/">{% trans '서열표로 돌아가기' %}</a>
+</p>
+<p class="bm-auth-foot">
+  <a href="/find-id/">{% trans '아이디 찾기' %}</a>
+  <span class="bm-auth-sep">·</span>
+  <a href="/reset-password/">{% trans '비밀번호 재설정' %}</a>
 </p>
 {% endblock %}

@@ -27,6 +27,23 @@ pat_str = re.compile(r"'([^']*)'|\"([^\"]*)\"")
 hangul = re.compile(r'[\uac00-\ud7a3]')
 
 
+def unescape(text):
+    """파이썬 소스에 적힌 문자열 리터럴을 실행 시 값으로 되돌린다."""
+    out = []
+    i = 0
+    table = {'n': '\n', 't': '\t', 'r': '\r',
+             '\\': '\\', "'": "'", '"': '"'}
+    while i < len(text):
+        c = text[i]
+        if c == '\\' and i + 1 < len(text) and text[i + 1] in table:
+            out.append(table[text[i + 1]])
+            i += 2
+        else:
+            out.append(c)
+            i += 1
+    return ''.join(out)
+
+
 def to_msgid(body):
     return re.sub(r'{{\s*([a-zA-Z_0-9]+)\s*}}', r'%(\1)s', body).strip()
 
@@ -46,7 +63,11 @@ for base, dirs, files in os.walk(ROOT):
         found = [m.group(2) for m in pat_trans.finditer(s)]
         found += [to_msgid(m.group(1)) for m in pat_block.finditer(s)]
         for m in pat_py.finditer(s):
-            found.append(''.join(a or b for a, b in pat_str.findall(m.group(1))))
+            # 소스에 적힌 그대로가 아니라 파이썬이 읽었을 값과 비교해야 한다.
+            # 소스의 백슬래시+n 은 두 글자지만 실행하면 줄바꿈 한 글자다.
+            # 이걸 풀지 않으면 여러 줄짜리 문구가 늘 '번역 없음' 으로 잡힌다.
+            raw = ''.join(a or b for a, b in pat_str.findall(m.group(1)))
+            found.append(unescape(raw))
         for t in found:
             if not hangul.search(t) or t in have:
                 continue

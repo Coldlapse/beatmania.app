@@ -29,6 +29,7 @@ from django.views.i18n import JavaScriptCatalog
 
 import iidxrank.legacy as legacy
 import iidxrank.views as views
+import iidxrank.views_account as views_account
 import iidxrank.views_json as views_json
 import iidxrank.views_manage as views_manage
 import iidxrank.views_overjoy as views_overjoy
@@ -91,6 +92,16 @@ urlpatterns = [
     url(r'^sync/$', views_typing.data_sync, name='data_sync'),
     # API 토큰은 계정 설정에 가까워 따로 뺐다.
     url(r'^account/token/$', views_typing.api_token, name='api_token'),
+    # --- 계정 인증 ---
+    # AJAX 로 코드를 주고받는다. 목적(purpose)별 권한은 views_account 에서 본다.
+    url(r'^account/verify/send/$', views_account.verify_send, name='verify_send'),
+    url(r'^account/verify/check/$', views_account.verify_check, name='verify_check'),
+    url(r'^account/email/$', views_account.change_email, name='change_email'),
+    # 기존 사용자 1회 인증. 미들웨어가 여기로 보낸다.
+    url(r'^account/verify-account/$', views_account.verify_account,
+        name='verify_account'),
+    url(r'^find-id/$', views_account.find_id, name='find_id'),
+    url(r'^reset-password/$', views_account.reset_password, name='reset_password'),
     url(r'^account/token/reissue/$', views_typing.api_token_reissue,
         name='api_token_reissue'),
     url(r'^status/(?P<machine_id>[\w-]+)/$',

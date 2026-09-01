@@ -3,6 +3,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: en\n"
 
+msgid "%(cmd)s 실행 로그"
+msgstr "%(cmd)s run log"
+
+msgid "%(sec)d초 뒤에 다시 보낼 수 있습니다."
+msgstr "You can request another code in %(sec)d seconds."
+
 msgid "%(tool_name)s 연동에는 API 토큰이 필요합니다"
 msgstr "%(tool_name)s needs an API token"
 
@@ -17,6 +23,9 @@ msgstr "(Coming soon)"
 
 msgid "- <a href=\"%(url)s\" target=\"_blank\" style=\"color: #007bff; text-decoration: underline;\">IIDXwidget</a> 프로젝트 기반 타건 횟수 기록 일지 기능 구현"
 msgstr "- Daily keystroke log built on the <a href=\"%(url)s\" target=\"_blank\" style=\"color: #007bff; text-decoration: underline;\">IIDXwidget</a> project"
+
+msgid "- <a href=\"%(url)s\" target=\"_blank\">IIDXwidget</a> 프로젝트 기반 타건 횟수 기록 일지 기능 구현"
+msgstr "- Daily keystroke log built on the <a href=\"%(url)s\" target=\"_blank\">IIDXwidget</a> project"
 
 msgid "- BMS(beatoraja) 플레이어를 위한 흰숫 변환기 기능 구현"
 msgstr "- Added a SUDDEN+ converter for BMS (beatoraja) players"
@@ -159,6 +168,15 @@ msgstr "7. How we protect it"
 msgid "8. 문의"
 msgstr "8. Contact"
 
+msgid "8자 이상"
+msgstr "8 or more characters"
+
+msgid "8자 이상. 영문·숫자·기호를 쓸 수 있고 조합 규칙은 없습니다."
+msgstr "At least 8 characters. Letters, digits and symbols; no composition rules."
+
+msgid "8자 이상. 영문·숫자·기호를 쓸 수 있고 조합 규칙은 없습니다. 쓰시던 비밀번호가 규칙에 맞으면 그대로 입력하셔도 됩니다."
+msgstr "At least 8 characters. Letters, digits and symbols; no composition rules. If your current password already meets this, you may enter it as it is."
+
 msgid "90일"
 msgstr "90 days"
 
@@ -234,6 +252,9 @@ msgstr "A personal token for linking the IIDXwidget app."
 msgid "IIDX는 레인 전체 높이를 1000으로 본다. 서든 플러스는 위에서 내려오는 덮개의 높이이고, 리프트는 아래에서 올라오는 덮개의 높이다. 둘 다 같은 1000 기준의 절대값이라, 보이는 넓이는 <b>1000 − 서든 − 리프트</b>가 된다."
 msgstr "IIDX treats the full height of the lane as 1000. SUDDEN+ is the height of the cover coming down from the top, and LIFT is the height of the cover rising from the bottom. Both are absolute values against that same 1000, so the visible area is <b>1000 − SUDDEN+ − LIFT</b>."
 
+msgid "IR Profile"
+msgstr "IR Profile"
+
 msgid "JPG · PNG · GIF · WebP, 최대 2MB. 정사각형 이미지를 권장합니다."
 msgstr "JPG, PNG, GIF or WebP, up to 2MB. A square image works best."
 
@@ -245,6 +266,21 @@ msgstr "SPL difficulty support"
 
 msgid "X-0000-0000-0000"
 msgstr "X-0000-0000-0000"
+
+msgid "[beatmania.app] 가입 인증 코드"
+msgstr "[beatmania.app] Sign-up verification code"
+
+msgid "[beatmania.app] 계정 인증 코드"
+msgstr "[beatmania.app] Account verification code"
+
+msgid "[beatmania.app] 비밀번호 재설정 인증 코드"
+msgstr "[beatmania.app] Password reset verification code"
+
+msgid "[beatmania.app] 아이디 찾기 인증 코드"
+msgstr "[beatmania.app] Find-ID verification code"
+
+msgid "[beatmania.app] 이메일 변경 인증 코드"
+msgstr "[beatmania.app] Email change verification code"
 
 msgid "\"%(name)s\" 은(는) 사용할 수 없는 아이디입니다."
 msgstr "\"%(name)s\" cannot be used as an ID."
@@ -264,6 +300,9 @@ msgstr "beatmania.app has <b>%(users)s</b> users, and <b>%(players)s</b> of them
 msgid "beatmania.app 은 %(phrase)s <b>%(n)s</b> 번의 방문을 기록했습니다."
 msgstr "beatmania.app recorded <b>%(n)s</b> visits %(phrase)s."
 
+msgid "beatmania.app 프로젝트의 개발 진행 상황과 앞으로 업데이트될 기능들입니다."
+msgstr "Development progress of the beatmania.app project and what is coming next."
+
 msgid "beatmania.app(이하 '이 사이트')은 IIDX INFINITAS 서열표를 제공하는 개인 운영 사이트입니다. 아래는 이 사이트가 실제로 저장하고 사용하는 정보의 전부입니다."
 msgstr "beatmania.app (“this site”) is a personally operated site providing IIDX INFINITAS rank tables. Below is everything this site actually stores and uses."
 
@@ -276,6 +315,12 @@ msgstr "Converts SUDDEN+ values between beatoraja and IIDX."
 msgid "beatoraja는 다르다. 리프트로 잘려 나간 뒤 <b>남은 영역</b>을 다시 1000으로 놓고 서든을 센다. 그래서 리프트가 0이 아니면 화면은 똑같은데 숫자만 달라진다. 위의 두 필드가 언제나 같은 모양인데 숫자가 다른 것이 그 때문이다."
 msgstr "beatoraja is different. It takes the <b>area left over</b> after LIFT has cut into the lane and treats that as 1000 again, then counts SUDDEN+ against it. So whenever LIFT is not zero, the screen looks identical but the number differs. That is why the two fields above always match in shape yet show different numbers."
 
+msgid "beatoraja와 IIDX의 서든 플러스 수치를 서로 변환합니다."
+msgstr "Converts SUDDEN+ values between beatoraja and IIDX."
+
+msgid "beatoraja의 LITONE 계열 스킨 등 IIDX와 동일한 구조로 제작된 스킨에 대응합니다. 일부 LITONE 버전은 IIDX AC 계산식대로의 서든 계산을 지원하지만, 일부 버전은 beatoraja의 서든 계산대로 작동합니다. 확인 후 이용해주세요."
+msgstr "This works with skins built to the same structure as IIDX, such as the LITONE family for beatoraja. Some LITONE versions calculate SUDDEN+ the way IIDX AC does, while others follow beatoraja's own calculation. Please check which one your skin uses before relying on this."
+
 msgid "textage.cc (수록곡 출처)"
 msgstr "textage.cc (song source)"
 
@@ -284,6 +329,9 @@ msgstr "you@example.com"
 
 msgid "가동 이력"
 msgstr "Uptime history"
+
+msgid "가입된 주소라면 인증 코드를 보냈습니다."
+msgstr "If that address is registered, we have sent a verification code."
 
 msgid "가입하고 IIDXwidget 을 연결하면 하루에 몇 번 쳤는지가 여기에 쌓이고, 아래 순위에도 오릅니다."
 msgstr "Sign up and connect IIDXwidget, and your daily keystrokes will collect here and appear in the ranking below."
@@ -296,6 +344,15 @@ msgstr "Sign up to record your clear lamps and scores on the rank tables."
 
 msgid "가입할 때"
 msgstr "At signup"
+
+msgid "가입할 때 쓴 이메일"
+msgstr "The email you signed up with"
+
+msgid "가입할 때 쓴 이메일을 인증하면 새 비밀번호를 정할 수 있습니다."
+msgstr "Verify the email you signed up with to set a new password."
+
+msgid "가입할 때 쓴 이메일을 인증하면 아이디를 알려 드립니다."
+msgstr "Verify the email you signed up with and we will show your ID."
 
 msgid "같은 방문자가 여러 서열표를 봐도 한 번으로 셉니다"
 msgstr "One visitor counts once, even across several rank tables"
@@ -357,6 +414,15 @@ msgstr "Account settings"
 msgid "계정 식별과 로그인 유지"
 msgstr "Identifying your account and keeping you logged in"
 
+msgid "계정 인증"
+msgstr "Account verification"
+
+msgid "계정 인증과 아이디·비밀번호 찾기에만 씁니다. 인증을 끝내야 가입할 수 있습니다."
+msgstr "Used only for account verification and recovering your ID or password. You must verify it to sign up."
+
+msgid "계정 인증을 진행해 주세요"
+msgstr "Please verify your account"
+
 msgid "계정과 그에 딸린 기록은 탈퇴할 때까지 보관하고, 탈퇴하면 함께 지웁니다."
 msgstr "Your account and its records are kept until you delete the account, and are removed with it."
 
@@ -365,6 +431,9 @@ msgstr "A key issued once per account. The programs below identify you with this
 
 msgid "계정마다 하나씩 발급되며, 프로그램 설정에 넣으면 됩니다."
 msgstr "One is issued per account; paste it into the program settings."
+
+msgid "곡 랭킹"
+msgstr "Song Rankings"
 
 msgid "곡 목록"
 msgstr "Song list"
@@ -495,6 +564,15 @@ msgstr "Log in"
 msgid "로그인 상태를 유지하기 위한 세션 정보와 마지막 로그인 시각."
 msgstr "Session information used to keep you logged in, and your last login time."
 
+msgid "로그인하러 가기"
+msgstr "Go to login"
+
+msgid "로봇 확인에 실패했습니다. 다시 시도해 주세요."
+msgstr "Robot check failed. Please try again."
+
+msgid "로봇이 아님을 확인해 주세요."
+msgstr "Please confirm you are not a robot."
+
 msgid "를 참조해주세요."
 msgstr "."
 
@@ -513,11 +591,20 @@ msgstr "Keep the visible area when LIFT changes"
 msgid "마지막 기록"
 msgstr "Last record"
 
+msgid "먼저 인증 코드를 받아 주세요."
+msgstr "Request a verification code first."
+
 msgid "메뉴 열기"
 msgstr "Open menu"
 
+msgid "메일로 받은 6자리 숫자"
+msgstr "The 6-digit number from the email"
+
 msgid "명령"
 msgstr "Command"
+
+msgid "무엇을 하나요"
+msgstr "What this does"
 
 msgid "발급일"
 msgstr "Issued"
@@ -525,11 +612,17 @@ msgstr "Issued"
 msgid "변환할 리프트"
 msgstr "LIFT to convert"
 
+msgid "보안 규정이 바뀌어 계정마다 한 번씩 확인이 필요합니다. 이 화면은 한 번만 나옵니다."
+msgstr "Our security rules changed, so each account needs a one-time check. You will see this screen only once."
+
 msgid "복사"
 msgstr "Copy"
 
 msgid "복사됨"
 msgstr "Copied"
+
+msgid "본인 확인을 위해 현재 비밀번호를 함께 입력해 주세요."
+msgstr "Enter your current password to confirm it is you."
 
 msgid "본인의 프로필이라면 로그인 후 설정에서 공개 여부를 확인해 보세요."
 msgstr "If this is your profile, log in and check the privacy setting."
@@ -543,14 +636,41 @@ msgstr "Password"
 msgid "비밀번호 — 원문을 저장하지 않습니다. 되돌릴 수 없는 해시로만 보관하므로 운영자도 알 수 없습니다."
 msgstr "Password — we never store the original. Only an irreversible hash is kept, so not even the operator can read it."
 
+msgid "비밀번호 바꾸기"
+msgstr "Change password"
+
 msgid "비밀번호 변경"
 msgstr "Change password"
+
+msgid "비밀번호 재설정"
+msgstr "Reset password"
 
 msgid "비밀번호 확인"
 msgstr "Confirm password"
 
+msgid "비밀번호가 맞지 않습니다."
+msgstr "That password is incorrect."
+
+msgid "비밀번호가 서로 다릅니다."
+msgstr "The passwords do not match."
+
 msgid "비밀번호는 되돌릴 수 없는 해시로만 저장합니다."
 msgstr "Passwords are stored only as an irreversible hash."
+
+msgid "비밀번호는 보안을 위해 다시 입력하셔야 합니다."
+msgstr "For security, passwords are not kept when the page reloads. Please enter them again."
+
+msgid "비밀번호를 규정에 맞게 다시 정하기 — <b>꼭 바꾸실 필요는 없습니다.</b> 쓰시던 비밀번호가 규정(8자 이상)에 맞으면 그대로 입력하셔도 됩니다."
+msgstr "Setting a password that meets the rules - <b>you do not have to change it.</b> If your current password already meets them (8+ characters), just enter it again."
+
+msgid "비밀번호를 바꿨습니다. 새 비밀번호로 로그인해 주세요."
+msgstr "Your password has been changed. Please log in with the new one."
+
+msgid "비밀번호를 재설정하시려면"
+msgstr "To reset your password"
+
+msgid "비밀번호에는 영문·숫자·기호만 쓸 수 있습니다. 한글이나 이모지는 기기에 따라 입력 방식이 달라져 같은 글자를 쳐도 로그인되지 않을 수 있습니다."
+msgstr "Passwords can use letters, digits and symbols only. Characters outside that range are entered differently depending on the device, so the same characters may not log you back in."
 
 msgid "비밀번호처럼 취급해 주세요."
 msgstr "Treat it like a password."
@@ -588,8 +708,20 @@ msgstr "New password"
 msgid "새 비밀번호 확인"
 msgstr "Confirm new password"
 
+msgid "새 비밀번호가 서로 다릅니다."
+msgstr "The new passwords do not match."
+
 msgid "새 비밀번호를 설정해 주세요."
 msgstr "Choose a new password."
+
+msgid "새 이메일"
+msgstr "New email"
+
+msgid "새 이메일 주소를 확인해 주세요"
+msgstr "Confirm your new email address"
+
+msgid "새 이메일을 인증해야 바뀝니다. 지금 주소는 인증하지 않아도 됩니다."
+msgstr "The change takes effect once the new address is verified. You do not need to verify your current address."
 
 msgid "서든"
 msgstr "SUDDEN+"
@@ -666,6 +798,9 @@ msgstr "We do not sell or hand over collected information to anyone."
 msgid "순위표 등 사이트 곳곳에 표시되는 공개 이름입니다. 다른 사람과 같아도 되며 언제든 바꿀 수 있습니다. 주소에 쓰이는 아이디와는 다릅니다."
 msgstr "The public name shown across the site, including the leaderboard. It may be the same as someone else's and you can change it at any time. It is not the ID used in your address."
 
+msgid "시도 횟수를 넘겼습니다. 인증 코드를 다시 받아 주세요."
+msgstr "Too many attempts. Please request a new code."
+
 msgid "시스템 안정화 및 기능 추가"
 msgstr "Stabilisation and new features"
 
@@ -678,17 +813,35 @@ msgstr "Run history"
 msgid "실행자"
 msgstr "Started by"
 
+msgid "아래 인증 코드를 입력해 주세요."
+msgstr "Enter the verification code below."
+
+msgid "아래 인증 코드를 입력해 주세요.\n\n    %(code)s\n\n유효 시간은 %(min)d분입니다.\n\n이 메일은 beatmania.app 의 계정 인증 때문에 발송되었습니다.\n본인이 요청한 것이 아니라면 이 메일을 무시하셔도 됩니다.\n저희는 계정 인증과 아이디·비밀번호 찾기 외의 목적으로는\n메일을 보내지 않습니다.\n"
+msgstr "Enter the verification code below.\n\n    %(code)s\n\nIt is valid for %(min)d minutes.\n\nThis email was sent for account verification on beatmania.app.\nIf you did not request it, you can ignore this message.\nWe never send email for anything other than account verification\nand recovering your ID or password.\n"
+
 msgid "아이디"
 msgstr "your-id"
 
 msgid "아이디 — 공개 프로필 주소가 됩니다. 가입 후 바꿀 수 없습니다."
 msgstr "ID — becomes your public profile address. Cannot be changed after signup."
 
+msgid "아이디 찾기"
+msgstr "Find ID"
+
+msgid "아이디 확인"
+msgstr "Show my ID"
+
 msgid "아이디, DJ NAME, 프로필 사진, 플레이 기록은 공개 프로필 주소에서 누구나 볼 수 있습니다. 계정 설정에서 <b>프로필 비공개</b>를 켜면 다른 사람이 볼 수 없습니다."
 msgstr "Your ID, DJ NAME, profile photo and play records are visible to anyone at your public profile address. Turn on <b>private profile</b> in account settings and no one else can see them."
 
 msgid "아이디는 공개 주소가 됩니다."
 msgstr "Your username becomes a public URL."
+
+msgid "아이디를 확인하시려면"
+msgstr "To see your ID"
+
+msgid "아직 계정이 없으신가요?"
+msgstr "No account yet?"
 
 msgid "아직 기록이 없습니다. IIDXwidget 을 연결하면 여기에 쌓입니다."
 msgstr "No records yet. Connect IIDXwidget and they will show up here."
@@ -701,6 +854,9 @@ msgstr "It will use the API token you already have. Nothing extra to issue."
 
 msgid "영문/숫자 4자 이상"
 msgstr "4+ letters or digits"
+
+msgid "영문·숫자·기호만 쓸 수 있습니다."
+msgstr "Letters, digits and symbols only."
 
 msgid "영문·숫자·밑줄(_)만, 4자 이상. 가입 후에는 바꿀 수 없습니다."
 msgstr "Letters, digits and underscore only, 4+ characters. Cannot be changed later."
@@ -735,8 +891,17 @@ msgstr "Full visual overhaul and ecosystem expansion"
 msgid "위 목적 외에는 쓰지 않습니다. 광고에 쓰거나 프로파일링하지 않습니다."
 msgstr "We use it for nothing beyond the purposes above. No advertising, no profiling."
 
+msgid "유저 랭킹"
+msgstr "User Rankings"
+
 msgid "유튜브"
 msgstr "YouTube"
+
+msgid "유효 시간은 %(min)s분입니다."
+msgstr "Valid for %(min)s minutes."
+
+msgid "이 메일은 beatmania.app 의 계정 인증 때문에 발송되었습니다. 본인이 요청한 것이 아니라면 이 메일을 무시하셔도 됩니다."
+msgstr "This email was sent for account verification on beatmania.app. If you did not request it, you can ignore this message."
 
 msgid "이 방침이 바뀌면 이 페이지에서 알립니다."
 msgstr "If this policy changes we will announce it on this page."
@@ -747,8 +912,14 @@ msgstr "If you like this site, consider <a href=\"https://buymeacoffee.com/sadan
 msgid "이 사이트는 신용카드 정보나 주민등록번호 같은 정보를 받지 않으며, 저장할 자리도 두지 않았습니다."
 msgstr "This site does not accept things like credit card numbers or national ID numbers, and has no place to store them."
 
+msgid "이 이메일로 가입된 아이디입니다."
+msgstr "The ID registered with this email."
+
 msgid "이 점검은 beatmania.app 안에서 스스로를 확인한 결과입니다. 사이트 자체가 내려가면 이 페이지도 열리지 않으므로, 바깥에서 같은 항목을 확인하는 점검기를 따로 둘 예정입니다."
 msgstr "These checks run inside beatmania.app itself. If the site goes down this page will not open either, so a separate external checker is planned."
+
+msgid "이 주소는 다른 계정과 겹치거나 형식이 올바르지 않아 그대로 쓸 수 없습니다. 쓰실 수 있는 다른 주소를 넣어 주세요."
+msgstr "This address cannot be used as it is - it either collides with another account or is not a valid address. Please enter one you can use."
 
 msgid "이 페이지를 그려 주는 서버가 요청을 처리하고 있는지."
 msgstr "Whether the server rendering this page is handling requests."
@@ -759,14 +930,41 @@ msgstr "By name"
 msgid "이메일"
 msgstr "Email"
 
+msgid "이메일 바꾸기"
+msgstr "Change email"
+
+msgid "이메일 변경"
+msgstr "Change email"
+
+msgid "이메일 인증 — 아이디·비밀번호를 잊었을 때 되찾는 유일한 수단입니다."
+msgstr "Email verification - the only way to recover your ID or password later."
+
+msgid "이메일 인증을 먼저 끝내 주세요. 주소를 바꾸셨다면 다시 인증해야 합니다."
+msgstr "Please finish email verification first. If you changed the address, verify it again."
+
+msgid "이메일 인증이 끝났습니다."
+msgstr "Email verified."
+
 msgid "이메일 주소"
 msgstr "Email address"
+
+msgid "이메일 주소 형식이 올바르지 않습니다."
+msgstr "That is not a valid email address."
 
 msgid "이메일 주소와 접속 IP는 어떤 경우에도 공개되지 않습니다."
 msgstr "Your email address and IP address are never made public."
 
+msgid "이메일은 계정 인증 및 아이디, 비밀번호 찾기에만 사용됩니다. 그 이외에는 어떤 상황에도 이메일을 사용하거나 임의로 이메일을 발송하지 않습니다. 당연히, 마케팅 메일도 없습니다."
+msgstr "Your email is used only for account verification and for recovering your ID or password. We will not use it for anything else, and we will never send you unsolicited mail. No marketing email, of course."
+
 msgid "이미 계정이 있으신가요?"
 msgstr "Already have an account?"
+
+msgid "이미 다른 계정이 쓰고 있는 이메일입니다."
+msgstr "Another account is already using that email."
+
+msgid "이미 사용 중인 아이디입니다."
+msgstr "That ID is already taken."
 
 msgid "이미지가 너무 큽니다. 가로·세로 %(side)dpx 이하로 올려주세요."
 msgstr "That image is too large. Please keep it under %(side)dpx on each side."
@@ -776,6 +974,24 @@ msgstr "Prev"
 
 msgid "익하작도 점수에 반영됩니다. 즉 아무리 실력이 좋아도 익하(풀콤)작을 하지 않으면 점수가 생각보다 낮게 나올 수 있습니다!"
 msgstr "Full combos also count. Even a strong player may score lower than expected without grinding full combos."
+
+msgid "인증 마치기"
+msgstr "Finish verification"
+
+msgid "인증 코드가 만료되었습니다. 다시 받아 주세요."
+msgstr "The code has expired. Please request a new one."
+
+msgid "인증 코드가 맞지 않습니다. (%(n)d번 남음)"
+msgstr "That code is not correct. (%(n)d attempts left)"
+
+msgid "인증 코드를 보냈습니다. 메일함을 확인해 주세요."
+msgstr "Verification code sent. Please check your inbox."
+
+msgid "인증번호 받기"
+msgstr "Send code"
+
+msgid "인증을 시작한 브라우저에서 진행해 주세요."
+msgstr "Continue in the browser where you started the verification."
 
 msgid "일반"
 msgstr "Normal"
@@ -791,6 +1007,9 @@ msgstr "Daily Keystrokes"
 
 msgid "일일 타건 기록 — 날짜별 타건 수."
 msgstr "Daily keystrokes — keystroke counts per day."
+
+msgid "입력한 내용을 다시 확인해 주세요."
+msgstr "Please check what you entered."
 
 msgid "입력한 아이디가 그대로 서열표 주소에 들어가며, 누구나 이 주소로 당신의 서열표를 볼 수 있습니다. 실명이나 다른 곳에서 쓰는 아이디는 피하세요."
 msgstr "Your username goes straight into the rank table URL, and anyone with that link can view your table. Avoid your real name or a username you reuse elsewhere."
@@ -812,6 +1031,9 @@ msgstr "Reissue"
 
 msgid "저장"
 msgstr "Save"
+
+msgid "저희는 계정 인증과 아이디·비밀번호 찾기 외의 목적으로는 메일을 보내지 않습니다. 마케팅 메일도 보내지 않습니다."
+msgstr "We never send email for anything other than account verification and recovering your ID or password. No marketing email either."
 
 msgid "전체"
 msgstr "All time"
@@ -843,11 +1065,26 @@ msgstr "Coming soon"
 msgid "준비 중입니다"
 msgstr "Coming soon"
 
+msgid "지금 등록된 이메일"
+msgstr "Current email"
+
+msgid "지금 쓰는 비밀번호"
+msgstr "Your current password"
+
+msgid "지금 쓰는 비밀번호와 다른 것으로 정해 주세요."
+msgstr "Choose a password different from your current one."
+
 msgid "지금 토큰은 즉시 쓸 수 없게 됩니다. 새로 발급할까요?"
 msgstr "Your current token stops working immediately. Issue a new one?"
 
+msgid "지금 하지 않으시면 서열표 열람은 되지만 기록 저장·설정은 쓸 수 없습니다."
+msgstr "Until you do this you can still browse the rank tables, but saving records and changing settings are unavailable."
+
 msgid "지금까지"
 msgstr "so far"
+
+msgid "지금은 이 인증을 진행할 수 없습니다."
+msgstr "This verification is not available right now."
 
 msgid "지난 1년"
 msgstr "Last year"
@@ -896,6 +1133,9 @@ msgstr "Without enough play records (no FAILs, or everything at HC~EXHC or above
 
 msgid "켜면 다른 사람이 내 서열표와 유저 목록에서 나를 볼 수 없습니다."
 msgstr "When on, others cannot see you in rank tables or the user list."
+
+msgid "클리어 기록 가져오기"
+msgstr "Import Clear Records"
 
 msgid "타건 수"
 msgstr "Keystrokes"
@@ -984,11 +1224,20 @@ msgstr "No records in this period."
 msgid "해당 기간에 조회된 기록이 없습니다."
 msgstr "No views in this period."
 
+msgid "현재 비밀번호"
+msgstr "Current password"
+
+msgid "현재 비밀번호가 맞지 않습니다."
+msgstr "That is not your current password."
+
 msgid "현재 사진 삭제하고 기본 아이콘으로"
 msgstr "Remove the photo and use the default icon"
 
 msgid "현재 사진 삭제하고 기본 이미지로"
 msgstr "Remove photo and use the default image"
+
+msgid "확인"
+msgstr "Verify"
 
 msgid "회원 탈퇴"
 msgstr "Delete account"
@@ -998,6 +1247,9 @@ msgstr "Sign up"
 
 msgid "회원가입 외 다른 용도로 사용하지 않습니다."
 msgstr "Used only for your account. Never shared."
+
+msgid "회원가입을 마무리해 주세요"
+msgstr "Finish creating your account"
 
 msgid "흰숫 변환기"
 msgstr "Sudden+ Converter"

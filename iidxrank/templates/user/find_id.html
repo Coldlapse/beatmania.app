@@ -1,0 +1,36 @@
+{% extends "user/_authbase.html" %}
+{% load django_bootstrap5 i18n static %}
+{% block page_title %}{% trans '아이디 찾기' %}{% endblock %}
+{% block auth_title %}{% trans '아이디 찾기' %}{% endblock %}
+{% block auth_lead %}
+<p class="bm-auth-lead">{% blocktrans %}가입할 때 쓴 이메일을 인증하면 아이디를 알려 드립니다.{% endblocktrans %}</p>
+{% endblock %}
+{% block auth_body %}
+{% if found %}
+  <div class="alert alert-success" role="alert">
+    <div class="small">{% trans '이 이메일로 가입된 아이디입니다.' %}</div>
+    <div class="fs-5 fw-bold mt-1">{{ found }}</div>
+  </div>
+  <a href="/login/" class="btn btn-primary w-100">{% trans '로그인하러 가기' %}</a>
+{% else %}
+  {% if form.errors %}
+    <div class="alert alert-danger" role="alert">
+      <i class="bi bi-exclamation-circle-fill me-1" aria-hidden="true"></i>
+      {% trans '입력한 내용을 다시 확인해 주세요.' %}
+    </div>
+  {% endif %}
+  <form method="POST" action="./" novalidate>
+    {% csrf_token %}
+    {% bootstrap_field form.email layout='vertical' %}
+    {% include "user/_verify_email.html" with purpose=purpose email_field='email' %}
+    <button type="submit" class="btn btn-primary w-100 mt-3">{% trans '아이디 확인' %}</button>
+  </form>
+  <script src="{% static 'js/verify-email.js' %}?v=20260902a"></script>
+{% endif %}
+{% endblock %}
+{% block auth_after %}
+<p class="bm-auth-foot">
+  <a href="/reset-password/">{% trans '비밀번호 재설정' %}</a>
+  <span class="bm-auth-sep">·</span><a href="/login/">{% trans '로그인' %}</a>
+</p>
+{% endblock %}

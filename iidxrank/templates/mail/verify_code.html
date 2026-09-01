@@ -1,0 +1,97 @@
+{% load i18n %}<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head><meta charset="utf-8"><title>{{ subject }}</title></head>
+{% comment %}
+  인증 코드 메일(HTML). 메일 클라이언트는 브라우저가 아니다. 여기서 지킨 규칙:
+
+  - 스타일은 전부 인라인. Gmail 은 <style> 블록을 통째로 지운다.
+  - 레이아웃은 <table>. flex/grid 는 Outlook 이 이해하지 못한다.
+  - 이미지를 쓰지 않는다. 대부분의 클라이언트가 기본으로 차단해서, 로고를
+    넣어 봐야 깨진 아이콘만 보인다. 그리고 원격 이미지는 열람 시점과 IP 를
+    발신자에게 알려 주는 추적 수단이 되는데, 개인정보처리방침에 그런 것을
+    하지 않는다고 적어 두었다.
+  - 다크 모드 대응을 하지 않는다. 클라이언트마다 처리가 제각각이라 어설프게
+    맞추면 흰 배경에 흰 글씨가 되는 쪽이 더 흔하다. 밝은 바탕 하나로 간다.
+  - 링크를 넣지 않는다. 계정 인증 메일에 링크가 있으면, 나중에 진짜 피싱
+    메일이 왔을 때 사용자가 구별할 수 없다. 코드만 보내고 사이트는 이미
+    열려 있는 창에서 이어 가게 한다.
+{% endcomment %}
+<body style="margin:0; padding:0; background:#f4f6f8;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+         style="background:#f4f6f8; padding:32px 12px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+               style="max-width:480px; background:#ffffff; border-radius:14px;
+                      border:1px solid #e3e8ee; overflow:hidden;
+                      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',
+                                  'Helvetica Neue',Arial,'Apple SD Gothic Neo',
+                                  'Malgun Gothic',sans-serif;">
+
+          <tr>
+            <td style="padding:22px 28px 0 28px;">
+              <div style="font-size:17px; font-weight:800; color:#0d6efd;
+                          letter-spacing:-.02em;">
+                beatmania<span style="color:#8a94a6; font-weight:400;">.app</span>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:18px 28px 0 28px;">
+              <div style="font-size:20px; font-weight:700; color:#212529;
+                          letter-spacing:-.01em;">{{ heading }}</div>
+              <div style="font-size:14px; color:#5c6670; line-height:1.7;
+                          margin-top:8px;">{% trans '아래 인증 코드를 입력해 주세요.' %}</div>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:20px 28px 0 28px;">
+              <div style="background:#f1f5fb; border:1px solid #dbe4f0;
+                          border-radius:10px; padding:18px 12px; text-align:center;">
+                <div style="font-family:'SFMono-Regular',Consolas,'Liberation Mono',
+                            Menlo,monospace; font-size:32px; font-weight:700;
+                            letter-spacing:.28em; color:#123a6d;
+                            text-indent:.28em;">{{ code }}</div>
+              </div>
+              <div style="font-size:13px; color:#5c6670; text-align:center;
+                          margin-top:10px;">
+                {% comment %}
+                  blocktrans 안에서는 컨텍스트 변수를 {{ min }} 으로 쓴다.
+                  msgid 로 뽑힐 때 %(min)s 로 바뀐다 - 그래서 카탈로그에는
+                  %(min)s 로 들어가 있다. 여기에 %(min)s 를 그대로 적으면
+                  치환되지 않고 글자 그대로 나온다(실제로 그랬다).
+                {% endcomment %}
+                {% blocktrans %}유효 시간은 {{ min }}분입니다.{% endblocktrans %}
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:22px 28px 0 28px;">
+              <div style="border-top:1px solid #eef1f5;"></div>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:16px 28px 26px 28px;">
+              <div style="font-size:12px; color:#8a94a6; line-height:1.8;">
+                {% blocktrans %}이 메일은 beatmania.app 의 계정 인증 때문에 발송되었습니다. 본인이 요청한 것이 아니라면 이 메일을 무시하셔도 됩니다.{% endblocktrans %}<br>
+                {% blocktrans %}저희는 계정 인증과 아이디·비밀번호 찾기 외의 목적으로는 메일을 보내지 않습니다. 마케팅 메일도 보내지 않습니다.{% endblocktrans %}
+              </div>
+            </td>
+          </tr>
+        </table>
+
+        <div style="max-width:480px; margin-top:14px; font-size:11px;
+                    color:#a3abb8; text-align:center;
+                    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',
+                                Arial,sans-serif;">
+          beatmania.app
+        </div>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

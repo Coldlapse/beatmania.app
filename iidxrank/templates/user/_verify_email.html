@@ -1,0 +1,43 @@
+{% load i18n %}
+{% comment %}
+  이메일 인증 위젯. 가입·이메일 변경·아이디 찾기·비밀번호 재설정·기존 사용자
+  인증에서 같이 쓴다.
+
+  쓰는 쪽에서 넘길 것
+    purpose      signup / change / find_id / reset_pw / migrate
+    email_field  인증 대상 이메일 칸의 name (기본 email)
+
+  동작
+    [인증번호 받기] -> /account/verify/send/  (AJAX)
+    [확인]          -> /account/verify/check/ (AJAX)
+
+  인증 결과는 서버 세션에 남는다. 그래서 비밀번호 오류 등으로 폼이 다시
+  그려져도 인증이 풀리지 않는다. 반대로 이메일 칸을 고치면 인증이 무효가
+  되므로(주소가 달라지면 서버가 거부한다) 화면에서도 표시를 지운다.
+{% endcomment %}
+
+<div class="bm-verify" data-purpose="{{ purpose }}"
+     data-field="{{ email_field|default:'email' }}">
+  <div class="d-flex gap-2 align-items-start">
+    <button type="button" class="btn btn-outline-primary btn-sm bm-verify-send">
+      {% trans '인증번호 받기' %}
+    </button>
+    <div class="bm-verify-timer small text-body-secondary align-self-center"></div>
+  </div>
+
+  <div class="bm-verify-code-row mt-2 d-none">
+    <label class="form-label small mb-1" for="bm-verify-code">
+      {% trans '메일로 받은 6자리 숫자' %}
+    </label>
+    <div class="d-flex gap-2">
+      <input type="text" class="form-control bm-verify-code" id="bm-verify-code"
+             inputmode="numeric" autocomplete="one-time-code" maxlength="6"
+             placeholder="000000">
+      <button type="button" class="btn btn-primary bm-verify-check text-nowrap">
+        {% trans '확인' %}
+      </button>
+    </div>
+  </div>
+
+  <div class="bm-verify-msg small mt-2" role="status" aria-live="polite"></div>
+</div>

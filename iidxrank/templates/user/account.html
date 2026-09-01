@@ -1,6 +1,6 @@
 {% extends "user/_authbase.html" %}
 {% load django_bootstrap5 i18n %}
-{% block subtitle %} - {% trans '설정' %}{% endblock %}
+{% block page_title %}{% trans '설정' %}{% endblock %}
 {% block auth_title %}{% trans '계정 설정' %}{% endblock %}
 {% block auth_body %}
 <form method="POST" action="./" enctype="multipart/form-data" novalidate>
@@ -57,6 +57,8 @@
 <div class="d-grid gap-2">
   <a href="/setpassword/" class="btn btn-outline-secondary">
     <i class="bi bi-key me-1" aria-hidden="true"></i>{% trans '비밀번호 변경' %}</a>
+  <a href="/account/email/" class="btn btn-outline-secondary">
+    <i class="bi bi-envelope me-1" aria-hidden="true"></i>{% trans '이메일 변경' %}</a>
   <a href="/my-page/" class="btn btn-outline-secondary">
     <i class="bi bi-keyboard me-1" aria-hidden="true"></i>{% trans '일일 타건 기록' %}</a>
   <a href="/withdraw/" class="btn btn-outline-danger">

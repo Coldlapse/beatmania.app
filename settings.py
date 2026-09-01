@@ -141,6 +141,9 @@ MIDDLEWARE = (
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    # request.user 를 읽으므로 Authentication 뒤여야 한다.
+    # 2026-09 규칙을 지나지 않은 계정을 1회 인증 화면으로 보낸다.
+    'iidxrank.middleware.RequireAccountVerificationMiddleware',
     #'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -272,8 +275,89 @@ NOCAPTCHA = False
 RECAPTCHA_PUBLIC_KEY = env('RECAPTCHA_PUBLIC_KEY', required=True)
 RECAPTCHA_PRIVATE_KEY = env('RECAPTCHA_PRIVATE_KEY', required=True)
 
-# for imgtl image upload service
-imgtlkey = env('IMGTL_KEY', '')
+
+# ---------------------------------------------------------------------------
+# 메일 발송
+#
+# 계정 인증(가입·이메일 변경·아이디/비밀번호 찾기)에만 쓴다. 마케팅 메일은
+# 보내지 않는다 — 가입 폼에 그렇게 적어 두었으므로 코드도 그래야 한다.
+#
+# Gmail 은 계정 비밀번호로 SMTP 로그인을 받지 않는다. 2단계 인증을 켜고
+# '앱 비밀번호'(16자)를 따로 발급해 EMAIL_HOST_PASSWORD 에 넣는다.
+#
+# 값이 없으면 콘솔 백엔드로 떨어진다. 개발 중에 메일 서버 없이 인증 코드를
+# 터미널에서 확인하기 위해서다. 운영에서 실수로 값이 빠지면 메일이 조용히
+# 사라지는 대신 로그에 찍히므로, 그 사실을 알아챌 수 있다.
+# ---------------------------------------------------------------------------
+EMAIL_HOST = env('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(env('EMAIL_PORT', '587'))
+EMAIL_USE_TLS = env_bool('EMAIL_USE_TLS', True)
+EMAIL_HOST_USER = env('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', '')
+EMAIL_TIMEOUT = int(env('EMAIL_TIMEOUT', '10'))
+
+if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# 받는 사람에게 보이는 주소. Gmail 은 EMAIL_HOST_USER 와 다른 주소로 보내면
+# 대개 거부하거나 갈아 끼운다. 굳이 다르게 두지 않는다.
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER or 'noreply@beatmania.app')
+
+# --- 계정 인증 정책 -------------------------------------------------------
+# 인증 코드 유효 시간과 재발송 간격. 둘 다 초 단위.
+# 1시간은 메일이 늦게 오거나 다른 기기에서 확인하는 경우를 감안한 값이다.
+# 5분은 같은 주소로 메일을 퍼붓지 못하게 하는 최소 간격이다.
+EMAIL_CODE_TTL = int(env('EMAIL_CODE_TTL', str(60 * 60)))
+EMAIL_RESEND_INTERVAL = int(env('EMAIL_RESEND_INTERVAL', str(5 * 60)))
+# 코드 입력을 몇 번까지 틀릴 수 있나. 넘으면 코드를 버리고 다시 받아야 한다.
+EMAIL_CODE_MAX_ATTEMPTS = int(env('EMAIL_CODE_MAX_ATTEMPTS', '5'))
+
+
+# ---------------------------------------------------------------------------
+# 비밀번호 검증
+#
+# 특수문자·대소문자 조합은 강제하지 않는다. 강제하면 사람들이 Password1! 같은
+# 예측 가능한 패턴으로 몰린다(NIST SP 800-63B 도 조합 규칙을 권하지 않는다).
+#
+# 길이는 8자다. 12자로 올려서 추가로 막히는 것은 이미 CommonPasswordValidator
+# 가 잡는 것들뿐이고(password, 12345678, abcd1234, qwerty123 전부 목록에 있다),
+# 가입 이탈만 늘어난다. 실제로 일을 하는 것은 길이가 아니라 그 19,728개 목록이다.
+#
+# 기존 사용자에게는 영향이 없다. Django 는 비밀번호를 **설정할 때만** 검증한다.
+# 뒤집어 말하면 지금 약한 비밀번호를 쓰는 사람은 그대로 남는다는 뜻이기도 하다.
+#
+# **이 설정은 저절로 적용되지 않는다.** 적용해 주는 것은 django.contrib.auth 의
+# 기본 폼들인데 이 사이트는 폼을 직접 만들어 쓴다. iidxrank/forms.py 가
+# validate_password() 를 직접 부른다 — 그 호출을 지우면 이 설정 전체가
+# 조용히 무효가 된다.
+# ---------------------------------------------------------------------------
+AUTH_PASSWORD_VALIDATORS = [
+    # 아이디·이메일과 지나치게 비슷한 비밀번호를 막는다.
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+     'OPTIONS': {'min_length': 8}},
+    # Django 가 들고 있는 흔한 비밀번호 19,728개 목록.
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+    # 한글·이모지 차단. 이유는 iidxrank/validators.py 주석 참조.
+    {'NAME': 'iidxrank.validators.ASCIIPasswordValidator'},
+]
+
+
+# ---------------------------------------------------------------------------
+# 폼 렌더링 (django-bootstrap5)
+#
+# 기본 렌더러는 폼이 bound 이면 오류 없는 칸에 전부 is-valid(초록 체크)를
+# 붙인다. 비밀번호 칸은 값이 다시 그려지지 않으므로 "빈 칸에 맞음 표시" 가
+# 남아 사용자를 헷갈리게 한다. 초록만 빼는 렌더러로 갈아 끼운다.
+# 자세한 이유는 iidxrank/bootstrap.py 주석.
+# ---------------------------------------------------------------------------
+BOOTSTRAP5 = {
+    'field_renderers': {'default': 'iidxrank.bootstrap.FieldRenderer'},
+}
+
 
 # hitcount setting
 HITCOUNT_KEEP_HIT_ACTIVE = {'hours': 4}
