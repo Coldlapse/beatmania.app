@@ -1,0 +1,66 @@
+# beatmania.app Apache 가상호스트 (컨테이너 프록시 방식).
+#
+# 지금까지는 mod_wsgi 로 Apache 가 파이썬을 직접 품고 있었다. 컨테이너로
+# 옮기면 Apache 는 TLS 를 끊고 요청을 넘겨 주는 일만 한다.
+#
+#   /etc/apache2/sites-available/beatmania.app.conf 로 복사해 쓴다.
+#   sudo a2enmod proxy proxy_http headers
+#   sudo a2ensite beatmania.app && sudo systemctl reload apache2
+#
+# mod_wsgi 설정(WSGIDaemonProcess / WSGIScriptAlias)은 이 파일에 남기지
+# 않는다. 둘이 같이 있으면 어느 쪽이 응답했는지 알 수 없어 문제를 못 찾는다.
+
+<VirtualHost *:80>
+    ServerName beatmania.app
+
+    # certbot 이 이 블록을 알아서 바꿔 두었다면 그대로 두면 된다.
+    RewriteEngine On
+    RewriteCond %{HTTPS} !=on
+    RewriteRule ^/?(.*) https://%{SERVER_NAME}/$1 [R=301,L]
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName beatmania.app
+
+    SSLEngine on
+    SSLCertificateFile      /etc/letsencrypt/live/beatmania.app/fullchain.pem
+    SSLCertificateKeyFile   /etc/letsencrypt/live/beatmania.app/privkey.pem
+
+    # 사용자가 올린 프로필 사진. 컨테이너의 볼륨과 같은 디렉터리를 가리킨다.
+    # 파이썬을 거치지 않고 Apache 가 바로 낸다.
+    #
+    # DEBUG=False 인 Django 는 /media/ 를 아예 처리하지 않는다. 이 Alias 가
+    # 없으면 프로필 사진이 전부 404 가 된다.
+    Alias /media/ /srv/beatmania/media/
+    <Directory /srv/beatmania/media>
+        Require all granted
+        Options -Indexes
+        # 파일 이름이 uuid 라 내용이 바뀌면 이름도 바뀐다. 길게 캐시해도 된다.
+        <IfModule mod_headers.c>
+            Header set Cache-Control "public, max-age=2592000"
+        </IfModule>
+    </Directory>
+    ProxyPass /media/ !
+
+    # /static/ 은 프록시로 넘긴다. 컨테이너 안의 whitenoise 가 낸다.
+    # Apache 쪽에 Alias 를 두지 않는 이유: 정적 파일이 이미지 안에 있어서
+    # 호스트에 꺼내 두려면 배포마다 복사하는 단계가 하나 더 생긴다.
+
+    # X-Forwarded-Proto 를 여기서 못 박는다. 클라이언트가 보낸 값은 덮어쓴다.
+    # 이 헤더를 Django 가 믿기 때문에(DJANGO_BEHIND_PROXY=true), 바깥에서
+    # 위조한 값이 그대로 들어가면 안 된다.
+    <IfModule mod_headers.c>
+        RequestHeader set X-Forwarded-Proto "https"
+    </IfModule>
+
+    ProxyPreserveHost On
+    ProxyPass        / http://127.0.0.1:8731/ timeout=180
+    ProxyPassReverse / http://127.0.0.1:8731/
+
+    # timeout=180 은 gunicorn 의 --timeout 120 보다 넉넉해야 한다.
+    # 관리자 대시보드에서 updateSongInfinitas 를 돌리면 응답이 길다.
+    # Apache 가 먼저 끊으면 504 만 보이고 원인을 알 수 없다.
+
+    ErrorLog  ${APACHE_LOG_DIR}/beatmania_error.log
+    CustomLog ${APACHE_LOG_DIR}/beatmania_access.log combined
+</VirtualHost>

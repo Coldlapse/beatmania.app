@@ -1,5 +1,49 @@
-django
-beautifulsoup4
-django-celery
-celery
-redis
+# beatmania.app 실행에 필요한 패키지.
+#
+# 만든 방법: pip freeze 를 뜨지 않고, 코드가 실제로 import 하는 것에서
+# 출발해 각 패키지의 requires 를 따라 내려가 폐포를 구했다. 라이브 서버는
+# base 환경에 마구잡이로 깔려 있어 기준으로 삼을 수 없었고, 개발 환경도
+# 이 프로젝트와 무관한 패키지(telepot, wikitextparser 등 22개)가 섞여
+# 있었기 때문이다.
+#
+# 버전은 개발 환경에서 실제로 돌아가고 있는 것을 그대로 고정했다. 전이
+# 의존성까지 고정해야 빌드가 재현된다 — 고정하지 않으면 빌드 시점의 최신
+# 버전이 들어와 어느 날 갑자기 깨진다.
+#
+# 갱신할 때: 직접 의존성만 손으로 올리고, 전이 의존성은 새 환경에서 폐포를
+# 다시 구해 채운다.
+
+# --- 직접 의존성 (코드가 import 한다) --------------------------------------
+Django==3.2.25
+PyMySQL==1.2.0                  # settings.py 에서 install_as_MySQLdb()
+Pillow==11.3.0                  # models.ImageField(avatar). Django 가 선언하지
+                                # 않는 조건부 의존성이라 폐포에 안 잡힌다
+beautifulsoup4==4.15.0          # update/parser_infinitas.py, html.parser 로 씀
+                                # (lxml 은 쓰지 않는다)
+requests==2.32.5                # iidxrank/health.py 외
+thefuzz==0.22.1                 # cleanDuplicateSongs 의 곡명 비교
+playwright==1.60.0              # 시트/textage 는 JS 로 그려져서 브라우저가 필요
+django-bootstrap5==21.3
+django-hitcount==1.3.5
+django-recaptcha==3.0.0
+
+# --- 배포에만 쓰는 것 -------------------------------------------------------
+gunicorn==23.0.0                # 컨테이너의 WSGI 서버. Windows 에서는 돌지
+                                # 않으므로 개발 환경에는 깔려 있지 않다
+whitenoise==6.9.0               # 정적 파일을 앱이 직접 낸다. Apache 쪽에
+                                # Alias 를 두지 않아도 되게 하려는 것
+
+# --- 전이 의존성 (위 패키지들이 끌어온다) -----------------------------------
+asgiref==3.11.1                 # Django
+sqlparse==0.5.5                 # Django
+pytz==2026.3.post1              # Django 3.2
+soupsieve==2.8.4                # beautifulsoup4
+certifi==2026.7.22              # requests
+charset-normalizer==3.5.1       # requests
+idna==3.19                      # requests
+urllib3==2.6.3                  # requests
+rapidfuzz==3.13.0               # thefuzz
+greenlet==3.2.4                 # playwright
+pyee==13.0.1                    # playwright
+typing_extensions==4.16.0       # pyee
+django-etc==1.4.0               # django-hitcount

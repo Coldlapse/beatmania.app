@@ -62,6 +62,19 @@ DEBUG = env_bool('DJANGO_DEBUG', False)
 
 ALLOWED_HOSTS = env_list('DJANGO_ALLOWED_HOSTS', 'beatmania.app')
 
+# 컨테이너로 돌릴 때는 Apache 가 TLS 를 끊고 평문 HTTP 로 넘겨 준다. 그러면
+# Django 입장에서는 모든 요청이 http 로 보이고, 그 상태로는
+#   - request.is_secure() 가 False 라 CSRF 의 Referer 대조가 어긋나고
+#   - build_absolute_uri() 가 http:// 주소를 만들어 낸다.
+# X-Forwarded-Proto 를 믿게 해서 이를 바로잡는다.
+#
+# 반드시 스위치로 둔다. 프록시 뒤가 아닌데 켜 두면, 누구든 이 헤더를 붙여
+# 보내는 것만으로 자기 요청을 HTTPS 인 척할 수 있다. Apache 는 이 헤더를
+# 자기가 덮어쓰므로(RequestHeader set) 바깥에서 위조한 값은 들어오지 못한다.
+if env_bool('DJANGO_BEHIND_PROXY', False):
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    USE_X_FORWARDED_HOST = True
+
 
 # Application definition
 
@@ -94,6 +107,8 @@ MIDDLEWARE = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    # 정적 파일은 여기서 끝난다. 아래 미들웨어와 뷰까지 가지 않는다.
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 )
 
 
@@ -193,22 +208,25 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.8/howto/static-files/
-#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
-LOGIN_URL = '/login/'
-#    '/home/sadang/iidxranktable/static/',
-#]
+# collectstatic 이 모으는 곳. 원본 static/ 과 반드시 달라야 한다 — 같으면
+# collectstatic 이 자기 입력 디렉터리에 쓰게 되어 거부한다.
+STATIC_ROOT = env('STATIC_ROOT', os.path.join(BASE_DIR, 'staticfiles'))
 
-# redis Websocket part
+# whitenoise 가 정적 파일을 직접 낸다. Apache 쪽에 Alias 를 두지 않아도 되고,
+# 컨테이너를 어디에 갖다 놔도 같은 방식으로 동작한다.
+#
+# 해시 붙이는 Manifest 계열 대신 압축만 하는 쪽을 골랐다. 템플릿이 이미
+# '?v=' 로 캐시를 깨고 있어 해시가 없어도 되고, Manifest 는 CSS 안에서
+# 참조하는 파일이 하나라도 없으면 collectstatic 자체가 실패한다.
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+
+LOGIN_URL = '/login/'
 
 WSGI_APPLICATION = 'wsgi.application'
-WEBSOCKET_URL = '/ws/'
-WS4REDIS_EXPIRE = 7200	# reconnection delay
-WS4REDIS_PREFIX = 'ws'	# for convinence in redis
 
 # custom setting
 
