@@ -23,15 +23,18 @@ __pycache__/
 # dev/ranktable_drift.py 의 되돌리기 정보. 로컬 상태라 공유하지 않는다.
 dev/.drift_state.json
 
+# 라이브 DB 덤프를 놓는 자리. 실제 사용자 245명의 개인정보가 들어 있다.
+# 저장소는 공개다 — 절대 추적하지 않는다. (위 *.sql 규칙과 이중으로 막는다)
+dev/dumps/
+
+# dev 서버가 받은 업로드 파일
+dev/media/
+
 # ---------------------------------------------------------------------------
 # 런타임 생성물 — 소스가 아니다
 # ---------------------------------------------------------------------------
 # python manage.py collectstatic 산출물. 배포 시 재생성한다.
 /static/admin
-/static/hijack
-
-# update/parser_textage.py 가 만드는 수록곡 캐시 (370KB)
-textage*.json
 
 # 사용자가 올린 프로필 사진. 소스가 아니다.
 # 운영 서버에서는 MEDIA_ROOT 를 저장소 밖(/srv/beatmania/media)으로 두는 것이 낫다.
