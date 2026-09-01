@@ -685,3 +685,18 @@ body.bm-rankpage #rankimg { margin-top: .5rem; }
   color: #111 !important;
 }
 .bm-devlink-bmc:hover { filter: brightness(.95); color: #111 !important; }
+
+/* 남의 서열표를 보고 있다는 안내. 다른 안내와 성격이 달라 눈에 띄게 둔다. */
+.bm-intro-visiting {
+  font-weight: 600;
+  color: var(--bm-nav-link-hover);
+}
+
+/* --- IIDX ID 입력칸 (widgets/iidxid.html) -------------------------------- */
+.bm-iidxid-row {
+  display: flex; align-items: center; gap: .35rem; flex-wrap: nowrap;
+}
+.bm-iidxid-prefix { flex: 0 0 4.5rem; }
+/* min-width:0 이 없으면 입력칸이 기본 폭 아래로 줄지 않아 좁은 화면에서 삐져나간다 */
+.bm-iidxid-part { flex: 1 1 0; min-width: 0; text-align: center; }
+.bm-iidxid-sep { color: var(--bm-text-muted); font-weight: 700; }

@@ -40,6 +40,14 @@
 
   <hr class="my-4">
 
+  {% comment %}
+    가입할 때 두 이름 모두 아이디로 채워 둔다(views.join / rankpage.newplayer).
+    그대로 둔 사람이 많아서, 바꿔도 된다는 것을 폼 맨 위에서 알려 준다.
+  {% endcomment %}
+  <p class="text-muted small mb-3">
+    {% trans '닉네임과 IIDX DJ NAME은 가입 초기 아이디로 기본 설정됩니다.' %}
+  </p>
+
   {% bootstrap_form form layout='vertical' %}
   <button type="submit" class="btn btn-primary w-100 mt-2">{% trans '저장' %}</button>
 </form>

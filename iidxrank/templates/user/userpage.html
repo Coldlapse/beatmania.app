@@ -14,6 +14,16 @@
   <div class="card bm-intro-card">
     <div class="card-body">
       <ul class="bm-intro-list">
+        {% comment %}
+          남의 서열표를 보고 있을 때만 맨 위에 알린다. 여기서 무엇을 눌러도
+          그 사람의 기록은 바뀌지 않으므로 그 사실을 먼저 말해 준다.
+        {% endcomment %}
+        {% if viewing_other %}
+        <li class="bm-intro-visiting">
+          <i class="bi bi-eye" aria-hidden="true"></i>
+          <span>{% blocktrans with dj=userdata.djname nick=userdata.nickname %}DJ {{ dj }} ({{ nick }}) 님의 서열표 페이지에 접근하셨습니다. 읽기 전용입니다.{% endblocktrans %}</span>
+        </li>
+        {% endif %}
         <li>
           <i class="bi bi-git" aria-hidden="true"></i>
           <span><a href="https://github.com/kuna/iidxranktable/" target="_blank" rel="noopener">kuna/iidxranktable</a>

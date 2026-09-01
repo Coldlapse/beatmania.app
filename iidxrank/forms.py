@@ -102,17 +102,90 @@ class JoinForm(forms.Form):
         if (self.data['password'] != self.data['password_again']):
             raise forms.ValidationError('Password does not match!')
 
+class IIDXIDWidget(forms.MultiWidget):
+    """IIDX ID 를 '앞글자 + 네 자리 3칸' 으로 받는다.
+
+    한 칸짜리 자유 입력이던 것을 나눈 이유 — 저장된 값이 제각각이었다.
+    X000000000000 149건, X-0000-0000-0000 49건, 여덟 자리만 37건, 그 밖에
+    하이픈 위치가 다른 것들. 자유 입력이면 계속 섞인다.
+
+    화면에서 나눠 받고 저장은 X-0000-0000-0000 한 가지로 맞춘다.
+    """
+
+    PREFIXES = [('K', 'K'), ('C', 'C')]
+
+    def __init__(self, attrs=None):
+        base = {'inputmode': 'numeric', 'pattern': '[0-9]{4}',
+                'maxlength': '4', 'class': 'form-control bm-iidxid-part',
+                'placeholder': '0000'}
+        widgets = [
+            forms.Select(choices=self.PREFIXES,
+                         attrs={'class': 'form-select bm-iidxid-prefix'}),
+            forms.TextInput(attrs=dict(base)),
+            forms.TextInput(attrs=dict(base)),
+            forms.TextInput(attrs=dict(base)),
+        ]
+        super().__init__(widgets, attrs)
+
+    # 칸 사이에 하이픈을 그려 저장될 모양(X-0000-0000-0000)이 눈에 보이게 한다.
+    # MultiWidget 기본 렌더링은 칸만 나열해서 무엇이 만들어지는지 알 수 없다.
+    template_name = 'widgets/iidxid.html'
+
+    def decompress(self, value):
+        """저장된 값을 네 칸으로 되돌린다.
+
+        형식이 섞여 있으므로 느슨하게 읽는다. 알아볼 수 없으면 빈 칸으로 둔다 —
+        엉뚱하게 채워 두면 저장할 때 남의 값으로 덮어쓴다.
+        """
+        if not value:
+            return ['K', '', '', '']
+        v = str(value).strip().upper()
+        prefix = 'K'
+        if v[:1] in ('K', 'C'):
+            prefix, v = v[0], v[1:]
+        digits = ''.join(ch for ch in v if ch.isdigit())
+        if len(digits) == 12:
+            return [prefix, digits[0:4], digits[4:8], digits[8:12]]
+        return [prefix, '', '', '']
+
+
+class IIDXIDField(forms.MultiValueField):
+    widget = IIDXIDWidget
+
+    def __init__(self, **kwargs):
+        fields = (
+            forms.ChoiceField(choices=IIDXIDWidget.PREFIXES),
+            forms.RegexField(regex=r'^[0-9]{4}$'),
+            forms.RegexField(regex=r'^[0-9]{4}$'),
+            forms.RegexField(regex=r'^[0-9]{4}$'),
+        )
+        super().__init__(fields=fields, require_all_fields=True, **kwargs)
+
+    def compress(self, values):
+        if not values or not all(values):
+            return ''
+        return '%s-%s-%s-%s' % tuple(values)
+
+
 class AccountForm(forms.Form):
     first_name = forms.CharField(
             label=_('닉네임'),
+            help_text=_('순위표 등 사이트 곳곳에 표시되는 공개 이름입니다. '
+                        '다른 사람과 같아도 되며 언제든 바꿀 수 있습니다. '
+                        '주소에 쓰이는 아이디와는 다릅니다.'),
             widget=forms.TextInput(attrs={'placeholder': _('사이트에 표시될 이름')}))
-    iidxid = forms.CharField(
-            label='IIDX ID',
-            help_text=_('?-0000-0000-0000 형식'),
-            widget=forms.TextInput(attrs={'placeholder': _('X-0000-0000-0000')}))
+    # 게임 안의 이름(DJ NAME)을 ID 보다 먼저 묻는다. 사람이 자기 이름을 먼저
+    # 떠올리고 숫자를 나중에 찾아보기 때문이다.
     iidxnick = forms.CharField(
-            label=_('IIDX 닉네임'),
+            label='IIDX DJ NAME',
+            required=False,
+            help_text=_('서열표 프로필에 DJ NAME 으로 표시됩니다. 사이트 닉네임과는 '
+                        '별개이며, 다른 사람과 같아도 됩니다.'),
             widget=forms.TextInput(attrs={'placeholder': _('DJ NAME')}))
+    iidxid = IIDXIDField(
+            label='IIDX ID',
+            required=False,
+            help_text=_('게임 화면에 나오는 ID 입니다. 앞글자를 고르고 네 자리씩 입력하세요.'))
     classes = iidx.classes
     spclass = forms.ChoiceField(label=_('SP 단위'), choices=classes)
     dpclass = forms.ChoiceField(label=_('DP 단위'), choices=classes)

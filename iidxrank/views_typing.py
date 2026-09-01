@@ -71,7 +71,7 @@ def _leaderboard(key, request_user):
     key, (_btn, phrase, days) = _period(key)
 
     rows = list(_visible_logs(days)
-                .values('user_id', 'user__username')
+                .values('user_id', 'user__username', 'user__first_name')
                 .annotate(total=Sum('count'))
                 .order_by('-total'))
 
@@ -85,6 +85,9 @@ def _leaderboard(key, request_user):
         p = players.get(r['user_id'])
         top.append({
             'rank': i,
+            # 보여 주는 것은 닉네임(first_name), 링크에 쓰는 것은 아이디다.
+            # 닉네임은 중복될 수 있어 주소로 쓸 수 없다.
+            'nickname': r['user__first_name'] or r['user__username'],
             'username': r['user__username'],
             'total': r['total'],
             'avatar': _avatar_url(p),

@@ -312,6 +312,35 @@ def get_pdata_from_iidxme(data, ranktable):
 """
 get only userdata from player object
 """
+
+def format_iidxid(raw):
+    """IIDX ID 를 X-0000-0000-0000 모양으로 보여 준다.
+
+    예전에 자유 입력으로 받아서 저장된 값이 제각각이다 — X000000000000,
+    X-0000-0000-0000, 여덟 자리만, 하이픈 위치가 다른 것. 표시할 때만
+    한 모양으로 맞춘다. **DB 값을 고치지는 않는다** — 계정 설정에서 다시
+    저장할 때 정리된다.
+
+    알아볼 수 없는 값은 손대지 않고 그대로 보여 준다. 임의로 자르면 남의
+    ID 를 잘못 표시하게 된다.
+    """
+    if not raw:
+        return ''
+    v = str(raw).strip().upper()
+    prefix = ''
+    if v[:1] in ('K', 'C'):
+        prefix, v = v[0], v[1:]
+    digits = ''.join(ch for ch in v if ch.isdigit())
+    if len(digits) == 12:
+        # 앞글자가 없으면 지어내지 않는다. K 인지 C 인지는 우리가 알 수 없다.
+        body = '%s-%s-%s' % (digits[0:4], digits[4:8], digits[8:12])
+        return '%s-%s' % (prefix, body) if prefix else body
+    if len(digits) == 8 and not prefix:
+        # 옛 아케이드 형식(0000-0000). 앞글자를 지어내지 않는다.
+        return '%s-%s' % (digits[0:4], digits[4:8])
+    return str(raw).strip()
+
+
 def get_udata_from_player(player, username=None):
     """username 이 주어지면 그 사용자의 공개 프로필로 본다."""
     from django.conf import settings
@@ -330,7 +359,7 @@ def get_udata_from_player(player, username=None):
         userdata['has_avatar'] = False
     else:
         userdata['djname'] = player.iidxnick
-        userdata['iidxid'] = player.iidxid.replace('-','')
+        userdata['iidxid'] = format_iidxid(player.iidxid)
         userdata['spclass'] = player.spclass
         userdata['dpclass'] = player.dpclass
         userdata['spclassstr'] = iidx.getdanstring(player.spclass)
@@ -339,6 +368,8 @@ def get_udata_from_player(player, username=None):
         # 템플릿이 정한다(리더보드와 같은 기본 아이콘).
         userdata['avatar_url'] = player.avatar_url()
         userdata['has_avatar'] = bool(player.avatar)
+        # 사이트 닉네임. 서열표에 보이는 DJ NAME(iidxnick)과는 별개다.
+        userdata['nickname'] = (player.user.first_name or player.user.username)             if player.user else ''
     return userdata
 
 """

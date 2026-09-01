@@ -1,0 +1,13 @@
+{% comment %}
+  IIDX ID 입력칸. 앞글자 드롭다운 + 네 자리 3칸을 한 줄에 두고 사이에
+  하이픈을 그린다. 저장될 모양(X-0000-0000-0000)이 그대로 보이게 하려는 것이다.
+
+  좁은 화면에서도 줄바꿈하지 않는다 — 하이픈만 다음 줄로 넘어가면 더 읽기 나쁘다.
+  대신 칸이 함께 줄어든다.
+{% endcomment %}
+<div class="bm-iidxid-row">
+  {% for w in widget.subwidgets %}
+    {% if not forloop.first %}<span class="bm-iidxid-sep" aria-hidden="true">-</span>{% endif %}
+    {% include w.template_name with widget=w %}
+  {% endfor %}
+</div>

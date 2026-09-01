@@ -218,15 +218,24 @@ function Default2Renderer(ctx) {
     self.ctx.fillText(title, x+w/2, 70);
 
     // DJ name, clear status
-    self.ctx.fillStyle="#000";
-    roundRect(self.ctx, x+10, 115, 100, 25, 5, true, false);
+    //
+    // 이름 상자는 예전에 폭이 100 으로 고정이었다. DJ NAME 이 길면 글자가
+    // 검은 상자를 삐져나가고, 그 뒤에 고정 위치로 그리던 IIDX ID 와 겹쳤다.
+    // 글자 폭을 재서 상자를 늘리고, ID 를 그만큼 오른쪽으로 민다.
     self.ctx.font = "bold 14px Arial";
     self.ctx.textAlign="left";
+    var namestr = "DJ " + username;
+    var namepad = 10;                       // 상자 안쪽 좌우 여백
+    var namebox = Math.max(100, self.ctx.measureText(namestr).width + namepad * 2);
+
+    self.ctx.fillStyle="#000";
+    roundRect(self.ctx, x+10, 115, namebox, 25, 5, true, false);
     self.ctx.fillStyle="#FFF";
-    self.ctx.fillText("DJ " + username, x + 20, 132);
+    self.ctx.fillText(namestr, x + 10 + namepad, 132);
+
     self.ctx.font = "bold 14px Arial";
     self.ctx.fillStyle="#000";
-    self.ctx.fillText(d.userdata.iidxid, x + 120, 132);
+    self.ctx.fillText(d.userdata.iidxid, x + 10 + namebox + 16, 132);
 
     var gradecolor = [
       "#000000",
@@ -573,15 +582,24 @@ function DefaultDarkRenderer(ctx) {
     self.ctx.fillText(title, x+w/2, 70);
 
     // DJ name, clear status
-    self.ctx.fillStyle="#000";
-    roundRect(self.ctx, x+10, 115, 100, 25, 5, true, false);
+    //
+    // 이름 상자는 예전에 폭이 100 으로 고정이었다. DJ NAME 이 길면 글자가
+    // 검은 상자를 삐져나가고, 그 뒤에 고정 위치로 그리던 IIDX ID 와 겹쳤다.
+    // 글자 폭을 재서 상자를 늘리고, ID 를 그만큼 오른쪽으로 민다.
     self.ctx.font = "bold 14px Arial";
     self.ctx.textAlign="left";
+    var namestr = "DJ " + username;
+    var namepad = 10;                       // 상자 안쪽 좌우 여백
+    var namebox = Math.max(100, self.ctx.measureText(namestr).width + namepad * 2);
+
+    self.ctx.fillStyle="#000";
+    roundRect(self.ctx, x+10, 115, namebox, 25, 5, true, false);
     self.ctx.fillStyle="#FFF";
-    self.ctx.fillText("DJ " + username, x + 20, 132);
+    self.ctx.fillText(namestr, x + 10 + namepad, 132);
+
     self.ctx.font = "bold 14px Arial";
     self.ctx.fillStyle="#FFF";
-    self.ctx.fillText(d.userdata.iidxid, x + 120, 132);
+    self.ctx.fillText(d.userdata.iidxid, x + 10 + namebox + 16, 132);
 
     var gradecolor = [
       "#000000",

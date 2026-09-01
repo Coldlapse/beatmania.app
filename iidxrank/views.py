@@ -51,7 +51,14 @@ def userpage(request, username=None):
             # 없는 계정인지 비공개인지 구별해 주지 않는다 — 구별이 곧 계정 열거다
             return _unavailable(request, username)
         userinfo = rp.get_udata_from_player(player, username)
-    return render(request, 'user/userpage.html', {'userdata': userinfo})
+    # 남의 페이지인지 알려 준다. 여기서만 판단하고 화면은 그대로 쓴다 —
+    # 로그인 여부가 아니라 '주소에 아이디가 있는가' 가 기준이다.
+    # 내 페이지는 /(아이디 없음), 남의 페이지는 /u/<아이디>/ 다.
+    return render(request, 'user/userpage.html', {
+        'userdata': userinfo,
+        'viewing_other': username is not None,
+        'other_username': username,
+    })
 
 def get_pdata(request, username, tablename):
     """서열표 데이터를 만든다.
@@ -318,16 +325,16 @@ def account(request):
             player.save()
 
         if (form.is_valid()):
-            user.first_name = form.data['first_name']
-            player.iidxid = form.data['iidxid']
-            player.iidxnick = form.data['iidxnick']
-            player.spclass = form.data['spclass']
-            player.dpclass = form.data['dpclass']
-            try:
-                if form.data['private'] == 'on':
-                    player.private = True
-            except:
-                player.private = False
+            # form.data 는 화면에서 온 날것이다. IIDX ID 는 칸 네 개로 나뉘어
+            # 오므로 날것으로는 읽을 수 없다. 검사와 조립을 마친
+            # cleaned_data 를 쓴다.
+            cd = form.cleaned_data
+            user.first_name = cd['first_name']
+            player.iidxid = cd['iidxid']
+            player.iidxnick = cd['iidxnick']
+            player.spclass = cd['spclass']
+            player.dpclass = cd['dpclass']
+            player.private = bool(cd.get('private'))
             user.save()
             player.save()
             return redirect('home')
