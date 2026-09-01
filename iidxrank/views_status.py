@@ -33,14 +33,15 @@ SP_TABLES = ['SP12H', 'SP12N', 'SP11H', 'SP11N', 'SP10H', 'SP10R', 'SP12TEST']
 DP_TABLES = ['DP12', 'DP11', 'DP10', 'DBR', '11DBR', 'onehand']
 
 PERIODS = {
-    # key: (버튼에 쓸 이름, 문장에 쓸 이름, 거슬러 갈 길이, 시간 단위인가)
+    # key: (버튼에 쓸 이름, 문장에 쓸 구절, 거슬러 갈 길이, 시간 단위인가)
     #
-    # 이름을 둘로 나눈 이유: 버튼은 '오늘'이 짧고 자연스럽지만, 문장에 넣으면
-    # "오늘 동안 313번" 처럼 어색해진다. 문장에서는 '지난 1일'로 읽는다.
-    'today': ('오늘', '지난 1일', datetime.timedelta(days=1), True),
-    'week': ('지난 7일', '지난 7일', datetime.timedelta(days=7), False),
-    'month': ('지난 30일', '지난 30일', datetime.timedelta(days=30), False),
-    'year': ('지난 365일', '지난 365일', datetime.timedelta(days=365), False),
+    # 문장 쪽은 '동안'까지 포함한 구절로 둔다. 화면에서 라벨 뒤에 '동안'을
+    # 붙이면 '오늘 동안'이 되어 어색하다. 조사가 붙고 안 붙고는 말의 문제라
+    # 라벨과 함께 있어야 한다.
+    'today': ('오늘', '오늘', datetime.timedelta(days=1), True),
+    'week': ('지난 7일', '지난 7일 동안', datetime.timedelta(days=7), False),
+    'month': ('지난 30일', '지난 30일 동안', datetime.timedelta(days=30), False),
+    'year': ('지난 365일', '지난 365일 동안', datetime.timedelta(days=365), False),
 }
 DEFAULT_PERIOD = 'week'
 

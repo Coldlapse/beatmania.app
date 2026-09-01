@@ -159,8 +159,10 @@
     var tc = themeColors();
     var v = p.visits;
 
+    // period_label 은 '오늘' / '지난 7일 동안' 처럼 조사까지 포함한 구절이다.
+    // 여기서 '동안'을 붙이면 '오늘 동안'이 된다.
     visitSentence.innerHTML =
-      'beatmania.app 은 ' + v.period_label + ' 동안 <b>' +
+      'beatmania.app 은 ' + v.period_label + ' <b>' +
       v.total.toLocaleString() + '</b> 번의 방문을 기록했습니다.';
 
     if (visitChart) { visitChart.destroy(); }
