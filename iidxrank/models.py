@@ -215,3 +215,33 @@ class MachineStatus(models.Model):
     def __str__(self):
         return f"{self.machine_id}: {self.waiting_count} waiting"
 
+
+
+class HealthCheck(models.Model):
+    """상태 점검 한 번의 결과.
+
+    업타임을 시계열로 보여 주려면 과거가 남아 있어야 한다. 요청이 올 때마다
+    외부에 붙어 보는 것은 느리고 상대에게도 실례라, 주기적으로 돌린 결과를
+    쌓아 두고 화면은 그것만 읽는다(iidxrank/management/commands/healthcheck.py).
+
+    행이 무한정 늘지 않도록 그 명령이 오래된 것을 지운다.
+    """
+
+    OK = 'ok'
+    DEGRADED = 'degraded'
+    DOWN = 'down'
+    STATUS_CHOICES = [(OK, 'ok'), (DEGRADED, 'degraded'), (DOWN, 'down')]
+
+    target = models.CharField(max_length=32)
+    status = models.CharField(max_length=16, choices=STATUS_CHOICES)
+    latency_ms = models.IntegerField(default=0)
+    note = models.CharField(max_length=200, blank=True, default='')
+    checked_at = models.DateTimeField(db_index=True)
+
+    class Meta:
+        # 화면은 "대상별로 최근 것부터"만 읽는다. 그 순서로 색인을 둔다.
+        index_together = [('target', 'checked_at')]
+        ordering = ['-checked_at']
+
+    def __str__(self):
+        return '%s %s @%s' % (self.target, self.status, self.checked_at)

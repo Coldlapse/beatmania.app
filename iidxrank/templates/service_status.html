@@ -28,6 +28,23 @@
     </div>
   </div>
 
+  <div class="card bm-panel mb-3">
+    <div class="card-body">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+        <h2 class="h6 mb-0">{% trans '사이트뷰' %}</h2>
+        <span class="small text-body-secondary">{% trans '같은 방문자가 여러 서열표를 봐도 한 번으로 셉니다' %}</span>
+      </div>
+      <div class="bm-chart-wrap bm-chart-wrap-sm">
+        <canvas id="bm-visits-chart" role="img"
+                aria-label="{% trans '사이트뷰 추이' %}"></canvas>
+      </div>
+      <p id="bm-visits-sentence" class="bm-status-sentence mt-3 mb-0"></p>
+      <p class="small text-body-secondary mt-2 mb-0">
+        {% trans '서열표를 연 방문만 셉니다. 다른 페이지만 보고 나간 방문은 포함되지 않습니다.' %}
+      </p>
+    </div>
+  </div>
+
   <div class="card bm-panel">
     <div class="card-body">
       <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
@@ -58,6 +75,53 @@
       <div id="bm-chart-total" class="small text-body-secondary mt-2"></div>
     </div>
   </div>
+
+  {% comment %}
+    상태 점검. 화면에서 외부에 붙지 않는다 — 요청마다 textage/구글에 붙으면
+    느리고 상대에게도 실례다. `manage.py healthcheck` 가 주기적으로 남긴
+    기록만 읽는다.
+  {% endcomment %}
+  <div class="card bm-panel mt-3">
+    <div class="card-body">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+        <h2 class="h6 mb-0">{% trans '상태 점검' %}</h2>
+        <span class="small text-body-secondary">
+          {% blocktrans with h=health_window_hours %}최근 {{ h }}시간{% endblocktrans %}
+        </span>
+      </div>
+
+      {% for h in health %}
+      <div class="bm-health-row">
+        <div class="bm-health-head">
+          <span class="bm-health-dot bm-health-{{ h.current|default:'none' }}"
+                aria-hidden="true"></span>
+          <span class="bm-health-label">{{ h.label }}</span>
+          <span class="bm-health-num">
+            {% if h.uptime is not None %}{{ h.uptime }}%{% if h.avg_ms %}
+              <span class="text-body-secondary">· {{ h.avg_ms }}ms</span>{% endif %}
+            {% else %}<span class="text-body-secondary">{% trans '기록 없음' %}</span>{% endif %}
+          </span>
+        </div>
+        <div class="bm-uptime" role="img"
+             aria-label="{{ h.label }} {% trans '가동 이력' %}">
+          {% for s in h.slots %}
+          <i class="bm-uptime-slot bm-health-{{ s|default:'none' }}"
+             title="{% if s %}{{ s }}{% else %}{% trans '기록 없음' %}{% endif %}"></i>
+          {% endfor %}
+        </div>
+        <div class="bm-health-desc">
+          {{ h.description }}
+          {% if h.note %}<span class="bm-health-note">— {{ h.note }}</span>{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+
+      <p class="small text-body-secondary mt-3 mb-0">
+        {% blocktrans %}이 점검은 beatmania.app 안에서 스스로를 확인한 결과입니다. 사이트 자체가 내려가면 이 페이지도 열리지 않으므로, 바깥에서 같은 항목을 확인하는 점검기를 따로 둘 예정입니다.{% endblocktrans %}
+        <span class="bm-health-external">{% trans '(외부 점검기: 준비 중)' %}</span>
+      </p>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -65,6 +129,9 @@
   var URL_BASE = "{% url 'status_views_json' %}";
   var state = { period: "{{ default_period }}", group: 'SP', payload: null };
   var chart = null;
+  var visitChart = null;
+  var visitCanvas = document.getElementById('bm-visits-chart');
+  var visitSentence = document.getElementById('bm-visits-sentence');
   var canvas = document.getElementById('bm-views-chart');
   var empty = document.getElementById('bm-chart-empty');
   var totalBox = document.getElementById('bm-chart-total');
@@ -84,9 +151,49 @@
     };
   }
 
+  // 사이트뷰는 SP/DP 와 무관하다. 기간이 바뀔 때만 다시 그린다.
+  function renderVisits() {
+    var p = state.payload;
+    if (!p || !p.visits) { return; }
+    var tc = themeColors();
+    var v = p.visits;
+
+    visitSentence.innerHTML =
+      'beatmania.app 은 ' + v.period_label + ' 동안 <b>' +
+      v.total.toLocaleString() + '</b> 번의 방문을 기록했습니다.';
+
+    if (visitChart) { visitChart.destroy(); }
+    visitChart = new Chart(visitCanvas.getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: p.labels,
+        datasets: [{
+          label: '{% trans "사이트뷰" %}',
+          data: v.data,
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59,130,246,.18)',
+          borderWidth: 2, pointRadius: 0, pointHoverRadius: 4,
+          tension: .25, fill: true
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: tc.text, maxRotation: 0, autoSkipPadding: 24 },
+               grid: { color: tc.grid } },
+          y: { beginAtZero: true, ticks: { color: tc.text, precision: 0 },
+               grid: { color: tc.grid } }
+        }
+      }
+    });
+  }
+
   function render() {
     var p = state.payload;
     if (!p) { return; }
+    renderVisits();
     var series = (p.groups[state.group] || []);
     var grand = series.reduce(function (a, s) { return a + s.total; }, 0);
 

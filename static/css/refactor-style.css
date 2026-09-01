@@ -517,3 +517,33 @@ body.bm-rankpage #rankimg { margin-top: .5rem; }
 .bm-legal ul { padding-left: 1.2rem; }
 .bm-legal li { margin-bottom: .3rem; }
 .bm-legal p { line-height: 1.7; }
+
+/* --- 사이트뷰 / 상태 점검 (service_status.html) -------------------------- */
+.bm-chart-wrap-sm { height: 200px; }
+@media (max-width: 576px) { .bm-chart-wrap-sm { height: 160px; } }
+
+.bm-health-row { padding: .75rem 0; border-top: 1px solid var(--bm-border); }
+.bm-health-row:first-of-type { border-top: 0; padding-top: 0; }
+.bm-health-head { display: flex; align-items: center; gap: .5rem; }
+.bm-health-label { font-weight: 600; }
+.bm-health-num { margin-left: auto; font-variant-numeric: tabular-nums; }
+.bm-health-desc { font-size: .82rem; color: var(--bm-text-muted); margin-top: .35rem; }
+.bm-health-note { color: #d97706; }
+
+.bm-health-dot {
+  width: .6rem; height: .6rem; border-radius: 50%; display: inline-block;
+}
+
+/* 업타임 막대. 흔한 상태 페이지처럼 한 칸이 한 시간대다. */
+.bm-uptime {
+  display: flex; gap: 2px; margin-top: .45rem; height: 26px;
+}
+.bm-uptime-slot { flex: 1 1 0; border-radius: 2px; min-width: 2px; }
+
+/* 색은 상태의 뜻이라 테마와 무관하게 고정한다.
+   '기록 없음'은 회색 — 초록으로 칠하면 점검이 안 돈 시간을 정상으로 읽는다. */
+.bm-health-ok       { background: #22c55e; }
+.bm-health-degraded { background: #f59e0b; }
+.bm-health-down     { background: #ef4444; }
+.bm-health-none     { background: var(--bm-border); }
+.bm-health-external { white-space: nowrap; }

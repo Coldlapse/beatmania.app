@@ -22,7 +22,7 @@ from django.views.decorators.http import require_GET
 
 from hitcount.models import Hit
 
-from iidxrank import models
+from iidxrank import health, models
 
 # 서열표를 두 묶음으로 나눈다.
 #
@@ -65,12 +65,70 @@ def _service_numbers():
     }
 
 
+# 업타임 막대에 몇 칸을 보여 줄 것인가. 5분 간격 점검 기준으로 24시간.
+UPTIME_SLOTS = 48
+UPTIME_WINDOW = datetime.timedelta(hours=24)
+
+
+def _uptime():
+    """대상별로 최근 24시간을 UPTIME_SLOTS 칸으로 접어 돌려준다.
+
+    한 칸 안에 여러 번 점검한 결과가 들어가면 **가장 나쁜 것**을 남긴다.
+    30분 중 한 번이라도 죽었으면 그 칸은 초록이면 안 된다.
+    """
+    now = timezone.localtime()
+    start = now - UPTIME_WINDOW
+    slot = UPTIME_WINDOW / UPTIME_SLOTS
+    rank = {health.OK: 0, health.DEGRADED: 1, health.DOWN: 2}
+
+    rows = (models.HealthCheck.objects
+            .filter(checked_at__gte=start)
+            .values('target', 'status', 'latency_ms', 'checked_at'))
+
+    grid = {t: [None] * UPTIME_SLOTS for t in health.CHECKS}
+    latest = {}
+    lat_sum = {t: [0, 0] for t in health.CHECKS}
+    for r in rows:
+        t = r['target']
+        if t not in grid:
+            continue
+        i = int((timezone.localtime(r['checked_at']) - start) / slot)
+        i = min(max(i, 0), UPTIME_SLOTS - 1)
+        cur = grid[t][i]
+        if cur is None or rank[r['status']] > rank[cur]:
+            grid[t][i] = r['status']
+        if t not in latest or r['checked_at'] > latest[t]['checked_at']:
+            latest[t] = r
+        lat_sum[t][0] += r['latency_ms']
+        lat_sum[t][1] += 1
+
+    out = []
+    for t in health.CHECKS:
+        seen = [s for s in grid[t] if s]
+        ok = sum(1 for s in seen if s == health.OK)
+        out.append({
+            'key': t,
+            'label': health.LABELS[t],
+            'description': health.DESCRIPTIONS[t],
+            'slots': grid[t],
+            'current': latest.get(t, {}).get('status'),
+            'note': latest.get(t, {}).get('note', ''),
+            'checked_at': latest.get(t, {}).get('checked_at'),
+            # 점검이 한 번도 안 돌았으면 비율을 지어내지 않는다.
+            'uptime': round(100.0 * ok / len(seen), 1) if seen else None,
+            'avg_ms': int(lat_sum[t][0] / lat_sum[t][1]) if lat_sum[t][1] else None,
+        })
+    return out
+
+
 @require_GET
 def service_status(request):
     return render(request, 'service_status.html', {
         'numbers': _service_numbers(),
         'periods': [(k, PERIODS[k][0]) for k in ('today', 'week', 'month', 'year')],
         'default_period': DEFAULT_PERIOD,
+        'health': _uptime(),
+        'health_window_hours': int(UPTIME_WINDOW.total_seconds() // 3600),
     })
 
 
@@ -96,8 +154,13 @@ def views_json(request):
         trunc = TruncDate('created')
         step = datetime.timedelta(days=1)
 
+    # order_by() 로 기본 정렬을 지운다. Hit 는 Meta.ordering 이 ('-created',)
+    # 라서, 지우지 않으면 Django 가 created 를 GROUP BY 에 끼워 넣는다.
+    # 그러면 묶음이 조회 한 건 단위로 쪼개진다 — 아래 세션 집계에서 실제로
+    # 고유 세션 수가 전체 조회 수와 같아지는 결과가 나왔다.
     rows = (Hit.objects
             .filter(hitcount__content_type__model='ranktable', created__gte=start)
+            .order_by()
             .annotate(bucket=trunc)
             .values('bucket', 'hitcount__object_pk')
             .annotate(n=Count('id')))
@@ -135,6 +198,33 @@ def views_json(request):
             continue
         series.setdefault(name, [0] * len(keys))[i] += r['n']
 
+    # --- 사이트뷰 ---------------------------------------------------------
+    #
+    # "서열표 조회수의 합"은 사이트뷰가 아니다. 한 사람이 한 번 들어와 표
+    # 세 개를 보면 합계에는 3 이 더해진다(실측: 조회 13,849건 / 고유 세션
+    # 9,969개 = 세션당 1.39표). 그래서 세션 단위로 따로 센다.
+    #
+    # 한계도 분명히 해 둔다 — hitcount 는 **서열표 페이지에만** 걸려 있다.
+    # /about/ 이나 /status/ 만 보고 나간 방문은 여기 잡히지 않는다.
+    # 사이트 전체를 세려면 모든 페이지에 조회 기록을 남겨야 하는데, 그건
+    # 지금 구조를 바꾸는 일이라 하지 않았다.
+    visit_rows = (Hit.objects
+                  .filter(hitcount__content_type__model='ranktable',
+                          created__gte=start)
+                  .order_by()                     # 위와 같은 이유
+                  .annotate(bucket=trunc)
+                  .values('bucket')
+                  .annotate(n=Count('session', distinct=True)))
+    visits = [0] * len(keys)
+    for r in visit_rows:
+        b = r['bucket']
+        k = (timezone.localtime(b).strftime('%H:00')
+             if hourly and timezone.is_aware(b)
+             else b.strftime('%H:00' if hourly else '%Y-%m-%d'))
+        i = index.get(k)
+        if i is not None:
+            visits[i] += r['n']
+
     groups = {'SP': [], 'DP': []}
     for name, data in series.items():
         groups[_group(name)].append({'name': name, 'data': data,
@@ -146,4 +236,6 @@ def views_json(request):
         'labels': keys,
         'unit': 'hour' if hourly else 'day',
         'groups': groups,
+        'visits': {'data': visits, 'total': sum(visits),
+                   'period_label': _label},
     })
