@@ -1,5 +1,7 @@
 #-*- coding: utf-8 -*-
 
+import bisect
+
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
@@ -44,8 +46,17 @@ def json_series(request, type, series):
   return JsonResponse({'status':'success', 'songs': createSonginfoFromModel(songs)})
 
 def json_user(request):
+  # players who set their profile private must not appear here, same as
+  # rankpage.find_player_from_id() already does for /<username>/
+  players = list(models.Player.objects.filter(private=False))
+  # ranks used to be one COUNT query per player per mode (2N+1 queries);
+  # sort once instead and look the position up in memory
+  sp_levels = sorted(p.splevel for p in players)
+  dp_levels = sorted(p.dplevel for p in players)
+  total = len(players)
+
   user_array = []
-  for user in models.Player.objects.all():
+  for user in players:
     user_array.append({
       'iidxid': user.iidxid,
       'iidxmeid': user.iidxmeid_private(),
@@ -54,8 +65,9 @@ def json_user(request):
       'dpdan': iidx.getdanstring(user.dpclass),
       'splevel': getLevel(user.splevel),
       'dplevel': getLevel(user.dplevel),
-      'sprank': models.Player.objects.filter(splevel__gt=user.splevel).count()+1,
-      'dprank': models.Player.objects.filter(dplevel__gt=user.dplevel).count()+1,
+      # == count(splevel > mine) + 1
+      'sprank': total - bisect.bisect_right(sp_levels, user.splevel) + 1,
+      'dprank': total - bisect.bisect_right(dp_levels, user.dplevel) + 1,
     })
   return JsonResponse({'status':'success', 'users': user_array})
 

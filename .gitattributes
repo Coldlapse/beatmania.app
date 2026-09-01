@@ -1,17 +1,28 @@
-# Auto detect text files and perform LF normalization
+# Windows 에서 개발하고 Linux 서버에서 서비스한다.
+# 저장소 안에서는 LF 로 통일하고, 체크아웃 시 OS 규칙을 따른다.
 * text=auto
 
-# Custom for Visual Studio
-*.cs     diff=csharp
+# 서버에서 실행되는 것들은 LF 를 강제한다.
+# CRLF 가 섞이면 shebang 이 깨지고 컨테이너 안에서 실행되지 않는다.
+*.sh        text eol=lf
+*.py        text eol=lf
+Dockerfile  text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+.env.example text eol=lf
 
-# Standard to msysgit
-*.doc	 diff=astextplain
-*.DOC	 diff=astextplain
-*.docx diff=astextplain
-*.DOCX diff=astextplain
-*.dot  diff=astextplain
-*.DOT  diff=astextplain
-*.pdf  diff=astextplain
-*.PDF	 diff=astextplain
-*.rtf	 diff=astextplain
-*.RTF	 diff=astextplain
+# 바이너리 — 줄바꿈 변환이 끼어들면 조용히 깨진다.
+# text=auto 의 휴리스틱에 맡기지 않고 못 박는다.
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.psd   binary
+*.woff  binary
+*.woff2 binary
+*.ttf   binary
+*.eot   binary
+*.otf   binary
+*.pdf   binary
+*.zip   binary

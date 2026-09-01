@@ -1,12 +1,13 @@
 #-*- coding: utf-8 -*-
 
-from update import parser_clickagain, parser_zasa, parser_iidxme, parser_custom, parser_textage
+from update import parser_clickagain, parser_zasa, parser_iidxme, parser_custom, parser_textage, parser_infinitas
 from update import parser_remywiki
 from update import textdistance
 from django.db import transaction
 from update import log
 import iidxrank.models as models
 import datetime
+import html
 
 # to make version FORCE
 VERSION = -1
@@ -17,11 +18,14 @@ TEST = 0
 # returns 1 if added
 # returns 0 if not added(updated)
 def update_song_by_object(song, do_add=True):
+    
     if (VERSION >= 0):
         song['version'] = VERSION
+    
     # if not exists, then add
-    # if exists, then check level and title, then update.
+    # if exists, then check level and title, then update. < 이미 있으면 업뎃 안하도록 해봄
     added = 0
+    #print(type(song['title']))
     song_id = textdistance.CreateIntHashFromText(song['title'])
     song_title = song['title']
     version = str(song['version'])
@@ -53,18 +57,18 @@ def update_song_by_object(song, do_add=True):
                     calcweight_exh=0)
             print("song %s/%s(%d) added (id %d)" % (song['title'], song['diff'], song['level'], song_id))
             added = 1
-    else:
-        if (obj_song.songlevel != song['level'] or
-                obj_song.version != version or
-                obj_song.songtitle != song_title):
-            log.Print("song %s(%d)/%s/%s (org: %s/%d/%s) updated" %
-                    (song_title, song['level'], song['diff'], version,
-                    obj_song.songtitle, obj_song.songlevel, obj_song.version))
-            if (TEST == 0):
-                obj_song.songlevel = song['level']
-                obj_song.version = version
-                obj_song.songtitle = song['title']
-                obj_song.save()
+    #else:
+    #    if (obj_song.songlevel != song['level'] or
+    #            obj_song.version != version or
+    #            obj_song.songtitle != song_title):
+    #        log.Print("song %s(%d)/%s/%s (org: %s/%d/%s) updated" %
+    #                (song_title, song['level'], song['diff'], version,
+    #                obj_song.songtitle, obj_song.songlevel, obj_song.version))
+    #        if (TEST == 0):
+    #            obj_song.songlevel = song['level']
+    #            obj_song.version = version
+    #            obj_song.songtitle = song['title']
+    #            obj_song.save()
     return (obj_song, added)
 
 #
@@ -102,6 +106,21 @@ def update_from_textage(ver=-1):
         obj, is_added = update_song_by_object(song)
         added_data_cnt += is_added
     log.Print("added %d datas" % added_data_cnt)
+
+#
+# update new song from textage.cc for infinitas
+#
+def update_from_infinitas(ver=-1):
+    data = parser_infinitas.parse(ver)
+    added_data_cnt = 0
+    for song in data:
+        obj, is_added = update_song_by_object(song)
+        #log.Print(obj)
+        #log.Print(song)
+        #log.Print(data)
+        added_data_cnt += is_added
+    log.Print("added %d datas" % added_data_cnt)
+
 
 #
 # update new song from remywiki

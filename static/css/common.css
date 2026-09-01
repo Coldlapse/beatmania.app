@@ -53,7 +53,7 @@ html,body { height:100%; }
 #topmenu li a:hover { color:#fff; }
 
 /* container */
-#container { width: 1000px; margin:0 auto; padding-top:40px; }
+#container { width: 1000px; margin:0 auto; padding-top:10px; }
 #container .row { margin: 0 0 30px; }
 #container .notice_inner { max-width: 480px; margin: 100px auto 0; }
 #footer { font-size:11px; color:#ccc; text-align: center; width:100%;cursor:default; margin-top: 80px; clear:both; }
@@ -204,7 +204,7 @@ table .loading { color:#999; text-align: center; padding:20px; }
 #editsonglist .rank-item-H .level { color:#CC9; }
 #editsonglist .rank-item-N .level { color:#69C; }
 .edit-button { background:none; border: 1px solid #666; line-height: 10px; padding: 5px; width: 80px; text-align: center; float: right; margin-right: 10px; }
-.rank-item .edit-rank { width: 40px; }
+.rank-item .edit-rank { width: 45px; }
 .rank-item .edit-clear-0:before { content:'NOPLAY'; color:#666; }
 .rank-item .edit-clear-1:before { content:'FAILED'; color:#999; }
 .rank-item .edit-clear-2:before { content:'ASSIST'; color:#CAA; }
@@ -221,7 +221,31 @@ table .loading { color:#999; text-align: center; padding:20px; }
 .rank-item .edit-rank-A:before { content:'A'; color:#FCC; }
 .rank-item .edit-rank-AA:before { content:'AA'; color:#FFC; }
 .rank-item .edit-rank-AAA:before { content:'AAA'; color:#FFF; }
-.rank-item .edit-rank-MAX:before { content:'MAX'; color:#EFF; }
+.rank-item .edit-rank-MAX:before { content:'MAX-'; color:#EFF; }
+
+.input-group-btn {
+  position: relative;
+  font-size: 0;
+  white-space: nowrap;
+}
+
+button.close {
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.btn-clear {
+  position: absolute!important;
+  width: 32px!important;
+  height: 26px!important;
+  right: 35px!important;
+  z-index: 1000!important;
+  color: #666!important;
+}
 
 #editwidget { display:none; }
 @media screen and (max-width: 768px) {
@@ -351,3 +375,8 @@ table .loading { color:#999; text-align: center; padding:20px; }
 .panel-notice .panel-text table td { padding:3px; }
 
 .form_error { color:#c66;  }
+
+.search {
+  margin-top: 6px;
+  width: 363px;
+}

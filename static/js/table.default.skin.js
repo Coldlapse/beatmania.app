@@ -3,6 +3,8 @@
 // by @lazykuna MIT License
 //
 
+// depreciated. (23/08/02)
+
 function DefaultRenderer(ctx) {
   var self = this;
   self.ctx = ctx;
@@ -13,6 +15,7 @@ function DefaultRenderer(ctx) {
   img_clear.onload = function() { img_loadcnt++; }
   self.isLoaded = function() { return img_loadcnt >= 1; }
   img_clear.src = "/static/img/clearlamp2.png";
+  //alert(self.dark);
 
   //
   // privates
@@ -56,6 +59,8 @@ function DefaultRenderer(ctx) {
         self.ctx.fillStyle="#FFFFF0";
       } else if (d.data.diff == 'N') {
         self.ctx.fillStyle="#F0F0FF";
+      } else if (d.data.diff == 'L') {
+        self.ctx.fillStyle="#FFF0FF";
       }
       self.ctx.fillRect(x,y,w,h);
       // 2 draw font
@@ -222,7 +227,7 @@ function DefaultRenderer(ctx) {
     self.ctx.fillStyle="#999";
     self.ctx.font = "13px Arial";
     self.ctx.textAlign="right";
-    console.log(d);
+    //console.log(d);
     var tdate = new Date(tabletime * 1000);
     self.ctx.fillText("Today: " + formatDate(new Date()) + " / Updated: " + formatDate(tdate),
         x+w, y+h+20);

@@ -1,5 +1,4 @@
 django
-mysql-python
 beautifulsoup4
 django-celery
 celery

@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 import io, json
-import urllib
+import urllib.request
 from bs4 import BeautifulSoup
 from update import jsondata
 
@@ -267,9 +267,8 @@ def parse_songs_http(username='delmitz', ver=25):
 def parse_qpro(username):
     url = "http://iidx.me/%s" % username
     try:
-        data = urllib.urlopen(url)
-        html = data.read()
-        data.close()
+        with urllib.request.urlopen(url, timeout=5) as data:
+            html = data.read()
         soup = BeautifulSoup(html, "lxml")
         return "http://iidx.me" + soup.find('div', class_='qpro').find('img')['src']
     except Exception as e:

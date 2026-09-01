@@ -2,7 +2,6 @@
 {% load static %}
 {% load hijack_tags %}
 {% block head %}
-
 {% endblock %}
 {% block body %}
 
@@ -12,8 +11,7 @@
 	<div class="notice_inner">
 		{% if player %}
 		<div class="row">
-			<center><a href=".."><button class="btn btn-default"><span class="
-glyphicon glyphicon-home"></span></button></a></center>
+			<center><a href=".."><button class="btn btn-default"><span class="glyphicon glyphicon-home"></span></button></a></center>
 		</div>		
 		<div class="row">
 			<div class="userimage" style="text-align:center;"><img src="/qpro/{{ player.iidxid }}"></div>
@@ -57,7 +55,7 @@ glyphicon glyphicon-home"></span></button></a></center>
 
 		<div class="row input-group">
       <div class="panel panel-default panel-notice">
-        <div class="panel-heading"><a href="/board/notice/">Notice</a></div>
+        <div class="panel-ing"><a href="/board/notice/">Notice</a></div>
         <div class="list-group" style="overflow-y:scroll; height:200px;">
           {% autoescape off %}
           <span class="title">{{ noticepost.title }}</span>

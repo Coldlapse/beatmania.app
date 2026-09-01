@@ -1,0 +1,72 @@
+{% extends "common.html" %}
+
+{% block custom_head %}
+{# 간단한 탭 UI를 위한 스타일 #}
+<style>
+    .nav-tabs {
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+    .nav-tabs a {
+        display: inline-block;
+        padding: 10px 15px;
+        margin-right: 5px;
+        text-decoration: none;
+        color: #007bff;
+        border: 1px solid transparent;
+        border-radius: 0.25rem 0.25rem 0 0;
+    }
+    .nav-tabs a.active {
+        font-weight: bold;
+        color: #495057;
+        background-color: #fff;
+        border-color: #dee2e6 #dee2e6 #fff;
+        border-bottom: 2px solid #007bff;
+    }
+    .nav-tabs a:hover {
+        background-color: #f8f9fa;
+        border-color: #e9ecef;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+  {% include "top.html" %}
+  <div id="container">
+    {# 1. View에서 전달받은 동적 제목을 출력합니다. #}
+    <h2>{{ title }}</h2>
+
+    {# 2. 탭 방식 네비게이션 #}
+    <div class="nav-tabs">
+        <a href="?period=daily"   class="{% if active_period == 'daily' %}active{% endif %}">오늘</a>
+        <a href="?period=weekly"  class="{% if active_period == 'weekly' %}active{% endif %}">지난 7일</a>
+        <a href="?period=monthly" class="{% if active_period == 'monthly' %}active{% endif %}">지난 30일</a>
+        <a href="?period=yearly"  class="{% if active_period == 'yearly' %}active{% endif %}">지난 365일</a>
+    </div>
+
+    {# 3. 단순화된 통계 테이블 #}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>서열표</th>
+          <th>조회수</th>
+        </tr>
+      </thead>
+      <tbody>
+        {# for 루프는 동일하지만, 더 이상 '날짜' 열은 없습니다. #}
+        {% for stat in stats %}
+          <tr>
+            <td><a href="/!/{{ stat.tablename }}/">{{ stat.tablename }}</a></td>
+            <td>{{ stat.views }}</td>
+          </tr>
+        {# 해당 기간에 데이터가 없을 경우 메시지를 보여줍니다. #}
+        {% empty %}
+          <tr>
+            <td colspan="2" style="text-align: center;">해당 기간에 조회된 기록이 없습니다.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "common.html" %}
+{% block head %}
+
+{% endblock %}
+{% block body %}
+
+{% include "top.html" %}
+{% load static %}
+
+<div id="container">
+    <head>
+		<script type="text/javascript" src="{% static 'js/converter.js' %}"></script>
+	</head>
+    <body>
+        # 비토라쟈 서든 입력<br>
+		<input type="text" Id="beatoraja_sudden" placeholder="비토라쟈 서든"> → <input type="text" Id="converted_beatoraja" placeholder="비토라쟈 서든 (리프트 변환)" disabled><br><br>
+        # 투덱 서든 입력<br>
+        <input type="text" Id="iidx_sudden" placeholder="투덱 서든"> → <input type="text" Id="converted_iidx" placeholder="투덱 서든 (리프트 변환)" disabled><br><br>
+        # 리프트 입력 (공통)<br>
+        <input type="text" Id="lift" placeholder="비토라쟈, 투덱 리프트"> → <input type="text" Id="converted_lift" placeholder="변환할 리프트"><br><br>
+		<input type="button" value="비토라쟈 → 투덱 변환" onclick="bms2iidx();">
+        <input type="button" value="투덱 → 비토라쟈 변환" onclick="iidx2bms();">
+        <input type="button" value="리프트 변환" onclick="liftconvert();">
+	</body>
+</div>
+
+{% endblock %}
+{% block etc %}{% endblock %}

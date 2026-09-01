@@ -217,7 +217,7 @@ function DefaultScoreRenderer(ctx) {
     self.ctx.fillStyle="#999";
     self.ctx.font = "13px Arial";
     self.ctx.textAlign="right";
-    console.log(d);
+    //console.log(d);
     var tdate = new Date(d.tableinfo.tabletime * 1000);
     self.ctx.fillText("Today: " + formatDate(new Date()) + " / Updated: " + formatDate(tdate),
         x+w, y+h+20);

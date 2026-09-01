@@ -1,25 +1,43 @@
-<!-- top: logo / song/play stat, musiclist, recent cmts, board / search -->
-<div id="top"><div class="inner">
-  <ul id="topmenu">
-    <li><a id="logo" href="/">iidx stat/user info site</a></li>
-    <li><a href="/!/">서열표</a></li>
-    {% if user.is_authenticated %}
-    <li>ID:{{ user.username }}</li>
-    <li><a href="/!/logout/">로그아웃</a></li>
-    <li><a href="/!/account/">설정</a></li>
-    <li><a href="/!/update/">Upload CSV</a></li>
-    {% else %}
-    <li><a href="/!/login/">로그인</a></li>
-    {% endif %}
-    <!--
-    <li><a href="/!/songrank/">Songs</a></li>
-    <li><a href="/!/userrank/">Players</a></li>
-    -->
-  </ul>
-  {% if not hidesearch %}
-  <div id="search" class="input-group input-group-sm">
-    <input type="text" class="form-control" id="searchuser" value="{{ userdata.iidxmeid }}" />
-    <span class="input-group-addon" id="goto">iidx.me ID</span>
+{% load static %}
+<nav class="navbar navbar-inverse navbar-static-top" id="refactor-navbar">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mainNav" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">IIDX INFINITAS Rank Table</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="nav navbar-nav">
+        <li><a href="/!/">서열표</a></li>
+        <li><a href="/!/analytics">사이트뷰 분석</a></li>
+        <li><a href="/!/my-page">일일 타건 기록</a></li>
+        <li><a href="/!/roadmap">개발 로드맵</a></li>
+        <li><a href="https://discord.gg/RxjwbvWa8D">디스코드</a></li>
+        <li><a href="/!/converter/">흰숫 변환기</a></li>
+        <li><a href="http://sadang.org/overjoy.html">옵조 난이도표 백업</a></li>
+        <!--<li><a href="/!/status/IIDXLM/">화정 라투 대기현황</a></li>-->
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        {% if user.is_authenticated %}
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              <i class="bi bi-person-circle"></i> {{ user.username }} <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="/!/account/">설정</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/!/logout/">로그아웃</a></li>
+            </ul>
+          </li>
+        {% else %}
+          <li><a class="btn btn-primary btn-sm navbar-btn" href="/!/login/">로그인</a></li>
+        {% endif %}
+      </ul>
+    </div>
   </div>
-  {% endif %}
-</div></div>
+</nav>

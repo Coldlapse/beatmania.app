@@ -6,6 +6,8 @@ from datetime import datetime
 import json
 import copy
 
+
+
 def get_ranktable(tablename):
     tablename = tablename.upper()
     try:
@@ -14,7 +16,39 @@ def get_ranktable(tablename):
         return None
     return ranktable
 
-def get_player_from_user(user, create_if_none=True):
+def find_player_from_id(username):
+    try:
+        User = models.User.objects.get(username=username)
+    except Exception as e:
+        return None
+    player = models.Player.objects.filter(user=User).first()
+    # a User can exist without a Player row (e.g. created via /admin/)
+    if player == None:
+        return None
+    if player.private == True:
+        return None
+    return player
+
+def get_player_from_user(username):
+    player = models.Player.objects.filter(user=username).first()
+    #player = models.Player.objects.filter(id=username).first()
+    #if (create_if_none and player == None):
+    #    pid = "user_%s" % user.username
+    #    if (models.Player.objects.filter(iidxmeid=pid).count()):
+    #        # maybe previous modeled data exists, link it
+    #        player = models.Player.objects.get(iidxmeid=pid)
+    #        player.user = request.user
+    #        player.save()
+    #    else:
+    #        player = models.Player.objects.create(
+    #                iidxmeid=pid,
+    #                iidxid='00000000',
+    #                iidxnick=user.username,
+    #                user=user
+    #                )
+    return player
+
+def newplayer(user, create_if_none=True):
     player = models.Player.objects.filter(user=user).first()
     if (create_if_none and player == None):
         pid = "user_%s" % user.username
@@ -26,7 +60,7 @@ def get_player_from_user(user, create_if_none=True):
         else:
             player = models.Player.objects.create(
                     iidxmeid=pid,
-                    iidxid='00000000',
+                    iidxid='C000000000000',
                     iidxnick=user.username,
                     user=user
                     )
@@ -109,7 +143,7 @@ def process_prdata(music):
         else:
             music['rate'] = music['score'] / float(music['data']['notes']) / 2 * 100
     # make rank
-    music['rank'] = iidx.getrank(music['rate'])
+    #music['rank'] = iidx.getrank(music['rate'])
 
 
 """
@@ -297,8 +331,8 @@ def generate_pr(songs, player=None):
                 'clear': 0,
                 #'clearstring': iidx.getclearstring(0),
                 'data': {
-                    'diff': song.songtype,
-                    'type': song.songtype[-1:],
+                    'diff': song.songtype[-1:],
+                    'type': song.songtype,
                     'title': song.songtitle,
                     'level': song.songlevel,
                     'id': song.songid,
@@ -319,11 +353,13 @@ def generate_pr(songs, player=None):
             clear = 0
             score = 0
             rate = 0
+            rank = 0
             notes = song.songnotes
             if (notes == None):
                 notes = 0
             if (pr != None):
                 clear = pr.playclear
+                rank = pr.playscore
                 if (pr.playscore != None):
                     score = pr.playscore
                 if (notes > 0):
@@ -331,8 +367,8 @@ def generate_pr(songs, player=None):
 
             music = {
                 'pkid': song.pk,
-                #'rate': rate,
-                'rank': iidx.getrank(rate),
+                'rate': rate,
+                'rank': rank,
                 'clear': clear,
                 #'clearstring': iidx.getclearstring(clear),
                 'data': {
@@ -424,7 +460,7 @@ def categorize_musicdata(musicdata, ranktable, remove_empty_category=True):
         if (category.categoryname.startswith('hidden')):
             categories_dict[category.id]['hide'] = True
     categories_dict[-1] = {
-        'category': '-',
+        'category': '미분류',
         'categorytype': 1,
         'sortindex': -100,
         'categoryclearstring': iidx.getclearstring(7),
@@ -487,6 +523,49 @@ update player record
 """
 def update_record(sid, player, desc, log=[]):
     song = models.Song.objects.get(id=sid)
+    if ('rank' in desc):
+        if (desc['rank'] == 0):
+        # F --> attempt to remove record
+            try:
+                #obj = models.PlayRecord.objects.get(song=song,player=player)
+                #obj.delete()
+                (pr,_) = models.PlayRecord.objects.get_or_create(song=song,player=player)
+                pr.playscore = desc['rank']
+                pr.save()
+                return True
+            except models.PlayRecord.DoesNotExist:
+                pass # no record not means failure
+        else:
+            try:
+                (pr,_) = models.PlayRecord.objects.get_or_create(song=song,player=player)
+                #if ('clear' in desc):
+                #    pr.playclear = desc['clear']
+                #sadang modified
+                if ('rank' in desc):
+                    pr.playscore = desc['rank']
+                    
+                rate = None
+                #if ('rate' in desc):
+                #    rate = desc['rate']
+                #if ('rank' in desc):
+                #    ranks = [0,22.3,33.4,44.5,55.6,66.7,77.8,88.9,100]
+                #    pr.playscore = desc['rank']
+                #    rate = ranks[desc['rank']]
+                #if ('score' in desc):
+                #    pr.playscore = desc['score']
+                #elif (rate != None):
+                #    pr.playscore = int(song.songnotes * rate * 2 / 100)
+                pr.save()
+                return True
+            except MultipleObjectsReturned as e:
+                # check if pr returns more than one
+                pr = models.PlayRecord.objects.filter(song=song,player=player).first()
+                pr.delete()
+                log.append('Internal error (MultipleObjectReturned). Please try again!')
+                return False
+            except Exception as e:
+                log.append('Invalid Song modification - ' + str(e))
+                return False
     if (desc['clear'] == 0):
         # NO_PLAY --> attempt to remove record
         try:
@@ -499,16 +578,20 @@ def update_record(sid, player, desc, log=[]):
             (pr,_) = models.PlayRecord.objects.get_or_create(song=song,player=player)
             if ('clear' in desc):
                 pr.playclear = desc['clear']
+            #sadang modified
+            #if ('rank' in desc):
+            #    pr.playscore = desc['rank']
             rate = None
-            if ('rate' in desc):
-                rate = desc['rate']
-            if ('rank' in desc):
-                ranks = [0,22.3,33.4,44.5,55.6,66.7,77.8,88.9,100]
-                rate = ranks[desc['rank']]
-            if ('score' in desc):
-                pr.playscore = desc['score']
-            elif (rate != None):
-                pr.playscore = int(song.songnotes * rate * 2 / 100)
+            #if ('rate' in desc):
+            #    rate = desc['rate']
+            #if ('rank' in desc):
+            #    ranks = [0,22.3,33.4,44.5,55.6,66.7,77.8,88.9,100]
+            #    pr.playscore = desc['rank']
+            #    rate = ranks[desc['rank']]
+            #if ('score' in desc):
+            #    pr.playscore = desc['score']
+            #elif (rate != None):
+            #    pr.playscore = int(song.songnotes * rate * 2 / 100)
             pr.save()
         except MultipleObjectsReturned as e:
             # check if pr returns more than one

@@ -62,6 +62,7 @@ var TableRenderer = function(renderer) {
   self._margin = 20;
   self._colwidth = 150;
   self._itemcol = 5;
+  self._dark = false;
   self._itemheight = 30;
   self._itemwidth = 200;  // will be recalculated automatically
   self._vitempos = [];    // (itemdata, pos: (x, y, w, h), parent)
@@ -72,6 +73,7 @@ var TableRenderer = function(renderer) {
   if (renderer.itemcol) self._itemcol = renderer.itemcol;
   if (renderer.itemheight) self._itemheight = renderer.itemheight;
   if (renderer.theme_maincate_margin === undefined) renderer.theme_maincate_margin = 0;
+  if (renderer.dark) self._dark = renderer.dark;
 
   function convPos(e,obj) {
     //var offset = obj.offset();

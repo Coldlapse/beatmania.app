@@ -1,51 +1,41 @@
-
 {% load static %}
-<div id="header"><div class="inner">
-  <div class="user">
-    <div class="userimage"><img src="/qpro/{{ userdata.iidxmeid }}/"></div>
-    <div class="userinfo">
-      <h3 class="username">DJ {{ userdata.djname }}</h3>
-      <div class="userid">{{ userdata.iidxid }}</div>
-      <div class="usergrade">
-        <span class="label spdan dan{{ userdata.spclass }}">{{ userdata.spclassstr }}</span><span class="label dpdan dan{{ userdata.dpclass }}">{{ userdata.dpclassstr }}</span>
+<div class="profile-header-container" id="refactored-header">
+  <div class="refactored-inner-container">
+    <div class="profile-main-info">
+      <div class="profile-avatar-wrapper">
+        <img src="{% static 'qpro/infinitas.png' %}" alt="DJ Avatar" class="profile-avatar">
       </div>
-      <div class="userlevel">
-        <span class="level" onclick="if (confirm('점수를 갱신하시겠습니까?')) { updateuser('{{ userdata.iidxmeid }}'); }"><span class="label label-default">★{{ userdata.splevel }} / ★{{ userdata.dplevel }}</span></span>
-        <img src="{% static 'img/loading_small.gif' %}" width="20" id="loading_animation" style="display:none;">
+      <div class="profile-text-wrapper">
+        <h3 class="profile-djname">DJ {{ userdata.djname }}</h3>
+        <p class="profile-iidxid">{{ userdata.iidxid }}</p>
+        <div class="profile-dan-wrapper">
+          <span class="profile-dan dan-sp dan{{ userdata.spclass }}">{{ userdata.spclassstr }}</span>
+          <span class="profile-dan dan-dp dan{{ userdata.dpclass }}">{{ userdata.dpclassstr }}</span>
+        </div>
       </div>
-      <div class="userlevel"></div>
-      <div id="update"></div>
+    </div>
+    
+    <div class="rank-nav-container">
+        <ul class="nav nav-pills">
+          <li class="rank-nav-title"><small>SINGLE PLAY</small></li>
+          <li><a href="/{{ userdata.iidxmeid }}/SP12H" class="nav-link">SP12 HARD</a></li>
+          <li><a href="/{{ userdata.iidxmeid }}/SP12N" class="nav-link">SP12 NORMAL</a></li>
+          <li><a href="/{{ userdata.iidxmeid }}/SP11H" class="nav-link">SP11 HARD</a></li>
+          <li><a href="/{{ userdata.iidxmeid }}/SP11N" class="nav-link">SP11 NORMAL</a></li>
+          <li><a href="/{{ userdata.iidxmeid }}/SP10H" class="nav-link">SP10 HARD</a></li>
+        </ul>
+        <ul class="nav nav-pills">
+            <li class="rank-nav-title"><small>DOUBLE PLAY</small></li>
+            <li><a href="/{{ userdata.iidxmeid }}/DP12" class="nav-link">DP12</a></li>
+            <li><a href="/{{ userdata.iidxmeid }}/DP11" class="nav-link">DP11</a></li>
+            <li><a href="/{{ userdata.iidxmeid }}/DP10" class="nav-link">DP10</a></li>
+        </ul>
+        <ul class="nav nav-pills">
+            <li class="rank-nav-title"><small>ETC</small></li>
+            <li><a href="/!/dbr" class="nav-link">DBR</a></li>
+            <li><a href="/!/11dbr" class="nav-link">11DBR</a></li>
+            <li><a href="/!/onehand" class="nav-link">12片手</a></li>
+        </ul>
     </div>
   </div>
-  <div id="sidemenu">
-  </div>
-  <div id="menu">
-    <ul class="list sp">
-      <!--<a href="/{{ userdata.iidxmeid }}/sp12_7"><li>SP12.7</li></a>-->
-      <a href="/{{ userdata.iidxmeid }}/sp12"><li>SP12H</li></a>
-      <a href="/{{ userdata.iidxmeid }}/sp12N"><li>SP12N</li></a>
-      <!--<a href="/{{ userdata.iidxmeid }}/sp11exh"><li>SP11EXH</li></a>-->
-      <a href="/{{ userdata.iidxmeid }}/SP11HW"><li>SP11H</li></a>
-      <a href="/{{ userdata.iidxmeid }}/SP11NW"><li>SP11N</li></a>
-      <a href="/{{ userdata.iidxmeid }}/sp10"><li>SP10</li></a>
-      <a href="/{{ userdata.iidxmeid }}/sp9"><li>SP9</li></a>
-      <a href="/{{ userdata.iidxmeid }}/sp8"><li>SP8</li></a>
-    </ul>
-    <ul class="list dp">
-      <a href="/{{ userdata.iidxmeid }}/dp12h"><li>DP12H</li></a>
-      <a href="/{{ userdata.iidxmeid }}/dp12"><li>DP12</li></a>
-      <a href="/{{ userdata.iidxmeid }}/dp11h"><li>DP11H</li></a>
-      <a href="/{{ userdata.iidxmeid }}/dp11"><li>DP11</li></a>
-      <a href="/{{ userdata.iidxmeid }}/dp10"><li>DP10</li></a>
-      <a href="/{{ userdata.iidxmeid }}/dp9"><li>DP9</li></a>
-      <a href="/{{ userdata.iidxmeid }}/dp8"><li>DP8</li></a>
-    </ul>
-    <ul class="list table">
-      <a href="/!/dbr"><li>DBR</li></a>
-      <!--
-      <a href="/{{ userdata.iidxmeid }}/stat/skill"><li>Best</li></a>
-      <a href="/{{ userdata.iidxmeid }}/stat/recm"><li>Recommend</li></a>
-      -->
-    </ul>
-  </div>
-</div></div>
+</div>

@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.conf.urls import url
 from django import forms
 from iidxrank import models
+from iidxrank import dper
 
 # ------ Admin classes ------
 
@@ -30,7 +31,7 @@ class PlayerAdmin(admin.ModelAdmin):
 	list_display = ('iidxmeid', 'iidxid', 'splevel', 'dplevel', 'spclass', 'dpclass', 'time', 'get_playrecord_count')
 	search_fields = ['iidxid', 'iidxmeid']
 class SongAdmin(admin.ModelAdmin):
-	list_display = ('songtitle', 'songtype', 'songlevel', 'dper_actions')
+	list_display = ('songtitle', 'songtype', 'songlevel', 'dper_actions', 'elevendper_actions')
 	search_fields = ['songtitle', 'songtype']
 	# https://medium.com/@hakibenita/how-to-add-custom-action-buttons-to-django-admin-8d266f5b0d41
 	def process_dbr(self, request, songid, *args, **kwargs):
@@ -50,6 +51,9 @@ class SongAdmin(admin.ModelAdmin):
 			url(r'^(?P<songid>.+)/dbr',
 			self.admin_site.admin_view(self.process_dbr),
 			name='dper-dbr'),
+			url(r'^(?P<songid>.+)/11dbr',
+			self.admin_site.admin_view(self.process_11dbr),
+			name='11dper-dbr'),
 		]
 		return custom_urls + urls
 	def dper_actions(self, obj):
@@ -58,11 +62,26 @@ class SongAdmin(admin.ModelAdmin):
 			reverse('admin:dper-dbr', args=[obj.pk])
 			)
 
-	def make_version_24(modeladmin, request, queryset):
-		queryset.update(version=24)
-	def make_version_25(modeladmin, request, queryset):
-		queryset.update(version=25)
-	actions = [make_version_24, make_version_25]
+	def make_version_28(modeladmin, request, queryset):
+		queryset.update(version=28)
+	actions = [make_version_28]
+	
+	def process_11dbr(self, request, songid, *args, **kwargs):
+		r, msg = dper.copy_as_11dbr(songid)
+		if (r):
+			return HttpResponseRedirect('/admin/iidxrank/song/')
+		else:
+			return HttpResponse("""
+			<script>
+			alert('%s');
+			history.back();
+			</script>
+			""" % msg)
+	def elevendper_actions(self, obj):
+		return format_html(
+			'<a class="button" href="{}">11DBR</a>',
+			reverse('admin:11dper-dbr', args=[obj.pk])
+			)
 
 
 

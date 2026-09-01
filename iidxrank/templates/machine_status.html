@@ -1,0 +1,87 @@
+{% extends "common.html" %}
+{% block head %}
+<style>
+    /* 신호등 디자인 */
+    .status-container { text-align: center; padding: 40px 20px; background: #1a1a1a; border-radius: 20px; color: white; margin-top: 20px; }
+    .machine-name { font-size: 28px; font-weight: bold; color: #fff; margin-bottom: 10px; }
+    .machine-type { font-size: 18px; color: #aaa; margin-bottom: 30px; }
+    
+    .traffic-light { 
+        display: inline-flex; flex-direction: column; gap: 15px; 
+        background: #333; padding: 20px; border-radius: 40px; border: 4px solid #444;
+    }
+    .light { width: 80px; height: 80px; border-radius: 50%; background: #222; transition: 0.4s; position: relative; }
+    
+    /* 실제 불빛 (필터 효과) */
+    .light.red.active { background: #ff4d4d; box-shadow: 0 0 35px #ff4d4d; }
+    .light.orange.active { background: #ffa500; box-shadow: 0 0 35px #ffa500; }
+    .light.green.active { background: #2ecc71; box-shadow: 0 0 35px #2ecc71; }
+
+    .wait-text { font-size: 40px; font-weight: 800; margin-top: 25px; color: #fff; }
+    .wait-text span { color: #00d4ff; }
+</style>
+{% endblock %}
+
+{% block body %}
+{% include "top.html" %}
+{% load static %}
+
+<div id="container">
+    <div class="status-container">
+        <div class="machine-name">화정 게임랜드</div>
+        <div class="machine-type">비트매니아 IIDX 라이트닝 모델 대기 현황</div>
+
+        <div class="traffic-light">
+            <div id="light-red" class="light red"></div>
+            <div id="light-orange" class="light orange"></div>
+            <div id="light-green" class="light green"></div>
+        </div>
+
+        <div class="wait-text" id="status-display">
+            <span id="wait-count">0</span> 대기
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function refreshStatus() {
+        fetch('/!/status/{{ machine_id }}/json/')
+            .then(response => response.json())
+            .then(data => {
+                const displayArea = document.getElementById('status-display');
+                const lights = document.querySelectorAll('.light');
+
+                // 1. 모든 불 끄기 (초기화)
+                lights.forEach(l => l.classList.remove('active'));
+
+                // 2. 오프라인 판정 처리
+                if (!data.is_online) {
+                    displayArea.innerHTML = "<span style='color: #ff4d4d;'>감지기 오프라인</span>";
+                    return; // 오프라인이면 아래 신호등 로직을 실행하지 않음
+                }
+
+                // 3. 온라인일 경우 데이터 출력
+                const count = data.waiting_count;
+                displayArea.innerHTML = `<span id="wait-count">${count}</span> 대기`;
+
+                // 4. 대기 인원에 따른 신호등 점등
+                if (count <= 1) {
+                    document.getElementById('light-green').classList.add('active');
+                } else if (count <= 3) {
+                    document.getElementById('light-orange').classList.add('active');
+                } else {
+                    document.getElementById('light-red').classList.add('active');
+                }
+            })
+            .catch(err => {
+                console.error("Fetch error:", err);
+                document.getElementById('status-display').innerHTML = "<span style='color: #ff4d4d;'>서버 연결 끊김</span>";
+            });
+    }
+
+    setInterval(refreshStatus, 5000);
+    window.onload = refreshStatus;
+</script>
+
+{% endblock %}
+{% block etc %}{% endblock %}

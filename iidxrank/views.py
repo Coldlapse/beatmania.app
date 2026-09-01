@@ -1,5 +1,6 @@
 #-*- coding: utf-8 -*-
 from django.http import HttpResponse, HttpResponseRedirect, Http404, JsonResponse
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.core.exceptions import MultipleObjectsReturned
 from django.urls import reverse
@@ -9,29 +10,34 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 from django.core.paginator import Paginator
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.db.models import F
 from iidxrank import models
 from iidxrank import forms
 import board.models
 import settings
-
 from iidxrank import rankpage as rp
 import update.parser_csv as parser_csv
 from iidxrank import iidx
 from iidxrank import views_json
 import json
 import base64
+import os
+import requests
 
 import update.parser_iidxme as iidxme
+from hitcount.views import HitCountDetailView
+
+from django.db.models.functions import TruncDay, TruncWeek, TruncMonth
+from django.db.models import Count
+from datetime import datetime
+from django.utils import timezone
+from datetime import timedelta
+
+from hitcount.models import Hit, HitCount
+from hitcount.views import HitCountMixin
+from django.core.paginator import Paginator
 
 
-"""
-check is iidxme data is valid player data
-TODO: make this code in parser_iidxme module
-"""
-def checkValidPlayer(player):
-    return not (player == None or 
-        'userdata' not in player or 
-        player['status'] != 'success')
 
 
 
@@ -64,18 +70,16 @@ def userpage(request, username="!"):
         pobj = rp.get_player_from_request(request)
         userinfo = rp.get_udata_from_player(pobj)
     else:
-        # check recent json to get player info
-        #userjson_url = "http://json.iidx.me/%s/recent/" % username
-        #player = jsondata.loadJSONurl(userjson_url)
-        userpage_url = "http://iidx.me/%s/recent/" % username
-        player = iidxme.parse_iidxme_http(userpage_url)
-        if (not checkValidPlayer(player)):
-            # invalid user!
+        # find_player_from_id returns a Player model (or None when the user
+        # does not exist / has no player row / is private)
+        player = rp.find_player_from_id(username)
+        if (player == None):
             raise Http404
-        userinfo = rp.get_udata_from_iidxme(player)
+        userinfo = rp.get_udata_from_player(player)
     return render(request, 'user/userpage.html', {'userdata': userinfo})
 
 def get_pdata(request,username,tablename):
+    
     table = rp.get_ranktable(tablename)
     if (table == None):
         #raise Http404
@@ -87,25 +91,53 @@ def get_pdata(request,username,tablename):
     else:
         #userjson_url = "http://json.iidx.me/%s/%s/level/%d/" % (username, table.type.lower(), table.level)
         #iidxme_data = jsondata.loadJSONurl(userjson_url)
-        userpage_url = "http://iidx.me/%s/%s/level/%d/" % (username, table.type.lower(), table.level)
-        iidxme_data = iidxme.parse_iidxme_http(userpage_url)
-        if (not checkValidPlayer(iidxme_data)):
+        #userpage_url = "http://iidx.me/%s/%s/level/%d/" % (username, table.type.lower(), table.level)
+        #iidxme_data = iidxme.parse_iidxme_http(userpage_url)
+        #if (not checkValidPlayer(iidxme_data)):
             #raise Http404
-            return None
-        pdata = rp.get_pdata_from_iidxme(iidxme_data,table)
+        #    return None
+        player = rp.find_player_from_id(username)
+        if player == None:
+            raise Http404
+        pdata = rp.get_pdata_from_player(player,table)
     # only session authorized user can edit table.
     if (player):
         pdata['editable']=True
     else:
         pdata['editable']=False
+
+    if (username != "!"):
+        pdata['editable']=False
     return pdata
 
 def rankpage(request, username="!", tablename="SP12"):
-    pdata = get_pdata(request,username,tablename)
-    if (pdata == None):
+    pdata = get_pdata(request, username, tablename)
+    if (pdata is None):
         raise Http404
     # append additional data
     pdata['tabledata_json'] = rp.serialize_ranktable(pdata)
+
+    # ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
+    # django-hitcount의 내장 로직을 사용하여 조회수를 처리합니다.
+    # ---------------------------------------------------------
+    try:
+        # 조회수를 집계할 대상 객체를 가져옵니다.
+        ranktable = models.RankTable.objects.get(tablename=tablename)
+
+        # 1. 대상 객체에 연결된 조회수 객체를 가져옵니다.
+        hit_count = HitCount.objects.get_for_object(ranktable)
+
+        # 2. HitCountMixin의 hit_count 함수를 호출하여 조회수를 증가시킵니다.
+        #    이 함수 내에 세션, 사용자 기반의 중복 방지 로직이 이미 포함되어 있습니다.
+        #    (별도의 중복 확인 로직이 필요 없습니다.)
+        hit_count_response = HitCountMixin.hit_count(request, hit_count)
+
+    except Exception as e:
+        # 조회수 집계 중 오류가 발생하더라도 페이지 렌더링은 계속됩니다.
+        # print(f"Hit count error: {e}")
+        pass
+    # ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
     return render(request, 'user/rankview.html', pdata)
 
 """
@@ -120,6 +152,7 @@ def ranktable(request, username="!", tablename="SP12"):
         raise Http404
     if (request.GET.get('edit') != None):
         pdata['edit'] = True
+    
     return render(request, 'ranktable.html', pdata)
 
 def rankjson(request, username="!", tablename="SP12"):
@@ -133,7 +166,7 @@ def rankedit(request, id=-1):
     if (not request.user.is_authenticated):
         islogined = False
         valid = False
-        pr_obj = None
+        song_obj = None
         title = ''
     else:
         islogined = True
@@ -182,33 +215,23 @@ def ranktableedit(request, tablename):
 #@xframe_options_exempt
 def musiclist(request):
     # all the other things will done in json & html
-    return render('musiclist.html')
+    return render(request, 'musiclist.html')
 
-# /iidx/(username)/recommend/
-def recommend(request, username):
-    userjson_url = "http://json.iidx.me/%s/recent/" % username
-    player = jsondata.loadJSONurl(userjson_url)
-    if (not checkValidPlayer(player)):
-        raise Http404
-    userinfo = rp.getUserInfo(player, username)
-    return render('user/recommend.html', {"userinfo": userinfo})
+# converter
+def converter(request):
+    return render(request, 'converter.html')
 
-# /iidx/(username)/skillrank
-def skillrank(request, username):
-    userjson_url = "http://json.iidx.me/%s/recent/" % username
-    player = jsondata.loadJSONurl(userjson_url)
-    if (not checkValidPlayer(player)):
-        raise Http404
-    userinfo = rp.getUserInfo(player, username)
-    return render('user/skillrank.html', {"userinfo": userinfo})
+# roadmap
+def roadmap(request):
+    return render(request, 'roadmap.html')
 
 # /iidx/!/songrank/
 def songrank(request):
-    return render('songrank.html')
+    return render(request, 'songrank.html')
 
 # /iidx/!/userrank/
 def userrank(request):
-    return render('userrank.html')
+    return render(request, 'userrank.html')
 
 
 """
@@ -244,7 +267,8 @@ def join(request):
                     email=form.data['email'],
                     password=form.data['password'])
             # automatically create player object
-            rp.get_player_from_user(user)
+            #rp.get_player_from_user(user)
+            rp.newplayer(user)
             user = authenticate(username=form.data['id'], password=form.data['password'])
             login_django(request, user)
             return redirect('main')
@@ -289,6 +313,11 @@ def account(request):
             player.iidxnick = form.data['iidxnick']
             player.spclass = form.data['spclass']
             player.dpclass = form.data['dpclass']
+            try:
+                if form.data['private'] == 'on':
+                    player.private = True
+            except:
+                player.private = False
             user.save()
             player.save()
             return redirect('main')
@@ -298,13 +327,14 @@ def account(request):
             'iidxid': player.iidxid,
             'iidxnick': player.iidxnick,
             'spclass': player.spclass,
-            'dpclass': player.dpclass
+            'dpclass': player.dpclass,
+            'private' : player.private
             })
     return render(request, 'user/account.html', {'form': form})
 
 # /!/set_password/
 def set_password(request):
-    if (not request.user.is_authenticated()):
+    if not request.user.is_authenticated:
         return redirect('main')
     if (request.method == "POST"):
         form = forms.SetPasswordForm(request.POST)
@@ -359,11 +389,13 @@ def modify(request):
         lst = json.loads(v)
         for l in lst:
             sid = int(l['id'])
-            desc = { 'clear': int(l['clear']) }
+            if ('clear' in l):
+                desc = { 'clear': int(l['clear']) }
             if ('rate' in l):
                 desc['rate'] = float(l['rate'])
             if ('rank' in l):
-                desc['rank'] = l['rank']
+                desc = { 'rank': int(l['rank']) }
+            #desc['rank'] = int(l['rank'])
             if ('score' in l):
                 desc['score'] = int(l['score'])
             log = []
@@ -425,32 +457,203 @@ def imgtl(request):
     pngdata = base64.b64decode(request.POST['base64'])
     print("got request: %s (%d byte)" % (request.POST['name'], len(pngdata)))
 
-    import requests
-    import urllib2
     header = {'X-IMGTL-TOKEN': settings.imgtlkey}
     r = requests.post('https://api.img.tl/upload', data={'desc': '', 'filename': filename}, \
             files={'file': (filename, pngdata, 'application/octet-stream')}, headers=header)
     return HttpResponse(r.text)
 
 # iidx/qpro/<iidxid>/
+def _qpro_static(name):
+    # MUST be absolute: under mod_wsgi the process CWD is not the project root
+    path = os.path.join(settings.BASE_DIR, 'static', 'qpro', name)
+    with open(path, 'rb') as f:
+        return HttpResponse(f.read(), content_type="image/png")
+
 @csrf_exempt
 def qpro(request, iidxid='!'):
-    if ((iidxid.isdigit() and int(iidxid) == 0) or iidxid=='!' ):
-        with open('static/qpro/noname.png', 'rb') as f:
-            img_blank = f.read()
-        return HttpResponse(img_blank, content_type="image/png")
+    digits = iidxid.replace('-', '')
+    if (iidxid == '!' or (digits.isdigit() and int(digits) == 0)):
+        return _qpro_static('noname.png')
 
-    import urllib2
-    #qpro_url = 'http://iidx.me/userdata/copula/%s/qpro.png' % iidxid
     qpro_url = iidxme.parse_qpro(iidxid)
-    try:
-        resp = urllib2.urlopen(qpro_url)
-        if (resp.info().maintype == "image"):
-            return HttpResponse(resp.read(), content_type="image/png")
-    except urllib2.HTTPError as e:
-        pass
+    if (qpro_url):
+        try:
+            resp = requests.get(qpro_url, timeout=5)
+            if (resp.status_code == 200 and
+                    resp.headers.get('Content-Type', '').startswith('image/')):
+                return HttpResponse(resp.content, content_type="image/png")
+        except requests.RequestException:
+            pass
 
     # cannot found
-    with open('static/qpro/blank.png', 'rb') as f:
-        img_blank = f.read()
-    return HttpResponse(img_blank, content_type="image/png")
+    return _qpro_static('blank.png')
+
+def rankpage_analytics(request):
+    # 1. URL 파라미터 가져오기
+    period = request.GET.get('period', 'daily')
+
+    # 2. 기준 시간을 UTC가 아닌 한국 시간(KST)으로 설정
+    now_kst = timezone.localtime()
+
+    # 3. 기간에 따라 제목과 KST 기준 시작 '시각' 설정
+    if period == 'weekly':
+        title = '주간 (지난 7일) 서열표 조회수'
+        # 현재 시각으로부터 정확히 7일 전
+        start_date = now_kst - timedelta(days=6)
+    elif period == 'monthly':
+        title = '월간 (지난 30일) 서열표 조회수'
+        start_date = now_kst - timedelta(days=29)
+    elif period == 'yearly':
+        title = '연간 (지난 365일) 서열표 조회수'
+        start_date = now_kst - timedelta(days=364)
+    else: # 'daily'
+        period = 'daily'
+        title = '일간 (오늘) 서열표 조회수'
+        # 오늘의 시작 시각 (자정)
+        start_date = now_kst.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    # 4. '날짜'가 아닌 '시각' 기준으로 필터링 (created__gte)
+    stats = Hit.objects.filter(
+        hitcount__content_type__model='ranktable',
+        created__gte=start_date
+    ).values(
+        'hitcount__object_pk'
+    ).annotate(
+        views=Count('id')
+    ).order_by('-views')
+
+    # (이하 데이터 보강 로직은 동일)
+    if stats:
+        ranktable_pks = [stat['hitcount__object_pk'] for stat in stats]
+        ranktables = models.RankTable.objects.in_bulk(ranktable_pks)
+        for stat in stats:
+            ranktable_obj = ranktables.get(stat['hitcount__object_pk'])
+            if ranktable_obj:
+                stat['tablename'] = ranktable_obj.tablename
+            else:
+                stat['tablename'] = '삭제된 서열표'
+
+    context = {
+        'stats': stats,
+        'title': title,
+        'active_period': period,
+    }
+    return render(request, 'analytics.html', context)
+
+# --- 1. Electron 앱과 통신할 API 뷰 ---
+@csrf_exempt
+def update_typing_count_api(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST method is required.'}, status=405)
+
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Token '):
+        return JsonResponse({'error': 'Authorization header is missing or invalid.'}, status=401)
+    
+    token_key = auth_header.split(' ')[1]
+    try:
+        api_token = models.ApiToken.objects.select_related('user').get(key=token_key)
+        user = api_token.user
+    except models.ApiToken.DoesNotExist:
+        return JsonResponse({'error': 'Invalid token.'}, status=401)
+
+    try:
+        data = json.loads(request.body)
+        count_to_add = data.get('count')
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON format.'}, status=400)
+
+    if count_to_add is None or not isinstance(count_to_add, int) or count_to_add <= 0:
+        return JsonResponse({'error': "0보다 큰 정수 형태의 'count' 값을 보내야 합니다."}, status=400)
+
+    # ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
+    # '오늘'의 기준을 한국 시간으로 변경
+    today = timezone.localdate()
+    # ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+    
+    try:
+        log_entry = models.TypingLog.objects.get(user=user, date=today)
+        log_entry.count = F('count') + count_to_add
+        log_entry.save(update_fields=['count'])
+    except models.TypingLog.DoesNotExist:
+        log_entry = models.TypingLog.objects.create(
+            user=user,
+            date=today,
+            count=count_to_add
+        )
+
+    log_entry.refresh_from_db()
+
+    return JsonResponse({"status": "success", "daily_total": log_entry.count}, status=200)
+
+
+# --- 2. 사용자가 웹에서 볼 마이페이지 뷰 ---
+@login_required
+def my_page_view(request):
+    token, created = models.ApiToken.objects.get_or_create(user=request.user)
+    
+    # ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
+    # '오늘'의 기준을 한국 시간으로 변경
+    today = timezone.localdate()
+    # ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+    
+    log_list = models.TypingLog.objects.filter(user=request.user).exclude(date=today)
+    paginator = Paginator(log_list, 20) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    today_count = 0
+    try:
+        # 여기도 한국 시간 기준으로 오늘의 로그를 찾도록 변경
+        today_log = models.TypingLog.objects.get(user=request.user, date=today)
+        today_count = today_log.count
+    except models.TypingLog.DoesNotExist:
+        pass
+
+    context = {
+        'token': token.key,
+        'page_obj': page_obj, 
+        'today_count': today_count,
+    }
+    return render(request, 'my_page.html', context)
+
+# --- 대기 현황 API ---
+@csrf_exempt
+def update_machine_status_api(request):
+    """Agent(PC)로부터 데이터를 받는 POST API"""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST method required'}, status=405)
+    try:
+        data = json.loads(request.body)
+        m_id = data.get('machine_id')
+        count = data.get('waiting_count')
+        
+        if m_id is not None and count is not None:
+            # DB에 상태 업데이트 (모델은 미리 정의되어 있다고 가정)
+            status, created = models.MachineStatus.objects.update_or_create(
+                machine_id=m_id,
+                defaults={'waiting_count': count}
+            )
+            return JsonResponse({"status": "success"})
+    except:
+        return JsonResponse({"status": "error"}, status=400)
+
+def get_machine_status_json(request, machine_id):
+    try:
+        status = models.MachineStatus.objects.get(machine_id=machine_id)
+        
+        # ▼ 마지막 업데이트 후 30초가 지났는지 체크 (Heartbeat 로직)
+        # timezone.now()와 DB의 last_updated를 비교합니다.
+        is_online = timezone.now() - status.last_updated < timedelta(seconds=30)
+
+        return JsonResponse({
+            'waiting_count': status.waiting_count,
+            'is_online': is_online, # 온라인 여부 추가
+            'last_updated': status.last_updated.strftime('%Y-%m-%d %H:%M:%S')
+        })
+    except models.MachineStatus.DoesNotExist:
+        return JsonResponse({'waiting_count': 0, 'is_online': False})
+
+# --- 페이지 렌더링 뷰 ---
+def machine_status_view(request, machine_id="hwajeong_iidx_1"):
+    return render(request, 'machine_status.html', {'machine_id': machine_id})

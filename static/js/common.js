@@ -1,3 +1,58 @@
+// static/js/common.js
+
+$(function() {
+    // Bootstrap 5 스타일의 드롭다운을 Bootstrap 3의 jQuery로 수동 제어
+    $('.dropdown-toggle').on('click', function(e) {
+        var dropdownMenu = $(this).siblings('.dropdown-menu');
+        $('.dropdown-menu').not(dropdownMenu).removeClass('show');
+        dropdownMenu.toggleClass('show');
+        e.stopPropagation();
+    });
+    $(document).on('click', function(e) {
+        if (!$(e.target).closest('.dropdown').length) {
+            $('.dropdown-menu').removeClass('show');
+        }
+    });
+
+    // ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
+    // 다크 모드 최종 수정안
+    // ---------------------------------------------
+
+    // 1. 페이지 로드 시 쿠키를 확인하여 테마를 먼저 설정합니다.
+    if (getCookie('darkmode') === 'true') {
+        $('body').attr('data-theme', 'dark');
+    } else {
+        $('body').attr('data-theme', 'light');
+    }
+
+    // 기존에 #dark 버튼에 연결된 모든 클릭 이벤트를 강제로 제거합니다.
+    $('#dark').off('click');
+
+    // 그리고 우리의 새로운 클릭 이벤트를 다시 연결합니다.
+    $('#dark').on('click', function () {
+        var is_currently_dark = document.documentElement.getAttribute('data-theme') === 'dark';
+        
+        // 테마를 반대로 설정합니다.
+        if (is_currently_dark) {
+            // 현재 다크모드 -> 라이트모드로 변경
+            document.documentElement.setAttribute('data-theme', 'light');
+            setCookie('darkmode', 'false', 365);
+        } else {
+            // 현재 라이트모드 -> 다크모드로 변경
+            document.documentElement.setAttribute('data-theme', 'dark');
+            setCookie('darkmode', 'true', 365);
+        }
+
+        // rankpage에만 존재하는 dorender 함수를 안전하게 호출하여 캔버스도 다시 그립니다.
+        if (typeof dorender === "function") {
+            //dorender(!is_currently_dark ? "dark" : "white");
+        }
+    });
+    // ---------------------------------------------
+    // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+});
+
 
 /* load json (for datatable) */
 function loadJSON(json_url, processor, onload) {

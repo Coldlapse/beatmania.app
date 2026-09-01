@@ -2,9 +2,10 @@
 {% block subtitle %} - {{ pageinfo.title }}{% endblock %}
 {% block head %}
 {% load static %}
-<script type="text/javascript" src="{% static 'js/table.default.skin.js' %}?v=190103"></script>
-<script type="text/javascript" src="{% static 'js/table.default2.skin.js' %}?v=200121"></script>
-<script type="text/javascript" src="{% static 'js/table.js' %}?v=201119"></script>
+
+
+<script type="text/javascript" src="{% static 'js/table.default2.skin.js' %}?v=230727"></script>
+<script type="text/javascript" src="{% static 'js/table.js' %}?v=230727"></script>
 
 <link href='https://fonts.googleapis.com/css?family=Comfortaa' rel='stylesheet' type='text/css'>
 <script language="javascript">
@@ -17,7 +18,7 @@ var tablename = "{{ tableinfo.tablename }}";
 var editmode = ("{{ editable }}"=="True");
 var ftitle = "{{ tableinfo.title }} - DJ {{ userdata.name }}"
 var fname = ftitle + ".png";
-
+var username = "{{ user.username }}"
 
 
 
@@ -25,7 +26,10 @@ var fname = ftitle + ".png";
 // table data & sort
 
 var tabledata = {{ tabledata_json|safe }};
+//console.log(tabledata);
 var tabledata_orig = tabledata;
+var darkmode = false;
+var searchtext = "";
 
 function sortTabledata(type) {
   type = type !== undefined ? type : "name";
@@ -39,8 +43,8 @@ function sortTabledata(type) {
         var str2 = b.data.title.toLowerCase();
         return ( ( str1 == str2 ) ? 0 : ( ( str1 > str2 ) ? 1 : -1 ) );
         //return str1.localeCompare(str2);
-      } else if (type == "rate") {
-        return ( b.rate - a.rate );
+      } else if (type == "score") {
+        return ( b.rank - a.rank );
       } else if (type == "clear") {
         return ( b.clear - a.clear );
       } else {
@@ -50,14 +54,48 @@ function sortTabledata(type) {
   }
 }
 
+function searchclear() {
+  for (var i in tabledata.categories) {
+    cate = tabledata.categories[i];
+    for (var j in cate.items) {
+      itm = cate.items[j];
+      itm.data.lvhd = 0;
+    }
+  }
+}
+
+function search(searchdata) {
+  //alert(searchdata);
+  if (searchdata == "") {
+    searchclear();
+    return 0;
+  }
+  if (searchdata == " ") {
+    return 0;
+  }
+  for (var i in tabledata.categories) {
+    cate = tabledata.categories[i];
+    for (var j in cate.items) {
+      itm = cate.items[j];
+      itm.data.lvhd = 0;
+      if (itm.data.title.toLowerCase().includes(searchdata.toLowerCase()) == true) {
+        itm.data.lvhd = 1;
+        //alert("해당 곡 lvhd 1 처리 완료");
+        //alert(itm.data.lvhd + " " + itm.data.title);
+        //console.log(tabledata);
+      }
+    }
+  }
+}
+
 $(function () {
   $("#ranksort_clear").click(function () {
     sortTabledata("clear");
     dorender();
   });
 
-  $("#ranksort_rate").click(function () {
-    sortTabledata("rate");
+  $("#ranksort_score").click(function () {
+    sortTabledata("score");
     dorender();
   });
 
@@ -65,6 +103,50 @@ $(function () {
     sortTabledata("name");
     dorender();
   });
+
+
+  $("#search-button").click(function () {
+    //alert("검색버튼눌림");
+    search(document.getElementById('search-input').value);
+    $("#clear-button").show();
+    //alert("검색함수끝남");
+    dorender();
+    //alert("렌더링다시됨");
+  });
+
+  $("#clear-button").click(function () {
+    searchclear();
+    document.getElementById('search-input').value = '';
+    $("#clear-button").hide();
+    dorender();
+  })
+
+  $("#dark").click(function () {
+    if (darkmode == false) {
+      darkmode = true;
+      setCookie('darkmode', 'true', '365');
+      //alert(document.cookie);
+      dorender("dark");
+      document.body.style.backgroundColor = "#1F1F23"
+    }
+    else {
+      darkmode = false;
+      setCookie('darkmode', 'false', '365');
+      //alert(document.cookie);
+      dorender("white");
+      document.body.style.backgroundColor = "#FFFFFF"
+    }
+    //darkmode = true;
+    //dorender("dark");
+    //document.body.style.backgroundColor = "#1F1F23"
+    //document.getElementsByClassName("btn btn-default").backgroundColor = "#1F1F23"
+  });
+
+  $("#share").click(function () {
+    window.navigator.clipboard.writeText("https://beatmania.app/" + username + "/" + tablename + "/").then(() => {
+      alert("클립보드에 서열표 공유 주소가 복사되었습니다!");
+    })
+  })
 });
 
 // sort by name, basically.
@@ -72,8 +154,28 @@ sortTabledata();
 
 
 
+function setCookie(cookie_name, value, days) {
+  var exdate = new Date();
+  exdate.setDate(exdate.getDate() + days);
+  // 설정 일수만큼 현재시간에 만료값으로 지정
 
+  var cookie_value = escape(value) + ((days == null) ? '' : '; expires=' + exdate.toUTCString());
+  document.cookie = cookie_name + '=' + cookie_value + '; path=/;';
+}
 
+function getCookie(cookie_name) {
+  var x, y;
+  var val = document.cookie.split(';');
+
+  for (var i = 0; i < val.length; i++) {
+    x = val[i].substr(0, val[i].indexOf('='));
+    y = val[i].substr(val[i].indexOf('=') + 1);
+    x = x.replace(/^\s+|\s+$/g, ''); // 앞과 뒤의 공백 제거하기
+    if (x == cookie_name) {
+      return unescape(y); // unescape로 디코딩 후 값 리턴
+    }
+  }
+}
 
 function dorender(rendermode)
 {
@@ -82,15 +184,40 @@ function dorender(rendermode)
 
     // mode check
     //var ttheme;
-    if (rendermode == "clear") {
-      ttheme = new Default2Renderer();
-    } else if (rendermode == "score") {
+    if (rendermode == "dark") {
+      document.body.style.backgroundColor = "#1F1F23"
+      ttheme = new DefaultDarkRenderer();
+      ttheme.drawscore = true;
+    }
+    if (rendermode == "white") {
       ttheme = new Default2Renderer();
       ttheme.drawscore = true;
-    } else if (rendermode == "wide") {
-      ttheme = new Default2Renderer();
-      ttheme.width = 1800;
-      ttheme.itemcol = 10;
+    }
+    if (darkmode == true) {
+      if (rendermode == "clear") {
+        ttheme = new DefaultDarkRenderer();
+        ttheme.drawscore = true;
+      } else if (rendermode == "score") {
+        ttheme = new DefaultDarkRenderer();
+        ttheme.drawscore = true;
+      } else if (rendermode == "wide") {
+        ttheme = new DefaultDarkRenderer();
+        ttheme.width = 1800;
+        ttheme.itemcol = 10;
+      }
+    }
+    else {
+      if (rendermode == "clear") {
+        ttheme = new Default2Renderer();
+        ttheme.drawscore = true;
+      } else if (rendermode == "score") {
+        ttheme = new Default2Renderer();
+        ttheme.drawscore = true;
+      } else if (rendermode == "wide") {
+        ttheme = new Default2Renderer();
+        ttheme.width = 1800;
+        ttheme.itemcol = 10;
+      }
     }
 
     // generate renderer and render
@@ -100,7 +227,7 @@ function dorender(rendermode)
     {% if editable %}
     // click handler for editing songa
     var clears = ['0','1','2','3','4','5','6','7'];
-    var ranks = ['F','E','D','C','B','A','AA','AAA','MAX'];
+    var ranks = ['0','1','2','3','4','5','6','7','8'];
     t.onItemClick = function(e, item, idx) {
       var editor = $('#editor');
       if (item === undefined)
@@ -121,11 +248,14 @@ function dorender(rendermode)
         $('.edit-rank').on('click touch', function (e) {
           var rank_str = $(this).attr('data-rank');
           var rank = ranks.indexOf(rank_str);
+          var rank_sadang = parseInt($(this).attr('data-rank'));
           if (rank < 0) { alert('error'); return; }
-          var param = [{'id':item.pkid,'rank':rank}];
+          var param = [{'id':item.pkid,'rank':rank_sadang}];
           _submit('edit', JSON.stringify(param));
           // redraw canvas
-          item.rank = rank_str;
+          item.rank = rank_sadang;
+          //alert(rank_sadang);
+          //item.clear = rank_sadang;
           item.rate = rank / 9.0 * 100 + 0.1;
           t.Redraw(tabledata);
           return false;
@@ -136,6 +266,7 @@ function dorender(rendermode)
           _submit('edit', JSON.stringify(param));
           // redraw canvas
           item.clear = clear;
+          //alert(clear);
           t.Redraw(tabledata);
           return false;
         });
@@ -144,7 +275,20 @@ function dorender(rendermode)
     {% endif %}
 }
 
-$(function() { dorender("clear"); }); 
+if (getCookie('darkmode') == 'true') {
+  darkmode = true;
+  //document.body.style.backgroundColor = "#1F1F23"
+  $(function() { dorender("dark"); });
+  //document.body.style.backgroundColor = "#1F1F23"
+}
+else {
+  darkmode = false;
+  $(function() { dorender("clear"); });
+}
+//$(function() { dorender("clear"); }); 
+
+
+
 </script>
 
 {% endblock %}
@@ -166,21 +310,63 @@ $(function() { dorender("clear"); });
     {% if request.user.is_staff %}
     <a href="/update/rankedit/{{ tableinfo.tablename }}/" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span></a>
     {% endif %}
+    <button id="dark" class="btn btn-default" data-loading-text="please wait..." ><span class="glyphicon glyphicon-adjust"></span></button>
+    {% if editable %}
+    <button id="share" class="btn btn-default" data-loading-text="please wait..." ><span class="glyphicon glyphicon-share"></span></button>
+    {% endif %}
     <div class="btn-group btn-group-sm">
-      <button id="ranksort_clear" class="btn btn-default">sort by clear</button>
-      <button id="ranksort_rate" class="btn btn-default">rate</button>
-      <button id="ranksort_name" class="btn btn-default">name</button>
+      <button id="ranksort_clear" class="btn btn-default">램프순 정렬</button>
+      <!--<button id="ranksort_rate" class="btn btn-default">rate</button>-->
+      <button id="ranksort_name" class="btn btn-default">이름순 정렬</button>
+      <button id="ranksort_score" class="btn btn-default">점수순 정렬</button>
     </div>
-    <button id="capture" class="btn btn-default" data-loading-text="please wait..." ><span class="glyphicon glyphicon-camera"></span> download</button>
+    <button id="capture" class="btn btn-default" data-loading-text="please wait..." ><span class="glyphicon glyphicon-camera"></span> 다운로드</button>
     <ul class="list theme">
-      <a href="#"><li class="sel" data-value="clear">클리어</li></a>
-      <a href="#"><li data-value="score">점수</li></a>
+      <a href="#"><li class="sel" data-value="clear">일반</li></a>
+      <!--<a href="#"><li data-value="score">점수</li></a>-->
       <a href="#"><li data-value="wide">WIDE</li></a>
     </ul>
+    <br>
+    <div class="search" style="float: right;">
+      <div class="input-group input-group-sm">
+        <input type="text" class="form-control prevent-zoom" id="search-input" placeholder="곡 제목 검색">
+        <span class="input-group-btn">
+          <button class="btn btn-primary" type="button" id="search-button">
+            <span class="glyphicon glyphicon-search"></span>
+          </button>
+          <button type="button" class="btn-clear close" id="clear-button" aria-label="Close" style="display: none;">
+            <span aria-hidden="true">×</span>
+          </button>
+        </span>
+      </div>
+      
+    </div>
   </div>
+
   <div class="clear"></div>
 
+  <script>
+    // Get the input field
+    var inputtextfield = document.getElementById("search-input");
 
+    // Execute a function when the user presses a key on the keyboard
+    inputtextfield.addEventListener("keydown", function(event) {
+    // If the user presses the "Enter" key on the keyboard
+    
+    if (event.key === "Enter") {
+      // Cancel the default action, if needed
+      event.preventDefault();
+      // Trigger the button element with a click
+      document.getElementById("search-button").click();
+    }
+    if (event.key === "Escape") {
+      // Cancel the default action, if needed
+      //event.preventDefault();
+      // Trigger the button element with a click
+      document.getElementById("clear-button").click();
+    }
+    });
+  </script>
 
   <!-- rank table -->
   <div id="rankimg">

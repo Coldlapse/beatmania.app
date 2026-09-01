@@ -1,0 +1,112 @@
+/* --- 다크/라이트 모드 색상 변수 정의 --- */
+:root, html[data-theme="light"] {
+  --body-bg: #ffffff;
+  --header-bg: linear-gradient(135deg, #e0f2ff 0%, #a0e2fc 50%, #1fbfff 100%); /* 1. 라이트모드: 밝은 하늘색 그라데이션 */
+  --header-text-color: #212529;
+  --rank-nav-bg: rgba(0, 0, 0, 0.03);
+  --rank-nav-pill-color: #495057;
+  --rank-nav-pill-bg: rgba(0, 0, 0, 0.05);
+  --rank-nav-pill-active-bg: #0d6efd;
+  --rank-nav-pill-hover-bg: rgba(13, 110, 253, 0.1);
+  --top-nav-bg: #a0e2fc; /* 1. 라이트모드: 밝은 하늘색 */
+  --top-nav-link-color: #495057;
+  --top-nav-link-hover-color: #000000;
+  --dropdown-bg: #ffffff;
+  --dropdown-link-color: #212529;
+  --dropdown-divider-color: #e9ecef;
+  --dropdown-link-hover-bg: #f8f9fa; /* 라이트 모드 hover 배경색 */
+  --dropdown-link-hover-color: #000000; /* 라이트 모드 hover 글자색 */
+}
+html[data-theme="dark"] {
+  --body-bg: #0f172a;
+  --header-bg: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #3b82f6 100%); /* 2. 다크모드: 기존 그라데이션 유지 */
+  --header-text-color: #ffffff;
+  --rank-nav-bg: rgba(15, 23, 42, 0.5);
+  --rank-nav-pill-color: #e2e8f0;
+  --rank-nav-pill-bg: rgba(255, 255, 255, 0.08);
+  --rank-nav-pill-active-bg: #3b82f6;
+  --rank-nav-pill-hover-bg: rgba(59, 130, 246, 0.3);
+  --top-nav-bg: #1e293b; /* 2. 다크모드: 어두운 군청색 */
+  --top-nav-link-color: #adb5bd;
+  --top-nav-link-hover-color: #ffffff;
+  --dropdown-bg: #343a40;
+  --dropdown-link-color: #f8f9fa;
+  --dropdown-link-hover-bg: #495057; /* 다크 모드 hover 배경색 */
+  --dropdown-link-hover-color: #ffffff; /* 다크 모드 hover 글자색 */
+  --dropdown-divider-color: #495057;
+}
+
+/* --- 기존 스타일 초기화 --- */
+#top, #header { all: unset !important; display: block !important; }
+body { background: var(--body-bg); background-attachment: fixed; }
+
+/* --- Top Navbar (top.html) --- */
+#refactor-navbar {
+    background-image: none !important;
+    background-color: var(--top-nav-bg) !important; /* 배경색을 변수로 교체 */
+    margin-bottom: 0 !important;
+    border: 0 !important;
+    border-radius: 0;
+}
+#refactor-navbar .navbar-brand { font-family: 'Kreon', serif; font-weight: bold; height: auto; color: var(--top-nav-link-hover-color) !important; }
+@media (min-width: 768px) {
+    #refactor-navbar .navbar-nav > li > a { padding-top: 15px; padding-bottom: 15px; }
+    #refactor-navbar .navbar-btn { margin-top: 8px; margin-bottom: 8px; }
+}
+#refactor-navbar .dropdown-menu > li > a:hover {
+    background-color: var(--dropdown-link-hover-bg) !important;
+    color: var(--dropdown-link-hover-color) !important;
+}
+#refactor-navbar .bi { vertical-align: -0.125em; margin-right: 0.25rem; }
+#refactor-navbar .navbar-nav > li > a { color: var(--top-nav-link-color) !important; }
+#refactor-navbar .navbar-nav > li > a:hover { color: var(--top-nav-link-hover-color) !important; }
+#refactor-navbar .dropdown-menu { background-color: var(--dropdown-bg) !important; }
+#refactor-navbar .dropdown-menu > li > a { color: var(--dropdown-link-color) !important; }
+#refactor-navbar .dropdown-menu > .divider { background-color: var(--dropdown-divider-color) !important; }
+#refactor-navbar .navbar-toggle .icon-bar { background-color: #fff; }
+#refactor-navbar .navbar-toggle { border-color: #333 !important; }
+
+/* --- Profile Header (profileheader.html) --- */
+.profile-header-container { background: var(--header-bg) !important; color: var(--header-text-color) !important; padding: 0; margin-bottom: 20px; }
+.profile-header-container h3, .profile-header-container p { color: var(--header-text-color) !important; }
+.profile-header-container .text-muted { color: var(--header-text-color) !important; opacity: 0.75; }
+.refactored-inner-container { width: 1000px; margin: 0 auto; padding-bottom: 1rem; }
+@media (max-width: 1024px) { .refactored-inner-container { width: auto; margin: 0 15px; } }
+.profile-main-info { display: flex; align-items: center; padding: 2rem 0; }
+.profile-avatar-wrapper { flex-shrink: 0; }
+.profile-text-wrapper { flex-grow: 1; margin-left: 1.5rem; }
+.profile-avatar { width: 100px; height: 100px; border-radius: 50%; border: 3px solid #60a5fa; background-color: #334155; padding: 5px; }
+.profile-djname { font-weight: bold; text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); font-size: 2rem; margin: 0; }
+.profile-iidxid { font-size: 1rem; opacity: 0.8; }
+.profile-dan-wrapper { display: flex; align-items: center; margin-top: 0.5rem; }
+.profile-dan { padding: 0.25em 0.8em; font-size: 0.8rem; font-weight: bold; border-radius: 20px; color: #fff; text-align: center; min-width: 60px; margin-right: 0.5rem; }
+.profile-dan.dan1 { background-color: #6c757d !important; }
+
+/* --- Rank Table Navigation --- */
+.rank-nav-container { padding: 0.75rem 1rem; background-color: var(--rank-nav-bg); border-radius: 12px; width: fit-content; }
+.rank-nav-container ul.nav-pills { display: flex; flex-wrap: nowrap; align-items: center; padding-left: 0; margin: 0.25rem 0; list-style: none; }
+.rank-nav-container .rank-nav-title { flex-shrink: 0; width: 110px; text-align: right; padding-right: 1rem; font-weight: bold; color: #94a3b8; }
+.rank-nav-container .nav-pills li { margin: 0.125rem; }
+.rank-nav-container .nav-pills li a { display: block; padding: 0.4rem 0.8rem; color: var(--rank-nav-pill-color); text-decoration: none; border-radius: 0.5rem; transition: all 0.2s ease-in-out; background-color: var(--rank-nav-pill-bg) !important; white-space: nowrap; }
+.rank-nav-container .nav-pills li a:hover { background-color: var(--rank-nav-pill-hover-bg) !important; }
+.rank-nav-container .nav-pills li.sel a { color: #ffffff !important; background-color: var(--rank-nav-pill-active-bg) !important; }
+@media (max-width: 1024px) {
+    .rank-nav-container { width: auto; }
+    .rank-nav-container ul.nav-pills { flex-wrap: wrap; }
+}
+
+/* --- 로그인 버튼 세로 크기 조절 --- */
+@media (min-width: 768px) {
+    #refactor-navbar .navbar-btn.btn-sm { margin-top: 10px; margin-bottom: 10px; padding-top: 4px; padding-bottom: 4px; }
+}
+/* static/css/refactor-style.css 파일 맨 아래에 추가 */
+
+/* ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼ */
+/* 모바일 환경에서 드롭다운 메뉴 스크롤바 제거 및 자동 높이 조절 */
+@media (max-width: 767px) {
+    #refactor-navbar .navbar-collapse {
+        max-height: none !important; /* 최대 높이 제한 해제 */
+        overflow-y: visible !important; /* 스크롤바 제거 */
+    }
+}
+/* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ */

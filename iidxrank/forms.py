@@ -54,6 +54,7 @@ class AccountForm(forms.Form):
     classes = iidx.classes
     spclass = forms.ChoiceField(choices=classes)
     dpclass = forms.ChoiceField(choices=classes)
+    private = forms.BooleanField(widget=forms.CheckboxInput(), required=False)
 
 
 class SetPasswordForm(forms.Form):

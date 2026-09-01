@@ -4,9 +4,42 @@
 from datetime import datetime, date
 from django.db import models    # whether to use django?
 from django.db.models import CASCADE
+from django.conf import settings
 from django.utils.timezone import now
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.fields import GenericRelation
+from hitcount.models import HitCount
+import secrets # 파이썬 내장 라이브러리
 
+# 1. API 인증을 위한 커스텀 토큰 모델
+class ApiToken(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='api_token')
+    key = models.CharField(max_length=40, unique=True, primary_key=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        # 객체가 처음 생성될 때만 토큰 키를 생성합니다.
+        if not self.key:
+            self.key = secrets.token_hex(20)
+        return super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.key
+
+# 2. 날짜별 타건 기록을 저장할 모델 (스케줄러가 필요 없는 방식)
+class TypingLog(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='typing_logs')
+    count = models.IntegerField(default=0, verbose_name="총 타건 수")
+    date = models.DateField(verbose_name="날짜")
+
+    class Meta:
+        # 한 사용자는 하루에 하나의 로그만 갖도록 제약 조건 설정
+        unique_together = ('user', 'date')
+        ordering = ['-date'] # 최신 날짜순으로 정렬
+
+    def __str__(self):
+        return f"{self.user.username} - {self.date} ({self.count}타)"
+        
 class Song(models.Model):
     songid = models.IntegerField(default=0)
     songtype = models.CharField(max_length=8)       # dph/spa ...
@@ -64,6 +97,8 @@ class Player(models.Model):
     spclass = models.IntegerField(default=0)
     dpclass = models.IntegerField(default=0)
 
+    private = models.BooleanField(default=False)
+
     splevel = models.FloatField(default=0)  # need to calculate
     dplevel = models.FloatField(default=0)  # need to calculate
 
@@ -84,8 +119,9 @@ class PlayRecord(models.Model):
     # MUST use db_index for performance
     player = models.ForeignKey(Player, db_index=True, on_delete=models.CASCADE)
     song = models.ForeignKey(Song, db_index=True, on_delete=models.CASCADE)
-    playscore = models.IntegerField(default=0, null=True)
+    playscore = models.IntegerField(default=0)
     playclear = models.IntegerField(default=0)
+    #playrank = models.IntegerField(default=0)
     playmiss = models.IntegerField(default=0, null=True)
 
 
@@ -97,6 +133,8 @@ class RankTable(models.Model):
     level = models.IntegerField(default=0)
     type = models.CharField(max_length=100)
     copyright = models.CharField(max_length=100)
+    hit_count = GenericRelation(HitCount, object_id_field='object_pk',
+        related_query_name='hit_count_generic_relation')
 
     def getTitleHTML(self):
         if (self.tabletitlehtml == ""):
@@ -143,4 +181,11 @@ class RankItem(models.Model):
     def get_categoryname(obj):
         return obj.rankcategory.categoryname
 
+class MachineStatus(models.Model):
+    machine_id = models.CharField(max_length=50, unique=True) # 예: 'hwajeong_iidx_1'
+    waiting_count = models.IntegerField(default=0)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.machine_id}: {self.waiting_count} waiting"
 

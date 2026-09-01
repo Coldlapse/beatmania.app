@@ -1,61 +1,37 @@
-# Windows image file caches
-Thumbs.db
-ehthumbs.db
+# ---------------------------------------------------------------------------
+# 시크릿 — 절대 커밋 금지
+# ---------------------------------------------------------------------------
+# 실제 설정값. settings.py 가 읽는다. 템플릿은 .env.example 만 추적한다.
+.env
+.env.*
+!.env.example
 
-# Folder config file
-Desktop.ini
+# DB 덤프. 과거에 서버 전체 --all-databases 덤프가 저장소 루트에 놓인 적 있다.
+*.sql
+*.sql.gz
+*.dump
 
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
 
-# Windows Installer files
-*.cab
-*.msi
-*.msm
-*.msp
+# 로컬 개발 DB (dev 환경에서만 쓴다)
+*.sqlite3
 
-# Windows shortcuts
-*.lnk
-
-# =========================
-# Operating System Files
-# =========================
-
-# OSX
-# =========================
-
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# Thumbnails
-._*
-
-# Files that might appear on external disk
-.Spotlight-V100
-.Trashes
-
-# Directories potentially created on remote AFP share
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
-
-
-*.pyc
-test*
-private.py
-env.py
-!testunit.py
-*.swp
-settings.py
-log.txt
-textage*.json
-
-# grab this file using
-# python manage.py collectstatic
+# ---------------------------------------------------------------------------
+# 런타임 생성물 — 소스가 아니다
+# ---------------------------------------------------------------------------
+# python manage.py collectstatic 산출물 (1.7MB). 배포 시 재생성한다.
 /static/admin
 
-# 
-celerybeat*
+# update/parser_textage.py 가 만드는 수록곡 캐시 (370KB)
+textage*.json
+
+# ---------------------------------------------------------------------------
+# 에디터 / OS
+# ---------------------------------------------------------------------------
+*.swp
+Thumbs.db
+Desktop.ini
