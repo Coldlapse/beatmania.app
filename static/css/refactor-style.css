@@ -608,3 +608,19 @@ body.bm-rankpage #rankimg { margin-top: .5rem; }
   background: var(--bm-surface-2); color: var(--bm-text-muted);
   border: 1px solid var(--bm-border); font-size: .7rem; font-weight: 500;
 }
+
+/* 프로필 사진을 올리지 않은 사람. 리더보드 시상대와 같은 모양을 쓴다. */
+.profile-avatar-empty,
+.profile-avatar-wrapper.profile-avatar-fallback::after {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--bm-text-subtle);
+  background: var(--bm-surface-2);
+}
+.profile-avatar-empty i { font-size: 2rem; }
+.profile-avatar-wrapper.profile-avatar-fallback::after {
+  content: "\F4E1";           /* bootstrap-icons: person-fill */
+  font-family: "bootstrap-icons";
+  font-size: 2rem;
+}

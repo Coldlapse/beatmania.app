@@ -3,8 +3,20 @@
   <div class="refactored-inner-container">
     <div class="profile-main-info">
       <div class="profile-avatar-wrapper">
+        {% comment %}
+          사진을 올린 사람은 그 사진을, 올리지 않은 사람은 리더보드와 같은
+          기본 아이콘을 쓴다. 예전에는 게임 기본 이미지(qpro/infinitas.png)를
+          썼는데 사이트의 다른 자리와 모양이 달랐다.
+          onerror 는 그대로 둔다 — 파일이 지워졌을 때의 마지막 대비다.
+        {% endcomment %}
+        {% if userdata.has_avatar %}
         <img src="{{ userdata.avatar_url }}" alt="DJ Avatar" class="profile-avatar"
-             onerror="this.onerror=null;this.src='{% static 'qpro/infinitas.png' %}'">
+             onerror="this.onerror=null;this.parentNode.classList.add('profile-avatar-fallback');this.remove();">
+        {% else %}
+        <div class="profile-avatar profile-avatar-empty" aria-hidden="true">
+          <i class="bi bi-person-fill"></i>
+        </div>
+        {% endif %}
       </div>
       <div class="profile-text-wrapper">
         <h3 class="profile-djname">DJ {{ userdata.djname }}</h3>

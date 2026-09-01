@@ -148,6 +148,17 @@ urlpatterns = [
     url(r'^manage/run/(?P<run_id>[0-9]+)/abort/$', views_manage.abort_run, name='manage_run_abort'),
     url(r'^manage/run/(?P<run_id>[0-9]+)/answer/$', views_manage.answer_prompt, name='manage_run_answer'),
 
+    # --- 개발 서버에서만: 업로드 파일 서빙 ---------------------------------
+    #
+    # **아래 옛 주소 규칙보다 먼저 와야 한다.** 그 규칙이 남은 모든 최상위
+    # 경로를 삼키기 때문에, 뒤에 붙이면 /media/... 가 거기 걸려 404 가 된다.
+    # 실제로 프로필 사진이 저장은 되는데 화면에 안 뜨는 형태로 한 번 물렸다.
+    #
+    # 운영에서는 Apache 가 /media/ 를 Alias 로 직접 서빙한다 — WSGI 워커가
+    # 이미지 전송에 묶이면 안 된다.
+] + (static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+     if settings.DEBUG else []) + [
+
     # --- 옛 주소 301 리다이렉트 -------------------------------------------
     # 반드시 맨 아래에 둔다. 위의 실제 경로가 먼저 매칭되어야 한다.
     url(r'^!/$', RedirectView.as_view(url='/', permanent=True)),
@@ -157,8 +168,3 @@ urlpatterns = [
     url(r'^(?P<username>[\w-]+)/(?P<rest>.*)$', legacy.redirect_user),
 ]
 
-# 개발 서버에서만 업로드 파일을 Django 가 서빙한다.
-# 운영에서는 Apache 가 /media/ 를 Alias 로 직접 서빙해야 한다 —
-# WSGI 워커가 이미지 전송에 묶이면 안 된다.
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

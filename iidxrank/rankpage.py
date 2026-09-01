@@ -327,6 +327,7 @@ def get_udata_from_player(player, username=None):
         userdata['spclassstr'] = iidx.getdanstring(1)
         userdata['dpclassstr'] = iidx.getdanstring(1)
         userdata['avatar_url'] = default_avatar
+        userdata['has_avatar'] = False
     else:
         userdata['djname'] = player.iidxnick
         userdata['iidxid'] = player.iidxid.replace('-','')
@@ -334,7 +335,10 @@ def get_udata_from_player(player, username=None):
         userdata['dpclass'] = player.dpclass
         userdata['spclassstr'] = iidx.getdanstring(player.spclass)
         userdata['dpclassstr'] = iidx.getdanstring(player.dpclass)
+        # 올린 사진이 있는지를 따로 알려 준다. 없을 때 무엇을 그릴지는
+        # 템플릿이 정한다(리더보드와 같은 기본 아이콘).
         userdata['avatar_url'] = player.avatar_url()
+        userdata['has_avatar'] = bool(player.avatar)
     return userdata
 
 """
