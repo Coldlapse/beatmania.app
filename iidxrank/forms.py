@@ -4,6 +4,7 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import RegexValidator
 from captcha.fields import ReCaptchaField
+from django.utils.safestring import mark_safe
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from iidxrank import models
@@ -61,6 +62,14 @@ class JoinForm(forms.Form):
             label=_('비밀번호 확인'),
             widget=forms.PasswordInput(attrs={
                 'autocomplete': 'new-password', 'placeholder': _('한 번 더 입력')}))
+    # 동의는 캡차보다 먼저 와야 한다. 캡차를 푼 뒤에 체크박스가 나오면
+    # 놓치기 쉽고, 놓치면 캡차를 다시 풀어야 한다.
+    agree_privacy = forms.BooleanField(
+        required=True,
+        label=mark_safe(_(
+            '<a href="/privacy/" target="_blank" rel="noopener">개인정보처리방침</a>'
+            '을 읽었고 이에 동의합니다.')),
+        error_messages={'required': _('개인정보처리방침에 동의해야 가입할 수 있습니다.')})
     # 선언 순서가 곧 렌더 순서다. 캡차는 마지막에 와야 자연스럽다.
     captcha = ReCaptchaField(label='')
 

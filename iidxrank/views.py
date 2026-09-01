@@ -213,7 +213,13 @@ def converter(request):
 
 # roadmap
 def roadmap(request):
+    # 템플릿 이름은 roadmap.html 그대로다. 개발자 소개가 위에 붙었을 뿐
+    # 로드맵이 이 페이지의 본체라, 파일까지 옮기면 이력만 끊긴다.
     return render(request, 'roadmap.html')
+
+
+def privacy(request):
+    return render(request, 'privacy.html')
 
 # /iidx/!/songrank/
 def songrank(request):

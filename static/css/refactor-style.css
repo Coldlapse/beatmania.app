@@ -481,3 +481,29 @@ body.bm-rankpage #rankimg { margin-top: .5rem; }
 @media (max-width: 576px) {
   .bm-chart-wrap { height: 260px; }
 }
+
+/* --- 후원 배너 (roadmap.html) ------------------------------------------- */
+/* BuyMeACoffee 가 주는 이미지 배너를 쓰지 않는다. 외부 이미지를 불러오면
+   방문 사실이 그쪽에 남고, 다크 모드에서 배경이 겉돈다. 같은 색을 CSS 로 낸다. */
+.bm-bmc-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .55rem 1.1rem;
+  border-radius: .5rem;
+  background: #FFDD00;
+  color: #111 !important;
+  font-weight: 700;
+  text-decoration: none;
+  border: 1px solid rgba(0, 0, 0, .12);
+}
+.bm-bmc-banner:hover { filter: brightness(.95); color: #111 !important; }
+.bm-bmc-banner i { font-size: 1.1em; }
+
+/* --- 약관 문서 (privacy.html) -------------------------------------------- */
+.bm-legal h2 { font-size: 1.05rem; font-weight: 700; margin-top: 1.6rem; }
+.bm-legal h2:first-of-type { margin-top: 0; }
+.bm-legal h3 { font-size: .95rem; font-weight: 600; margin-top: 1rem; }
+.bm-legal ul { padding-left: 1.2rem; }
+.bm-legal li { margin-bottom: .3rem; }
+.bm-legal p { line-height: 1.7; }

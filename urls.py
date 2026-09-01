@@ -62,7 +62,12 @@ urlpatterns = [
     url(r'^userrank/$', views.userrank, name='userrank'),
     url(r'^musiclist/$', views.musiclist, name='musiclist'),
     url(r'^converter/$', views.converter, name='converter'),
-    url(r'^roadmap/$', views.roadmap, name='roadmap'),
+    # '개발 로드맵' 이었다. 개발자 소개를 같이 담게 되어 이름을 넓혔다.
+    # 옛 주소는 넘긴다.
+    url(r'^about/$', views.roadmap, name='about'),
+    url(r'^roadmap/$',
+        RedirectView.as_view(pattern_name='about', permanent=True)),
+    url(r'^privacy/$', views.privacy, name='privacy'),
 
     # sadang.org 에서 옮겨온 Overjoy 난이도표.
     # header.json 은 BMS 구동기가 읽는 규약 주소다. 사람이 보는 페이지보다
