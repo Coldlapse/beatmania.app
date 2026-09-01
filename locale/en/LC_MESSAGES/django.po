@@ -87,6 +87,9 @@ msgstr "2. What we use it for"
 msgid "2022 Q4 (완료)"
 msgstr "2022 Q4 (done)"
 
+msgid "2022년에 IIDX와 BMS를 시작하여, 현재 SP 발광개전을 취득한 BMS 플레이어입니다. IIDX 인피니타스를 위한 독점 서열표 사이트가 없다는 점에 착안, <a href=\"%(repo)s\" target=\"_blank\" rel=\"noopener\">lazykuna/iidxranktable</a> 을 포크하여 인피니타스 독점 서비스로 개발 및 유지보수 해왔습니다. 서비스에 대한 문의는 <a href=\"%(discord)s\" target=\"_blank\" rel=\"noopener\">디스코드</a>에서 부탁드립니다."
+msgstr "I started IIDX and BMS in 2022 and now hold SP Hakkyou Kaiden as a BMS player. Noticing that no rank table site existed for IIDX INFINITAS alone, I forked <a href=\"%(repo)s\" target=\"_blank\" rel=\"noopener\">lazykuna/iidxranktable</a> and have developed and maintained it as an INFINITAS-only service. For enquiries about the service, please reach me on <a href=\"%(discord)s\" target=\"_blank\" rel=\"noopener\">Discord</a>."
+
 msgid "2023 Q1 (완료)"
 msgstr "2023 Q1 (done)"
 
@@ -158,6 +161,9 @@ msgstr "View API token"
 
 msgid "Buy me a coffee"
 msgstr "Buy me a coffee"
+
+msgid "DJ %(dj)s (%(nick)s) 님의 서열표 페이지에 접근하셨습니다. 읽기 전용입니다."
+msgstr "You are viewing DJ %(dj)s (%(nick)s)'s rank table page. It is read-only."
 
 msgid "DJ NAME"
 msgstr "DJ NAME"
@@ -294,6 +300,9 @@ msgstr "This will read your game records and fill in clear lamps and scores auto
 msgid "게임 기록을 읽어 서열표의 클리어 램프와 점수를 자동으로 채워 넣을 프로그램입니다. 지금은 손으로 입력해야 하는 부분입니다."
 msgstr "A program that will read your game records and fill in clear lamps and scores automatically. For now this has to be entered by hand."
 
+msgid "게임 화면에 나오는 ID 입니다. 앞글자를 고르고 네 자리씩 입력하세요."
+msgstr "The ID shown on the game screen. Pick the leading letter, then enter four digits in each box."
+
 msgid "계정 삭제(탈퇴)도 <a href=\"/account/\">계정 설정</a>에서 직접 할 수 있습니다."
 msgstr "You can also delete your account yourself in <a href=\"/account/\">account settings</a>."
 
@@ -368,6 +377,9 @@ msgstr "Download"
 
 msgid "닉네임"
 msgstr "Display name"
+
+msgid "닉네임과 IIDX DJ NAME은 가입 초기 아이디로 기본 설정됩니다."
+msgstr "Your display name and IIDX DJ NAME are both set to your ID when you sign up."
 
 msgid "다국어 지원"
 msgstr "Multilingual support"
@@ -540,6 +552,9 @@ msgstr "Rank table view trend"
 msgid "서열표 편집"
 msgstr "Edit rank table"
 
+msgid "서열표 프로필에 DJ NAME 으로 표시됩니다. 사이트 닉네임과는 별개이며, 다른 사람과 같아도 됩니다."
+msgstr "Shown as DJ NAME on your rank table profile. It is separate from your display name on this site, and may be the same as someone else's."
+
 msgid "서열표로 돌아가기"
 msgstr "Back to rank tables"
 
@@ -572,6 +587,9 @@ msgstr "Whether the song source page is reachable. We fetch it and check for a m
 
 msgid "수집한 정보를 다른 곳에 팔거나 넘기지 않습니다."
 msgstr "We do not sell or hand over collected information to anyone."
+
+msgid "순위표 등 사이트 곳곳에 표시되는 공개 이름입니다. 다른 사람과 같아도 되며 언제든 바꿀 수 있습니다. 주소에 쓰이는 아이디와는 다릅니다."
+msgstr "The public name shown across the site, including the leaderboard. It may be the same as someone else's and you can change it at any time. It is not the ID used in your address."
 
 msgid "시스템 안정화 및 기능 추가"
 msgstr "Stabilisation and new features"
@@ -621,6 +639,9 @@ msgstr "Today"
 msgid "오늘의 타건 수"
 msgstr "Today's keystrokes"
 
+msgid "올라간 기록은 <a href=\"%(mypage_url)s\">일일 타건 기록</a>에서 볼 수 있습니다."
+msgstr "You can see the uploaded records on <a href=\"%(mypage_url)s\">Daily Keystrokes</a>."
+
 msgid "옵션"
 msgstr "Options"
 
@@ -638,6 +659,9 @@ msgstr "Full visual overhaul and ecosystem expansion"
 
 msgid "위 목적 외에는 쓰지 않습니다. 광고에 쓰거나 프로파일링하지 않습니다."
 msgstr "We use it for nothing beyond the purposes above. No advertising, no profiling."
+
+msgid "유튜브"
+msgstr "YouTube"
 
 msgid "이 방침이 바뀌면 이 페이지에서 알립니다."
 msgstr "If this policy changes we will announce it on this page."

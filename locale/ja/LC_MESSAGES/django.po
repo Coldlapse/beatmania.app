@@ -87,6 +87,9 @@ msgstr "2. 何に使うか"
 msgid "2022 Q4 (완료)"
 msgstr "2022 Q4（完了）"
 
+msgid "2022년에 IIDX와 BMS를 시작하여, 현재 SP 발광개전을 취득한 BMS 플레이어입니다. IIDX 인피니타스를 위한 독점 서열표 사이트가 없다는 점에 착안, <a href=\"%(repo)s\" target=\"_blank\" rel=\"noopener\">lazykuna/iidxranktable</a> 을 포크하여 인피니타스 독점 서비스로 개발 및 유지보수 해왔습니다. 서비스에 대한 문의는 <a href=\"%(discord)s\" target=\"_blank\" rel=\"noopener\">디스코드</a>에서 부탁드립니다."
+msgstr "2022年に IIDX と BMS を始め、現在は SP 発狂皆伝を取得した BMS プレイヤーです。IIDX INFINITAS 専用の難易度表サイトが無いことに着目し、<a href=\"%(repo)s\" target=\"_blank\" rel=\"noopener\">lazykuna/iidxranktable</a> をフォークして INFINITAS 専用サービスとして開発・保守してきました。サービスに関するお問い合わせは <a href=\"%(discord)s\" target=\"_blank\" rel=\"noopener\">Discord</a> までお願いします。"
+
 msgid "2023 Q1 (완료)"
 msgstr "2023 Q1（完了）"
 
@@ -158,6 +161,9 @@ msgstr "API トークンを見る"
 
 msgid "Buy me a coffee"
 msgstr "Buy me a coffee"
+
+msgid "DJ %(dj)s (%(nick)s) 님의 서열표 페이지에 접근하셨습니다. 읽기 전용입니다."
+msgstr "DJ %(dj)s（%(nick)s）さんの難易度表ページを表示しています。読み取り専用です。"
 
 msgid "DJ NAME"
 msgstr "DJ NAME"
@@ -294,6 +300,9 @@ msgstr "ゲームの記録を読み取り、難易度表のクリアランプと
 msgid "게임 기록을 읽어 서열표의 클리어 램프와 점수를 자동으로 채워 넣을 프로그램입니다. 지금은 손으로 입력해야 하는 부분입니다."
 msgstr "ゲームの記録を読み取り、難易度表のクリアランプとスコアを自動で埋めるプログラムです。今は手で入力する必要がある部分です。"
 
+msgid "게임 화면에 나오는 ID 입니다. 앞글자를 고르고 네 자리씩 입력하세요."
+msgstr "ゲーム画面に表示される ID です。先頭の文字を選び、4桁ずつ入力してください。"
+
 msgid "계정 삭제(탈퇴)도 <a href=\"/account/\">계정 설정</a>에서 직접 할 수 있습니다."
 msgstr "アカウントの削除(退会)も<a href=\"/account/\">アカウント設定</a>から自分で行えます。"
 
@@ -368,6 +377,9 @@ msgstr "ダウンロード"
 
 msgid "닉네임"
 msgstr "表示名"
+
+msgid "닉네임과 IIDX DJ NAME은 가입 초기 아이디로 기본 설정됩니다."
+msgstr "表示名と IIDX DJ NAME は、登録時には ID が初期値として設定されます。"
 
 msgid "다국어 지원"
 msgstr "多言語対応"
@@ -540,6 +552,9 @@ msgstr "難易度表 閲覧数の推移"
 msgid "서열표 편집"
 msgstr "難易度表を編集"
 
+msgid "서열표 프로필에 DJ NAME 으로 표시됩니다. 사이트 닉네임과는 별개이며, 다른 사람과 같아도 됩니다."
+msgstr "難易度表のプロフィールに DJ NAME として表示されます。サイトの表示名とは別のもので、他の人と同じでも構いません。"
+
 msgid "서열표로 돌아가기"
 msgstr "難易度表に戻る"
 
@@ -572,6 +587,9 @@ msgstr "楽曲データを取得するページに到達できるか。取得し
 
 msgid "수집한 정보를 다른 곳에 팔거나 넘기지 않습니다."
 msgstr "収集した情報を他所に売ったり渡したりしません。"
+
+msgid "순위표 등 사이트 곳곳에 표시되는 공개 이름입니다. 다른 사람과 같아도 되며 언제든 바꿀 수 있습니다. 주소에 쓰이는 아이디와는 다릅니다."
+msgstr "リーダーボードなど、サイトの各所に表示される公開名です。他の人と同じでも構わず、いつでも変更できます。アドレスに使われる ID とは別のものです。"
 
 msgid "시스템 안정화 및 기능 추가"
 msgstr "システム安定化と機能追加"
@@ -621,6 +639,9 @@ msgstr "今日"
 msgid "오늘의 타건 수"
 msgstr "今日の打鍵数"
 
+msgid "올라간 기록은 <a href=\"%(mypage_url)s\">일일 타건 기록</a>에서 볼 수 있습니다."
+msgstr "アップロードされた記録は<a href=\"%(mypage_url)s\">日別打鍵記録</a>で確認できます。"
+
 msgid "옵션"
 msgstr "オプション"
 
@@ -638,6 +659,9 @@ msgstr "サイト外観の全面刷新とエコシステム拡張"
 
 msgid "위 목적 외에는 쓰지 않습니다. 광고에 쓰거나 프로파일링하지 않습니다."
 msgstr "上記の目的以外には使いません。広告に使ったりプロファイリングしたりしません。"
+
+msgid "유튜브"
+msgstr "YouTube"
 
 msgid "이 방침이 바뀌면 이 페이지에서 알립니다."
 msgstr "この方針が変わった場合はこのページでお知らせします。"

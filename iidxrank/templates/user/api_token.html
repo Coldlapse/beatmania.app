@@ -85,7 +85,7 @@
           <ol class="bm-steps">
             <li>{% blocktrans %}IIDXwidget 설정에 위 토큰을 넣고 저장합니다.{% endblocktrans %}</li>
             <li>{% blocktrans %}프로그램을 켜 두면 타건 수가 자동으로 올라갑니다.{% endblocktrans %}</li>
-            <li>{% blocktrans %}올라간 기록은 <a href="{% endblocktrans %}{% url 'my_page' %}{% blocktrans %}">일일 타건 기록</a>에서 볼 수 있습니다.{% endblocktrans %}</li>
+            <li>{% url 'my_page' as mypage_url %}{% blocktrans %}올라간 기록은 <a href="{{ mypage_url }}">일일 타건 기록</a>에서 볼 수 있습니다.{% endblocktrans %}</li>
           </ol>
           <a class="btn btn-outline-secondary btn-sm"
              href="https://github.com/Coldlapse/IIDXwidget"
