@@ -15,8 +15,10 @@
    쓰도록 고친 뒤에 등록한다 — 그러면 CLI 와 웹 양쪽에서 동작한다.
 5. **동시 실행을 막는다.** 같은 DB 를 긁어 쓰는 작업이라 겹치면 데이터가 깨진다.
 """
+import contextlib
 import datetime
 import io
+import sys
 import threading
 import traceback
 
@@ -219,7 +221,16 @@ def _run(run_pk, command_name, kwargs):
         stream.write('$ python manage.py %s %s\n\n' % (command_name, run.options))
         # 이 스레드에서 부르는 prompt.ask() 가 CLI 대신 웹 경로를 타게 한다
         _prompt.bind(run_pk, flush=stream.flush)
-        call_command(command_name, stdout=stream, stderr=stream, **kwargs)
+        # call_command(stdout=...) 는 명령의 self.stdout.write 만 잡는다.
+        # 이 프로젝트의 파서들은 대부분 맨 print() 를 쓰기 때문에, 그대로 두면
+        # 진행 상황이 서버 콘솔로 새고 대시보드 로그는 텅 빈 채로 남는다.
+        # sys.stdout/stderr 도 같은 스트림으로 돌린다.
+        #
+        # 이 리다이렉트는 프로세스 전역이다. 동시 실행을 막아 두었기에
+        # (start() 의 잠금) 다른 요청의 출력을 삼킬 일이 없다.
+        # 그 잠금을 없애면 여기도 다시 봐야 한다.
+        with contextlib.redirect_stdout(stream), contextlib.redirect_stderr(stream):
+            call_command(command_name, stdout=stream, stderr=stream, **kwargs)
     except Exception:
         status = CommandRun.FAILED
         stream.write('\n\n=== 예외 발생 ===\n')

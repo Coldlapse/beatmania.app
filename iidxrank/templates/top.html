@@ -1,4 +1,4 @@
-{% load static i18n %}
+{% load static i18n bm_i18n %}
 {% comment %}
   Bootstrap 5 네비바.
   이전에는 BS3 마크업(navbar-inverse / navbar-static-top / data-toggle / nav>li)이었다.
@@ -10,7 +10,12 @@
 
     <div class="d-flex align-items-center order-xl-last">
       {% get_current_language as CUR_LANG %}
-      {% get_available_languages as LANGS %}
+      {% comment %}
+        Django 기본 get_available_languages 는 언어 이름을 번역해 버린다
+        ('English' → '영어'). 언어 선택 메뉴는 원어민이 읽는 자리이므로
+        항상 자칭으로 보여야 한다. iidxrank/templatetags/bm_i18n.py 참조.
+      {% endcomment %}
+      {% native_languages as LANGS %}
       <div class="dropdown me-1">
         <button class="btn bm-icon-btn dropdown-toggle bm-lang-btn" type="button"
                 data-bs-toggle="dropdown" aria-expanded="false"
