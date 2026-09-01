@@ -61,7 +61,6 @@ def _service_numbers():
         'records': models.PlayRecord.objects.count(),
         'songs': models.Song.objects.count(),
         'tables': models.RankTable.objects.count(),
-        'items': models.RankItem.objects.count(),
     }
 
 
