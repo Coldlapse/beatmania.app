@@ -46,7 +46,7 @@
 
 <script type="text/javascript">
     function refreshStatus() {
-        fetch('/!/status/{{ machine_id }}/json/')
+        fetch('/status/{{ machine_id }}/json/')
             .then(response => response.json())
             .then(data => {
                 const displayArea = document.getElementById('status-display');

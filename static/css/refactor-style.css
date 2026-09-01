@@ -416,3 +416,20 @@ body {
 .bm-prompt-item:hover { background-color: var(--bm-surface-2); }
 .bm-prompt-text { display: flex; flex-direction: column; line-height: 1.4; min-width: 0; }
 .bm-prompt-text small { color: var(--bm-text-muted); font-family: ui-monospace, monospace; }
+
+/* --- 비공개 프로필 안내 (user/private.html) ------------------------------ */
+.bm-private-icon {
+  font-size: 2.5rem;
+  color: var(--bm-text-faint);
+  display: block;
+}
+
+/* 가입 폼의 안심 문구 — 경고와 시각적으로 구분한다 */
+.bm-id-reassure {
+  background-color: var(--bm-accent-soft);
+  border-radius: .5rem;
+  padding: .6rem .75rem;
+  font-size: .85rem;
+  line-height: 1.6;
+  color: var(--bm-text);
+}

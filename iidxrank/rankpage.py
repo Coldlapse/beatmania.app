@@ -16,18 +16,25 @@ def get_ranktable(tablename):
         return None
     return ranktable
 
+# find_player_from_id 가 돌려주는 '못 찾음'의 이유.
+# 없는 사용자와 비공개 사용자를 같은 None 으로 뭉개면 화면에서 구별할 수 없다.
+NOT_FOUND = 'not_found'
+PRIVATE = 'private'
+
+
 def find_player_from_id(username):
+    """(player, reason) 를 돌려준다. player 가 None 이면 reason 에 이유가 담긴다."""
     try:
-        User = models.User.objects.get(username=username)
-    except Exception as e:
-        return None
-    player = models.Player.objects.filter(user=User).first()
-    # a User can exist without a Player row (e.g. created via /admin/)
-    if player == None:
-        return None
-    if player.private == True:
-        return None
-    return player
+        user = models.User.objects.get(username=username)
+    except models.User.DoesNotExist:
+        return None, NOT_FOUND
+    player = models.Player.objects.filter(user=user).first()
+    # 사용자는 있는데 Player 행이 없을 수 있다 (예: /admin/ 에서 만든 계정)
+    if player is None:
+        return None, NOT_FOUND
+    if player.private:
+        return None, PRIVATE
+    return player, None
 
 def get_player_from_user(username):
     player = models.Player.objects.filter(user=username).first()
@@ -296,14 +303,16 @@ def get_pdata_from_iidxme(data, ranktable):
 """
 get only userdata from player object
 """
-def get_udata_from_player(player):
+def get_udata_from_player(player, username=None):
+    """username 이 주어지면 그 사용자의 공개 프로필로 본다."""
     from django.conf import settings
     default_avatar = settings.STATIC_URL + 'qpro/infinitas.png'
     userdata = {}
+    # 서열표 링크의 기준 경로. 내 프로필이면 /table/, 남의 것이면 /u/<id>/table/
+    userdata['table_base'] = ('/u/%s/table/' % username) if username else '/table/' 
     if (player == None):
         userdata['djname'] = 'NONAME'
         userdata['iidxid'] = '00000000'
-        userdata['iidxmeid'] = '!'
         userdata['spclass'] = 1
         userdata['dpclass'] = 1
         userdata['spclassstr'] = iidx.getdanstring(1)
@@ -312,7 +321,6 @@ def get_udata_from_player(player):
     else:
         userdata['djname'] = player.iidxnick
         userdata['iidxid'] = player.iidxid.replace('-','')
-        userdata['iidxmeid'] = '!'
         userdata['spclass'] = player.spclass
         userdata['dpclass'] = player.dpclass
         userdata['spclassstr'] = iidx.getdanstring(player.spclass)
@@ -397,10 +405,10 @@ def generate_pr(songs, player=None):
 get pdata from player object
 - if player==None, then return DJ NONAME (empty player)
 """
-def get_pdata_from_player(player, ranktable):
+def get_pdata_from_player(player, ranktable, username=None):
     musicdata = []
     tabledata = []
-    userdata = get_udata_from_player(player)
+    userdata = get_udata_from_player(player, username)
 
 
     # generate player records

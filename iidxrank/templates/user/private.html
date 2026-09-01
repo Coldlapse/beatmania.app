@@ -1,0 +1,26 @@
+{% extends "common.html" %}
+{% load i18n %}
+{% comment %}
+  비공개 프로필. 404 로 뭉개면 "주소를 잘못 쳤나?" 하고 헤매게 된다.
+  없는 것과 감춘 것은 다르다는 걸 분명히 알린다.
+{% endcomment %}
+{% block subtitle %} - {% trans '비공개 프로필' %}{% endblock %}
+{% block body %}
+{% include "top.html" %}
+
+<main class="bm-auth">
+  <div class="bm-auth-card card text-center">
+    <div class="card-body">
+      <i class="bi bi-lock-fill bm-private-icon" aria-hidden="true"></i>
+      <h1 class="bm-auth-title mt-3">{% trans '비공개 프로필입니다' %}</h1>
+      <p class="text-body-secondary mb-1">
+        {% blocktrans %}이 사용자는 프로필을 비공개로 설정했습니다.{% endblocktrans %}
+      </p>
+      <p class="text-body-secondary small">
+        {% blocktrans %}주소가 틀린 것이 아니라, 본인이 공개하지 않기로 선택한 것입니다.{% endblocktrans %}
+      </p>
+      <a href="/" class="btn btn-primary mt-3">{% trans '서열표로 돌아가기' %}</a>
+    </div>
+  </div>
+</main>
+{% endblock %}

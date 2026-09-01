@@ -1,3 +1,17 @@
+/* 캔버스 배경을 사이트 배경(theme.css 의 --bm-bg)과 맞춘다.
+   예전에는 라이트 #FFF / 다크 #1F1F23 로 고정돼 있어서, 다크 모드에서
+   사이트 배경(#0f172a)과 색이 달라 서열표만 다른 판때기처럼 떠 보였다.
+   CSS 변수에서 읽으므로 팔레트를 바꾸면 자동으로 따라온다.
+   다운로드한 PNG 도 같은 색이 되어 공유했을 때 이질감이 없다. */
+function bmSiteBackground(fallback) {
+  try {
+    var v = getComputedStyle(document.documentElement)
+              .getPropertyValue('--bm-bg').trim();
+    if (v) { return v; }
+  } catch (e) {}
+  return fallback;
+}
+
 //
 // very-default skin of table renderer of @lazykuna
 // by @lazykuna MIT License
@@ -178,8 +192,8 @@ function Default2Renderer(ctx) {
     // init
     self.rank_count = [0,0,0,0,0,0,0,0];
 
-    // fill total white
-    self.ctx.fillStyle = "#FFF";
+    // 사이트 배경과 같은 색으로 채운다
+    self.ctx.fillStyle = bmSiteBackground("#ffffff");
     self.ctx.fillRect(0, 0, self.ctx.canvas.width, self.ctx.canvas.height);
 
     // render tablename (as background)
@@ -533,8 +547,8 @@ function DefaultDarkRenderer(ctx) {
     // init
     self.rank_count = [0,0,0,0,0,0,0,0];
 
-    // fill total white
-    self.ctx.fillStyle = "#1F1F23";
+    // 사이트 배경과 같은 색으로 채운다
+    self.ctx.fillStyle = bmSiteBackground("#0f172a");
     self.ctx.fillRect(0, 0, self.ctx.canvas.width, self.ctx.canvas.height);
 
     // render tablename (as background)

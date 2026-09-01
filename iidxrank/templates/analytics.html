@@ -32,7 +32,7 @@
           <tbody>
             {% for stat in stats %}
             <tr>
-              <td><a href="/!/{{ stat.tablename }}/">{{ stat.tablename }}</a></td>
+              <td><a href="/table/{{ stat.tablename }}/">{{ stat.tablename }}</a></td>
               <td class="text-end font-monospace">{{ stat.views }}</td>
             </tr>
             {% empty %}

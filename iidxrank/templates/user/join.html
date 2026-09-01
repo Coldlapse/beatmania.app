@@ -13,10 +13,11 @@
   <b>{% trans '아이디는 공개 주소가 됩니다.' %}</b><br>
   {% blocktrans %}입력한 아이디가 그대로 서열표 주소에 들어가며, 누구나 이 주소로 당신의 서열표를 볼 수 있습니다. 실명이나 다른 곳에서 쓰는 아이디는 피하세요.{% endblocktrans %}
   <div class="bm-url-preview mt-2">
-    <code>https://beatmania.app/<span id="url-preview">아이디</span>/SP12H/</code>
+    <code>https://beatmania.app/u/<span id="url-preview">아이디</span>/</code>
   </div>
-  <div class="form-text mt-1">
-    {% blocktrans %}공개를 원하지 않으면 가입 후 설정에서 '프로필 비공개'를 켤 수 있습니다.{% endblocktrans %}
+  <div class="bm-id-reassure mt-2">
+    <i class="bi bi-shield-check me-1" aria-hidden="true"></i>
+    {% blocktrans %}공개를 원하지 않으면 가입 후 <b>설정 → 프로필 비공개</b>를 켜면 됩니다. 켜면 이 주소로 접속해도 아무것도 보이지 않고, 유저 목록에도 나타나지 않습니다. 언제든 다시 끌 수 있습니다.{% endblocktrans %}
   </div>
 </div>
 
@@ -42,8 +43,8 @@
 {% endblock %}
 {% block auth_after %}
 <p class="bm-auth-foot">
-  {% trans '이미 계정이 있으신가요?' %} <a href="/!/login/">{% trans '로그인' %}</a>
+  {% trans '이미 계정이 있으신가요?' %} <a href="/login/">{% trans '로그인' %}</a>
   <span class="bm-auth-sep">·</span>
-  <a href="/!/">{% trans '서열표로 돌아가기' %}</a>
+  <a href="/">{% trans '서열표로 돌아가기' %}</a>
 </p>
 {% endblock %}

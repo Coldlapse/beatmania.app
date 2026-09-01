@@ -329,7 +329,7 @@ def songcomment(request, tag):
     if (ranktable == None):
         rankpage = {'url': '#', 'name': u'(존재하지 않습니다)'}
     else:
-        rankpage = {'url': '/!/'+tablename+'/detail/', 'name': ranktable.tabletitle}
+        rankpage = {'url': '/'+tablename+'/detail/', 'name': ranktable.tabletitle}
 
     if (request.method == "POST"):
         if (post == None and checkValidText(request.POST["text"])):

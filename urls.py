@@ -1,17 +1,23 @@
-"""iidxrank URL Configuration
+"""beatmania.app URL 설계
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/1.8/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
-Including another URLconf
-    1. Add an import:  from blog import urls as blog_urls
-    2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
+이전에는 "내 것"을 뜻하는 구분자로 `!` 를 썼다: `/!/SP12H/` 는 내 서열표,
+`/sadang/SP12H/` 는 남의 서열표. 사용자 이름이 최상위 와일드카드였기 때문에
+`!` 없이는 서열표 이름과 사용자 이름을 구별할 수 없었다.
+
+이제 네임스페이스로 나눈다.
+
+    /                       내 서열표 목록 (프로필)
+    /table/<name>/          내 서열표
+    /table/<name>/embed/    내 서열표 (임베드용)
+    /table/<name>/json/     내 서열표 JSON
+    /u/<username>/          남의 프로필
+    /u/<username>/table/... 남의 서열표
+
+최상위 와일드카드가 사라져 `!` 가 필요 없어졌고, 나머지 페이지도 전부
+평범한 경로로 내려왔다(`/login/`, `/analytics/` ...).
+
+**옛 주소는 전부 301 로 넘긴다.** 245명의 북마크와 디스코드·velog 의 외부
+링크, 검색엔진 색인이 옛 주소를 가리키고 있다. `legacy.py` 참조.
 """
 
 from django.conf import settings
@@ -20,111 +26,107 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.views.generic import RedirectView
 from django.views.i18n import JavaScriptCatalog
+
+import board.views as views_board
+import iidxrank.legacy as legacy
 import iidxrank.views as views
 import iidxrank.views_json as views_json
 import iidxrank.views_manage as views_manage
-import board.views as views_board
 
-
+# 서열표 한 개에 딸린 하위 경로. 내 것과 남의 것이 같은 모양을 갖도록 공유한다.
+table_patterns = [
+    url(r'^$', views.rankpage, name='rankpage'),
+    url(r'^embed/$', views.ranktable, name='ranktable_embed'),
+    url(r'^json/$', views.rankjson, name='ranktable_json'),
+]
 
 urlpatterns = [
+    # --- 유틸리티 ---------------------------------------------------------
+    url(r'^admin/', admin.site.urls),
+    # 언어 전환. URL 에 언어를 넣지 않고 쿠키/세션에 저장한다.
+    # set_language 는 POST + next 로만 동작하므로 오픈 리다이렉트가 되지 않는다.
+    url(r'^i18n/', include('django.conf.urls.i18n')),
+    url(r'^jsi18n/$', JavaScriptCatalog.as_view(), name='javascript-catalog'),
+    url(r'^imgdownload/$', views.imgdownload, name='imgdownload'),
+    url(r'^hijack/', include('hijack.urls', namespace='hijack')),
 
-	url(r'', include([
-        
-	# utilities (admin, image download ...)
-	    url(r'^admin/', admin.site.urls),
-        # 언어 전환. URL 에 언어를 넣지 않고 쿠키/세션에 저장한다.
-        # set_language 는 POST + next 로만 동작하므로 오픈 리다이렉트가 되지 않는다.
-            url(r'^i18n/', include('django.conf.urls.i18n')),
-        # JS 안의 번역 문자열용 카탈로그
-            url(r'^jsi18n/$', JavaScriptCatalog.as_view(), name='javascript-catalog'),
-            url(r'^imgdownload/$', views.imgdownload),
+    # --- 서열표 -----------------------------------------------------------
+    url(r'^$', views.userpage, name='home'),
+    url(r'^table/(?P<tablename>\w+)/', include(table_patterns)),
+    url(r'^u/(?P<username>[\w-]+)/$', views.userpage, name='userpage'),
+    url(r'^u/(?P<username>[\w-]+)/table/(?P<tablename>\w+)/', include(table_patterns)),
 
-	# 서열표 편집 (staff 전용)
-            url(r'^update/', include([
-                    url(r'^rankedit/(?P<tablename>\w+)/$', views.ranktableedit, name="ranktableedit"),
-            ])),
+    # --- 일반 페이지 -------------------------------------------------------
+    url(r'^songrank/$', views.songrank, name='songrank'),
+    url(r'^userrank/$', views.userrank, name='userrank'),
+    url(r'^musiclist/$', views.musiclist, name='musiclist'),
+    url(r'^converter/$', views.converter, name='converter'),
+    url(r'^roadmap/$', views.roadmap, name='roadmap'),
+    url(r'^analytics/$', views.rankpage_analytics, name='analytics'),
+    url(r'^my-page/$', views.my_page_view, name='my_page'),
+    url(r'^status/(?P<machine_id>[\w-]+)/$',
+        views.machine_status_view, name='machine_status_view'),
+    url(r'^status/(?P<machine_id>[\w-]+)/json/$',
+        views.get_machine_status_json, name='get_machine_status_json'),
 
-        # comment, board
-            url(r'^board/', include([
-                    url(r'^view/(?P<postid>[0-9]+)/$', views_board.view, name="postview"),
-                    url(r'^modify/(?P<postid>[0-9]+)/$', views_board.modify, name="postmodify"),
-                    url(r'^delete/(?P<postid>[0-9]+)/$', views_board.delete, name="postdelete"),
-                    url(r'^comment/add/(?P<postid>[0-9]+)/$', views_board.comment_add, name="comment_add"),
-                    url(r'^comment/delete/$', views_board.comment_delete, name="comment_delete"),
-                    url(r'^(?P<boardname>\w+)/$', views_board.list, name="postlist"),
-                    url(r'^(?P<boardname>\w+)/(?P<page>[0-9]+)/$', views_board.list, name="postlist"),
-                    url(r'^(?P<boardname>\w+)/write/$', views_board.write, name="postwrite"),
-            ])),
+    # --- 계정 -------------------------------------------------------------
+    url(r'^login/$', views.login, name='login'),
+    url(r'^join/$', views.join, name='join'),
+    url(r'^logout/$', views.logout, name='logout'),
+    url(r'^account/$', views.account, name='account'),
+    url(r'^setpassword/$', views.set_password, name='setpassword'),
+    url(r'^withdraw/$', views.withdraw, name='withdraw'),
 
-        # select music
-            url(r'^musiclist/$', views.musiclist),
-            url(r'^json/', include([
-                    url(r'^musiclist/(?P<type>\w+)/level/(?P<level>[0-9]+)/$', views_json.json_level),
-                    url(r'^musiclist/(?P<type>\w+)/series/(?P<series>\w+)/$', views_json.json_series),
-                    url(r'^userlist/$', views_json.json_user),
-                    # username
-                    url(r'^recommend/(?P<username>(\w|-)+)/(?P<type>\w+)/$', views_json.json_recommend),
-                    url(r'^recommend/(?P<username>(\w|-)+)/(?P<type>\w+)/(?P<level>[0-9]+)/$', views_json.json_recommend),
-            ])),
+    # --- 기록 편집 --------------------------------------------------------
+    url(r'^lampupdate/$', views.updatelamp, name='updatelamp'),
+    url(r'^rankedit/(?P<id>[0-9]+)/$', views.rankedit, name='rankedit'),
+    url(r'^modify/$', views.modify, name='modify'),
+    url(r'^update/rankedit/(?P<tablename>\w+)/$',
+        views.ranktableedit, name='ranktableedit'),
 
-            # hijack
-            url(r'^hijack/', include('hijack.urls', namespace='hijack')),
+    # --- 게시판 -----------------------------------------------------------
+    url(r'^board/', include([
+        url(r'^view/(?P<postid>[0-9]+)/$', views_board.view, name='postview'),
+        url(r'^modify/(?P<postid>[0-9]+)/$', views_board.modify, name='postmodify'),
+        url(r'^delete/(?P<postid>[0-9]+)/$', views_board.delete, name='postdelete'),
+        url(r'^comment/add/(?P<postid>[0-9]+)/$', views_board.comment_add, name='comment_add'),
+        url(r'^comment/delete/$', views_board.comment_delete, name='comment_delete'),
+        url(r'^(?P<boardname>\w+)/$', views_board.list, name='postlist'),
+        url(r'^(?P<boardname>\w+)/(?P<page>[0-9]+)/$', views_board.list, name='postlist'),
+        url(r'^(?P<boardname>\w+)/write/$', views_board.write, name='postwrite'),
+    ])),
 
-        # membership
-            url(r'^!/login/$', views.login, name='login'),
-            url(r'^!/join/$', views.join),
-            url(r'^!/logout/$', views.logout),
-            url(r'^!/account/$', views.account),
-            url(r'^!/setpassword/$', views.set_password),
-            url(r'^!/withdraw/$', views.withdraw),
+    # --- JSON -------------------------------------------------------------
+    url(r'^json/', include([
+        url(r'^musiclist/(?P<type>\w+)/level/(?P<level>[0-9]+)/$', views_json.json_level),
+        url(r'^musiclist/(?P<type>\w+)/series/(?P<series>\w+)/$', views_json.json_series),
+        url(r'^userlist/$', views_json.json_user, name='json_userlist'),
+        url(r'^recommend/(?P<username>[\w-]+)/(?P<type>\w+)/$', views_json.json_recommend),
+        url(r'^recommend/(?P<username>[\w-]+)/(?P<type>\w+)/(?P<level>[0-9]+)/$',
+            views_json.json_recommend),
+    ])),
 
-            url(r'^!/rankedit/(?P<id>[0-9]+)/$', views.rankedit),
-            url(r'^!/modify/$', views.modify),
+    # --- API --------------------------------------------------------------
+    url(r'^api/v1/update-typing-count/$',
+        views.update_typing_count_api, name='update_typing_count_api'),
+    url(r'^api/v1/update-machine-status/$',
+        views.update_machine_status_api, name='update_machine_status_api'),
 
-        # API
-            # 2. API 엔드포인트 URL
-            url(r'^api/v1/update-typing-count/$', views.update_typing_count_api, name='update_typing_count_api'),
-            # ▼ 대기 현황 Agent용 POST API 추가
-            url(r'^api/v1/update-machine-status/$', views.update_machine_status_api, name='update_machine_status_api'),
-        # common urls (userpage, rankpage)
-            url(r'^$', RedirectView.as_view(url='/!/'), name="main"),
-            url(r'^!/$', views.userpage),
-            url(r'^!/songrank/$', views.songrank),
-            url(r'^!/userrank/$', views.userrank),
-            url(r'^!/update/$', views.updatelamp),
-            url(r'^!/converter', views.converter),
-            url(r'^!/roadmap', views.roadmap),
-            url(r'^!/analytics/$', views.rankpage_analytics, name="analytics"), # 이 줄 추가
-            # ▼ 대기 현황 위젯 및 JSON API 추가
-            # 위젯 페이지: /!/status/hwajeong_iidx_1/
-            url(r'^!/status/(?P<machine_id>[\w-]+)/$', views.machine_status_view, name="machine_status_view"),
-            # 실시간 갱신용 JSON: /!/status/hwajeong_iidx_1/json/
-            url(r'^!/status/(?P<machine_id>[\w-]+)/json/$', views.get_machine_status_json, name="get_machine_status_json"),
-            url(r'^!/my-page/$', views.my_page_view, name="my_page"),
+    # --- 관리자 대시보드 (staff 전용) --------------------------------------
+    url(r'^manage/$', views_manage.dashboard, name='manage_dashboard'),
+    url(r'^manage/run/$', views_manage.run_command, name='manage_run_command'),
+    url(r'^manage/run/(?P<run_id>[0-9]+)/$', views_manage.run_detail, name='manage_run'),
+    url(r'^manage/run/(?P<run_id>[0-9]+)/log/$', views_manage.run_log, name='manage_run_log'),
+    url(r'^manage/run/(?P<run_id>[0-9]+)/abort/$', views_manage.abort_run, name='manage_run_abort'),
+    url(r'^manage/run/(?P<run_id>[0-9]+)/answer/$', views_manage.answer_prompt, name='manage_run_answer'),
 
-        # 관리자 대시보드 (staff 전용). 서버에서 명령을 실행하므로
-        # tablename 패턴(^!/(\w+)/$)보다 반드시 위에 있어야 한다.
-            url(r'^!/manage/$', views_manage.dashboard, name="manage_dashboard"),
-            url(r'^!/manage/run/$', views_manage.run_command, name="manage_run_command"),
-            url(r'^!/manage/run/(?P<run_id>[0-9]+)/$', views_manage.run_detail, name="manage_run"),
-            url(r'^!/manage/run/(?P<run_id>[0-9]+)/log/$', views_manage.run_log, name="manage_run_log"),
-            url(r'^!/manage/run/(?P<run_id>[0-9]+)/abort/$', views_manage.abort_run, name="manage_run_abort"),
-            url(r'^!/manage/run/(?P<run_id>[0-9]+)/answer/$', views_manage.answer_prompt, name="manage_run_answer"),
-            url(r'^!/(?P<tablename>\w+)/$', views.rankpage, name="rankpage"),
-            url(r'^!/(?P<tablename>\w+)/table/$', views.ranktable),
-            url(r'^!/(?P<tablename>\w+)/json/$', views.rankjson),
-            # username
-            url(r'^(?P<username>(\w|-)+)/', include([
-                    url(r'^$', views.userpage),
-                    # /stat/recm/ and /stat/skill/ removed: both were served from
-                    # json.iidx.me, whose DNS record no longer exists.
-                    url(r'^(?P<tablename>\w+)/$', views.rankpage, name="rankpage"),
-                    url(r'^(?P<tablename>\w+)/table/$', views.ranktable),
-                    url(r'^(?P<tablename>\w+)/json/$', views.rankjson),
-            ])),
-
-	])),
+    # --- 옛 주소 301 리다이렉트 -------------------------------------------
+    # 반드시 맨 아래에 둔다. 위의 실제 경로가 먼저 매칭되어야 한다.
+    url(r'^!/$', RedirectView.as_view(url='/', permanent=True)),
+    url(r'^!/(?P<rest>.*)$', legacy.redirect_bang, name='legacy_bang'),
+    # 옛 최상위 사용자 경로(/sadang/SP12H/). 실제 사용자일 때만 넘긴다 —
+    # 오타까지 리다이렉트하면 404 가 사라져 버린다.
+    url(r'^(?P<username>[\w-]+)/(?P<rest>.*)$', legacy.redirect_user),
 ]
 
 # 개발 서버에서만 업로드 파일을 Django 가 서빙한다.

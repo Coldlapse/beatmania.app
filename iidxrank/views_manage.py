@@ -23,7 +23,7 @@ def _is_staff(user):
 
 
 # login_url 을 사이트 로그인으로 둔다. admin 로그인 화면으로 튕기지 않게.
-staff_only = user_passes_test(_is_staff, login_url='/!/login/')
+staff_only = user_passes_test(_is_staff, login_url='/login/')
 
 
 @staff_only

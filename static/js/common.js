@@ -434,7 +434,7 @@ function _submit(action,v) {
   var jstr = $('#editform').serialize();
   console.log(jstr);
   $.ajax({
-    url: "/!/modify/",
+    url: "/modify/",
     type: "POST",
     data: jstr,
     success: function(r) {

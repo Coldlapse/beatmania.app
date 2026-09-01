@@ -156,8 +156,20 @@ msgstr "Sign up to record your clear lamps and scores on the rank tables."
 msgid "입력한 아이디가 그대로 서열표 주소에 들어가며, 누구나 이 주소로 당신의 서열표를 볼 수 있습니다. 실명이나 다른 곳에서 쓰는 아이디는 피하세요."
 msgstr "Your username goes straight into the rank table URL, and anyone with that link can view your table. Avoid your real name or a username you reuse elsewhere."
 
-msgid "공개를 원하지 않으면 가입 후 설정에서 '프로필 비공개'를 켤 수 있습니다."
-msgstr "If you would rather not be listed, turn on \"Private profile\" in Settings after signing up."
+msgid "공개를 원하지 않으면 가입 후 <b>설정 → 프로필 비공개</b>를 켜면 됩니다. 켜면 이 주소로 접속해도 아무것도 보이지 않고, 유저 목록에도 나타나지 않습니다. 언제든 다시 끌 수 있습니다."
+msgstr "If you would rather stay hidden, turn on <b>Settings → Private profile</b> after signing up. Then this URL shows nothing and you will not appear in the user list. You can turn it back off at any time."
+
+msgid "비공개 프로필"
+msgstr "Private profile"
+
+msgid "비공개 프로필입니다"
+msgstr "This profile is private"
+
+msgid "이 사용자는 프로필을 비공개로 설정했습니다."
+msgstr "This user has set their profile to private."
+
+msgid "주소가 틀린 것이 아니라, 본인이 공개하지 않기로 선택한 것입니다."
+msgstr "The URL is correct — they simply chose not to make it public."
 
 msgid "새 비밀번호를 설정해 주세요."
 msgstr "Choose a new password."

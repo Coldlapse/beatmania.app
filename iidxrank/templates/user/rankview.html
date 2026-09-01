@@ -5,8 +5,8 @@
 {% load static %}
 
 
-<script type="text/javascript" src="{% static 'js/table.default2.skin.js' %}?v=230727"></script>
-<script type="text/javascript" src="{% static 'js/table.js' %}?v=230727"></script>
+<script type="text/javascript" src="{% static 'js/table.default2.skin.js' %}?v=260901"></script>
+<script type="text/javascript" src="{% static 'js/table.js' %}?v=260901"></script>
 
 <link href='https://fonts.googleapis.com/css?family=Comfortaa' rel='stylesheet' type='text/css'>
 <script language="javascript">
@@ -129,7 +129,8 @@ $(function () {
   });
 
   $("#share").click(function () {
-    window.navigator.clipboard.writeText("https://beatmania.app/" + username + "/" + tablename + "/").then(() => {
+    window.navigator.clipboard.writeText(
+      location.origin + "/u/" + username + "/table/" + tablename + "/").then(() => {
       alert("클립보드에 서열표 공유 주소가 복사되었습니다!");
     })
   })
@@ -186,7 +187,7 @@ function dorender(rendermode)
       editor.css({ top: p_y+'px', left: p_x+'px' });
       editor.show();
       editor.text('loading ...');
-      editor.load('/!/rankedit/'+item.pkid+'/', function() {
+      editor.load('/rankedit/'+item.pkid+'/', function() {
         /* attach click event */
         $('.edit-rank').on('click touch', function (e) {
           var rank_str = $(this).attr('data-rank');

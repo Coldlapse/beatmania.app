@@ -41,49 +41,62 @@ from django.core.paginator import Paginator
 
 
 
-def userpage(request, username="!"):
-    if (username == "!"):
+def userpage(request, username=None):
+    if username is None:
         # load player information from DB
         pobj = rp.get_player_from_request(request)
         userinfo = rp.get_udata_from_player(pobj)
     else:
-        # find_player_from_id returns a Player model (or None when the user
-        # does not exist / has no player row / is private)
-        player = rp.find_player_from_id(username)
-        if (player == None):
+        player, reason = rp.find_player_from_id(username)
+        if player is None:
+            if reason == rp.PRIVATE:
+                # 비공개는 '없음'과 다르다. 404 로 뭉개면 왜 안 보이는지
+                # 알 수 없어 사용자가 오타를 의심하게 된다.
+                return render(request, 'user/private.html',
+                              {'username': username}, status=403)
             raise Http404
-        userinfo = rp.get_udata_from_player(player)
+        userinfo = rp.get_udata_from_player(player, username)
     return render(request, 'user/userpage.html', {'userdata': userinfo})
 
-def get_pdata(request,username,tablename):
-    
-    table = rp.get_ranktable(tablename)
-    if (table == None):
-        #raise Http404
-        return None
-    player = None
-    if (username == "!"):
-        player = rp.get_player_from_request(request)
-        pdata = rp.get_pdata_from_player(player,table)
-    else:
-        player = rp.find_player_from_id(username)
-        if player == None:
-            raise Http404
-        pdata = rp.get_pdata_from_player(player,table)
-    # only session authorized user can edit table.
-    if (player):
-        pdata['editable']=True
-    else:
-        pdata['editable']=False
+def get_pdata(request, username, tablename):
+    """서열표 데이터를 만든다.
 
-    if (username != "!"):
-        pdata['editable']=False
+    username 이 None 이면 로그인한 본인의 서열표다.
+    실패하면 rp.NOT_FOUND / rp.PRIVATE 문자열을 돌려준다 — 호출한 뷰가
+    404 로 할지 '비공개' 안내로 할지 정한다.
+    """
+    table = rp.get_ranktable(tablename)
+    if table is None:
+        return rp.NOT_FOUND
+
+    if username is None:
+        player = rp.get_player_from_request(request)
+        pdata = rp.get_pdata_from_player(player, table)
+        # 로그인한 본인만 편집할 수 있다
+        pdata['editable'] = bool(player)
+    else:
+        player, reason = rp.find_player_from_id(username)
+        if player is None:
+            return reason
+        pdata = rp.get_pdata_from_player(player, table, username)
+        pdata['editable'] = False
     return pdata
 
-def rankpage(request, username="!", tablename="SP12"):
-    pdata = get_pdata(request, username, tablename)
-    if (pdata is None):
+
+def _pdata_or_response(request, pdata, username):
+    """get_pdata 결과가 실패 사유면 알맞은 응답을 만든다. 아니면 None."""
+    if pdata == rp.PRIVATE:
+        return render(request, 'user/private.html',
+                      {'username': username}, status=403)
+    if pdata == rp.NOT_FOUND or pdata is None:
         raise Http404
+    return None
+
+def rankpage(request, username=None, tablename="SP12"):
+    pdata = get_pdata(request, username, tablename)
+    early = _pdata_or_response(request, pdata, username)
+    if early is not None:
+        return early
     # append additional data
     pdata['tabledata_json'] = rp.serialize_ranktable(pdata)
 
@@ -116,19 +129,21 @@ def detailpage(request, username="!", tablename="SP12"):
     return render(request, 'user/detailview.html', d)
 """
 
-def ranktable(request, username="!", tablename="SP12"):
-    pdata = get_pdata(request,username,tablename)
-    if (pdata == None):
-        raise Http404
+def ranktable(request, username=None, tablename="SP12"):
+    pdata = get_pdata(request, username, tablename)
+    early = _pdata_or_response(request, pdata, username)
+    if early is not None:
+        return early
     if (request.GET.get('edit') != None):
         pdata['edit'] = True
     
     return render(request, 'ranktable.html', pdata)
 
-def rankjson(request, username="!", tablename="SP12"):
-    pdata = get_pdata(request,username,tablename)
-    if (pdata == None):
-        raise Http404
+def rankjson(request, username=None, tablename="SP12"):
+    pdata = get_pdata(request, username, tablename)
+    early = _pdata_or_response(request, pdata, username)
+    if early is not None:
+        return early
     return JsonResponse(pdata)
 
 def rankedit(request, id=-1):
@@ -212,13 +227,13 @@ user related part
 login_django = login
 def login(request):
     if (request.user.is_authenticated):
-        return redirect('main')
+        return redirect('home')
     if (request.method == "POST"):
         form = forms.LoginForm(request.POST)
         if (form.is_valid()):
             user = authenticate(username=form.data['id'], password=form.data['password'])
             login_django(request, user)
-            return redirect('main')
+            return redirect('home')
     else:
         form = forms.LoginForm()
 
@@ -227,7 +242,7 @@ def login(request):
 # /!/join/
 def join(request):
     if (request.user.is_authenticated):
-        return redirect('main')
+        return redirect('home')
     if (request.method == "POST"):
         form = forms.JoinForm(request.POST)
         if (form.is_valid()):
@@ -241,7 +256,7 @@ def join(request):
             rp.newplayer(user)
             user = authenticate(username=form.data['id'], password=form.data['password'])
             login_django(request, user)
-            return redirect('main')
+            return redirect('home')
     else:
         form = forms.JoinForm()
     return render(request, 'user/join.html', {'form': form})
@@ -250,7 +265,7 @@ def join(request):
 logout_django = logout
 def logout(request):
     logout_django(request)
-    return redirect('main')
+    return redirect('home')
 
 # /!/withdraw/
 def withdraw(request):
@@ -264,7 +279,7 @@ def withdraw(request):
             user = request.user
             user.delete()
             logout_django(request)
-            return redirect('main')
+            return redirect('home')
     else:
         form = forms.WithdrawForm(initial={'id': request.user.username})
     return render(request, 'user/withdraw.html', {'form': form})
@@ -272,7 +287,7 @@ def withdraw(request):
 # /!/account/
 def account(request):
     if (not request.user.is_authenticated):
-        return redirect('main')
+        return redirect('home')
     user = request.user
     player = rp.get_player_from_request(request)
     if (request.method == "POST"):
@@ -305,7 +320,7 @@ def account(request):
                 player.private = False
             user.save()
             player.save()
-            return redirect('main')
+            return redirect('home')
     else:
         avatar_form = forms.AvatarForm()
         form = forms.AccountForm(initial={
@@ -322,14 +337,14 @@ def account(request):
 # /!/set_password/
 def set_password(request):
     if not request.user.is_authenticated:
-        return redirect('main')
+        return redirect('home')
     if (request.method == "POST"):
         form = forms.SetPasswordForm(request.POST)
         if (form.is_valid()):
             user = request.user
             user.set_password(form.data['new_password'])
             user.save()
-            return redirect('main')
+            return redirect('home')
     else:
         form = forms.SetPasswordForm()
     return render(request, 'user/setpassword.html', {'form':form})
@@ -356,7 +371,7 @@ def updatelamp(request):
             form['message'] = log
             print("* updatelamp end.")
     if (not request.user.is_authenticated):
-        return redirect('main')
+        return redirect('home')
     return render(request, 'user/updatelamp.html', {'form':form})
 
 # JSON
