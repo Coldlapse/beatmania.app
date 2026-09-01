@@ -128,7 +128,13 @@ DATABASES = {
         # container -> host MySQL uses the docker0 gateway, not 'localhost'
         'HOST': env('DB_HOST', 'localhost'),
         'PORT': env('DB_PORT', '3306'),
-        'OPTIONS': {'charset': env('DB_CHARSET', 'utf8')}
+        # 기본값이 utf8 이면 안 된다. MySQL 8 에서 'utf8' 은 utf8mb3 의 별칭이라
+        # 3바이트까지만 담는다. 이 DB 의 컬럼은 전부 utf8mb4 이므로, 접속만
+        # utf8mb3 이면 4바이트 문자(이모지)를 쓸 때 콜레이션이 충돌해서
+        #   (1270, "Illegal mix of collations ... for operation 'concat'")
+        # 로 실패한다. 관리자 대시보드의 명령 로그가 이모지를 쏟아내므로
+        # 실제로 이 경로에서 터졌다.
+        'OPTIONS': {'charset': env('DB_CHARSET', 'utf8mb4')}
     }
 }
 

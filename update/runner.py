@@ -23,6 +23,8 @@ import traceback
 
 from django.core.management import call_command
 from django.db import close_old_connections
+from django.db.models import F, TextField, Value
+from django.db.models.functions import Concat
 from django.utils import timezone
 
 from update import prompt as _prompt
@@ -124,6 +126,7 @@ class _DBLogStream(io.TextIOBase):
         self._truncated = False
         self._stop = threading.Event()
         self._thread = None
+        self._failures = 0
 
     # --- 스트림 인터페이스 ------------------------------------------------
     def writable(self):
@@ -157,6 +160,15 @@ class _DBLogStream(io.TextIOBase):
         if self._thread:
             self._thread.join(timeout=10)
         self._drain()
+        note = self.failure_note()
+        if note:
+            # 마지막 시도. 이 문구는 ASCII 뿐이라 charset 문제로는 실패하지 않는다.
+            from update.models import CommandRun
+            try:
+                CommandRun.objects.filter(pk=self.run_pk).update(
+                    log=Concat(F('log'), Value(note), output_field=TextField()))
+            except Exception:
+                pass
 
     def _loop(self):
         while not self._stop.wait(self.INTERVAL):
@@ -168,20 +180,36 @@ class _DBLogStream(io.TextIOBase):
                 return
             chunk = ''.join(self._buf)
             self._buf = []
-        from django.db.models import F, TextField, Value
-        from django.db.models.functions import Concat
-
         from update.models import CommandRun
         try:
             # 파이썬에서 읽어와 이어붙이지 않고 DB 안에서 붙인다.
             # read-modify-write 사이에 다른 쓰기가 끼어들면 로그가 유실된다.
             CommandRun.objects.filter(pk=self.run_pk).update(
                 log=Concat(F('log'), Value(chunk), output_field=TextField()))
-        except Exception:
-            # 로그를 못 남기는 것이 명령 자체를 죽이면 안 된다.
-            # 다음 주기에 다시 시도할 수 있게 버퍼 앞에 되돌린다.
+            self._failures = 0
+        except Exception as e:
+            # 로그를 못 남기는 것이 명령 자체를 죽이면 안 된다. 다음 주기에
+            # 다시 시도할 수 있게 버퍼 앞에 되돌린다.
+            #
+            # **다만 조용히 삼키지는 않는다.** 예전에는 그냥 넘겼더니, 접속
+            # charset 이 utf8mb3 라 이모지가 안 들어가는 상태에서 로그가 통째로
+            # 비었는데도 실행은 '성공' 으로 끝났다. 원인을 찾을 단서가 화면에
+            # 하나도 남지 않았다.
+            self._failures += 1
             with self._lock:
                 self._buf.insert(0, chunk)
+            if self._failures == 1 or self._failures % 20 == 0:
+                sys.__stderr__.write(
+                    '[CommandRun %s] 로그 기록 실패 (%d회): %s: %s\n'
+                    % (self.run_pk, self._failures, type(e).__name__, e))
+                sys.__stderr__.flush()
+
+    def failure_note(self):
+        """로그를 못 남긴 채 끝났으면 그 사실이라도 남길 문구를 돌려준다."""
+        if not self._failures:
+            return ''
+        return ('\n\n=== 이 실행의 출력을 DB 에 기록하지 못했습니다 '
+                '(%d회 실패). 서버 로그를 확인하세요. ===\n' % self._failures)
 
 
 class _ThreadRoutedIO(object):
