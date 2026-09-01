@@ -58,9 +58,19 @@ EXPOSE 8000
 # 컨테이너 안에서 스스로 확인한다. compose 가 이 결과로 재시작을 판단한다.
 # /status/ 는 DB 와 외부 연동까지 건드리므로 헬스체크로는 무겁다. 가벼운
 # 정적 응답인 로그인 화면을 쓴다.
+#
+# Host 헤더를 DJANGO_ALLOWED_HOSTS 의 첫 항목으로 덮어쓴다. 이것을 빼면
+# Host 가 '127.0.0.1:8000' 이 되는데, 운영 .env 처럼 ALLOWED_HOSTS 에 도메인만
+# 있으면 Django 가 400(DisallowedHost)을 돌려주고 헬스체크가 영원히 실패한다.
+# 그러면 컨테이너가 계속 unhealthy 로 남는다. 실제로 첫 배포에서 겪었다.
+#
+# ALLOWED_HOSTS 에 127.0.0.1 을 넣는 것으로도 풀리지만, 그러면 운영 설정을
+# 헬스체크 사정에 맞춰 넓히는 셈이 된다. 반대로 헬스체크가 맞추게 했다.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
-    CMD python -c "import urllib.request,sys; \
-sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/login/', timeout=4).status == 200 else 1)"
+    CMD python -c "import os,sys,urllib.request; \
+host=next((h.strip() for h in os.environ.get('DJANGO_ALLOWED_HOSTS','').split(',') if h.strip()), '127.0.0.1'); \
+req=urllib.request.Request('http://127.0.0.1:8000/login/', headers={'Host': host}); \
+sys.exit(0 if urllib.request.urlopen(req, timeout=4).status == 200 else 1)"
 
 # 워커 수 — 기본 5.
 #
