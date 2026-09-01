@@ -397,13 +397,135 @@ body {
 }
 
 /* --- 흰숫 변환기 (converter.html) --------------------------------------- */
-.bm-conv-row { margin-bottom: 1.25rem; }
-.bm-conv-row .form-label { font-weight: 600; color: var(--bm-text); }
-.bm-conv-pair {
-  display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+.bm-conv-notice {
+  display: flex; align-items: flex-start; gap: .6rem;
+  font-size: .9rem; line-height: 1.55;
 }
-.bm-conv-pair .form-control { flex: 1 1 180px; min-width: 0; }
-.bm-conv-arrow { color: var(--bm-text-subtle); flex-shrink: 0; }
+.bm-conv-notice i { flex-shrink: 0; margin-top: .15rem; }
+
+.bm-conv-stage {
+  display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;
+}
+.bm-conv-side { flex: 0 1 260px; min-width: 200px; }
+.bm-conv-side-head {
+  display: flex; align-items: baseline; gap: .5rem; margin-bottom: .5rem;
+}
+.bm-conv-badge {
+  font-weight: 700; font-size: .8rem; letter-spacing: .04em;
+  padding: .15rem .5rem; border-radius: 4px; color: #fff;
+}
+.bm-conv-badge-iidx { background: #1f6feb; }
+.bm-conv-badge-bms  { background: #6f42c1; }
+.bm-conv-side-sub { font-size: .78rem; color: var(--bm-text-subtle); }
+.bm-conv-side-foot {
+  margin: .6rem 0 0; font-size: .85rem; color: var(--bm-text-subtle);
+  text-align: center;
+}
+.bm-conv-side-foot b { color: var(--bm-text); font-variant-numeric: tabular-nums; }
+
+/* 플레이 필드. 게임 화면이므로 사이트 테마와 무관하게 늘 검다. */
+.bm-field {
+  position: relative; height: 420px; border-radius: 6px; overflow: hidden;
+  background: #05070c; border: 1px solid #2a3242;
+  touch-action: none;   /* 끌 때 화면이 같이 스크롤되지 않게 */
+  user-select: none;
+}
+.bm-field-lanes { position: absolute; inset: 0; display: flex; }
+.bm-lane { display: block; border-right: 1px solid rgba(255,255,255,.10); }
+.bm-lane-scratch { flex: 1.6; background: linear-gradient(#2a0d12, #14070a); }
+.bm-lane-white   { flex: 1;   background: linear-gradient(#0d1018, #070a10); }
+.bm-lane-blue    { flex: .78; background: linear-gradient(#0a1220, #060a12); }
+.bm-lane:last-child { border-right: 0; }
+
+/* 덮개. IIDX 의 서든/리프트는 완전히 불투명하다. */
+.bm-cover {
+  position: absolute; left: 0; right: 0; background: #000;
+  display: flex; align-items: center; justify-content: center;
+}
+.bm-cover-sudden { top: 0; flex-direction: column; justify-content: flex-end; }
+.bm-cover-lift   { bottom: 0; flex-direction: column; justify-content: flex-start; }
+
+.bm-cover-handle {
+  position: absolute; left: 0; right: 0; height: 16px;
+  cursor: ns-resize; touch-action: none;
+  display: flex; align-items: center; justify-content: center;
+}
+.bm-cover-sudden .bm-cover-handle { bottom: -8px; }
+.bm-cover-lift   .bm-cover-handle { top: -8px; }
+.bm-cover-handle::before {
+  content: ''; display: block; width: 100%; height: 2px;
+  background: #4ade80; box-shadow: 0 0 6px rgba(74,222,128,.9);
+}
+.bm-cover-handle::after {
+  content: ''; position: absolute; width: 34px; height: 6px; border-radius: 3px;
+  background: #4ade80; opacity: .85;
+}
+.bm-cover-handle:hover::after,
+.bm-cover-handle.is-dragging::after { opacity: 1; transform: scaleX(1.25); }
+.bm-cover-handle:focus-visible { outline: 2px solid #4ade80; outline-offset: 2px; }
+
+/* 덮개 안의 숫자. IIDX 의 흰숫처럼 굵고 넓게 둔다. */
+.bm-cover-num { position: relative; z-index: 1; padding: .35rem 0; }
+.bm-cover-num input {
+  width: 5.2rem; text-align: center;
+  background: rgba(255,255,255,.06); color: #fff;
+  border: 1px solid rgba(255,255,255,.22); border-radius: 4px;
+  font-weight: 700; font-size: 1.05rem; letter-spacing: .06em;
+  font-variant-numeric: tabular-nums; padding: .15rem .2rem;
+}
+.bm-cover-num input:focus {
+  outline: none; border-color: #4ade80; background: rgba(74,222,128,.12);
+}
+/* 크롬·사파리의 증감 화살표는 좁은 칸에서 숫자를 가린다. */
+.bm-cover-num input::-webkit-outer-spin-button,
+.bm-cover-num input::-webkit-inner-spin-button {
+  -webkit-appearance: none; margin: 0;
+}
+.bm-cover-num input { -moz-appearance: textfield; }
+
+/* 덮개가 얇으면 숫자가 들어갈 자리가 없다. 레인 쪽으로 내보낸다. */
+.bm-cover.is-thin .bm-cover-num { position: absolute; }
+.bm-cover-sudden.is-thin .bm-cover-num { top: 100%; margin-top: 12px; }
+.bm-cover-lift.is-thin   .bm-cover-num { bottom: 100%; margin-bottom: 12px; }
+
+.bm-judgeline {
+  position: absolute; left: 0; right: 0; height: 3px;
+  background: #ff2d3f; box-shadow: 0 0 12px rgba(255,45,63,.85);
+  pointer-events: none;
+}
+
+.bm-conv-hint {
+  margin: 1rem 0 0; text-align: center;
+  font-size: .85rem; color: var(--bm-text-subtle);
+}
+.bm-conv-tools {
+  display: flex; align-items: center; justify-content: center;
+  gap: 1.25rem; flex-wrap: wrap; margin-top: 1rem;
+  padding-top: 1rem; border-top: 1px solid var(--bm-border);
+}
+.bm-conv-tools .form-check { margin: 0; }
+
+.bm-formula {
+  border: 1px solid var(--bm-border); border-radius: 6px;
+  overflow: hidden; margin: 1rem 0;
+}
+.bm-formula-row {
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  padding: .6rem .9rem; background: var(--bm-surface-2);
+}
+.bm-formula-row + .bm-formula-row { border-top: 1px solid var(--bm-border); }
+.bm-formula-label {
+  flex: 0 0 12rem; font-weight: 600; font-size: .88rem; color: var(--bm-text);
+}
+.bm-formula-row code { font-size: .92rem; color: var(--bm-text); }
+
+@media (max-width: 575.98px) {
+  .bm-field { height: 340px; }
+  .bm-conv-stage { gap: 1rem; }
+  .bm-conv-side { flex: 1 1 46%; min-width: 150px; }
+  .bm-cover-num input { width: 4.2rem; font-size: .92rem; }
+  .bm-formula-label { flex: 1 1 100%; }
+}
 
 /* --- 관리자 대시보드 ------------------------------------------------------ */
 .bm-cmd-meta code {

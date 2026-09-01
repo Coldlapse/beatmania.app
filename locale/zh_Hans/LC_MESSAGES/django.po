@@ -33,6 +33,9 @@ msgstr "- 通过 Reflux 实现数据自动更新"
 msgid "- SSL 인증서 적용 및 점수순 정렬 추가"
 msgstr "- 应用 SSL 证书并新增按分数排序"
 
+msgid "- healthcheck 구현(완료)"
+msgstr "- 实现健康检查（已完成）"
+
 msgid "- healthcheck 및 로깅 서버 구현"
 msgstr "- 实现健康检查与日志服务器"
 
@@ -45,17 +48,29 @@ msgstr "- 克隆 iidxranktable 项目并导入 INFINITAS 收录曲"
 msgid "- 난이도표 UI 한글화"
 msgstr "- 难度表 UI 韩语化"
 
+msgid "- 다국어 지원(영문·일본어·중국어) 번역 추가(완료)"
+msgstr "- 新增多语言支持（英语、日语、中文）（已完成）"
+
 msgid "- 다크 모드 및 곡 이름 검색 강조 기능 구현"
 msgstr "- 实现深色模式与曲名搜索高亮"
 
 msgid "- 랭크(B, A, AA, AAA, MAX-) 기록 기능 구현"
 msgstr "- 实现等级（B、A、AA、AAA、MAX-）记录功能"
 
+msgid "- 로깅 서버 구현"
+msgstr "- 实现日志服务器"
+
 msgid "- 부트스트랩(Bootstrap) 적용 등 사이트 디자인 및 UI 개선"
 msgstr "- 应用 Bootstrap 等，改善站点设计与 UI"
 
+msgid "- 서비스 개발을 마무리하고, 유지보수와 장애 대응에 집중"
+msgstr "- 完成服务开发，并专注于维护与故障处理"
+
 msgid "- 서열표 조회수 기록 및 조회 기능 구현"
 msgstr "- 实现难度表浏览量的记录与查看"
+
+msgid "- 신곡 데이터 추가 및 서열 분류 자동화"
+msgstr "- 新增新曲数据并实现难度分类自动化"
 
 msgid "- 신곡 데이터 추가 및 서열 분류 자동화(완료)"
 msgstr "- 新增新曲数据并实现难度分类自动化（已完成）"
@@ -66,8 +81,14 @@ msgstr "- 新增英语与日语翻译"
 msgid "- 원본 코드에서 SPN, SPH의 난이도 구분이 배경색으로 구현되도록 의도되었으나 작동하지 않던 버그 수정"
 msgstr "- 修复原代码中本应以背景色区分 SPN、SPH 难度却未生效的缺陷"
 
+msgid "- 전체 코드 전수 리팩토링 및 구조 정리"
+msgstr "- 对全部代码进行通盘重构并整理结构"
+
 msgid "- 점수(랭크)순 정렬 기능 구현"
 msgstr "- 实现按分数（等级）排序"
+
+msgid "- 타건 기록 리더보드 추가(완료)"
+msgstr "- 新增击键记录排行榜（已完成）"
 
 msgid "- 타인 서열표 조회(유저 검색) 및 프로필 비공개 기능 추가"
 msgstr "- 新增查看他人难度表（用户搜索）与资料不公开功能"
@@ -102,8 +123,17 @@ msgstr "2023 Q3（已完成）"
 msgid "2025 Q3 (완료)"
 msgstr "2025 Q3（已完成）"
 
+msgid "2026 Q2 (완료)"
+msgstr "2026 Q2（已完成）"
+
 msgid "2026 Q2 (진행 중)"
 msgstr "2026 Q2（进行中）"
+
+msgid "2026 Q3 (진행 중)"
+msgstr "2026 Q3（进行中）"
+
+msgid "2026 Q4 ~ (예정)"
+msgstr "2026 Q4 起（计划中）"
 
 msgid "3. 무엇이 공개되나"
 msgstr "3. 哪些内容会公开"
@@ -159,6 +189,9 @@ msgstr "获取 API 令牌"
 msgid "API 토큰 보기"
 msgstr "查看 API 令牌"
 
+msgid "Beatoraja의 LITONE 계열 스킨 등 IIDX와 동일한 구조로 제작된 스킨에 대응합니다. 일부 LITONE 버전은 IIDX AC 계산식대로의 서든 계산을 지원하지만, 일부 버전은 Beatoraja의 서든 계산대로 작동합니다. 확인 후 이용해주세요."
+msgstr "本工具适用于与 IIDX 结构相同的皮肤，例如 beatoraja 的 LITONE 系列。部分 LITONE 版本按 IIDX AC 的公式计算 SUDDEN+，另一部分版本则依照 beatoraja 自身的算法。请确认后再使用。"
+
 msgid "Buy me a coffee"
 msgstr "Buy me a coffee"
 
@@ -183,6 +216,9 @@ msgstr "IIDX INFINITAS Rank Table 项目的开发进展与今后将更新的功�
 msgid "IIDX 닉네임"
 msgstr "IIDX DJ NAME"
 
+msgid "IIDX 서든 플러스"
+msgstr "IIDX SUDDEN+"
+
 msgid "IIDXwidget 받기"
 msgstr "获取 IIDXwidget"
 
@@ -194,6 +230,9 @@ msgstr "在 IIDXwidget 设置中填入上面的令牌并保存。"
 
 msgid "IIDXwidget 앱과 연동하기 위한 개인 토큰입니다."
 msgstr "用于连接 IIDXwidget 应用的个人令牌。"
+
+msgid "IIDX는 레인 전체 높이를 1000으로 본다. 서든 플러스는 위에서 내려오는 덮개의 높이이고, 리프트는 아래에서 올라오는 덮개의 높이다. 둘 다 같은 1000 기준의 절대값이라, 보이는 넓이는 <b>1000 − 서든 − 리프트</b>가 된다."
+msgstr "IIDX 把整条轨道的高度视为 1000。SUDDEN+ 是从上方降下的遮罩高度，LIFT 是从下方升起的遮罩高度。两者都是以同一个 1000 为基准的绝对值，因此可见范围为 <b>1000 − SUDDEN+ − LIFT</b>。"
 
 msgid "JPG · PNG · GIF · WebP, 최대 2MB. 정사각형 이미지를 권장합니다."
 msgstr "JPG、PNG、GIF 或 WebP，最大 2MB。建议使用正方形图片。"
@@ -228,8 +267,14 @@ msgstr "beatmania.app %(phrase)s记录了 <b>%(n)s</b> 次访问。"
 msgid "beatmania.app(이하 '이 사이트')은 IIDX INFINITAS 서열표를 제공하는 개인 운영 사이트입니다. 아래는 이 사이트가 실제로 저장하고 사용하는 정보의 전부입니다."
 msgstr "beatmania.app（以下称“本站”）是提供 IIDX INFINITAS 难度表的个人运营站点。以下是本站实际存储并使用的全部信息。"
 
+msgid "beatoraja 서든"
+msgstr "beatoraja SUDDEN+"
+
 msgid "beatoraja(비토라쟈)와 IIDX의 서든 플러스 수치를 서로 변환합니다."
 msgstr "在 beatoraja 与 IIDX 的 SUDDEN+ 数值之间互相换算。"
+
+msgid "beatoraja는 다르다. 리프트로 잘려 나간 뒤 <b>남은 영역</b>을 다시 1000으로 놓고 서든을 센다. 그래서 리프트가 0이 아니면 화면은 똑같은데 숫자만 달라진다. 위의 두 필드가 언제나 같은 모양인데 숫자가 다른 것이 그 때문이다."
+msgstr "beatoraja 则不同。它把被 LIFT 截去之后<b>剩余的区域</b>重新视为 1000，再据此计算 SUDDEN+。因此只要 LIFT 不为 0，画面完全相同而数值却不同。上方两个区域形状始终一致、数字却不一样，原因正在于此。"
 
 msgid "textage.cc (수록곡 출처)"
 msgstr "textage.cc（曲目来源）"
@@ -375,6 +420,9 @@ msgstr "我的令牌"
 msgid "내려받기"
 msgstr "下载"
 
+msgid "넓이를 유지한 채 리프트만 변경"
+msgstr "保持可见范围，仅改变 LIFT"
+
 msgid "닉네임"
 msgstr "显示名称"
 
@@ -399,6 +447,9 @@ msgstr "切换到深色模式"
 msgid "대기 현황"
 msgstr "排队情况"
 
+msgid "덮개의 모서리를 끌거나, 덮개 안의 숫자를 직접 입력하세요. 방향키로도 조절됩니다."
+msgstr "拖动遮罩的边缘，或直接在遮罩内输入数值。方向键同样可以调节。"
+
 msgid "데이터 동기화"
 msgstr "数据同步"
 
@@ -417,6 +468,9 @@ msgstr "数据库"
 msgid "데이터베이스에 질의가 되는지."
 msgstr "数据库能否响应查询。"
 
+msgid "되돌리는 쪽에 <code>ceil</code>을 쓰는 이유가 있다. 게임이 실제로 하는 계산은 beatoraja → IIDX 방향의 내림뿐이므로, IIDX 수치 S를 얻으려면 그 식에 넣었을 때 S가 나오는 가장 작은 BMS 값을 찾아야 한다. 내림으로 되돌리면 리프트에 따라 한 칸 모자란 값이 나온다."
+msgstr "回算时使用 <code>ceil</code> 是有原因的。游戏本身执行的运算只有 beatoraja → IIDX 方向的向下取整，因此若要得到 IIDX 数值 S，就必须找出代入该公式后能得出 S 的最小 BMS 值。若回算时也向下取整，在某些 LIFT 下会少一格。"
+
 msgid "되돌릴 수 없습니다."
 msgstr "此操作无法撤销。"
 
@@ -425,6 +479,9 @@ msgstr "Discord"
 
 msgid "램프순"
 msgstr "按通关灯"
+
+msgid "레인 전체가 1000"
+msgstr "整条轨道为 1000"
 
 msgid "로그"
 msgstr "日志"
@@ -446,6 +503,12 @@ msgstr "LIFT"
 
 msgid "리프트 변환 결과"
 msgstr "LIFT 换算结果"
+
+msgid "리프트 위쪽만 1000"
+msgstr "仅 LIFT 以上为 1000"
+
+msgid "리프트를 바꿔도 보이는 넓이 유지"
+msgstr "改变 LIFT 时保持可见范围"
 
 msgid "마지막 기록"
 msgstr "最后记录"
@@ -528,14 +591,26 @@ msgstr "确认新密码"
 msgid "새 비밀번호를 설정해 주세요."
 msgstr "请设置新密码。"
 
+msgid "서든"
+msgstr "SUDDEN+"
+
+msgid "서든 플러스"
+msgstr "SUDDEN+"
+
 msgid "서버 구축 및 프로젝트 개시"
 msgstr "搭建服务器与项目启动"
+
+msgid "서비스 개발 마무리 및 운영"
+msgstr "开发收尾与运营"
 
 msgid "서비스 현황"
 msgstr "服务状态"
 
 msgid "서비스를 쓰면서 직접 입력하는 것"
 msgstr "使用服务时你自行输入的内容"
+
+msgid "서열 분류 자동화"
+msgstr "难度分类自动化"
 
 msgid "서열은 종전 본가 시트들을 기반으로 작성됩니다. SP의 경우 서열 미분류 곡에 대한 별도의 분류는 진행하지 않습니다."
 msgstr "难度基于既有的街机版表格编写。SP 不对未分类曲目单独分类。"
@@ -729,6 +804,9 @@ msgstr "自动留下的记录"
 msgid "자신의 정보는 <a href=\"/account/\">계정 설정</a>에서 언제든 보고 고칠 수 있습니다."
 msgstr "你可以随时在<a href=\"/account/\">账号设置</a>中查看和修改自己的信息。"
 
+msgid "작동 원리와 계산식"
+msgstr "工作原理与计算公式"
+
 msgid "재발급"
 msgstr "重新发放"
 
@@ -797,6 +875,9 @@ msgstr "在过去 7 天内"
 
 msgid "지난 기록"
 msgstr "历史记录"
+
+msgid "초기화"
+msgstr "重置"
 
 msgid "최근"
 msgstr "最近"

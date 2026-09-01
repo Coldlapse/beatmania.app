@@ -1,12 +1,9 @@
 {% extends "common.html" %}
 {% load i18n %}
 {% load static %}
-{% comment %}
-  이전 버전은 <div> 안에 <head>/<body> 태그가 중첩돼 있었다(유효하지 않은 HTML).
-{% endcomment %}
 {% block subtitle %}- {% trans '흰숫 변환기' %}{% endblock %}
 {% block head %}
-<script src="{% static 'js/converter.js' %}"></script>
+<script src="{% static 'js/converter.js' %}?v=20260902-4" defer></script>
 {% endblock %}
 {% block body %}
 
@@ -14,49 +11,186 @@
 
 <div id="container">
   <h1 class="bm-page-title">{% trans '흰숫 변환기' %}</h1>
-  <p class="text-body-secondary mb-4">
+  <p class="text-body-secondary mb-3">
     {% blocktrans %}beatoraja(비토라쟈)와 IIDX의 서든 플러스 수치를 서로 변환합니다.{% endblocktrans %}
   </p>
 
+  {% comment %}
+    스킨마다 계산식이 다르다는 것을 먼저 알린다. 잘못된 스킨에서 쓰면
+    수치가 맞지 않는데, 그걸 변환기 탓으로 오해하기 쉽다.
+  {% endcomment %}
+  <div class="alert alert-warning bm-conv-notice" role="note">
+    <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+    <span>{% blocktrans %}Beatoraja의 LITONE 계열 스킨 등 IIDX와 동일한 구조로 제작된 스킨에 대응합니다. 일부 LITONE 버전은 IIDX AC 계산식대로의 서든 계산을 지원하지만, 일부 버전은 Beatoraja의 서든 계산대로 작동합니다. 확인 후 이용해주세요.{% endblocktrans %}</span>
+  </div>
+
+  {% comment %}
+    두 필드는 언제나 같은 화면을 그린다. 다른 것은 옆에 붙는 숫자뿐이다.
+    "같은 시야인데 수치가 왜 다른가"가 이 도구의 존재 이유이므로,
+    그 사실이 눈으로 보이게 나란히 둔다.
+  {% endcomment %}
+  <div class="card bm-panel mb-3">
+    <div class="card-body">
+      <div class="bm-conv-stage">
+
+        <div class="bm-conv-side">
+          <div class="bm-conv-side-head">
+            <span class="bm-conv-badge bm-conv-badge-iidx">IIDX</span>
+            <span class="bm-conv-side-sub">{% trans '레인 전체가 1000' %}</span>
+          </div>
+
+          <div class="bm-field" data-conv-field="iidx">
+            <div class="bm-field-lanes" aria-hidden="true">
+              <span class="bm-lane bm-lane-scratch"></span>
+              <span class="bm-lane bm-lane-white"></span>
+              <span class="bm-lane bm-lane-blue"></span>
+              <span class="bm-lane bm-lane-white"></span>
+              <span class="bm-lane bm-lane-blue"></span>
+              <span class="bm-lane bm-lane-white"></span>
+              <span class="bm-lane bm-lane-blue"></span>
+              <span class="bm-lane bm-lane-white"></span>
+            </div>
+            <div class="bm-cover bm-cover-sudden" data-conv-cover="sudden">
+              <div class="bm-cover-num">
+                <label class="visually-hidden" for="conv-iidx-sudden">
+                  {% trans 'IIDX 서든 플러스' %}</label>
+                <input type="number" id="conv-iidx-sudden" min="0" max="1000" step="1"
+                       inputmode="numeric" autocomplete="off" data-conv-input="iidx-sudden">
+              </div>
+              <div class="bm-cover-handle" data-conv-handle="sudden"
+                   role="slider" tabindex="0" aria-valuemin="0" aria-valuemax="1000"
+                   aria-label="{% trans 'IIDX 서든 플러스' %}"></div>
+            </div>
+
+            <div class="bm-cover bm-cover-lift" data-conv-cover="lift">
+              <div class="bm-cover-handle" data-conv-handle="lift"
+                   role="slider" tabindex="0" aria-valuemin="0" aria-valuemax="1000"
+                   aria-label="{% trans '리프트' %}"></div>
+              <div class="bm-cover-num">
+                <label class="visually-hidden" for="conv-iidx-lift">
+                  {% trans '리프트' %}</label>
+                <input type="number" id="conv-iidx-lift" min="0" max="1000" step="1"
+                       inputmode="numeric" autocomplete="off" data-conv-input="lift">
+              </div>
+            </div>
+
+            <div class="bm-judgeline" aria-hidden="true"></div>
+          </div>
+
+          <p class="bm-conv-side-foot">
+            {% trans '서든 플러스' %} <b data-conv-echo="iidx-sudden">0</b>
+            · {% trans '리프트' %} <b data-conv-echo="lift">0</b>
+          </p>
+        </div>
+
+        <div class="bm-conv-side">
+          <div class="bm-conv-side-head">
+            <span class="bm-conv-badge bm-conv-badge-bms">beatoraja</span>
+            <span class="bm-conv-side-sub">{% trans '리프트 위쪽만 1000' %}</span>
+          </div>
+
+          <div class="bm-field" data-conv-field="bms">
+            <div class="bm-field-lanes" aria-hidden="true">
+              <span class="bm-lane bm-lane-scratch"></span>
+              <span class="bm-lane bm-lane-white"></span>
+              <span class="bm-lane bm-lane-blue"></span>
+              <span class="bm-lane bm-lane-white"></span>
+              <span class="bm-lane bm-lane-blue"></span>
+              <span class="bm-lane bm-lane-white"></span>
+              <span class="bm-lane bm-lane-blue"></span>
+              <span class="bm-lane bm-lane-white"></span>
+            </div>
+            <div class="bm-cover bm-cover-sudden" data-conv-cover="sudden">
+              <div class="bm-cover-num">
+                <label class="visually-hidden" for="conv-bms-sudden">
+                  {% trans 'beatoraja 서든' %}</label>
+                <input type="number" id="conv-bms-sudden" min="0" max="1000" step="1"
+                       inputmode="numeric" autocomplete="off" data-conv-input="bms-sudden">
+              </div>
+              <div class="bm-cover-handle" data-conv-handle="sudden"
+                   role="slider" tabindex="0" aria-valuemin="0" aria-valuemax="1000"
+                   aria-label="{% trans 'beatoraja 서든' %}"></div>
+            </div>
+
+            <div class="bm-cover bm-cover-lift" data-conv-cover="lift">
+              <div class="bm-cover-handle" data-conv-handle="lift"
+                   role="slider" tabindex="0" aria-valuemin="0" aria-valuemax="1000"
+                   aria-label="{% trans '리프트' %}"></div>
+              <div class="bm-cover-num">
+                <label class="visually-hidden" for="conv-bms-lift">
+                  {% trans '리프트' %}</label>
+                <input type="number" id="conv-bms-lift" min="0" max="1000" step="1"
+                       inputmode="numeric" autocomplete="off" data-conv-input="lift">
+              </div>
+            </div>
+
+            <div class="bm-judgeline" aria-hidden="true"></div>
+          </div>
+
+          <p class="bm-conv-side-foot">
+            {% trans '서든' %} <b data-conv-echo="bms-sudden">0</b>
+            · {% trans '리프트' %} <b data-conv-echo="lift">0</b>
+          </p>
+        </div>
+
+      </div>
+
+      <p class="bm-conv-hint">
+        <i class="bi bi-arrows-expand" aria-hidden="true"></i>
+        {% trans '덮개의 모서리를 끌거나, 덮개 안의 숫자를 직접 입력하세요. 방향키로도 조절됩니다.' %}
+      </p>
+
+      <div class="bm-conv-tools">
+        {% comment %}
+          리프트를 바꾸면 보통 시야가 함께 변한다. 예전 페이지의 '리프트 변환'
+          버튼은 시야를 유지한 채 서든만 다시 계산해 주는 것이었다.
+          그 기능을 버튼 대신 이 스위치로 옮겼다.
+        {% endcomment %}
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" role="switch"
+                 id="conv-keepview" data-conv-keepview>
+          <label class="form-check-label" for="conv-keepview">
+            {% trans '리프트를 바꿔도 보이는 넓이 유지' %}
+          </label>
+        </div>
+        <button type="button" class="btn btn-outline-secondary btn-sm"
+                data-conv-reset>
+          <i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i>
+          {% trans '초기화' %}
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div class="card bm-panel">
     <div class="card-body">
-      <div class="bm-conv-row">
-        <label class="form-label" for="beatoraja_sudden">{% trans '비토라쟈 서든' %}</label>
-        <div class="bm-conv-pair">
-          <input type="text" class="form-control" id="beatoraja_sudden" placeholder="{% trans '비토라쟈 서든' %}">
-          <span class="bm-conv-arrow" aria-hidden="true">→</span>
-          <input type="text" class="form-control" id="converted_beatoraja"
-                 placeholder="{% trans '리프트 변환 결과' %}" disabled>
+      <h2 class="h5 mb-3">{% trans '작동 원리와 계산식' %}</h2>
+
+      <p>
+        {% blocktrans %}IIDX는 레인 전체 높이를 1000으로 본다. 서든 플러스는 위에서 내려오는 덮개의 높이이고, 리프트는 아래에서 올라오는 덮개의 높이다. 둘 다 같은 1000 기준의 절대값이라, 보이는 넓이는 <b>1000 − 서든 − 리프트</b>가 된다.{% endblocktrans %}
+      </p>
+      <p>
+        {% blocktrans %}beatoraja는 다르다. 리프트로 잘려 나간 뒤 <b>남은 영역</b>을 다시 1000으로 놓고 서든을 센다. 그래서 리프트가 0이 아니면 화면은 똑같은데 숫자만 달라진다. 위의 두 필드가 언제나 같은 모양인데 숫자가 다른 것이 그 때문이다.{% endblocktrans %}
+      </p>
+
+      <div class="bm-formula">
+        <div class="bm-formula-row">
+          <span class="bm-formula-label">beatoraja → IIDX</span>
+          <code>IIDX = floor(BMS × (1000 − LIFT) ÷ 1000)</code>
+        </div>
+        <div class="bm-formula-row">
+          <span class="bm-formula-label">IIDX → beatoraja</span>
+          <code>BMS = ceil(IIDX × 1000 ÷ (1000 − LIFT))</code>
+        </div>
+        <div class="bm-formula-row">
+          <span class="bm-formula-label">{% trans '넓이를 유지한 채 리프트만 변경' %}</span>
+          <code>IIDX' = IIDX − (LIFT' − LIFT)</code>
         </div>
       </div>
 
-      <div class="bm-conv-row">
-        <label class="form-label" for="iidx_sudden">{% trans '투덱 서든' %}</label>
-        <div class="bm-conv-pair">
-          <input type="text" class="form-control" id="iidx_sudden" placeholder="{% trans '투덱 서든' %}">
-          <span class="bm-conv-arrow" aria-hidden="true">→</span>
-          <input type="text" class="form-control" id="converted_iidx"
-                 placeholder="{% trans '리프트 변환 결과' %}" disabled>
-        </div>
-      </div>
-
-      <div class="bm-conv-row">
-        <label class="form-label" for="lift">{% trans '리프트' %} <span class="text-body-secondary">({% trans '공통' %})</span></label>
-        <div class="bm-conv-pair">
-          <input type="text" class="form-control" id="lift" placeholder="{% trans '비토라쟈 · 투덱 리프트' %}">
-          <span class="bm-conv-arrow" aria-hidden="true">→</span>
-          <input type="text" class="form-control" id="converted_lift" placeholder="{% trans '변환할 리프트' %}">
-        </div>
-      </div>
-
-      <div class="d-flex flex-wrap gap-2 mt-4">
-        <button type="button" class="btn btn-primary" onclick="bms2iidx();">
-          비토라쟈 → 투덱</button>
-        <button type="button" class="btn btn-primary" onclick="iidx2bms();">
-          투덱 → 비토라쟈</button>
-        <button type="button" class="btn btn-outline-secondary" onclick="liftconvert();">
-          리프트 변환</button>
-      </div>
+      <p class="text-body-secondary small mb-0">
+        {% blocktrans %}되돌리는 쪽에 <code>ceil</code>을 쓰는 이유가 있다. 게임이 실제로 하는 계산은 beatoraja → IIDX 방향의 내림뿐이므로, IIDX 수치 S를 얻으려면 그 식에 넣었을 때 S가 나오는 가장 작은 BMS 값을 찾아야 한다. 내림으로 되돌리면 리프트에 따라 한 칸 모자란 값이 나온다.{% endblocktrans %}
+      </p>
     </div>
   </div>
 </div>
