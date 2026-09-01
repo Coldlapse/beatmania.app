@@ -30,7 +30,7 @@ from iidxrank import health, models
 # RankTable.type 으로는 못 나눈다 — onehand 는 type 이 'SP' 지만 DP 쪽에
 # 두기로 했고, DBR/11DBR 은 type 자체가 따로다. 이름으로 명시한다.
 # 새 서열표가 생기면 여기에 넣어야 그래프에 나온다(아래 _group 참조).
-SP_TABLES = ['SP12H', 'SP12N', 'SP11H', 'SP11N', 'SP10H', 'SP10R', 'SP12TEST']
+SP_TABLES = ['SP12H', 'SP12N', 'SP11H', 'SP11N', 'SP10H']
 DP_TABLES = ['DP12', 'DP11', 'DP10', 'DBR', '11DBR', 'onehand']
 
 PERIODS = {
