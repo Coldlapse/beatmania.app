@@ -1,6 +1,17 @@
 @charset "utf-8";
 
-body{
+/* sadang.org 원본 style.css 를 그대로 옮기되, 모든 선택자를
+   #overjoy-root 안으로 가뒀다.
+
+   원본은 페이지 하나를 통째로 쓰던 파일이라 body/a/div/table 같은 요소
+   선택자를 쓴다. 우리 페이지에는 위에 상단바가 있어서 그대로 두면
+   상단바까지 물든다 — 실제로 body 의 letter-spacing: 0.1em 이 상단바
+   글자 간격을 벌리고 있었다.
+
+   본문 안에서의 모양은 원본과 같다. 고칠 일이 있으면 규칙이 아니라
+   이 범위 지정을 먼저 의심할 것. */
+
+#overjoy-root {
   font-size: 14px;
   letter-spacing: 0.1em;
   line-height: 1.3em;
@@ -9,30 +20,34 @@ body{
   color: #000000;
 }
 
-a{
+#overjoy-root a {
   color: #2222A0;
 }
- 
-a:link{
+
+#overjoy-root a:link {
   color: #2222A0;
 }
- 
-a:visited{
+
+#overjoy-root a:visited {
   color: #A02222;
 }
- 
-a:hover{
+
+#overjoy-root a:hover {
   color: #2222A0;
   text-decoration: none;
 }
 
-table, thead, tbody{
+#overjoy-root table,
+#overjoy-root thead,
+#overjoy-root tbody {
   background-color: #ffffff;
   border: none;
   border-collapse: collapse;
 }
 
-tr, td, th{
+#overjoy-root tr,
+#overjoy-root td,
+#overjoy-root th {
   font-size: 14px;
   letter-spacing: 0.1em;
   line-height: 1.3em;
@@ -40,31 +55,31 @@ tr, td, th{
   background-color: #ffffff;
 }
 
-table{
+#overjoy-root table {
   margin: auto;
   margin-top: 1em;
   padding: 0px;
   line-height: 1.25em;
 }
 
-th{
+#overjoy-root th {
   padding: 0.4em 0.25em 0.25em 0.5em;
   font-weight: bold;
   color: #FFFFFF;
   background-color: #222222;
 }
 
-td{
+#overjoy-root td {
   padding: 0.4em 0.25em 0.25em 0.5em;
 }
 
-ul{
+#overjoy-root ul {
   padding-left: 1.5em;
   -webkit-padding-start: 1.5em;
   padding-bottom: 1em;
 }
 
-h1{
+#overjoy-root h1 {
   width: 100%;
   text-align: center;
   margin-top: 1em;
@@ -73,7 +88,7 @@ h1{
   font-weight: bold;
 }
 
-h2{
+#overjoy-root h2 {
   width: 100%;
   margin-top: 1em;
   
@@ -81,88 +96,88 @@ h2{
   font-weight: bold;
 }
 
-h3{
+#overjoy-root h3 {
   margin: 0em;
 }
 
-.overjoy{
+#overjoy-root .overjoy {
   color: #FF4040;
   font-weight: bold;
 }
 
-legend{
+#overjoy-root legend {
   margin: auto;
 }
 
-p{
+#overjoy-root p {
   margin: 0px;
   padding-top: 1em;
   padding-left: 1.5em;
   clear: both;
 }
 
-div{
+#overjoy-root div {
   margin: 0px;
   padding: 0px;
 }
 
-div.contents{
+#overjoy-root div.contents {
   margin-bottom: 2em;
 }
 
-div.centertext{
+#overjoy-root div.centertext {
   text-align: left;
   display:inline-table;
   margin: auto;
 }
 
-div.info{
+#overjoy-root div.info {
   text-align: center;
   margin: auto;
   padding: 0.5em 0px;
   clear: both;
 }
 
-table#bmslist{
+#overjoy-root table#bmslist {
   margin-top: 1em;
   margin-bottom: 2em;
   width: 90%;
 }
 
-table#linklist{
+#overjoy-root table#linklist {
   margin-top: 1em;
   width: 60%;
 }
 
-th#level{
+#overjoy-root th#level {
   width: 4%;
 }
 
-th#title{
+#overjoy-root th#title {
   width: 20%;
 }
 
-th#ir{
+#overjoy-root th#ir {
   width: 2%;
 }
 
-th#artist{
+#overjoy-root th#artist {
   width: 20%;
 }
 
-th#sabun{
+#overjoy-root th#sabun {
   width: 20%;
 }
 
-th#comment{
+#overjoy-root th#comment {
   width: 25%;
 }
 
-th#misc{
+#overjoy-root th#misc {
   width: 9%;
 }
 
-tr.header td{
+#overjoy-root tr.header td {
   font-weight: bold;
   text-align: center;
   vertical-align: bottom;
@@ -172,14 +187,14 @@ tr.header td{
   color: #FFFFFF;
 }
 
-tr.main td{
+#overjoy-root tr.main td {
   font-size: 12px;
 }
 
-tr.new td{
+#overjoy-root tr.new td {
   background-color: #FFFFDD;
 }
 
-tr.separate {
+#overjoy-root tr.separate {
   height: 1em;
 }

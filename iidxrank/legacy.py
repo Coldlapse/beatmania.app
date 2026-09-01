@@ -12,6 +12,7 @@
 """
 import re
 
+from django.http import Http404
 from django.shortcuts import redirect
 
 # 옛 `/!/...` 경로 → 새 경로.
@@ -61,6 +62,24 @@ def redirect_bang(request, rest):
     return redirect('/', permanent=True)
 
 
+# 사이트 자신의 경로로 쓰거나 쓸 이름들. 사용자 이름으로 넘기지 않는다.
+#
+# 이 규칙은 URLconf 의 맨 끝에서 "남은 모든 최상위 경로"를 받는다. 그래서
+# 아직 만들지 않은 페이지 주소도 여기 걸려 **영구** 리다이렉트가 나간다.
+# 방문자 브라우저는 301 을 오래 캐시하므로, 나중에 그 주소로 페이지를
+# 만들어도 이미 방문한 사람에게는 계속 /u/... 로 날아간다.
+# 실제로 /status/ 가 그렇게 한 번 물렸다.
+#
+# 존재 여부를 확인하지 않는 원칙(계정 열거 차단)은 그대로다. 이 목록은
+# 고정된 사이트 경로일 뿐 계정에 대해 아무것도 알려주지 않는다.
+RESERVED = frozenset("""
+about account admin analytics api board converter embed favicon.ico
+health i18n imgdownload join json jsi18n login logout manage media
+musiclist my-page overjoy privacy rankedit robots.txt roadmap
+songrank static status table u user userrank
+""".split())
+
+
 def redirect_user(request, username, rest):
     """옛 최상위 사용자 경로 `/sadang/SP12H/` → `/u/sadang/table/SP12H/`.
 
@@ -69,6 +88,11 @@ def redirect_user(request, username, rest):
     존재 여부 판단은 새 주소의 뷰가 하고, 없는 계정과 비공개 계정에
     같은 화면을 준다.
     """
+    if username.lower() in RESERVED:
+        # 사이트 경로다. 지금 없는 주소면 그냥 404 로 둔다 — 영구
+        # 리다이렉트를 캐시시켜 두면 나중에 그 주소를 못 쓴다.
+        raise Http404()
+
     rest = rest.strip('/')
     base = '/u/%s/' % username
     if not rest:

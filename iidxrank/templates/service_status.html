@@ -23,7 +23,7 @@
   <div class="card bm-panel mb-3">
     <div class="card-body">
       <p class="bm-status-sentence mb-0">
-        {% blocktrans with users=numbers.users|intcomma players=numbers.players_with_record|intcomma records=numbers.records|intcomma songs=numbers.songs|intcomma tables=numbers.tables|intcomma items=numbers.items|intcomma %}beatmania.app 에는 <b>{{ users }}명</b>의 유저가 있고, 그중 <b>{{ players }}명</b>이 지금까지 <b>{{ records }}개</b>의 플레이 기록을 남겼습니다. <b>{{ songs }}개</b>의 채보가 등록되어 있으며, <b>{{ tables }}개</b>의 서열표에 걸쳐 <b>{{ items }}개</b> 자리에 분류되어 있습니다.{% endblocktrans %}
+        {% blocktrans with users=numbers.users|intcomma players=numbers.players_with_record|intcomma records=numbers.records|intcomma songs=numbers.songs|intcomma tables=numbers.tables|intcomma items=numbers.items|intcomma %}beatmania.app 에는 <b>{{ users }}명</b>의 유저가 있고, 그중 <b>{{ players }}명</b>이 지금까지 <b>{{ records }}개</b>의 플레이 기록을 남겼습니다. 등록된 채보는 <b>{{ songs }}개</b>이며, <b>{{ tables }}개</b>의 서열표가 이 가운데 <b>{{ items }}개</b>를 난이도별로 배치하고 있습니다. 한 채보가 여러 서열표에 들어가기도 합니다.{% endblocktrans %}
       </p>
     </div>
   </div>

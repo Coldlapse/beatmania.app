@@ -62,10 +62,13 @@ classes = (
     )
 
 def getdanstring(dan):
+    # Player.spclass/dpclass 의 기본값은 0 인데 아래 표는 1(= '-', 단위 없음)
+    # 부터 시작한다. 그래서 단위를 한 번도 설정하지 않은 계정은 표에 없는
+    # 값이 되어 None 이 그대로 화면에 찍혔다. 표에 없는 값은 전부 '-' 로 본다.
     for cls in classes:
         if (cls[0] == dan):
             return cls[1]
-    return None
+    return '-'
 
 def getrank(rate):
     if (rate >= 8.0/9*100):

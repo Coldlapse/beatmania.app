@@ -36,21 +36,31 @@ body {
   color: var(--bm-nav-link-hover);
 }
 
-/* 사이트 이름. 'beatmania' 는 굵게, '.app' 은 힘을 빼서 도메인처럼 읽히게 한다.
-   이름이 짧아진 만큼 자간을 조금 벌려 로고처럼 보이게 했다. */
+/* 사이트 이름.
+ *
+ * 원래 'Kreon', Georgia, serif 였는데 Kreon 은 어디서도 불러오지 않아
+ * 사실상 Georgia 세리프였다. 논문 제목처럼 무거워 보인다는 지적이 맞다.
+ *
+ * 웹폰트를 새로 달지 않는다. 개인정보처리방침에 "제3자는 reCAPTCHA 뿐"
+ * 이라고 적어 두었는데 Google Fonts 를 붙이면 그 문장이 거짓이 된다.
+ * 대신 이미 쓰는 본문 폰트로 무게와 색만 갈라 로고처럼 만든다 —
+ * 'beatmania' 는 굵고 좁게, '.app' 은 가늘고 흐리게.
+ */
 #refactor-navbar .bm-brand {
-  font-size: 1.35rem;
-  letter-spacing: .01em;
+  font-family: inherit;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -.035em;
   display: inline-flex;
   align-items: baseline;
   gap: 0;
 }
 #refactor-navbar .bm-brand-tld {
   font-weight: 400;
-  opacity: .62;
-  letter-spacing: 0;
+  letter-spacing: -.01em;
+  opacity: .55;
 }
-#refactor-navbar .bm-brand:hover .bm-brand-tld { opacity: .85; }
+#refactor-navbar .bm-brand:hover .bm-brand-tld { opacity: .8; }
 
 /* 바깥으로 나가는 링크 두 개. 평소에는 다른 아이콘과 같은 무게로 두고,
    올렸을 때만 각자의 상징색을 준다 — 상단바가 알록달록해지지 않게. */
