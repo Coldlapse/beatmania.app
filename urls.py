@@ -34,6 +34,7 @@ import iidxrank.views_json as views_json
 import iidxrank.views_manage as views_manage
 import iidxrank.views_overjoy as views_overjoy
 import iidxrank.views_status as views_status
+import iidxrank.views_typing as views_typing
 
 # 서열표 한 개에 딸린 하위 경로. 내 것과 남의 것이 같은 모양을 갖도록 공유한다.
 table_patterns = [
@@ -82,7 +83,15 @@ urlpatterns = [
         name='status_views_json'),
     url(r'^analytics/$',
         RedirectView.as_view(pattern_name='service_status', permanent=True)),
-    url(r'^my-page/$', views.my_page_view, name='my_page'),
+    # 일일 타건 기록. 로그인하지 않아도 열린다 — 리더보드가 있어서 남이 봐도
+    # 의미가 있다. 본인 기록 부분만 로그인한 사람에게 보인다.
+    url(r'^my-page/$', views_typing.my_page, name='my_page'),
+    url(r'^my-page/typing\.json$', views_typing.typing_json,
+        name='typing_json'),
+    # API 토큰은 계정 설정에 가까워 따로 뺐다.
+    url(r'^account/token/$', views_typing.api_token, name='api_token'),
+    url(r'^account/token/reissue/$', views_typing.api_token_reissue,
+        name='api_token_reissue'),
     url(r'^status/(?P<machine_id>[\w-]+)/$',
         views.machine_status_view, name='machine_status_view'),
     url(r'^status/(?P<machine_id>[\w-]+)/json/$',

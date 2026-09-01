@@ -511,34 +511,6 @@ def update_typing_count_api(request):
 
 
 # --- 2. 사용자가 웹에서 볼 마이페이지 뷰 ---
-@login_required
-def my_page_view(request):
-    token, created = models.ApiToken.objects.get_or_create(user=request.user)
-    
-    # ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
-    # '오늘'의 기준을 한국 시간으로 변경
-    today = timezone.localdate()
-    # ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
-    
-    log_list = models.TypingLog.objects.filter(user=request.user).exclude(date=today)
-    paginator = Paginator(log_list, 20) 
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    today_count = 0
-    try:
-        # 여기도 한국 시간 기준으로 오늘의 로그를 찾도록 변경
-        today_log = models.TypingLog.objects.get(user=request.user, date=today)
-        today_count = today_log.count
-    except models.TypingLog.DoesNotExist:
-        pass
-
-    context = {
-        'token': token.key,
-        'page_obj': page_obj, 
-        'today_count': today_count,
-    }
-    return render(request, 'my_page.html', context)
 
 # --- 대기 현황 API ---
 @csrf_exempt

@@ -547,3 +547,64 @@ body.bm-rankpage #rankimg { margin-top: .5rem; }
 .bm-health-down     { background: #ef4444; }
 .bm-health-none     { background: var(--bm-border); }
 .bm-health-external { white-space: nowrap; }
+
+/* --- 일일 타건 기록 (my_page.html) --------------------------------------- */
+.bm-typing-summary {
+  display: flex; flex-wrap: wrap; gap: 1.5rem;
+  font-variant-numeric: tabular-nums;
+}
+.bm-typing-summary b { font-size: 1.15rem; }
+.bm-typing-label {
+  display: block; font-size: .78rem; color: var(--bm-text-muted);
+}
+
+.bm-empty-icon { font-size: 2.4rem; color: var(--bm-text-subtle); }
+
+/* 시상대. 1~3위만 크게 낸다. */
+.bm-podium {
+  display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;
+}
+.bm-podium-item {
+  flex: 1 1 150px; max-width: 220px; text-align: center;
+  padding: 1rem .75rem; border-radius: .6rem;
+  background: var(--bm-surface-2); border: 1px solid var(--bm-border);
+}
+/* 1위를 살짝 띄운다. 순위가 색만으로 구분되면 못 읽는 사람이 생긴다. */
+.bm-podium-1 { order: 2; transform: translateY(-6px); }
+.bm-podium-2 { order: 1; }
+.bm-podium-3 { order: 3; }
+.bm-podium-me { outline: 2px solid var(--bm-nav-link-hover); }
+.bm-podium-medal { font-size: 1.6rem; line-height: 1; }
+.bm-podium-avatar {
+  width: 56px; height: 56px; border-radius: 50%; object-fit: cover;
+  margin: .5rem auto; display: block; background: var(--bm-surface);
+}
+.bm-podium-avatar-empty {
+  display: flex; align-items: center; justify-content: center;
+  color: var(--bm-text-subtle); font-size: 1.6rem;
+}
+.bm-podium-name { display: block; font-weight: 600; text-decoration: none; }
+.bm-podium-total {
+  font-variant-numeric: tabular-nums; color: var(--bm-text-muted);
+  font-size: .9rem;
+}
+
+.bm-rank-table .bm-rank-num {
+  width: 3rem; text-align: center; color: var(--bm-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.bm-rank-me { outline: 2px solid var(--bm-nav-link-hover); }
+
+.bm-my-rank {
+  padding: .7rem 1rem; border-radius: .5rem;
+  background: var(--bm-surface-2); border: 1px solid var(--bm-border);
+}
+
+/* --- API 토큰 (user/api_token.html) -------------------------------------- */
+.bm-steps { padding-left: 1.2rem; }
+.bm-steps li { margin-bottom: .3rem; }
+.bm-panel-muted { opacity: .82; }
+.bm-badge-soon {
+  background: var(--bm-surface-2); color: var(--bm-text-muted);
+  border: 1px solid var(--bm-border); font-size: .7rem; font-weight: 500;
+}
