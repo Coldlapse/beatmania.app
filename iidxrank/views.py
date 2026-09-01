@@ -31,7 +31,7 @@ from datetime import datetime
 from django.utils import timezone
 from datetime import timedelta
 
-from hitcount.models import Hit, HitCount
+from hitcount.models import HitCount
 from hitcount.views import HitCountMixin
 from django.core.paginator import Paginator
 
@@ -456,57 +456,6 @@ def imgdownload(request):
 
 
 
-def rankpage_analytics(request):
-    # 1. URL 파라미터 가져오기
-    period = request.GET.get('period', 'daily')
-
-    # 2. 기준 시간을 UTC가 아닌 한국 시간(KST)으로 설정
-    now_kst = timezone.localtime()
-
-    # 3. 기간에 따라 제목과 KST 기준 시작 '시각' 설정
-    if period == 'weekly':
-        title = '주간 (지난 7일) 서열표 조회수'
-        # 현재 시각으로부터 정확히 7일 전
-        start_date = now_kst - timedelta(days=6)
-    elif period == 'monthly':
-        title = '월간 (지난 30일) 서열표 조회수'
-        start_date = now_kst - timedelta(days=29)
-    elif period == 'yearly':
-        title = '연간 (지난 365일) 서열표 조회수'
-        start_date = now_kst - timedelta(days=364)
-    else: # 'daily'
-        period = 'daily'
-        title = '일간 (오늘) 서열표 조회수'
-        # 오늘의 시작 시각 (자정)
-        start_date = now_kst.replace(hour=0, minute=0, second=0, microsecond=0)
-
-    # 4. '날짜'가 아닌 '시각' 기준으로 필터링 (created__gte)
-    stats = Hit.objects.filter(
-        hitcount__content_type__model='ranktable',
-        created__gte=start_date
-    ).values(
-        'hitcount__object_pk'
-    ).annotate(
-        views=Count('id')
-    ).order_by('-views')
-
-    # (이하 데이터 보강 로직은 동일)
-    if stats:
-        ranktable_pks = [stat['hitcount__object_pk'] for stat in stats]
-        ranktables = models.RankTable.objects.in_bulk(ranktable_pks)
-        for stat in stats:
-            ranktable_obj = ranktables.get(stat['hitcount__object_pk'])
-            if ranktable_obj:
-                stat['tablename'] = ranktable_obj.tablename
-            else:
-                stat['tablename'] = '삭제된 서열표'
-
-    context = {
-        'stats': stats,
-        'title': title,
-        'active_period': period,
-    }
-    return render(request, 'analytics.html', context)
 
 # --- 1. Electron 앱과 통신할 API 뷰 ---
 @csrf_exempt

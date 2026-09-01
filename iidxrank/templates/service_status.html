@@ -1,0 +1,174 @@
+{% extends "common.html" %}
+{% load i18n humanize %}
+{% comment %}
+  서비스 현황.
+
+  위: 규모를 문장으로. 표로 늘어놓는 것보다 한 문장이 읽힌다.
+  아래: 서열표 조회수 추이. 예전에는 기간별 '합계'만 표로 보여 줬는데,
+  hitcount 가 조회 한 건마다 시각을 남기므로 추이를 그릴 수 있다.
+  기간을 바꿔도 페이지를 다시 받지 않고 JSON 만 갈아 끼운다.
+{% endcomment %}
+{% block subtitle %}- {% trans '서비스 현황' %}{% endblock %}
+
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js" defer></script>
+{% endblock %}
+
+{% block body %}
+{% include "top.html" %}
+
+<div id="container">
+  <h1 class="bm-page-title">{% trans '서비스 현황' %}</h1>
+
+  <div class="card bm-panel mb-3">
+    <div class="card-body">
+      <p class="bm-status-sentence mb-0">
+        {% blocktrans with users=numbers.users|intcomma players=numbers.players_with_record|intcomma records=numbers.records|intcomma songs=numbers.songs|intcomma tables=numbers.tables|intcomma items=numbers.items|intcomma %}beatmania.app 에는 <b>{{ users }}명</b>의 유저가 있고, 그중 <b>{{ players }}명</b>이 지금까지 <b>{{ records }}개</b>의 플레이 기록을 남겼습니다. <b>{{ songs }}개</b>의 채보가 등록되어 있으며, <b>{{ tables }}개</b>의 서열표에 걸쳐 <b>{{ items }}개</b> 자리에 분류되어 있습니다.{% endblocktrans %}
+      </p>
+    </div>
+  </div>
+
+  <div class="card bm-panel">
+    <div class="card-body">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+        <h2 class="h6 mb-0">{% trans '서열표 조회수' %}</h2>
+
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <div class="btn-group btn-group-sm" role="group" aria-label="{% trans '플레이 모드' %}">
+            <button type="button" class="btn btn-outline-secondary active" data-bm-group="SP">SP</button>
+            <button type="button" class="btn btn-outline-secondary" data-bm-group="DP">DP</button>
+          </div>
+          <div class="btn-group btn-group-sm" role="group" aria-label="{% trans '기간' %}">
+            {% for key, label in periods %}
+            <button type="button"
+                    class="btn btn-outline-secondary {% if key == default_period %}active{% endif %}"
+                    data-bm-period="{{ key }}">{{ label }}</button>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="bm-chart-wrap">
+        <canvas id="bm-views-chart" aria-label="{% trans '서열표 조회수 추이' %}" role="img"></canvas>
+        <div id="bm-chart-empty" class="text-center text-body-secondary py-5" hidden>
+          {% trans '해당 기간에 조회된 기록이 없습니다.' %}
+        </div>
+      </div>
+
+      <div id="bm-chart-total" class="small text-body-secondary mt-2"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var URL_BASE = "{% url 'status_views_json' %}";
+  var state = { period: "{{ default_period }}", group: 'SP', payload: null };
+  var chart = null;
+  var canvas = document.getElementById('bm-views-chart');
+  var empty = document.getElementById('bm-chart-empty');
+  var totalBox = document.getElementById('bm-chart-total');
+
+  // 서열표가 최대 7개까지 한 그래프에 올라간다. 색이 겹치면 못 읽으므로
+  // 색상환을 고르게 나눠 쓴다. 테마와 무관하게 같은 색을 쓴다 —
+  // 다크에서 색이 바뀌면 같은 표를 다른 것으로 오독한다.
+  function color(i, n) {
+    return 'hsl(' + Math.round(360 * i / Math.max(n, 1)) + ' 65% 55%)';
+  }
+
+  function themeColors() {
+    var cs = getComputedStyle(document.documentElement);
+    return {
+      text: (cs.getPropertyValue('--bm-text') || '#222').trim(),
+      grid: (cs.getPropertyValue('--bm-border') || 'rgba(128,128,128,.2)').trim()
+    };
+  }
+
+  function render() {
+    var p = state.payload;
+    if (!p) { return; }
+    var series = (p.groups[state.group] || []);
+    var grand = series.reduce(function (a, s) { return a + s.total; }, 0);
+
+    empty.hidden = series.length > 0;
+    canvas.hidden = series.length === 0;
+    totalBox.textContent = series.length
+      ? '{% trans "합계" %} ' + grand.toLocaleString() + ' — ' +
+        series.map(function (s) { return s.name + ' ' + s.total.toLocaleString(); }).join(' · ')
+      : '';
+    if (!series.length) { if (chart) { chart.destroy(); chart = null; } return; }
+
+    var tc = themeColors();
+    var data = {
+      labels: p.labels,
+      datasets: series.map(function (s, i) {
+        var c = color(i, series.length);
+        return {
+          label: s.name, data: s.data, borderColor: c, backgroundColor: c,
+          borderWidth: 2, pointRadius: 0, pointHoverRadius: 4,
+          tension: .25, fill: false
+        };
+      })
+    };
+    var opts = {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { labels: { color: tc.text, usePointStyle: true, boxWidth: 8 } },
+        tooltip: {
+          callbacks: {
+            // 합계를 같이 보여 준다. 표마다 값을 읽고 더할 필요가 없게.
+            footer: function (items) {
+              var sum = items.reduce(function (a, it) { return a + it.parsed.y; }, 0);
+              return '{% trans "합계" %} ' + sum.toLocaleString();
+            }
+          }
+        }
+      },
+      scales: {
+        x: { ticks: { color: tc.text, maxRotation: 0, autoSkipPadding: 24 },
+             grid: { color: tc.grid } },
+        y: { beginAtZero: true, ticks: { color: tc.text, precision: 0 },
+             grid: { color: tc.grid } }
+      }
+    };
+    if (chart) { chart.destroy(); }
+    chart = new Chart(canvas.getContext('2d'), { type: 'line', data: data, options: opts });
+  }
+
+  function load() {
+    fetch(URL_BASE + '?period=' + encodeURIComponent(state.period), {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { state.payload = j; render(); })
+      .catch(function () {
+        empty.hidden = false;
+        empty.textContent = '{% trans "조회수를 불러오지 못했습니다." %}';
+      });
+  }
+
+  function wire(attr, key, after) {
+    document.querySelectorAll('[data-bm-' + attr + ']').forEach(function (b) {
+      b.addEventListener('click', function () {
+        b.parentNode.querySelectorAll('.btn').forEach(function (x) {
+          x.classList.remove('active');
+        });
+        b.classList.add('active');
+        state[key] = b.getAttribute('data-bm-' + attr);
+        after();
+      });
+    });
+  }
+
+  wire('group', 'group', render);   // 이미 받아 둔 데이터라 다시 받지 않는다
+  wire('period', 'period', load);
+
+  // 테마를 바꾸면 축·범례 색이 남는다. 다시 그린다.
+  window.addEventListener('bm:themechange', render);
+
+  if (window.Chart) { load(); }
+  else { window.addEventListener('load', load); }
+})();
+</script>
+{% endblock %}

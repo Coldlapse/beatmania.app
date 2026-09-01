@@ -33,6 +33,7 @@ import iidxrank.views as views
 import iidxrank.views_json as views_json
 import iidxrank.views_manage as views_manage
 import iidxrank.views_overjoy as views_overjoy
+import iidxrank.views_status as views_status
 
 # 서열표 한 개에 딸린 하위 경로. 내 것과 남의 것이 같은 모양을 갖도록 공유한다.
 table_patterns = [
@@ -69,7 +70,13 @@ urlpatterns = [
     url(r'^overjoy/$', views_overjoy.page, name='overjoy'),
     url(r'^overjoy/header\.json$', views_overjoy.header_json,
         name='overjoy_header'),
-    url(r'^analytics/$', views.rankpage_analytics, name='analytics'),
+    # 서비스 현황. 예전 이름은 '사이트뷰 분석'(/analytics/)이었다.
+    # 옛 주소는 그대로 두고 새 주소로 넘긴다 — 외부에 걸린 링크가 있다.
+    url(r'^status/$', views_status.service_status, name='service_status'),
+    url(r'^status/views\.json$', views_status.views_json,
+        name='status_views_json'),
+    url(r'^analytics/$',
+        RedirectView.as_view(pattern_name='service_status', permanent=True)),
     url(r'^my-page/$', views.my_page_view, name='my_page'),
     url(r'^status/(?P<machine_id>[\w-]+)/$',
         views.machine_status_view, name='machine_status_view'),

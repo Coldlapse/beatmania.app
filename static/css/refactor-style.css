@@ -35,6 +35,27 @@ body {
   letter-spacing: -.01em;
   color: var(--bm-nav-link-hover);
 }
+
+/* 사이트 이름. 'beatmania' 는 굵게, '.app' 은 힘을 빼서 도메인처럼 읽히게 한다.
+   이름이 짧아진 만큼 자간을 조금 벌려 로고처럼 보이게 했다. */
+#refactor-navbar .bm-brand {
+  font-size: 1.35rem;
+  letter-spacing: .01em;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0;
+}
+#refactor-navbar .bm-brand-tld {
+  font-weight: 400;
+  opacity: .62;
+  letter-spacing: 0;
+}
+#refactor-navbar .bm-brand:hover .bm-brand-tld { opacity: .85; }
+
+/* 바깥으로 나가는 링크 두 개. 평소에는 다른 아이콘과 같은 무게로 두고,
+   올렸을 때만 각자의 상징색을 준다 — 상단바가 알록달록해지지 않게. */
+#refactor-navbar .bm-discord-btn:hover { color: #5865F2; }
+#refactor-navbar .bm-bmc-btn:hover { color: #FFDD00; }
 #refactor-navbar .navbar-nav .nav-link {
   color: var(--bm-nav-link);
   font-weight: 500;
@@ -442,3 +463,21 @@ body {
 body.bm-rankpage { background-color: var(--bm-canvas-bg); }
 /* 캔버스와 페이지 사이의 경계가 사라지므로 툴바가 뜨지 않게 여백을 준다 */
 body.bm-rankpage #rankimg { margin-top: .5rem; }
+
+
+/* --- 서비스 현황 (service_status.html) ---------------------------------- */
+.bm-status-sentence {
+  font-size: 1.02rem;
+  line-height: 1.75;
+}
+.bm-status-sentence b { font-weight: 700; color: var(--bm-nav-link-hover); }
+
+/* 그래프는 높이를 CSS 로 고정한다. Chart.js 의 maintainAspectRatio:false 가
+   부모 높이를 따라가므로, 여기서 정하지 않으면 납작하게 그려진다. */
+.bm-chart-wrap {
+  position: relative;
+  height: 360px;
+}
+@media (max-width: 576px) {
+  .bm-chart-wrap { height: 260px; }
+}

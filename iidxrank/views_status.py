@@ -1,0 +1,149 @@
+# -*- coding: utf-8 -*-
+"""서비스 현황 — 규모 요약과 서열표 조회수 추이.
+
+예전 '사이트뷰 분석' 은 기간을 고르면 그 기간의 **합계** 를 표로 보여 줬다.
+"지난 30일에 SP12H 가 몇 번" 은 알 수 있어도 언제 늘고 줄었는지는 알 수 없다.
+
+`hitcount.Hit` 는 조회 한 건마다 `created` 를 남기므로 시계열을 만들 수 있다
+(2025-08-30 부터 쌓여 있다). 그래서 합계 대신 **날짜별 추이** 를 준다.
+기간을 바꾸면 페이지를 다시 받지 않고 JSON 만 받아 그래프를 갈아 끼운다.
+
+집계 기준은 KST 다. TIME_ZONE 이 Asia/Seoul 이라 TruncDate/TruncHour 가
+알아서 그 기준으로 자른다. UTC 로 자르면 한국 시간 오전 9시에 날짜가 바뀐다.
+"""
+import datetime
+
+from django.db.models import Count
+from django.db.models.functions import TruncDate, TruncHour
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.utils import timezone
+from django.views.decorators.http import require_GET
+
+from hitcount.models import Hit
+
+from iidxrank import models
+
+# 서열표를 두 묶음으로 나눈다.
+#
+# RankTable.type 으로는 못 나눈다 — onehand 는 type 이 'SP' 지만 DP 쪽에
+# 두기로 했고, DBR/11DBR 은 type 자체가 따로다. 이름으로 명시한다.
+# 새 서열표가 생기면 여기에 넣어야 그래프에 나온다(아래 _group 참조).
+SP_TABLES = ['SP12H', 'SP12N', 'SP11H', 'SP11N', 'SP10H', 'SP10R', 'SP12TEST']
+DP_TABLES = ['DP12', 'DP11', 'DP10', 'DBR', '11DBR', 'onehand']
+
+PERIODS = {
+    # key: (라벨, 거슬러 갈 길이, 시간 단위인가)
+    'today': ('오늘', datetime.timedelta(days=1), True),
+    'week': ('지난 7일', datetime.timedelta(days=7), False),
+    'month': ('지난 30일', datetime.timedelta(days=30), False),
+    'year': ('지난 365일', datetime.timedelta(days=365), False),
+}
+DEFAULT_PERIOD = 'week'
+
+
+def _group(tablename):
+    if tablename in SP_TABLES:
+        return 'SP'
+    if tablename in DP_TABLES:
+        return 'DP'
+    # 목록에 없는 새 서열표. 버리지 않고 type 으로 넘겨짚는다.
+    return 'DP' if tablename.upper().startswith('DP') else 'SP'
+
+
+def _service_numbers():
+    """문장에 넣을 수치. 한 번에 세고 캐시하지 않는다 — 초당 수십 번 열릴
+    페이지가 아니고, 캐시를 두면 '지금 몇 명' 이라는 말이 거짓이 된다."""
+    return {
+        'users': models.User.objects.count(),
+        'players_with_record': (models.PlayRecord.objects
+                                .values('player_id').distinct().count()),
+        'records': models.PlayRecord.objects.count(),
+        'songs': models.Song.objects.count(),
+        'tables': models.RankTable.objects.count(),
+        'items': models.RankItem.objects.count(),
+    }
+
+
+@require_GET
+def service_status(request):
+    return render(request, 'service_status.html', {
+        'numbers': _service_numbers(),
+        'periods': [(k, PERIODS[k][0]) for k in ('today', 'week', 'month', 'year')],
+        'default_period': DEFAULT_PERIOD,
+    })
+
+
+@require_GET
+def views_json(request):
+    """기간별 조회수 시계열.
+
+    반환: {'labels': [...], 'unit': 'hour'|'day',
+           'groups': {'SP': [{'name':..., 'data':[...]}, ...], 'DP': [...]}}
+    """
+    key = request.GET.get('period', DEFAULT_PERIOD)
+    if key not in PERIODS:
+        key = DEFAULT_PERIOD
+    _label, span, hourly = PERIODS[key]
+
+    now = timezone.localtime()
+    if hourly:
+        start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        trunc = TruncHour('created')
+        step = datetime.timedelta(hours=1)
+    else:
+        start = (now - span).replace(hour=0, minute=0, second=0, microsecond=0)
+        trunc = TruncDate('created')
+        step = datetime.timedelta(days=1)
+
+    rows = (Hit.objects
+            .filter(hitcount__content_type__model='ranktable', created__gte=start)
+            .annotate(bucket=trunc)
+            .values('bucket', 'hitcount__object_pk')
+            .annotate(n=Count('id')))
+
+    # object_pk 는 문자열이다. 이름으로 바꾸려면 한 번에 읽어 둔다.
+    names = {str(pk): name for pk, name in
+             models.RankTable.objects.values_list('id', 'tablename')}
+
+    # 눈금을 먼저 만든다. 조회가 0 인 날도 자리를 남겨야 선이 끊기지 않는다.
+    ticks = []
+    cur = start
+    end = now
+    while cur <= end:
+        ticks.append(cur)
+        cur += step
+    if hourly:
+        keys = [t.strftime('%H:00') for t in ticks]
+    else:
+        keys = [t.strftime('%Y-%m-%d') for t in ticks]
+    index = {k: i for i, k in enumerate(keys)}
+
+    series = {}
+    for r in rows:
+        name = names.get(str(r['hitcount__object_pk']))
+        if not name:
+            continue          # 지워진 서열표
+        b = r['bucket']
+        if hourly:
+            k = timezone.localtime(b).strftime('%H:00') if timezone.is_aware(b) \
+                else b.strftime('%H:00')
+        else:
+            k = b.strftime('%Y-%m-%d')
+        i = index.get(k)
+        if i is None:
+            continue
+        series.setdefault(name, [0] * len(keys))[i] += r['n']
+
+    groups = {'SP': [], 'DP': []}
+    for name, data in series.items():
+        groups[_group(name)].append({'name': name, 'data': data,
+                                     'total': sum(data)})
+    for g in groups.values():
+        g.sort(key=lambda d: d['total'], reverse=True)
+
+    return JsonResponse({
+        'labels': keys,
+        'unit': 'hour' if hourly else 'day',
+        'groups': groups,
+    })
