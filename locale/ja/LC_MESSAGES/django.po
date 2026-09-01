@@ -15,6 +15,66 @@ msgstr "（外部チェッカー: 準備中）"
 msgid "(준비 중입니다)"
 msgstr "（準備中です）"
 
+msgid "- <a href=\"%(url)s\" target=\"_blank\" style=\"color: #007bff; text-decoration: underline;\">IIDXwidget</a> 프로젝트 기반 타건 횟수 기록 일지 기능 구현"
+msgstr "- <a href=\"%(url)s\" target=\"_blank\" style=\"color: #007bff; text-decoration: underline;\">IIDXwidget</a> プロジェクトを基にした打鍵数記録日誌機能の実装"
+
+msgid "- BMS(beatoraja) 플레이어를 위한 흰숫 변환기 기능 구현"
+msgstr "- BMS(beatoraja) プレイヤー向けの白数字コンバーター実装"
+
+msgid "- CPI 사이트 연계 레이팅 시스템 및 리더보드 구현"
+msgstr "- CPI サイトと連携したレーティングシステムとリーダーボードの実装"
+
+msgid "- INFINITAS의 레겐데리아 업뎃에 맞추어 서열표에 [L] 난이도가 지원되도록 기능 추가, 곡 배경색으로 구분하도록 설정"
+msgstr "- INFINITAS のレジェンダリア追加に合わせて難易度表で [L] 難易度に対応し、曲の背景色で区別するよう設定"
+
+msgid "- Reflux를 통한 자동 데이터 갱신 구현"
+msgstr "- Reflux による自動データ更新の実装"
+
+msgid "- SSL 인증서 적용 및 점수순 정렬 추가"
+msgstr "- SSL 証明書の適用とスコア順ソートの追加"
+
+msgid "- healthcheck 및 로깅 서버 구현"
+msgstr "- ヘルスチェックとロギングサーバーの実装"
+
+msgid "- iidx.sadang.org → beatmania.app 사이트 도메인 변경"
+msgstr "- サイトドメインを iidx.sadang.org から beatmania.app へ変更"
+
+msgid "- iidxranktable 프로젝트 클론 및 INFINITAS 수록곡 반영"
+msgstr "- iidxranktable プロジェクトをクローンし INFINITAS の収録曲を反映"
+
+msgid "- 난이도표 UI 한글화"
+msgstr "- 難易度表 UI の韓国語化"
+
+msgid "- 다크 모드 및 곡 이름 검색 강조 기능 구현"
+msgstr "- ダークモードと曲名検索ハイライトの実装"
+
+msgid "- 랭크(B, A, AA, AAA, MAX-) 기록 기능 구현"
+msgstr "- ランク(B, A, AA, AAA, MAX-)記録機能の実装"
+
+msgid "- 부트스트랩(Bootstrap) 적용 등 사이트 디자인 및 UI 개선"
+msgstr "- Bootstrap の適用などサイトデザインと UI の改善"
+
+msgid "- 서열표 조회수 기록 및 조회 기능 구현"
+msgstr "- 難易度表の閲覧数記録と閲覧機能の実装"
+
+msgid "- 신곡 데이터 추가 및 서열 분류 자동화(완료)"
+msgstr "- 新曲データの追加と難易度分類の自動化(完了)"
+
+msgid "- 영문 및 일본어 번역 추가"
+msgstr "- 英語と日本語の翻訳を追加"
+
+msgid "- 원본 코드에서 SPN, SPH의 난이도 구분이 배경색으로 구현되도록 의도되었으나 작동하지 않던 버그 수정"
+msgstr "- 元のコードで SPN・SPH の難易度を背景色で区別する意図だったが動作していなかったバグを修正"
+
+msgid "- 점수(랭크)순 정렬 기능 구현"
+msgstr "- スコア(ランク)順ソート機能の実装"
+
+msgid "- 타인 서열표 조회(유저 검색) 및 프로필 비공개 기능 추가"
+msgstr "- 他人の難易度表の閲覧(ユーザー検索)とプロフィール非公開機能の追加"
+
+msgid "- 프로젝트 서비스를 위한 베어본 서버 PC 구매 및 구축"
+msgstr "- サービス用のベアボーンサーバー PC を購入し構築"
+
 msgid "1. 수집하는 정보"
 msgstr "1. 収集する情報"
 
@@ -23,6 +83,24 @@ msgstr "1年"
 
 msgid "2. 무엇에 쓰나"
 msgstr "2. 何に使うか"
+
+msgid "2022 Q4 (완료)"
+msgstr "2022 Q4（完了）"
+
+msgid "2023 Q1 (완료)"
+msgstr "2023 Q1（完了）"
+
+msgid "2023 Q2 (완료)"
+msgstr "2023 Q2（完了）"
+
+msgid "2023 Q3 (완료)"
+msgstr "2023 Q3（完了）"
+
+msgid "2025 Q3 (완료)"
+msgstr "2025 Q3（完了）"
+
+msgid "2026 Q2 (진행 중)"
+msgstr "2026 Q2（進行中）"
 
 msgid "3. 무엇이 공개되나"
 msgstr "3. 何が公開されるか"
@@ -93,6 +171,9 @@ msgstr "Google Sheets（難易度表データ元）"
 msgid "IIDX ID, DJ NAME — 계정 설정에서 입력하는 경우에만 저장합니다."
 msgstr "IIDX ID、DJ NAME — アカウント設定で入力した場合のみ保存します。"
 
+msgid "IIDX INFINTIAS Rank Table 프로젝트의 개발 진행 상황과 앞으로 업데이트될 기능들입니다."
+msgstr "IIDX INFINITAS Rank Table プロジェクトの開発状況と、今後追加予定の機能です。"
+
 msgid "IIDX 닉네임"
 msgstr "IIDX DJ NAME"
 
@@ -114,6 +195,9 @@ msgstr "JPG・PNG・GIF・WebP、最大2MB。正方形の画像を推奨しま�
 msgid "SP 단위"
 msgstr "SP 段位"
 
+msgid "SPL 난이도 지원 추가"
+msgstr "SPL 難易度対応の追加"
+
 msgid "X-0000-0000-0000"
 msgstr "X-0000-0000-0000"
 
@@ -125,6 +209,9 @@ msgstr "beatmania IIDX INFINITAS の非公式難易度表サイトです。"
 
 msgid "beatmania.app 건실 랭킹"
 msgstr "beatmania.app 精勤ランキング"
+
+msgid "beatmania.app 로드맵"
+msgstr "beatmania.app ロードマップ"
 
 msgid "beatmania.app 에는 <b>%(users)s명</b>의 유저가 있고, 그중 <b>%(players)s명</b>이 지금까지 <b>%(records)s개</b>의 플레이 기록을 남겼습니다.<br>등록된 채보는 <b>%(songs)s개</b>이며, <b>%(tables)s개</b>의 서열표가 있습니다."
 msgstr "beatmania.app には <b>%(users)s人</b>のユーザーがいて、そのうち <b>%(players)s人</b>がこれまでに <b>%(records)s件</b>のプレイ記録を残しました。<br>登録された譜面は <b>%(songs)s件</b>、難易度表は <b>%(tables)s個</b>です。"
@@ -252,6 +339,9 @@ msgstr "管理ダッシュボード"
 msgid "기간"
 msgstr "期間"
 
+msgid "기능 업데이트 공백기"
+msgstr "機能アップデートの空白期"
+
 msgid "기록 없음"
 msgstr "記録なし"
 
@@ -279,6 +369,9 @@ msgstr "ダウンロード"
 msgid "닉네임"
 msgstr "表示名"
 
+msgid "다국어 지원"
+msgstr "多言語対応"
+
 msgid "다만 가입 화면에서 자동 가입을 막기 위해 Google reCAPTCHA를 씁니다. 이때 Google이 자체 정책에 따라 접속 정보를 처리합니다. 이 사이트는 그 과정에서 어떤 정보도 따로 받지 않습니다."
 msgstr "ただし登録画面では自動登録を防ぐため Google reCAPTCHA を使います。その際 Google が自社のポリシーに従ってアクセス情報を処理します。当サイトはその過程で情報を受け取ることはありません。"
 
@@ -302,6 +395,9 @@ msgstr "データ同期プログラム"
 
 msgid "데이터 연동"
 msgstr "データ連携"
+
+msgid "데이터 연동 및 시스템 고도화"
+msgstr "データ連携とシステム高度化"
 
 msgid "데이터베이스"
 msgstr "データベース"
@@ -420,6 +516,9 @@ msgstr "新しいパスワード（確認）"
 msgid "새 비밀번호를 설정해 주세요."
 msgstr "新しいパスワードを設定してください。"
 
+msgid "서버 구축 및 프로젝트 개시"
+msgstr "サーバー構築とプロジェクト開始"
+
 msgid "서비스 현황"
 msgstr "サービス状況"
 
@@ -465,11 +564,17 @@ msgstr "セッション情報は有効期限が切れると消えます。"
 msgid "소요"
 msgstr "所要時間"
 
+msgid "수록곡 데이터 갱신 유지, 서버 안정화 및 유지보수"
+msgstr "収録曲データの更新維持、サーバー安定化と保守"
+
 msgid "수록곡을 긁어 오는 페이지에 닿는지. 내려받아 표식까지 확인한다."
 msgstr "楽曲データを取得するページに到達できるか。取得して目印まで確認する。"
 
 msgid "수집한 정보를 다른 곳에 팔거나 넘기지 않습니다."
 msgstr "収集した情報を他所に売ったり渡したりしません。"
+
+msgid "시스템 안정화 및 기능 추가"
+msgstr "システム安定化と機能追加"
 
 msgid "시작"
 msgstr "開始"
@@ -527,6 +632,9 @@ msgstr "外部ツール連携を使う場合、その認証トークン。"
 
 msgid "웹 서비스"
 msgstr "ウェブサービス"
+
+msgid "웹사이트 외관 전면 개편 및 생태계 확장"
+msgstr "サイト外観の全面刷新とエコシステム拡張"
 
 msgid "위 목적 외에는 쓰지 않습니다. 광고에 쓰거나 프로파일링하지 않습니다."
 msgstr "上記の目的以外には使いません。広告に使ったりプロファイリングしたりしません。"
@@ -624,6 +732,9 @@ msgstr "閲覧数"
 msgid "조회수를 불러오지 못했습니다."
 msgstr "閲覧数を読み込めませんでした。"
 
+msgid "주요 기능 추가 및 UI 보강"
+msgstr "主要機能の追加と UI 強化"
+
 msgid "준비 중"
 msgstr "準備中"
 
@@ -671,6 +782,9 @@ msgstr "直近 %(h)s 時間・%(m)s 分ごとに確認"
 
 msgid "최종 수정일"
 msgstr "最終更新日"
+
+msgid "추후 예정"
+msgstr "今後の予定"
 
 msgid "충분한 플레이 기록(FAIL이 없거나 전부 HC~EXHC 이상이거나)이 없을 경우에는 수치가 올바르게 표시되지 않을 수 있습니다."
 msgstr "プレー記録が十分でない場合（FAIL が無い、または全て HC〜EXHC 以上など）、数値が正しく表示されないことがあります。"

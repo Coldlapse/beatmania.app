@@ -75,7 +75,6 @@ INSTALLED_APPS = (
     # 서비스 현황 문장의 자릿수 구분자(|intcomma)에만 쓴다.
     'django.contrib.humanize',
     'iidxrank',
-    'board',
     'update',
     'captcha',
     'django_bootstrap5',

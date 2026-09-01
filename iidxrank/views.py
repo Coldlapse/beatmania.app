@@ -13,7 +13,6 @@ from django.contrib.auth.models import User
 from django.db.models import F
 from iidxrank import models
 from iidxrank import forms
-import board.models
 import settings
 from iidxrank import rankpage as rp
 import update.parser_csv as parser_csv

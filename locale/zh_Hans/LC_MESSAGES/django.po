@@ -15,6 +15,66 @@ msgstr "（外部检查器：准备中）"
 msgid "(준비 중입니다)"
 msgstr "（准备中）"
 
+msgid "- <a href=\"%(url)s\" target=\"_blank\" style=\"color: #007bff; text-decoration: underline;\">IIDXwidget</a> 프로젝트 기반 타건 횟수 기록 일지 기능 구현"
+msgstr "- 基于 <a href=\"%(url)s\" target=\"_blank\" style=\"color: #007bff; text-decoration: underline;\">IIDXwidget</a> 项目实现打键次数记录日志功能"
+
+msgid "- BMS(beatoraja) 플레이어를 위한 흰숫 변환기 기능 구현"
+msgstr "- 为 BMS(beatoraja) 玩家实现白数字换算器"
+
+msgid "- CPI 사이트 연계 레이팅 시스템 및 리더보드 구현"
+msgstr "- 实现与 CPI 站点联动的评分系统与排行榜"
+
+msgid "- INFINITAS의 레겐데리아 업뎃에 맞추어 서열표에 [L] 난이도가 지원되도록 기능 추가, 곡 배경색으로 구분하도록 설정"
+msgstr "- 配合 INFINITAS 的 LEGGENDARIA 更新，难度表支持 [L] 难度，并以曲目背景色区分"
+
+msgid "- Reflux를 통한 자동 데이터 갱신 구현"
+msgstr "- 通过 Reflux 实现数据自动更新"
+
+msgid "- SSL 인증서 적용 및 점수순 정렬 추가"
+msgstr "- 应用 SSL 证书并新增按分数排序"
+
+msgid "- healthcheck 및 로깅 서버 구현"
+msgstr "- 实现健康检查与日志服务器"
+
+msgid "- iidx.sadang.org → beatmania.app 사이트 도메인 변경"
+msgstr "- 站点域名由 iidx.sadang.org 变更为 beatmania.app"
+
+msgid "- iidxranktable 프로젝트 클론 및 INFINITAS 수록곡 반영"
+msgstr "- 克隆 iidxranktable 项目并导入 INFINITAS 收录曲"
+
+msgid "- 난이도표 UI 한글화"
+msgstr "- 难度表 UI 韩语化"
+
+msgid "- 다크 모드 및 곡 이름 검색 강조 기능 구현"
+msgstr "- 实现深色模式与曲名搜索高亮"
+
+msgid "- 랭크(B, A, AA, AAA, MAX-) 기록 기능 구현"
+msgstr "- 实现等级（B、A、AA、AAA、MAX-）记录功能"
+
+msgid "- 부트스트랩(Bootstrap) 적용 등 사이트 디자인 및 UI 개선"
+msgstr "- 应用 Bootstrap 等，改善站点设计与 UI"
+
+msgid "- 서열표 조회수 기록 및 조회 기능 구현"
+msgstr "- 实现难度表浏览量的记录与查看"
+
+msgid "- 신곡 데이터 추가 및 서열 분류 자동화(완료)"
+msgstr "- 新增新曲数据并实现难度分类自动化（已完成）"
+
+msgid "- 영문 및 일본어 번역 추가"
+msgstr "- 新增英语与日语翻译"
+
+msgid "- 원본 코드에서 SPN, SPH의 난이도 구분이 배경색으로 구현되도록 의도되었으나 작동하지 않던 버그 수정"
+msgstr "- 修复原代码中本应以背景色区分 SPN、SPH 难度却未生效的缺陷"
+
+msgid "- 점수(랭크)순 정렬 기능 구현"
+msgstr "- 实现按分数（等级）排序"
+
+msgid "- 타인 서열표 조회(유저 검색) 및 프로필 비공개 기능 추가"
+msgstr "- 新增查看他人难度表（用户搜索）与资料不公开功能"
+
+msgid "- 프로젝트 서비스를 위한 베어본 서버 PC 구매 및 구축"
+msgstr "- 购置并搭建用于服务的准系统服务器 PC"
+
 msgid "1. 수집하는 정보"
 msgstr "1. 收集的信息"
 
@@ -23,6 +83,24 @@ msgstr "1 年"
 
 msgid "2. 무엇에 쓰나"
 msgstr "2. 用途"
+
+msgid "2022 Q4 (완료)"
+msgstr "2022 Q4（已完成）"
+
+msgid "2023 Q1 (완료)"
+msgstr "2023 Q1（已完成）"
+
+msgid "2023 Q2 (완료)"
+msgstr "2023 Q2（已完成）"
+
+msgid "2023 Q3 (완료)"
+msgstr "2023 Q3（已完成）"
+
+msgid "2025 Q3 (완료)"
+msgstr "2025 Q3（已完成）"
+
+msgid "2026 Q2 (진행 중)"
+msgstr "2026 Q2（进行中）"
 
 msgid "3. 무엇이 공개되나"
 msgstr "3. 哪些内容会公开"
@@ -93,6 +171,9 @@ msgstr "Google Sheets（难度表来源）"
 msgid "IIDX ID, DJ NAME — 계정 설정에서 입력하는 경우에만 저장합니다."
 msgstr "IIDX ID、DJ NAME — 仅在账号设置中输入时才保存。"
 
+msgid "IIDX INFINTIAS Rank Table 프로젝트의 개발 진행 상황과 앞으로 업데이트될 기능들입니다."
+msgstr "IIDX INFINITAS Rank Table 项目的开发进展与今后将更新的功能。"
+
 msgid "IIDX 닉네임"
 msgstr "IIDX DJ NAME"
 
@@ -114,6 +195,9 @@ msgstr "JPG、PNG、GIF 或 WebP，最大 2MB。建议使用正方形图片。"
 msgid "SP 단위"
 msgstr "SP 段位"
 
+msgid "SPL 난이도 지원 추가"
+msgstr "新增 SPL 难度支持"
+
 msgid "X-0000-0000-0000"
 msgstr "X-0000-0000-0000"
 
@@ -125,6 +209,9 @@ msgstr "beatmania IIDX INFINITAS 的非官方难度表网站。"
 
 msgid "beatmania.app 건실 랭킹"
 msgstr "beatmania.app 勤奋排行榜"
+
+msgid "beatmania.app 로드맵"
+msgstr "beatmania.app 路线图"
 
 msgid "beatmania.app 에는 <b>%(users)s명</b>의 유저가 있고, 그중 <b>%(players)s명</b>이 지금까지 <b>%(records)s개</b>의 플레이 기록을 남겼습니다.<br>등록된 채보는 <b>%(songs)s개</b>이며, <b>%(tables)s개</b>의 서열표가 있습니다."
 msgstr "beatmania.app 有 <b>%(users)s</b> 位用户，其中 <b>%(players)s</b> 位至今留下了 <b>%(records)s</b> 条游玩记录。<br>已登录谱面 <b>%(songs)s</b> 个，难度表 <b>%(tables)s</b> 个。"
@@ -252,6 +339,9 @@ msgstr "管理后台"
 msgid "기간"
 msgstr "时间段"
 
+msgid "기능 업데이트 공백기"
+msgstr "功能更新空窗期"
+
 msgid "기록 없음"
 msgstr "无记录"
 
@@ -279,6 +369,9 @@ msgstr "下载"
 msgid "닉네임"
 msgstr "显示名称"
 
+msgid "다국어 지원"
+msgstr "多语言支持"
+
 msgid "다만 가입 화면에서 자동 가입을 막기 위해 Google reCAPTCHA를 씁니다. 이때 Google이 자체 정책에 따라 접속 정보를 처리합니다. 이 사이트는 그 과정에서 어떤 정보도 따로 받지 않습니다."
 msgstr "但注册页面会使用 Google reCAPTCHA 来阻止自动注册。此时 Google 会依其自身政策处理访问信息。本站在该过程中不会另行获取任何信息。"
 
@@ -302,6 +395,9 @@ msgstr "数据同步程序"
 
 msgid "데이터 연동"
 msgstr "数据联动"
+
+msgid "데이터 연동 및 시스템 고도화"
+msgstr "数据联动与系统升级"
 
 msgid "데이터베이스"
 msgstr "数据库"
@@ -420,6 +516,9 @@ msgstr "确认新密码"
 msgid "새 비밀번호를 설정해 주세요."
 msgstr "请设置新密码。"
 
+msgid "서버 구축 및 프로젝트 개시"
+msgstr "搭建服务器与项目启动"
+
 msgid "서비스 현황"
 msgstr "服务状态"
 
@@ -465,11 +564,17 @@ msgstr "会话信息在过期后消失。"
 msgid "소요"
 msgstr "耗时"
 
+msgid "수록곡 데이터 갱신 유지, 서버 안정화 및 유지보수"
+msgstr "维持收录曲数据更新、服务器稳定化与维护"
+
 msgid "수록곡을 긁어 오는 페이지에 닿는지. 내려받아 표식까지 확인한다."
 msgstr "能否访问抓取曲目的页面。会下载并检查标记。"
 
 msgid "수집한 정보를 다른 곳에 팔거나 넘기지 않습니다."
 msgstr "不会将收集的信息出售或转交他人。"
+
+msgid "시스템 안정화 및 기능 추가"
+msgstr "系统稳定化与功能新增"
 
 msgid "시작"
 msgstr "开始"
@@ -527,6 +632,9 @@ msgstr "如果使用外部工具联动，则包括其认证令牌。"
 
 msgid "웹 서비스"
 msgstr "网页服务"
+
+msgid "웹사이트 외관 전면 개편 및 생태계 확장"
+msgstr "网站外观全面改版与生态扩展"
 
 msgid "위 목적 외에는 쓰지 않습니다. 광고에 쓰거나 프로파일링하지 않습니다."
 msgstr "不用于上述目的之外。不用于广告，也不进行用户画像。"
@@ -624,6 +732,9 @@ msgstr "浏览量"
 msgid "조회수를 불러오지 못했습니다."
 msgstr "无法加载浏览量。"
 
+msgid "주요 기능 추가 및 UI 보강"
+msgstr "主要功能新增与 UI 强化"
+
 msgid "준비 중"
 msgstr "准备中"
 
@@ -671,6 +782,9 @@ msgstr "最近 %(h)s 小时 · 每 %(m)s 分钟检查"
 
 msgid "최종 수정일"
 msgstr "最后更新日期"
+
+msgid "추후 예정"
+msgstr "后续计划"
 
 msgid "충분한 플레이 기록(FAIL이 없거나 전부 HC~EXHC 이상이거나)이 없을 경우에는 수치가 올바르게 표시되지 않을 수 있습니다."
 msgstr "若游玩记录不足（没有 FAIL，或全部为 HC~EXHC 以上），数值可能无法正确显示。"

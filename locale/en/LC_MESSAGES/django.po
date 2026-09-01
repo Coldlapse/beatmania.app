@@ -15,6 +15,66 @@ msgstr "(External checker: coming soon)"
 msgid "(준비 중입니다)"
 msgstr "(Coming soon)"
 
+msgid "- <a href=\"%(url)s\" target=\"_blank\" style=\"color: #007bff; text-decoration: underline;\">IIDXwidget</a> 프로젝트 기반 타건 횟수 기록 일지 기능 구현"
+msgstr "- Daily keystroke log built on the <a href=\"%(url)s\" target=\"_blank\" style=\"color: #007bff; text-decoration: underline;\">IIDXwidget</a> project"
+
+msgid "- BMS(beatoraja) 플레이어를 위한 흰숫 변환기 기능 구현"
+msgstr "- Added a SUDDEN+ converter for BMS (beatoraja) players"
+
+msgid "- CPI 사이트 연계 레이팅 시스템 및 리더보드 구현"
+msgstr "- Rating system and leaderboard linked with the CPI site"
+
+msgid "- INFINITAS의 레겐데리아 업뎃에 맞추어 서열표에 [L] 난이도가 지원되도록 기능 추가, 곡 배경색으로 구분하도록 설정"
+msgstr "- Added [L] difficulty support in line with the INFINITAS LEGGENDARIA update, distinguished by song background colour"
+
+msgid "- Reflux를 통한 자동 데이터 갱신 구현"
+msgstr "- Automatic data updates via Reflux"
+
+msgid "- SSL 인증서 적용 및 점수순 정렬 추가"
+msgstr "- Applied an SSL certificate and added sorting by score"
+
+msgid "- healthcheck 및 로깅 서버 구현"
+msgstr "- Health check and logging server"
+
+msgid "- iidx.sadang.org → beatmania.app 사이트 도메인 변경"
+msgstr "- Moved the domain from iidx.sadang.org to beatmania.app"
+
+msgid "- iidxranktable 프로젝트 클론 및 INFINITAS 수록곡 반영"
+msgstr "- Cloned the iidxranktable project and applied the INFINITAS song list"
+
+msgid "- 난이도표 UI 한글화"
+msgstr "- Translated the rank table UI into Korean"
+
+msgid "- 다크 모드 및 곡 이름 검색 강조 기능 구현"
+msgstr "- Added dark mode and song title search highlighting"
+
+msgid "- 랭크(B, A, AA, AAA, MAX-) 기록 기능 구현"
+msgstr "- Added rank (B, A, AA, AAA, MAX-) recording"
+
+msgid "- 부트스트랩(Bootstrap) 적용 등 사이트 디자인 및 UI 개선"
+msgstr "- Improved site design and UI, including adopting Bootstrap"
+
+msgid "- 서열표 조회수 기록 및 조회 기능 구현"
+msgstr "- Added recording and viewing of rank table view counts"
+
+msgid "- 신곡 데이터 추가 및 서열 분류 자동화(완료)"
+msgstr "- Added new song data and automated rank classification (done)"
+
+msgid "- 영문 및 일본어 번역 추가"
+msgstr "- Added English and Japanese translations"
+
+msgid "- 원본 코드에서 SPN, SPH의 난이도 구분이 배경색으로 구현되도록 의도되었으나 작동하지 않던 버그 수정"
+msgstr "- Fixed a bug where SPN/SPH difficulty was meant to be distinguished by background colour but never worked"
+
+msgid "- 점수(랭크)순 정렬 기능 구현"
+msgstr "- Added sorting by score (rank)"
+
+msgid "- 타인 서열표 조회(유저 검색) 및 프로필 비공개 기능 추가"
+msgstr "- Added viewing other players' tables (user search) and private profiles"
+
+msgid "- 프로젝트 서비스를 위한 베어본 서버 PC 구매 및 구축"
+msgstr "- Bought and set up a barebone server PC for the service"
+
 msgid "1. 수집하는 정보"
 msgstr "1. What we collect"
 
@@ -23,6 +83,24 @@ msgstr "1 year"
 
 msgid "2. 무엇에 쓰나"
 msgstr "2. What we use it for"
+
+msgid "2022 Q4 (완료)"
+msgstr "2022 Q4 (done)"
+
+msgid "2023 Q1 (완료)"
+msgstr "2023 Q1 (done)"
+
+msgid "2023 Q2 (완료)"
+msgstr "2023 Q2 (done)"
+
+msgid "2023 Q3 (완료)"
+msgstr "2023 Q3 (done)"
+
+msgid "2025 Q3 (완료)"
+msgstr "2025 Q3 (done)"
+
+msgid "2026 Q2 (진행 중)"
+msgstr "2026 Q2 (in progress)"
 
 msgid "3. 무엇이 공개되나"
 msgstr "3. What is public"
@@ -93,6 +171,9 @@ msgstr "Google Sheets (rank table source)"
 msgid "IIDX ID, DJ NAME — 계정 설정에서 입력하는 경우에만 저장합니다."
 msgstr "IIDX ID and DJ NAME — stored only if you enter them in account settings."
 
+msgid "IIDX INFINTIAS Rank Table 프로젝트의 개발 진행 상황과 앞으로 업데이트될 기능들입니다."
+msgstr "Development progress of the IIDX INFINITAS Rank Table project and what is coming next."
+
 msgid "IIDX 닉네임"
 msgstr "IIDX DJ name"
 
@@ -114,6 +195,9 @@ msgstr "JPG, PNG, GIF or WebP, up to 2MB. A square image works best."
 msgid "SP 단위"
 msgstr "SP class"
 
+msgid "SPL 난이도 지원 추가"
+msgstr "SPL difficulty support"
+
 msgid "X-0000-0000-0000"
 msgstr "X-0000-0000-0000"
 
@@ -125,6 +209,9 @@ msgstr "Unofficial difficulty rank tables for beatmania IIDX INFINITAS."
 
 msgid "beatmania.app 건실 랭킹"
 msgstr "beatmania.app Diligence Ranking"
+
+msgid "beatmania.app 로드맵"
+msgstr "beatmania.app Roadmap"
 
 msgid "beatmania.app 에는 <b>%(users)s명</b>의 유저가 있고, 그중 <b>%(players)s명</b>이 지금까지 <b>%(records)s개</b>의 플레이 기록을 남겼습니다.<br>등록된 채보는 <b>%(songs)s개</b>이며, <b>%(tables)s개</b>의 서열표가 있습니다."
 msgstr "beatmania.app has <b>%(users)s</b> users, and <b>%(players)s</b> of them have left <b>%(records)s</b> play records so far.<br><b>%(songs)s</b> charts are registered across <b>%(tables)s</b> rank tables."
@@ -252,6 +339,9 @@ msgstr "Admin Dashboard"
 msgid "기간"
 msgstr "Period"
 
+msgid "기능 업데이트 공백기"
+msgstr "Feature update hiatus"
+
 msgid "기록 없음"
 msgstr "No data"
 
@@ -279,6 +369,9 @@ msgstr "Download"
 msgid "닉네임"
 msgstr "Display name"
 
+msgid "다국어 지원"
+msgstr "Multilingual support"
+
 msgid "다만 가입 화면에서 자동 가입을 막기 위해 Google reCAPTCHA를 씁니다. 이때 Google이 자체 정책에 따라 접속 정보를 처리합니다. 이 사이트는 그 과정에서 어떤 정보도 따로 받지 않습니다."
 msgstr "The signup screen does use Google reCAPTCHA to block automated registrations. Google processes access information there under its own policy. This site receives no information of its own from that process."
 
@@ -302,6 +395,9 @@ msgstr "the data sync program"
 
 msgid "데이터 연동"
 msgstr "Data sync"
+
+msgid "데이터 연동 및 시스템 고도화"
+msgstr "Data integration and system upgrades"
 
 msgid "데이터베이스"
 msgstr "Database"
@@ -420,6 +516,9 @@ msgstr "Confirm new password"
 msgid "새 비밀번호를 설정해 주세요."
 msgstr "Choose a new password."
 
+msgid "서버 구축 및 프로젝트 개시"
+msgstr "Server setup and project launch"
+
 msgid "서비스 현황"
 msgstr "Service Status"
 
@@ -465,11 +564,17 @@ msgstr "Session information disappears when it expires."
 msgid "소요"
 msgstr "Duration"
 
+msgid "수록곡 데이터 갱신 유지, 서버 안정화 및 유지보수"
+msgstr "Kept the song data updated; server stabilisation and maintenance"
+
 msgid "수록곡을 긁어 오는 페이지에 닿는지. 내려받아 표식까지 확인한다."
 msgstr "Whether the song source page is reachable. We fetch it and check for a marker."
 
 msgid "수집한 정보를 다른 곳에 팔거나 넘기지 않습니다."
 msgstr "We do not sell or hand over collected information to anyone."
+
+msgid "시스템 안정화 및 기능 추가"
+msgstr "Stabilisation and new features"
 
 msgid "시작"
 msgstr "Started"
@@ -527,6 +632,9 @@ msgstr "If you use external tool integration, its authentication token."
 
 msgid "웹 서비스"
 msgstr "Web service"
+
+msgid "웹사이트 외관 전면 개편 및 생태계 확장"
+msgstr "Full visual overhaul and ecosystem expansion"
 
 msgid "위 목적 외에는 쓰지 않습니다. 광고에 쓰거나 프로파일링하지 않습니다."
 msgstr "We use it for nothing beyond the purposes above. No advertising, no profiling."
@@ -624,6 +732,9 @@ msgstr "Views"
 msgid "조회수를 불러오지 못했습니다."
 msgstr "Could not load view counts."
 
+msgid "주요 기능 추가 및 UI 보강"
+msgstr "Major features and UI improvements"
+
 msgid "준비 중"
 msgstr "Coming soon"
 
@@ -671,6 +782,9 @@ msgstr "Last %(h)sh · checked every %(m)s min"
 
 msgid "최종 수정일"
 msgstr "Last updated"
+
+msgid "추후 예정"
+msgstr "Planned"
 
 msgid "충분한 플레이 기록(FAIL이 없거나 전부 HC~EXHC 이상이거나)이 없을 경우에는 수치가 올바르게 표시되지 않을 수 있습니다."
 msgstr "Without enough play records (no FAILs, or everything at HC~EXHC or above), these numbers may not be accurate."

@@ -107,98 +107,102 @@
   </style>
 
   <div id="container">
-    <h2>beatmania.app 로드맵</h2>
+    <h2>{% trans 'beatmania.app 로드맵' %}</h2>
 
     <hr>
 
     <div class="content-section">
-        <p>IIDX INFINTIAS Rank Table 프로젝트의 개발 진행 상황과 앞으로 업데이트될 기능들입니다.</p>
+        <p>{% trans 'IIDX INFINTIAS Rank Table 프로젝트의 개발 진행 상황과 앞으로 업데이트될 기능들입니다.' %}</p>
         
         <div class="roadmap-container">
             
             <div class="roadmap-item completed">
-                <div class="roadmap-date">2022 Q4 (완료)</div>
-                <div class="roadmap-title">서버 구축 및 프로젝트 개시</div>
+                <div class="roadmap-date">{% trans '2022 Q4 (완료)' %}</div>
+                <div class="roadmap-title">{% trans '서버 구축 및 프로젝트 개시' %}</div>
                 <div class="roadmap-desc">
-                    - 프로젝트 서비스를 위한 베어본 서버 PC 구매 및 구축<br>
-                    - iidxranktable 프로젝트 클론 및 INFINITAS 수록곡 반영<br>
-                    - 난이도표 UI 한글화
-                </div>
+                      {% trans '- 프로젝트 서비스를 위한 베어본 서버 PC 구매 및 구축' %}<br>
+                      {% trans '- iidxranktable 프로젝트 클론 및 INFINITAS 수록곡 반영' %}<br>
+                      {% trans '- 난이도표 UI 한글화' %}
+                  </div>
             </div>
 
             <div class="roadmap-item completed">
-                <div class="roadmap-date">2023 Q1 (완료)</div>
-                <div class="roadmap-title">시스템 안정화 및 기능 추가</div>
+                <div class="roadmap-date">{% trans '2023 Q1 (완료)' %}</div>
+                <div class="roadmap-title">{% trans '시스템 안정화 및 기능 추가' %}</div>
                 <div class="roadmap-desc">
-                    - 원본 코드에서 SPN, SPH의 난이도 구분이 배경색으로 구현되도록 의도되었으나 작동하지 않던 버그 수정<br>
-                    - SSL 인증서 적용 및 점수순 정렬 추가<br>
-                    - 랭크(B, A, AA, AAA, MAX-) 기록 기능 구현<br>
-                    - BMS(beatoraja) 플레이어를 위한 흰숫 변환기 기능 구현
-                </div>
+                      {% trans '- 원본 코드에서 SPN, SPH의 난이도 구분이 배경색으로 구현되도록 의도되었으나 작동하지 않던 버그 수정' %}<br>
+                      {% trans '- SSL 인증서 적용 및 점수순 정렬 추가' %}<br>
+                      {% trans '- 랭크(B, A, AA, AAA, MAX-) 기록 기능 구현' %}<br>
+                      {% trans '- BMS(beatoraja) 플레이어를 위한 흰숫 변환기 기능 구현' %}
+                  </div>
             </div>
 
             <div class="roadmap-item completed">
-                <div class="roadmap-date">2023 Q2 (완료)</div>
-                <div class="roadmap-title">주요 기능 추가 및 UI 보강</div>
+                <div class="roadmap-date">{% trans '2023 Q2 (완료)' %}</div>
+                <div class="roadmap-title">{% trans '주요 기능 추가 및 UI 보강' %}</div>
                 <div class="roadmap-desc">
-                    - 점수(랭크)순 정렬 기능 구현<br>
-                    - 다크 모드 및 곡 이름 검색 강조 기능 구현<br>
-                    - iidx.sadang.org → beatmania.app 사이트 도메인 변경<br>
-                    - 타인 서열표 조회(유저 검색) 및 프로필 비공개 기능 추가
-                </div>
+                      {% trans '- 점수(랭크)순 정렬 기능 구현' %}<br>
+                      {% trans '- 다크 모드 및 곡 이름 검색 강조 기능 구현' %}<br>
+                      {% trans '- iidx.sadang.org → beatmania.app 사이트 도메인 변경' %}<br>
+                      {% trans '- 타인 서열표 조회(유저 검색) 및 프로필 비공개 기능 추가' %}
+                  </div>
             </div>
 
             <div class="roadmap-item completed">
-                <div class="roadmap-date">2023 Q3 (완료)</div>
-                <div class="roadmap-title">SPL 난이도 지원 추가</div>
+                <div class="roadmap-date">{% trans '2023 Q3 (완료)' %}</div>
+                <div class="roadmap-title">{% trans 'SPL 난이도 지원 추가' %}</div>
                 <div class="roadmap-desc">
-                    - INFINITAS의 레겐데리아 업뎃에 맞추어 서열표에 [L] 난이도가 지원되도록 기능 추가, 곡 배경색으로 구분하도록 설정
-                </div>
+                      {% trans '- INFINITAS의 레겐데리아 업뎃에 맞추어 서열표에 [L] 난이도가 지원되도록 기능 추가, 곡 배경색으로 구분하도록 설정' %}
+                  </div>
             </div>
 
             <div class="roadmap-item hiatus">
                 <div class="roadmap-date">2023 Q4 ~ 2025 Q2</div>
-                <div class="roadmap-title">기능 업데이트 공백기</div>
+                <div class="roadmap-title">{% trans '기능 업데이트 공백기' %}</div>
                 <div class="roadmap-desc">
-                    수록곡 데이터 갱신 유지, 서버 안정화 및 유지보수
-                </div>
+                      {% trans '수록곡 데이터 갱신 유지, 서버 안정화 및 유지보수' %}
+                  </div>
             </div>
 
             <div class="roadmap-item completed">
-                <div class="roadmap-date">2025 Q3 (완료)</div>
-                <div class="roadmap-title">웹사이트 외관 전면 개편 및 생태계 확장</div>
+                <div class="roadmap-date">{% trans '2025 Q3 (완료)' %}</div>
+                <div class="roadmap-title">{% trans '웹사이트 외관 전면 개편 및 생태계 확장' %}</div>
                 <div class="roadmap-desc">
-                    - 부트스트랩(Bootstrap) 적용 등 사이트 디자인 및 UI 개선<br>
-                    - 서열표 조회수 기록 및 조회 기능 구현<br>
-                    - <a href="https://github.com/Coldlapse/IIDXwidget" target="_blank" style="color: #007bff; text-decoration: underline;">IIDXwidget</a> 프로젝트 기반 타건 횟수 기록 일지 기능 구현
-                </div>
+                      {% trans '- 부트스트랩(Bootstrap) 적용 등 사이트 디자인 및 UI 개선' %}<br>
+                      {% trans '- 서열표 조회수 기록 및 조회 기능 구현' %}<br>
+                    {% comment %}
+                      링크가 문장 안에 있어 blocktrans 로 잡고 주소는 변수로 뺐다.
+                    {% endcomment %}
+                    {% blocktrans with url='https://github.com/Coldlapse/IIDXwidget' %}- <a href="{{ url }}" target="_blank" style="color: #007bff; text-decoration: underline;">IIDXwidget</a> 프로젝트 기반 타건 횟수 기록 일지 기능 구현{% endblocktrans %}
+                
+                  </div>
             </div>
 
             <div class="roadmap-item hiatus">
                 <div class="roadmap-date">2025 Q4 ~ 2026 Q1</div>
-                <div class="roadmap-title">기능 업데이트 공백기</div>
+                <div class="roadmap-title">{% trans '기능 업데이트 공백기' %}</div>
                 <div class="roadmap-desc">
-                    수록곡 데이터 갱신 유지, 서버 안정화 및 유지보수
-                </div>
+                      {% trans '수록곡 데이터 갱신 유지, 서버 안정화 및 유지보수' %}
+                  </div>
             </div>
 
             <div class="roadmap-item">
-                <div class="roadmap-date">2026 Q2 (진행 중)</div>
-                <div class="roadmap-title">데이터 연동 및 시스템 고도화</div>
+                <div class="roadmap-date">{% trans '2026 Q2 (진행 중)' %}</div>
+                <div class="roadmap-title">{% trans '데이터 연동 및 시스템 고도화' %}</div>
                 <div class="roadmap-desc">
-                    - 신곡 데이터 추가 및 서열 분류 자동화(완료)<br>
-                    - CPI 사이트 연계 레이팅 시스템 및 리더보드 구현<br>
-                    - Reflux를 통한 자동 데이터 갱신 구현<br>
-                    - healthcheck 및 로깅 서버 구현
-                </div>
+                      {% trans '- 신곡 데이터 추가 및 서열 분류 자동화(완료)' %}<br>
+                      {% trans '- CPI 사이트 연계 레이팅 시스템 및 리더보드 구현' %}<br>
+                      {% trans '- Reflux를 통한 자동 데이터 갱신 구현' %}<br>
+                      {% trans '- healthcheck 및 로깅 서버 구현' %}
+                  </div>
             </div>
 
             <div class="roadmap-item">
-                <div class="roadmap-date">추후 예정</div>
-                <div class="roadmap-title">다국어 지원</div>
+                <div class="roadmap-date">{% trans '추후 예정' %}</div>
+                <div class="roadmap-title">{% trans '다국어 지원' %}</div>
                 <div class="roadmap-desc">
-                    - 영문 및 일본어 번역 추가
-                </div>
+                      {% trans '- 영문 및 일본어 번역 추가' %}
+                  </div>
             </div>
 
         </div>

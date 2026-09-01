@@ -27,7 +27,6 @@ from django.contrib import admin
 from django.views.generic import RedirectView
 from django.views.i18n import JavaScriptCatalog
 
-import board.views as views_board
 import iidxrank.legacy as legacy
 import iidxrank.views as views
 import iidxrank.views_json as views_json
@@ -115,16 +114,6 @@ urlpatterns = [
         views.ranktableedit, name='ranktableedit'),
 
     # --- 게시판 -----------------------------------------------------------
-    url(r'^board/', include([
-        url(r'^view/(?P<postid>[0-9]+)/$', views_board.view, name='postview'),
-        url(r'^modify/(?P<postid>[0-9]+)/$', views_board.modify, name='postmodify'),
-        url(r'^delete/(?P<postid>[0-9]+)/$', views_board.delete, name='postdelete'),
-        url(r'^comment/add/(?P<postid>[0-9]+)/$', views_board.comment_add, name='comment_add'),
-        url(r'^comment/delete/$', views_board.comment_delete, name='comment_delete'),
-        url(r'^(?P<boardname>\w+)/$', views_board.list, name='postlist'),
-        url(r'^(?P<boardname>\w+)/(?P<page>[0-9]+)/$', views_board.list, name='postlist'),
-        url(r'^(?P<boardname>\w+)/write/$', views_board.write, name='postwrite'),
-    ])),
 
     # --- JSON -------------------------------------------------------------
     url(r'^json/', include([
