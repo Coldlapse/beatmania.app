@@ -48,7 +48,6 @@ urlpatterns = [
     url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^jsi18n/$', JavaScriptCatalog.as_view(), name='javascript-catalog'),
     url(r'^imgdownload/$', views.imgdownload, name='imgdownload'),
-    url(r'^hijack/', include('hijack.urls', namespace='hijack')),
 
     # --- 서열표 -----------------------------------------------------------
     url(r'^$', views.userpage, name='home'),

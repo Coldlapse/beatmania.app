@@ -76,28 +76,6 @@ COMMANDS = [
         requires='playwright (브라우저 바이너리 필요), textage.cc · Google Sheets 접근',
     ),
     Cmd(
-        'updateSongTextage',
-        'textage 수록곡만 갱신',
-        'textage.cc 의 곡 정보만 갱신한다. 서열표 매핑은 하지 않는다.',
-        options=[
-            Opt('test', 'flag', '테스트 실행'),
-            Opt('set_version', 'int', '버전 지정'),
-        ],
-        duration='수 분',
-        requires='textage.cc 접근',
-    ),
-    Cmd(
-        'updateSongWiki',
-        'RemyWiki 곡 정보 갱신',
-        'RemyWiki 에서 곡 메타데이터를 가져온다.',
-        options=[
-            Opt('test', 'flag', '테스트 실행'),
-            Opt('set_version', 'int', '버전 지정'),
-        ],
-        duration='수 분',
-        requires='remywiki.com 접근',
-    ),
-    Cmd(
         'compareRankTables',
         'SP12TEST ↔ SP12H 대조',
         '두 서열표의 분류 결과를 비교해 차이를 보고한다. DB 를 바꾸지 않는다.',
