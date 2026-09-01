@@ -7,8 +7,19 @@
   {% csrf_token %}
 
   <div class="bm-avatar-edit">
+    {% comment %}
+      사진이 없으면 게임 기본 이미지 대신 사이트의 기본 아이콘을 보여 준다
+      (서열표 프로필·리더보드와 같은 모양). 파일을 고르면 아래 스크립트가
+      아이콘을 감추고 미리보기를 띄운다.
+    {% endcomment %}
     <img src="{{ player.avatar_url }}" alt="{% trans '프로필 사진' %}"
-         class="profile-avatar bm-avatar-preview" id="avatar-preview">
+         class="profile-avatar bm-avatar-preview" id="avatar-preview"
+         {% if not player.avatar %}hidden{% endif %}>
+    <div class="profile-avatar bm-avatar-preview profile-avatar-empty"
+         id="avatar-placeholder" aria-hidden="true"
+         {% if player.avatar %}hidden{% endif %}>
+      <i class="bi bi-person-fill"></i>
+    </div>
     <div class="bm-avatar-controls">
       <label class="form-label" for="id_avatar">{% trans '프로필 사진' %}</label>
       <input type="file" name="avatar" id="id_avatar" accept="image/*"
@@ -18,7 +29,7 @@
       <div class="form-check mt-2">
         <input class="form-check-input" type="checkbox" name="avatar-clear" id="avatar-clear">
         <label class="form-check-label small" for="avatar-clear">
-          {% trans '현재 사진 삭제하고 기본 이미지로' %}</label>
+          {% trans '현재 사진 삭제하고 기본 아이콘으로' %}</label>
       </div>
       {% endif %}
       {% if avatar_form.avatar.errors %}
@@ -51,7 +62,10 @@
     if (!f) { return; }
     var url = URL.createObjectURL(f);
     var img = document.getElementById('avatar-preview');
+    var ph = document.getElementById('avatar-placeholder');
     img.src = url;
+    img.hidden = false;
+    if (ph) { ph.hidden = true; }
     img.onload = function () { URL.revokeObjectURL(url); };
   });
 </script>

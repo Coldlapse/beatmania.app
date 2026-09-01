@@ -21,7 +21,7 @@
 <div id="container">
   <h1 class="bm-page-title">{% trans '일일 타건 기록' %}</h1>
 
-  {% include "_token_bar.html" with tool_name="IIDXwidget" tool_desc="하루에 몇 번 쳤는지를 세어 이 사이트로 보냅니다." %}
+  {% include "_token_bar.html" with tool_name="IIDXwidget" tool_desc="하루에 몇 번 쳤는지 세어 보냅니다." %}
 
   {% if user.is_authenticated %}
   <div class="card bm-panel mb-3">
@@ -90,7 +90,7 @@
     <div class="card-body">
       <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
         <div>
-          <h2 class="h6 mb-0">{% trans 'beatmania.app 건실함 랭킹' %}</h2>
+          <h2 class="h6 mb-0">{% trans 'beatmania.app 건실 랭킹' %}</h2>
           <span class="small text-body-secondary">
             {% trans '프로필을 비공개로 설정한 분은 순위에서 제외됩니다' %}
           </span>

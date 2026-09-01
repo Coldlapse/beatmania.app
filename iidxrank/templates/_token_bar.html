@@ -20,7 +20,7 @@
         <div class="bm-token-bar-desc">
           {{ tool_desc }}
           {% if user.is_authenticated %}
-          {% blocktrans %}토큰은 계정마다 하나씩 발급되며, 프로그램 설정에 그 값을 넣으면 됩니다.{% endblocktrans %}
+          {% blocktrans %}계정마다 하나씩 발급되며, 프로그램 설정에 넣으면 됩니다.{% endblocktrans %}
           {% else %}
           {% blocktrans %}토큰은 회원에게만 발급됩니다.{% endblocktrans %}
           {% endif %}
