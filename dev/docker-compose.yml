@@ -1,4 +1,4 @@
-# 개발용 MySQL. 라이브(홈 서버)와 같은 8.0.45 를 쓴다.
+# 개발용 MySQL. 라이브(홈 서버)와 같은 8.0.46 을 쓴다.
 #
 # 왜 컨테이너인가 — 지금까지 로컬 검증은 SQLite 로 했는데, 라이브와 다르게
 # 동작하는 지점이 이미 여럿 확인됐다. 대소문자 콜레이션(/SADANG/ 이 라이브에서만
@@ -9,7 +9,7 @@
 # 운영 자격증명과 아무 관계가 없다.
 services:
   db:
-    image: mysql:8.0.45
+    image: mysql:8.0.46
     container_name: bmapp-dev-mysql
     restart: unless-stopped
     environment:
