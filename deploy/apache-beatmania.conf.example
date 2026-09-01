@@ -1,66 +1,120 @@
-# beatmania.app Apache 가상호스트 (컨테이너 프록시 방식).
+# Apache 가상호스트 예시 — 컨테이너 리버스 프록시 구성
 #
-# 지금까지는 mod_wsgi 로 Apache 가 파이썬을 직접 품고 있었다. 컨테이너로
-# 옮기면 Apache 는 TLS 를 끊고 요청을 넘겨 주는 일만 한다.
+# mod_wsgi 로 Apache 가 파이썬을 직접 품던 구성에서, Apache 는 TLS 를 끊고
+# 요청을 컨테이너로 넘기는 일만 하는 구성으로 바꾼다.
 #
-#   /etc/apache2/sites-available/beatmania.app.conf 로 복사해 쓴다.
 #   sudo a2enmod proxy proxy_http headers
-#   sudo a2ensite beatmania.app && sudo systemctl reload apache2
+#   sudo apache2ctl configtest
+#   sudo systemctl reload apache2
 #
-# mod_wsgi 설정(WSGIDaemonProcess / WSGIScriptAlias)은 이 파일에 남기지
-# 않는다. 둘이 같이 있으면 어느 쪽이 응답했는지 알 수 없어 문제를 못 찾는다.
+# ---------------------------------------------------------------------------
+# 이 파일을 새 사이트로 복사하기 전에 확인할 것
+#
+# 이미 인증서 자동 갱신 도구(certbot 등)가 만든 사이트 파일이 있다면,
+# 새 이름으로 하나 더 만들지 말고 **그 파일을 고친다.** 이유 둘.
+#   ① 같은 ServerName 을 가진 vhost 가 둘이 되어 어느 쪽이 응답하는지 불분명해진다
+#   ② 갱신 도구는 자기가 아는 파일만 고치므로 인증서 경로가 어긋난다
+#
+# 아래에서 <도메인>, <앱포트>, <미디어경로> 를 자기 환경 값으로 바꾼다.
+# ---------------------------------------------------------------------------
+
 
 <VirtualHost *:80>
-    ServerName beatmania.app
+    ServerName <도메인>
 
-    # certbot 이 이 블록을 알아서 바꿔 두었다면 그대로 두면 된다.
+    # 전부 https 로 넘긴다. certbot 이 이 블록을 이미 만들어 두었다면 그대로 둔다.
     RewriteEngine On
     RewriteCond %{HTTPS} !=on
     RewriteRule ^/?(.*) https://%{SERVER_NAME}/$1 [R=301,L]
+
+    # mod_wsgi 시절의 <Directory> 블록과 Alias /static 이 남아 있으면 지운다.
 </VirtualHost>
 
+
+<IfModule mod_ssl.c>
 <VirtualHost *:443>
-    ServerName beatmania.app
+    ServerName <도메인>
 
     SSLEngine on
-    SSLCertificateFile      /etc/letsencrypt/live/beatmania.app/fullchain.pem
-    SSLCertificateKeyFile   /etc/letsencrypt/live/beatmania.app/privkey.pem
+    SSLCertificateFile    /etc/letsencrypt/live/<도메인>/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/<도메인>/privkey.pem
+    # certbot 을 쓴다면 위 두 줄 대신 이 줄이 함께 있을 수 있다. 손대지 않는다.
+    #Include /etc/letsencrypt/options-ssl-apache.conf
 
-    # 사용자가 올린 프로필 사진. 컨테이너의 볼륨과 같은 디렉터리를 가리킨다.
+    # -----------------------------------------------------------------------
+    # 지울 것 ①  mod_wsgi 지시자 전부
+    #
+    #   WSGIDaemonProcess ... / WSGIProcessGroup ... / WSGIScriptAlias ...
+    #   WSGIPassAuthorization On
+    #   <Directory /경로/앱> <Files wsgi.py> ... </Files> </Directory>
+    #
+    # 남겨 두면 어느 쪽이 응답했는지 알 수 없어 문제를 못 찾는다.
+    # 되돌릴 때를 위해 기존 파일을 백업해 두고 지운다.
+    # -----------------------------------------------------------------------
+
+    # -----------------------------------------------------------------------
+    # 지울 것 ②  옛 정적 파일 별칭
+    #
+    #   Alias /static /경로/앱/static
+    #   <Directory /경로/앱/static> Require all granted </Directory>
+    #
+    # /static/ 은 이제 프록시로 넘겨 컨테이너 안의 whitenoise 가 낸다.
+    # Apache 에 별칭을 두지 않는 이유: 정적 파일이 이미지 안에 있어서 호스트에
+    # 꺼내 두려면 배포마다 복사하는 단계가 하나 더 생긴다.
+    #
+    # 이걸 안 지우면 옛 CSS 가 계속 나가서, 새 화면을 배포했는데 안 바뀌는
+    # 상태가 된다. 브라우저 캐시로 오해하기 딱 좋다.
+    # -----------------------------------------------------------------------
+
+    # --- 업로드 파일 -------------------------------------------------------
+    # 프로필 사진. 컨테이너의 볼륨과 같은 디렉터리를 가리킨다.
     # 파이썬을 거치지 않고 Apache 가 바로 낸다.
     #
-    # DEBUG=False 인 Django 는 /media/ 를 아예 처리하지 않는다. 이 Alias 가
+    # DEBUG=False 인 Django 는 /media/ 를 아예 처리하지 않는다. 이 별칭이
     # 없으면 프로필 사진이 전부 404 가 된다.
-    Alias /media/ /srv/beatmania/media/
-    <Directory /srv/beatmania/media>
+    Alias /media/ <미디어경로>/
+    <Directory <미디어경로>>
         Require all granted
         Options -Indexes
-        # 파일 이름이 uuid 라 내용이 바뀌면 이름도 바뀐다. 길게 캐시해도 된다.
         <IfModule mod_headers.c>
+            # 파일 이름이 uuid 라 내용이 바뀌면 이름도 바뀐다. 길게 캐시해도 된다.
             Header set Cache-Control "public, max-age=2592000"
+            # 사용자가 올린 파일이다. 브라우저가 Content-Type 을 넘겨짚어
+            # HTML 로 해석하는 경로를 막는다.
+            Header set X-Content-Type-Options "nosniff"
         </IfModule>
     </Directory>
+    # 별칭이 먼저 잡히도록 이 경로는 프록시에서 뺀다.
     ProxyPass /media/ !
 
-    # /static/ 은 프록시로 넘긴다. 컨테이너 안의 whitenoise 가 낸다.
-    # Apache 쪽에 Alias 를 두지 않는 이유: 정적 파일이 이미지 안에 있어서
-    # 호스트에 꺼내 두려면 배포마다 복사하는 단계가 하나 더 생긴다.
+    # --- 이 vhost 가 겸하는 다른 용도가 있다면 --------------------------------
+    # 그 별칭도 남기고, 반드시 프록시에서 빼야 한다. 안 그러면 컨테이너로
+    # 넘어가 404 가 된다. ProxyPass / 보다 앞에 둔다.
+    #
+    #Alias /webdav /어딘가/webdav
+    #ProxyPass /webdav !
 
+    # --- 프록시 ------------------------------------------------------------
     # X-Forwarded-Proto 를 여기서 못 박는다. 클라이언트가 보낸 값은 덮어쓴다.
-    # 이 헤더를 Django 가 믿기 때문에(DJANGO_BEHIND_PROXY=true), 바깥에서
-    # 위조한 값이 그대로 들어가면 안 된다.
+    # Django 가 이 헤더를 믿기 때문에(DJANGO_BEHIND_PROXY=true), 바깥에서
+    # 위조한 값이 그대로 들어가면 자기 요청을 HTTPS 인 척할 수 있다.
+    # 'set' 이지 'setifempty' 가 아닌 것이 핵심이다.
     <IfModule mod_headers.c>
         RequestHeader set X-Forwarded-Proto "https"
     </IfModule>
 
+    # Host 헤더를 그대로 넘긴다. 안 넘기면 Django 가 127.0.0.1 을 Host 로 보고
+    # ALLOWED_HOSTS 에서 걸러 400 을 낸다.
     ProxyPreserveHost On
-    ProxyPass        / http://127.0.0.1:8731/ timeout=180
-    ProxyPassReverse / http://127.0.0.1:8731/
 
-    # timeout=180 은 gunicorn 의 --timeout 120 보다 넉넉해야 한다.
-    # 관리자 대시보드에서 updateSongInfinitas 를 돌리면 응답이 길다.
-    # Apache 가 먼저 끊으면 504 만 보이고 원인을 알 수 없다.
+    # timeout 은 gunicorn 의 --timeout 보다 넉넉해야 한다. 관리자 대시보드에서
+    # 곡 갱신을 돌리면 응답이 길다. Apache 가 먼저 끊으면 사용자에게는 502 만
+    # 보이고 원인을 알 수 없다.
+    ProxyPass        / http://127.0.0.1:<앱포트>/ timeout=180
+    ProxyPassReverse / http://127.0.0.1:<앱포트>/
 
+    # 기존 로그 경로가 있으면 그대로 쓴다. 바꾸면 지금까지의 로그와 끊긴다.
     ErrorLog  ${APACHE_LOG_DIR}/beatmania_error.log
     CustomLog ${APACHE_LOG_DIR}/beatmania_access.log combined
 </VirtualHost>
+</IfModule>

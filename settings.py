@@ -71,9 +71,47 @@ ALLOWED_HOSTS = env_list('DJANGO_ALLOWED_HOSTS', 'beatmania.app')
 # 반드시 스위치로 둔다. 프록시 뒤가 아닌데 켜 두면, 누구든 이 헤더를 붙여
 # 보내는 것만으로 자기 요청을 HTTPS 인 척할 수 있다. Apache 는 이 헤더를
 # 자기가 덮어쓰므로(RequestHeader set) 바깥에서 위조한 값은 들어오지 못한다.
-if env_bool('DJANGO_BEHIND_PROXY', False):
+BEHIND_PROXY = env_bool('DJANGO_BEHIND_PROXY', False)
+
+if BEHIND_PROXY:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     USE_X_FORWARDED_HOST = True
+
+# 쿠키에 Secure 를 붙이고 HSTS 를 낸다. 이 둘을 위 스위치에 묶은 것은 취향이
+# 아니라 순서 문제다. is_secure() 가 False 인 채로 SESSION_COOKIE_SECURE 를
+# 켜면 브라우저가 쿠키를 아예 저장하지 않아 로그인이 되지 않는다. 즉
+# SECURE_PROXY_SSL_HEADER 가 먼저 서 있어야 이것을 켤 수 있다.
+#
+# HSTS 는 되돌리기가 어렵다. 브라우저가 max-age 동안 이 도메인을 기억하므로,
+# 잘못 내보내면 그 기간 내내 http 로 접속할 방법이 없다. 그래서
+#   - 값을 환경변수로 빼고 (DJANGO_HSTS_SECONDS)
+#   - 기본을 1시간으로 두었다.
+# 배포 후 며칠 지켜보고 문제가 없으면 .env 에서 31536000(1년)으로 올린다.
+# preload 는 넣지 않았다 — 목록에 오르면 사이트를 접을 때까지 빠지기 어렵다.
+if BEHIND_PROXY:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    LANGUAGE_COOKIE_SECURE = True
+
+    SECURE_HSTS_SECONDS = int(env('DJANGO_HSTS_SECONDS', '3600'))
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool(
+        'DJANGO_HSTS_INCLUDE_SUBDOMAINS', False)
+
+# http → https 리다이렉트는 켜지 않는다. Apache 의 80 번 vhost 가 이미
+# RewriteRule 로 하고 있어 중복이고, 더 중요하게는 컨테이너 헬스체크가
+# 평문으로 127.0.0.1:8000/login/ 을 때린다. 이걸 켜면 그 요청이 301 을 받아
+# 헬스체크가 영원히 실패하고 compose 가 컨테이너를 계속 재시작한다.
+SECURE_SSL_REDIRECT = False
+
+# 쿠키를 자바스크립트에서 읽을 이유가 없다. 프록시 여부와 무관하게 켠다.
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = 'Lax'
+
+# 브라우저가 Content-Type 을 추측하지 못하게 한다. 사용자가 올린 프로필
+# 사진을 브라우저가 HTML 로 넘겨짚는 경로를 막는다.
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = 'same-origin'
 
 
 # Application definition
@@ -239,3 +277,70 @@ imgtlkey = env('IMGTL_KEY', '')
 
 # hitcount setting
 HITCOUNT_KEEP_HIT_ACTIVE = {'hours': 4}
+
+
+# ---------------------------------------------------------------------------
+# 로깅
+#
+# 전부 stdout 으로 낸다. 파일로 쓰지 않는 이유는 컨테이너 안의 파일은
+# 컨테이너를 다시 만들면 사라지고, 로그 로테이션을 이미지 안에서 또
+# 만들어야 하기 때문이다. stdout 으로 내면 docker 의 json-file 드라이버가
+# 받아 가고, 크기 제한은 docker-compose.yml 의 max-size/max-file 이 건다.
+#
+# DEBUG=False 인 Django 는 기본적으로 서버 에러를 ADMINS 에게 메일로만 보낸다.
+# ADMINS 가 비어 있으면 500 이 나도 아무 데도 남지 않는다 — 지금까지가 그
+# 상태였다. django.request 를 콘솔로 돌려 스택 트레이스가 보이게 한다.
+#
+# 레벨은 환경변수로 뺐다. 평소에는 INFO, 무언가 쫓을 때만 .env 에서 DEBUG 로
+# 올린다. 코드를 고치거나 이미지를 다시 만들 필요가 없다.
+# ---------------------------------------------------------------------------
+LOG_LEVEL = env('DJANGO_LOG_LEVEL', 'INFO').upper()
+
+LOGGING = {
+    'version': 1,
+    # 서드파티가 등록해 둔 로거를 죽이지 않는다.
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '[%(asctime)s] %(levelname)s %(name)s: %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': LOG_LEVEL,
+    },
+    'loggers': {
+        # 500 의 스택 트레이스. DEBUG=False 에서도 콘솔에 남는다.
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        # SQL 은 기본적으로 끈다. DEBUG=True 일 때만 나오지만, 그때조차
+        # 쿼리 하나마다 한 줄이라 로그가 쓸모없어진다. 필요하면 여기만 켠다.
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+        # 관리자 대시보드의 명령 실행 로그. 컨테이너 밖에서 진행을 보려면
+        # 이것이 stdout 에 있어야 한다.
+        'update': {
+            'handlers': ['console'],
+            'level': LOG_LEVEL,
+            'propagate': False,
+        },
+        'iidxrank': {
+            'handlers': ['console'],
+            'level': LOG_LEVEL,
+            'propagate': False,
+        },
+    },
+}

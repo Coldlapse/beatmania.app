@@ -1,0 +1,117 @@
+name: 홈 서버 배포
+
+# master 에 push 되면 홈 서버에서 직접 빌드하고 다시 띄운다.
+#
+# self-hosted runner 를 고른 이유:
+#  ① 가정용 회선이라 인바운드 포트를 열고 싶지 않다. runner 는 GitHub 쪽으로
+#     바깥에서 안으로가 아니라 안에서 밖으로 붙는다(long polling).
+#  ② 이미지가 1.91GB 다. 레지스트리를 거치면 매 배포마다 그만큼을 업로드하고
+#     다시 내려받아야 한다. 서버에서 직접 빌드하면 회선을 쓰지 않고,
+#     레이어 캐시도 살아 있어 보통은 마지막 COPY 층만 다시 만든다.
+#  ③ 배포 로그가 GitHub 에 남는다. 서버에 ssh 로 들어가 봐야 알 수 있는
+#     webhook 방식과 다른 점이다.
+#
+# 저장소가 public 이라는 점 때문에 조심할 것이 둘 있다.
+#  - self-hosted runner 는 fork 의 PR 에서 절대 돌면 안 된다. 남이 보낸 코드가
+#    홈 서버에서 실행된다. 그래서 트리거를 push(내 저장소) 로만 두고
+#    pull_request 를 넣지 않았다. 아래 if 로 저장소까지 한 번 더 확인한다.
+#  - runner 는 GitHub 의 기본 러너와 달리 매번 깨끗한 기계가 아니다.
+#    작업 사이에 상태가 남는다.
+
+on:
+  push:
+    branches: [master]
+  # 코드 변경 없이 다시 배포하고 싶을 때(.env 를 고쳤다든가).
+  workflow_dispatch:
+
+# 배포가 겹치지 않게 한다. 연달아 push 하면 앞의 것을 취소하지 않고
+# 기다렸다가 순서대로 돌린다 — 배포를 중간에 끊는 것이 더 위험하다.
+concurrency:
+  group: deploy-home
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, linux, beatmania]
+    if: github.repository == 'Coldlapse/beatmania.app'
+
+    # 서버에서 사람이 관리하는 자리. 워크플로가 clone 하지 않는다 —
+    # .env 와 media 가 이 디렉터리에 묶여 있기 때문이다.
+    env:
+      APP_DIR: /srv/beatmania/app
+
+    steps:
+      - name: 배포 대상 확인
+        run: |
+          set -euo pipefail
+          test -d "$APP_DIR/.git" || { echo "$APP_DIR 이 git 저장소가 아니다"; exit 1; }
+          test -f "$APP_DIR/.env"  || { echo "$APP_DIR/.env 가 없다"; exit 1; }
+
+      - name: 코드 갱신
+        run: |
+          set -euo pipefail
+          cd "$APP_DIR"
+          git fetch --prune origin
+          git checkout master
+          # 서버에서 손으로 고친 것이 있으면 여기서 조용히 덮이지 않고 멈춘다.
+          git status --porcelain | grep . && { echo "작업 트리가 더럽다. 사람이 볼 것"; exit 1; } || true
+          git reset --hard "origin/master"
+          echo "배포 커밋: $(git rev-parse --short HEAD) $(git log -1 --pretty=%s)"
+
+      - name: 이미지 빌드
+        run: |
+          set -euo pipefail
+          cd "$APP_DIR"
+          docker compose build
+
+      # 마이그레이션은 up 앞에 둔다. 새 코드가 아직 없는 컬럼을 읽으면 500 이
+      # 나기 때문이다. 반대로 컨테이너 시작 시 자동으로 돌게 두면 되돌릴 수
+      # 없는 변경이 배포 한 번에 조용히 지나간다.
+      #
+      # 여기서 덤프를 뜨지 않는 이유: 되돌릴 수 없는 마이그레이션은 사람이
+      # 보고 넣는 것이지 push 로 흘러들어올 것이 아니다. 그런 것이 있는
+      # 배포는 절차서(deploy/README.md)대로 손으로 한다.
+      - name: 마이그레이션
+        run: |
+          set -euo pipefail
+          cd "$APP_DIR"
+          docker compose run --rm app python manage.py migrate --noinput
+
+      - name: 다시 띄우기
+        run: |
+          set -euo pipefail
+          cd "$APP_DIR"
+          docker compose up -d
+
+      # healthy 가 될 때까지 기다린다. up -d 는 컨테이너가 떴다는 것만 알려
+      # 주지, 그 안의 Django 가 응답하는지는 말해 주지 않는다.
+      - name: 헬스체크 대기
+        run: |
+          set -euo pipefail
+          cd "$APP_DIR"
+          for i in $(seq 1 30); do
+            state=$(docker compose ps --format '{{.Health}}' app 2>/dev/null | head -1)
+            echo "[$i/30] health=$state"
+            [ "$state" = "healthy" ] && exit 0
+            sleep 5
+          done
+          echo "150초 안에 healthy 가 되지 않았다. 로그:"
+          docker compose logs --tail 100 app
+          exit 1
+
+      # 실제로 바깥에서 200 이 오는지 본다. 컨테이너가 healthy 여도 Apache
+      # 프록시가 끊겨 있으면 사용자는 502 를 본다 — 그 경우를 여기서 잡는다.
+      - name: 사이트 응답 확인
+        run: |
+          set -euo pipefail
+          code=$(curl -sS -o /dev/null -w '%{http_code}' https://beatmania.app/login/)
+          echo "https://beatmania.app/login/ -> $code"
+          [ "$code" = "200" ]
+
+      # 실패했더라도 무엇이 돌고 있는지는 남긴다.
+      - name: 상태 남기기
+        if: always()
+        run: |
+          cd "$APP_DIR"
+          docker compose ps
+          docker compose logs --tail 50 app || true

@@ -62,13 +62,35 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
     CMD python -c "import urllib.request,sys; \
 sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/login/', timeout=4).status == 200 else 1)"
 
-# --workers 3: 홈 서버 코어 수에 맞춰 조정한다(권장 2*코어+1).
+# 워커 수 — 기본 5.
+#
+# gunicorn 이 권하는 2*코어+1 은 그 기계가 이 앱 전용일 때의 수치다. 이 앱은
+# 보통 DB·웹서버·다른 서비스와 한 박스를 나눠 쓰는 곳에 놓인다. 전체 코어로
+# 세어 큰 값을 잡으면, 정작 이 앱이 기다리고 있는 DB 와 CPU 를 다투게 된다.
+# 앱 몫으로 칠 코어 수를 먼저 정하고 거기에 공식을 적용하는 편이 맞다.
+#
+# 이 앱만의 사정이 하나 더 있다. 대시보드의 updateSongInfinitas 는 Chromium 을
+# 같은 프로세스에서 띄우고 수 분간 워커 하나를 통째로 붙잡는다. 그동안
+# 나머지가 트래픽을 받아야 하므로 1~2개로는 부족하다.
+#
+# 값을 환경변수로 뺀 이유는, 재 보고 조정하는 것이 이미지를 다시 만드는 것보다
+# 싸기 때문이다. .env 에서 GUNICORN_WORKERS 를 바꾸고 다시 띄우면 된다.
+#
 # --timeout 120: updateSongInfinitas 가 대시보드에서 돌면 요청이 길어진다.
 #   기본 30초로는 워커가 죽는다.
+# --max-requests: Chromium 을 웹 프로세스에서 띄우는 구조라 누수가 쌓일 여지가
+#   있다. 일정 요청마다 워커를 갈아 끼운다. jitter 가 없으면 5개가 동시에
+#   교체돼 순간적으로 응답이 끊긴다. 진행 중인 요청을 끊지는 않는다.
 # --access-logfile -: 접근 로그를 stdout 으로. docker logs 로 본다.
-CMD ["gunicorn", "wsgi:application", \
-     "--bind", "0.0.0.0:8000", \
-     "--workers", "3", \
-     "--timeout", "120", \
-     "--access-logfile", "-", \
-     "--error-logfile", "-"]
+#
+# 셸 형식으로 쓴 이유는 exec 형식(JSON)에서는 환경변수가 치환되지 않기
+# 때문이다. exec 를 붙여 gunicorn 이 PID 1 을 넘겨받게 한다 — 안 그러면 sh 가
+# PID 1 이라 docker stop 의 SIGTERM 이 gunicorn 에 전달되지 않는다.
+CMD ["sh", "-c", "exec gunicorn wsgi:application \
+     --bind 0.0.0.0:8000 \
+     --workers ${GUNICORN_WORKERS:-5} \
+     --timeout ${GUNICORN_TIMEOUT:-120} \
+     --max-requests 1000 \
+     --max-requests-jitter 100 \
+     --access-logfile - \
+     --error-logfile -"]
