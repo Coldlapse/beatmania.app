@@ -25,7 +25,14 @@
   </div>
 {% endif %}
 
-<form method="POST" action="./" novalidate>
+{% comment %}
+  action 을 절대 경로로 둔다. "./" 로 두면 현재 주소를 기준으로 풀리는데,
+  이 화면이 다른 페이지 안에 끼워 넣어진 적이 있다(서열표 캔버스의 편집
+  팝업이 jQuery .load 로 불러왔다). 그때 '인증 마치기' 를 누르면 POST 가
+  서열표로 가서, 아무 일도 안 일어났는데 인증이 끝난 것처럼 보였다.
+  미들웨어 쪽에서도 막았지만 폼 자체가 엉뚱한 곳으로 갈 수 없게 해 둔다.
+{% endcomment %}
+<form method="POST" action="{% url 'verify_account' %}" novalidate>
   {% csrf_token %}
 
   {% if current_email %}

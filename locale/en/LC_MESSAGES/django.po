@@ -423,6 +423,9 @@ msgstr "Used only for account verification and recovering your ID or password. Y
 msgid "계정 인증을 진행해 주세요"
 msgstr "Please verify your account"
 
+msgid "계정 인증이 필요합니다."
+msgstr "Account verification is required."
+
 msgid "계정과 그에 딸린 기록은 탈퇴할 때까지 보관하고, 탈퇴하면 함께 지웁니다."
 msgstr "Your account and its records are kept until you delete the account, and are removed with it."
 
@@ -986,6 +989,9 @@ msgstr "That code is not correct. (%(n)d attempts left)"
 
 msgid "인증 코드를 보냈습니다. 메일함을 확인해 주세요."
 msgstr "Verification code sent. Please check your inbox."
+
+msgid "인증 화면으로 이동"
+msgstr "Go to verification"
 
 msgid "인증번호 받기"
 msgstr "Send code"

@@ -15,7 +15,7 @@
     {% trans '입력한 내용을 다시 확인해 주세요.' %}
   </div>
 {% endif %}
-<form method="POST" action="./" novalidate>
+<form method="POST" action="{% url 'change_email' %}" novalidate>
   {% csrf_token %}
   {% bootstrap_field form.email layout='vertical' %}
   {% include "user/_verify_email.html" with purpose=purpose email_field='email' %}

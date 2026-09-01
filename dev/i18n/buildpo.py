@@ -35,6 +35,7 @@ import newtrans_batch12
 import newtrans_batch13
 import newtrans_batch14
 import newtrans_batch15
+import newtrans_batch16
 import newtrans_roadmap
 
 LANGS = [('en', 0), ('ja', 1), ('zh_Hans', 2)]
@@ -57,6 +58,7 @@ NEW.update(newtrans_batch12.TRANS)
 NEW.update(newtrans_batch13.TRANS)
 NEW.update(newtrans_batch14.TRANS)
 NEW.update(newtrans_batch15.TRANS)
+NEW.update(newtrans_batch16.TRANS)
 
 
 def read_po(path):

@@ -3,7 +3,7 @@
 {% block page_title %}{% trans '로그인' %}{% endblock %}
 {% block auth_title %}{% trans '로그인' %}{% endblock %}
 {% block auth_body %}
-<form method="POST" action="./" novalidate>
+<form method="POST" action="{% url 'login' %}" novalidate>
   {% csrf_token %}
   {% bootstrap_form form layout='vertical' %}
   <button type="submit" class="btn btn-primary w-100 mt-2">{% trans '로그인' %}</button>

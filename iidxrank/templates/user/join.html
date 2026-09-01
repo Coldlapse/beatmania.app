@@ -40,7 +40,7 @@
     {% endif %}
   </div>
 {% endif %}
-<form method="POST" action="./" novalidate>
+<form method="POST" action="{% url 'join' %}" novalidate>
   {% csrf_token %}
   {% comment %}
     폼을 통째로 그리지 않고 낱개로 그린다. 이메일 칸 바로 뒤에 인증 위젯이
