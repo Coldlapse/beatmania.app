@@ -78,25 +78,12 @@ COMMANDS = [
         requires='playwright (브라우저 바이너리 필요), textage.cc · Google Sheets 접근',
     ),
     Cmd(
-        'compareRankTables',
-        'SP12TEST ↔ SP12H 대조',
-        '두 서열표의 분류 결과를 비교해 차이를 보고한다. DB 를 바꾸지 않는다.',
-        duration='짧음',
-    ),
-    Cmd(
         'cleanDuplicateSongs',
         '중복 곡 정리',
         '유사도 분석으로 중복 등록된 곡을 찾아 그룹별로 보여준다. '
         '어느 것을 지울지 그룹마다 물어본다.',
         danger=True,
         duration='짧음 (그룹마다 확인 필요)',
-    ),
-    Cmd(
-        'copyRankTable',
-        'SP12H → SP12TEST 복사',
-        'SP12H 의 카테고리와 곡 배치를 SP12TEST 로 통째로 복사한다.',
-        danger=True,
-        duration='짧음',
     ),
 ]
 
