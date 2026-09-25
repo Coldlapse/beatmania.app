@@ -320,3 +320,28 @@ class EmailVerification(models.Model):
     def __str__(self):
         return '%s %s %s' % (self.email, self.purpose,
                              'verified' if self.verified_at else 'pending')
+
+
+class RecordSync(models.Model):
+    """게임 기록 동기화 한 번의 결과(iidxrank/records_import.py).
+
+    /sync/ 화면에 "마지막으로 언제, 몇 개가 들어왔는지" 를 보여 주고,
+    상주 앱이 실제로 돌고 있는지 사용자가 확인하는 근거가 된다.
+    못 맞춘 곡 수를 남기는 이유는 곡 DB 를 고칠 단서라서다.
+    """
+
+    WEB = 'web'
+    APP = 'app'
+    SOURCES = [(WEB, 'web'), (APP, 'app')]
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                             related_name='record_syncs')
+    source = models.CharField(max_length=8, choices=SOURCES)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    charts = models.IntegerField(default=0)       # 파일에서 읽은 채보(레벨 10 이상, 기록 있는 것)
+    created = models.IntegerField(default=0)      # 새로 생긴 기록
+    improved = models.IntegerField(default=0)     # 더 좋아진 기록
+    unmatched = models.IntegerField(default=0)    # 곡 DB 에서 못 찾은 채보
+
+    class Meta:
+        ordering = ['-created_at']

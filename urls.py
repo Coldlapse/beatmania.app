@@ -34,6 +34,7 @@ import iidxrank.views_json as views_json
 import iidxrank.views_manage as views_manage
 import iidxrank.views_overjoy as views_overjoy
 import iidxrank.views_status as views_status
+import iidxrank.views_sync as views_sync
 import iidxrank.views_typing as views_typing
 
 # 서열표 한 개에 딸린 하위 경로. 내 것과 남의 것이 같은 모양을 갖도록 공유한다.
@@ -91,8 +92,8 @@ urlpatterns = [
     url(r'^my-page/$', views_typing.my_page, name='my_page'),
     url(r'^my-page/typing\.json$', views_typing.typing_json,
         name='typing_json'),
-    # 데이터 동기화. 아직 내용은 자리만 잡아 두었다.
-    url(r'^sync/$', views_typing.data_sync, name='data_sync'),
+    # 데이터 동기화. 게임 기록(tracker.tsv)을 직접 올리거나 상주 앱이 API 로 보낸다.
+    url(r'^sync/$', views_sync.data_sync, name='data_sync'),
     # API 토큰은 계정 설정에 가까워 따로 뺐다.
     url(r'^account/token/$', views_typing.api_token, name='api_token'),
     # --- 계정 인증 ---
@@ -144,6 +145,7 @@ urlpatterns = [
         views.update_typing_count_api, name='update_typing_count_api'),
     url(r'^api/v1/update-machine-status/$',
         views.update_machine_status_api, name='update_machine_status_api'),
+    url(r'^api/v1/records/$', views_sync.records_api, name='records_api'),
 
     # --- 관리자 대시보드 (staff 전용) --------------------------------------
     url(r'^manage/$', views_manage.dashboard, name='manage_dashboard'),

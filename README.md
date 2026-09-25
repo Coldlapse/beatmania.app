@@ -147,7 +147,7 @@ IIDX 와 beatoraja 사이의 서든+ 값을 환산합니다. 리프트를 함께
 | `GET` | `/musiclist/` | 곡 목록 |
 | `GET` | `/converter/` | 흰숫 변환기 |
 | `GET` | `/my-page/` | 일일 타건 기록 · 건실 랭킹 |
-| `GET` | `/sync/` | 데이터 동기화 안내 |
+| `GET` `POST` | `/sync/` | 데이터 동기화 — `tracker.tsv` 직접 올리기(로그인), 최근 동기화 이력 |
 | `GET` | `/status/` | 서비스 현황 |
 | `GET` | `/status/<기계ID>/` | 기계 대기열 |
 | `GET` | `/overjoy/` | Overjoy 난이도표 |
@@ -213,6 +213,7 @@ IIDX 와 beatoraja 사이의 서든+ 값을 환산합니다. 리프트를 함께
 |---|---|---|---|
 | `POST` | `/api/v1/update-typing-count/` | `Authorization: Token <키>` | 타건 수 누적 |
 | `POST` | `/api/v1/update-machine-status/` | `Authorization: Token <키>` (운영자 전용) | 기계 대기열 갱신 |
+| `POST` | `/api/v1/records/` | `Authorization: Token <키>` | 게임 기록(`tracker.tsv` 본문) 반영 |
 
 ```bash
 curl -X POST https://beatmania.app/api/v1/update-typing-count/ \
@@ -224,12 +225,19 @@ curl -X POST https://beatmania.app/api/v1/update-typing-count/ \
 응답은 `200` 성공 / `400` 잘못된 본문 / `401` 토큰 없음·틀림 / `405` POST 아님입니다.
 토큰은 `/account/token/` 에서 확인하고 재발급할 수 있습니다.
 
-두 API 모두 토큰 없이는 아무것도 하지 못합니다. 다만 요구하는 권한이 다릅니다.
+세 API 모두 토큰 없이는 아무것도 하지 못합니다. 다만 요구하는 권한이 다릅니다.
 
 | | 누가 쓸 수 있나 | 왜 |
 |---|---|---|
 | `update-typing-count` | 토큰을 가진 **모든 사용자** | 자기 타건 기록만 쌓습니다. 남의 데이터에 닿지 않습니다 |
+| `records` | 토큰을 가진 **모든 사용자** | 자기 서열표 기록만 바꿉니다 |
 | `update-machine-status` | **운영자 계정의 토큰만** | 기계 대기열은 모든 방문자가 함께 보는 값이라, 아무나 바꿀 수 있으면 안 됩니다 |
+
+`records` 는 Reflux 가 만든 `tracker.tsv` 를 **본문 그대로** 받습니다
+(`Content-Type: text/tab-separated-values; charset=utf-8`). 레벨 10 이상 채보의
+클리어 램프와 등급을 **지금 기록보다 좋을 때만** 올리고, 같은 파일을 다시 보내도 결과가 같습니다.
+응답은 `{created, improved, unchanged, unmatched, unmatched_titles}` 입니다.
+같은 사용자가 10초 안에 다시 보내면 `429` 와 `Retry-After` 를 돌려줍니다.
 
 권한이 없는 토큰으로 대기열 갱신을 시도하면 `403` 을 돌려줍니다
 (`401` 이 아닙니다 — 토큰 자체는 유효하기 때문입니다).

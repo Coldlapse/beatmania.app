@@ -873,3 +873,8 @@ body.bm-rankpage #rankimg { margin-top: .5rem; }
 /* min-width:0 이 없으면 입력칸이 기본 폭 아래로 줄지 않아 좁은 화면에서 삐져나간다 */
 .bm-iidxid-part { flex: 1 1 0; min-width: 0; text-align: center; }
 .bm-iidxid-sep { color: var(--bm-text-muted); font-weight: 700; }
+
+/* --- 데이터 동기화 (sync.html) ------------------------------------------ */
+.bm-sync-num { font-size: 1.5rem; font-weight: 700; line-height: 1.2; }
+.bm-sync-label { font-size: .8rem; color: var(--bm-text-muted); }
+.bm-sync-file { max-width: 22rem; }

@@ -252,17 +252,29 @@ msgstr "A personal token for linking the IIDXwidget app."
 msgid "IIDX는 레인 전체 높이를 1000으로 본다. 서든 플러스는 위에서 내려오는 덮개의 높이이고, 리프트는 아래에서 올라오는 덮개의 높이다. 둘 다 같은 1000 기준의 절대값이라, 보이는 넓이는 <b>1000 − 서든 − 리프트</b>가 된다."
 msgstr "IIDX treats the full height of the lane as 1000. SUDDEN+ is the height of the cover coming down from the top, and LIFT is the height of the cover rising from the bottom. Both are absolute values against that same 1000, so the visible area is <b>1000 − SUDDEN+ − LIFT</b>."
 
+msgid "INFINITAS 를 켜 둔 동안 옆에 상주하면서 기록이 바뀔 때마다 자동으로 올리는 앱을 준비하고 있습니다. 위와 같은 API 토큰을 씁니다."
+msgstr "We are preparing an app that stays running alongside INFINITAS and uploads your records automatically whenever they change. It uses the same API token."
+
+msgid "INF오소리를 쓰신다면 이 위치에 있습니다:"
+msgstr "If you use INFOhSorry, it is here:"
+
 msgid "IR Profile"
 msgstr "IR Profile"
 
 msgid "JPG · PNG · GIF · WebP, 최대 2MB. 정사각형 이미지를 권장합니다."
 msgstr "JPG, PNG, GIF or WebP, up to 2MB. A square image works best."
 
+msgid "Reflux 가 만든 <code>tracker.tsv</code> 를 올리면 레벨 10 이상 채보의 클리어 램프와 등급을 서열표에 반영합니다."
+msgstr "Upload the <code>tracker.tsv</code> made by Reflux to apply clear lamps and grades for charts of level 10 and above to the rank tables."
+
 msgid "SP 단위"
 msgstr "SP class"
 
 msgid "SPL 난이도 지원 추가"
 msgstr "SPL difficulty support"
+
+msgid "UTF-8 로 읽을 수 없는 파일입니다."
+msgstr "The file cannot be read as UTF-8."
 
 msgid "X-0000-0000-0000"
 msgstr "X-0000-0000-0000"
@@ -324,6 +336,9 @@ msgstr "This works with skins built to the same structure as IIDX, such as the L
 msgid "textage.cc (수록곡 출처)"
 msgstr "textage.cc (song source)"
 
+msgid "tracker.tsv 형식이 아닙니다. Reflux 가 만든 파일을 올려 주세요."
+msgstr "This is not a tracker.tsv file. Please upload the file made by Reflux."
+
 msgid "you@example.com"
 msgstr "you@example.com"
 
@@ -360,6 +375,9 @@ msgstr "One visitor counts once, even across several rank tables"
 msgid "같은 토큰을 그대로 씁니다. 따로 발급받을 것은 없습니다."
 msgstr "It uses the same token. Nothing extra to issue."
 
+msgid "같은 파일을 다시 올려도 결과는 같습니다."
+msgstr "Uploading the same file again gives the same result."
+
 msgid "개발 로드맵"
 msgstr "Roadmap"
 
@@ -380,6 +398,9 @@ msgstr "Privacy Policy"
 
 msgid "개인정보처리방침에 동의해야 가입할 수 있습니다."
 msgstr "You must agree to the Privacy Policy to sign up."
+
+msgid "갱신"
+msgstr "Improved"
 
 msgid "건의 및 난이도 갱신 요청, 서버 상태 등은"
 msgstr "For suggestions, difficulty updates and server status, see"
@@ -404,6 +425,9 @@ msgstr "A program that will read your game records and fill in clear lamps and s
 
 msgid "게임 화면에 나오는 ID 입니다. 앞글자를 고르고 네 자리씩 입력하세요."
 msgstr "The ID shown on the game screen. Pick the leading letter, then enter four digits in each box."
+
+msgid "경로"
+msgstr "Via"
 
 msgid "계정 삭제(탈퇴)도 <a href=\"/account/\">계정 설정</a>에서 직접 할 수 있습니다."
 msgstr "You can also delete your account yourself in <a href=\"/account/\">account settings</a>."
@@ -570,6 +594,9 @@ msgstr "Session information used to keep you logged in, and your last login time
 msgid "로그인하러 가기"
 msgstr "Go to login"
 
+msgid "로그인하면 올릴 수 있습니다."
+msgstr "Log in to upload."
+
 msgid "로봇 확인에 실패했습니다. 다시 시도해 주세요."
 msgstr "Robot check failed. Please try again."
 
@@ -606,11 +633,23 @@ msgstr "The 6-digit number from the email"
 msgid "명령"
 msgstr "Command"
 
+msgid "못 찾은 곡"
+msgstr "Not found"
+
+msgid "못 찾은 곡 보기"
+msgstr "Show songs not found"
+
 msgid "무엇을 하나요"
 msgstr "What this does"
 
+msgid "반영했습니다"
+msgstr "Applied"
+
 msgid "발급일"
 msgstr "Issued"
+
+msgid "변화 없음"
+msgstr "Unchanged"
 
 msgid "변환할 리프트"
 msgstr "LIFT to convert"
@@ -684,6 +723,9 @@ msgstr "beatoraja / IIDX LIFT"
 msgid "비토라쟈 서든"
 msgstr "beatoraja SUDDEN+"
 
+msgid "빈 파일입니다."
+msgstr "The file is empty."
+
 msgid "사이트 전체를 HTTPS로 제공합니다."
 msgstr "The whole site is served over HTTPS."
 
@@ -704,6 +746,9 @@ msgstr "Status"
 
 msgid "상태 점검"
 msgstr "Status checks"
+
+msgid "새 기록"
+msgstr "New"
 
 msgid "새 비밀번호"
 msgstr "New password"
@@ -801,6 +846,9 @@ msgstr "We do not sell or hand over collected information to anyone."
 msgid "순위표 등 사이트 곳곳에 표시되는 공개 이름입니다. 다른 사람과 같아도 되며 언제든 바꿀 수 있습니다. 주소에 쓰이는 아이디와는 다릅니다."
 msgstr "The public name shown across the site, including the leaderboard. It may be the same as someone else's and you can change it at any time. It is not the ID used in your address."
 
+msgid "시각"
+msgstr "Time"
+
 msgid "시도 횟수를 넘겼습니다. 인증 코드를 다시 받아 주세요."
 msgstr "Too many attempts. Please request a new code."
 
@@ -849,6 +897,9 @@ msgstr "No account yet?"
 msgid "아직 기록이 없습니다. IIDXwidget 을 연결하면 여기에 쌓입니다."
 msgstr "No records yet. Connect IIDXwidget and they will show up here."
 
+msgid "앱"
+msgstr "App"
+
 msgid "언어 선택"
 msgstr "Language"
 
@@ -876,6 +927,9 @@ msgstr "Today's keystrokes"
 msgid "올라간 기록은 <a href=\"%(mypage_url)s\">일일 타건 기록</a>에서 볼 수 있습니다."
 msgstr "You can see the uploaded records on <a href=\"%(mypage_url)s\">Daily Keystrokes</a>."
 
+msgid "올리기"
+msgstr "Upload"
+
 msgid "옵션"
 msgstr "Options"
 
@@ -884,6 +938,9 @@ msgstr "Overjoy Table (backup)"
 
 msgid "외부 도구 연동을 쓰는 경우 그 인증 토큰."
 msgstr "If you use external tool integration, its authentication token."
+
+msgid "웹"
+msgstr "Web"
 
 msgid "웹 서비스"
 msgstr "Web service"
@@ -1020,6 +1077,9 @@ msgstr "Please check what you entered."
 msgid "입력한 아이디가 그대로 서열표 주소에 들어가며, 누구나 이 주소로 당신의 서열표를 볼 수 있습니다. 실명이나 다른 곳에서 쓰는 아이디는 피하세요."
 msgstr "Your username goes straight into the rank table URL, and anyone with that link can view your table. Avoid your real name or a username you reuse elsewhere."
 
+msgid "자동 동기화 앱"
+msgstr "Auto-sync app"
+
 msgid "자동 스크롤"
 msgstr "Auto-scroll"
 
@@ -1031,6 +1091,9 @@ msgstr "You can view and edit your information at any time in <a href=\"/account
 
 msgid "작동 원리와 계산식"
 msgstr "How it works, and the formulas"
+
+msgid "잠시 뒤에 다시 올려 주세요."
+msgstr "Please try again in a moment."
 
 msgid "재발급"
 msgstr "Reissue"
@@ -1070,6 +1133,9 @@ msgstr "Coming soon"
 
 msgid "준비 중입니다"
 msgstr "Coming soon"
+
+msgid "지금 기록보다 좋을 때만 올립니다. 직접 입력한 기록을 낮추지 않습니다."
+msgstr "Records are only raised when better. Records you entered by hand are never lowered."
 
 msgid "지금 등록된 이메일"
 msgstr "Current email"
@@ -1128,6 +1194,9 @@ msgstr "Last"
 msgid "최근 %(h)s시간 · %(m)s분마다 점검"
 msgstr "Last %(h)sh · checked every %(m)s min"
 
+msgid "최근 동기화"
+msgstr "Recent syncs"
+
 msgid "최종 수정일"
 msgstr "Last updated"
 
@@ -1166,6 +1235,15 @@ msgstr "Tokens are issued to members only."
 
 msgid "투덱 서든"
 msgstr "IIDX SUDDEN+"
+
+msgid "파일로 올리기"
+msgstr "Upload a file"
+
+msgid "파일을 골라 주세요."
+msgstr "Please choose a file."
+
+msgid "파일이 너무 큽니다."
+msgstr "The file is too large."
 
 msgid "파일이 너무 큽니다. %(limit)dMB 이하로 올려주세요."
 msgstr "That file is too large. Please upload %(limit)dMB or less."

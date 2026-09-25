@@ -6,9 +6,9 @@
   구성은 '일일 타건 기록'과 같다 — 맨 위에 토큰 안내 줄(_token_bar.html),
   그 아래에 내용. 두 페이지가 같은 토큰을 쓰므로 들어오는 길도 같아야 한다.
 
-  세부 기능은 아직 정하지 않았다. 자리만 잡아 두고, 지금 할 수 있는 것과
-  없는 것을 분명히 적는다 — 빈 '준비 중' 화면만 두면 무엇을 기다려야 하는지
-  알 수 없다.
+  길은 둘이다. Reflux 가 만든 tracker.tsv 를 여기서 직접 올리거나, 게임 옆에
+  상주하는 동기화 앱이 같은 파일을 API 로 보낸다. 처리는 서버 한 벌
+  (iidxrank/records_import.py)이라 결과도 같다.
 {% endcomment %}
 {% block page_title %}{% trans '데이터 동기화' %}{% endblock %}
 
@@ -22,22 +22,89 @@
   {% trans "데이터 동기화 프로그램" as tool_name %}
   {% include "_token_bar.html" %}
 
-  <div class="card bm-panel">
-    <div class="card-body text-center py-5">
-      <i class="bi bi-arrow-repeat bm-empty-icon" aria-hidden="true"></i>
-      <h2 class="h5 mt-3">{% trans '준비 중입니다' %}</h2>
+  {% if result %}
+    {% if result.error %}
+    <div class="alert alert-danger" role="alert">{{ result.error }}</div>
+    {% else %}
+    <div class="card bm-panel mb-3">
+      <div class="card-body">
+        <h2 class="h6 mb-3"><i class="bi bi-check2-circle me-1" aria-hidden="true"></i>{% trans '반영했습니다' %}</h2>
+        <div class="row g-2 text-center bm-sync-stats">
+          <div class="col-6 col-md-3"><div class="bm-sync-num">{{ result.created }}</div><div class="bm-sync-label">{% trans '새 기록' %}</div></div>
+          <div class="col-6 col-md-3"><div class="bm-sync-num">{{ result.improved }}</div><div class="bm-sync-label">{% trans '갱신' %}</div></div>
+          <div class="col-6 col-md-3"><div class="bm-sync-num">{{ result.unchanged }}</div><div class="bm-sync-label">{% trans '변화 없음' %}</div></div>
+          <div class="col-6 col-md-3"><div class="bm-sync-num">{{ result.unmatched }}</div><div class="bm-sync-label">{% trans '못 찾은 곡' %}</div></div>
+        </div>
+        {% if result.unmatched_titles %}
+        <details class="mt-3">
+          <summary class="small">{% trans '못 찾은 곡 보기' %}</summary>
+          <ul class="small mt-2 mb-0">
+            {% for t in result.unmatched_titles %}<li>{{ t }}</li>{% endfor %}
+          </ul>
+        </details>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+  {% endif %}
+
+  <div class="card bm-panel mb-3">
+    <div class="card-body">
+      <h2 class="h5"><i class="bi bi-upload me-1" aria-hidden="true"></i>{% trans '파일로 올리기' %}</h2>
+      <p class="text-body-secondary">
+        {% blocktrans %}Reflux 가 만든 <code>tracker.tsv</code> 를 올리면 레벨 10 이상 채보의 클리어 램프와 등급을 서열표에 반영합니다.{% endblocktrans %}
+      </p>
+      <ul class="small text-body-secondary">
+        <li>{% trans 'INF오소리를 쓰신다면 이 위치에 있습니다:' %} <code>%APPDATA%\infohsorry\Reflux\tracker.tsv</code></li>
+        <li>{% trans '지금 기록보다 좋을 때만 올립니다. 직접 입력한 기록을 낮추지 않습니다.' %}</li>
+        <li>{% trans '같은 파일을 다시 올려도 결과는 같습니다.' %}</li>
+      </ul>
+      {% if user.is_authenticated %}
+      <form method="post" enctype="multipart/form-data" class="d-flex flex-wrap gap-2 align-items-center">
+        {% csrf_token %}
+        <input type="file" name="tracker" accept=".tsv,text/tab-separated-values" class="form-control form-control-sm bm-sync-file" required>
+        <button type="submit" class="btn btn-primary btn-sm">{% trans '올리기' %}</button>
+      </form>
+      {% else %}
+      <p class="mb-0 small">{% trans '로그인하면 올릴 수 있습니다.' %}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card bm-panel mb-3 bm-panel-muted">
+    <div class="card-body">
+      <h2 class="h5"><i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i>{% trans '자동 동기화 앱' %}</h2>
       <p class="text-body-secondary mb-0">
-        {% blocktrans %}게임 기록을 읽어 서열표의 클리어 램프와 점수를 자동으로 채워 넣는 기능입니다. 지금은 서열표에서 손으로 입력해야 하는 부분입니다.{% endblocktrans %}
+        {% blocktrans %}INFINITAS 를 켜 둔 동안 옆에 상주하면서 기록이 바뀔 때마다 자동으로 올리는 앱을 준비하고 있습니다. 위와 같은 API 토큰을 씁니다.{% endblocktrans %}
       </p>
-      <p class="text-body-secondary mt-2 mb-0">
-        {% blocktrans %}연동에는 지금 쓰는 API 토큰을 그대로 씁니다. 따로 발급받을 것은 없습니다.{% endblocktrans %}
-      </p>
-      <div class="mt-3">
-        <a class="btn btn-outline-secondary btn-sm" href="{% url 'about' %}">
-          {% trans '개발 로드맵 보기' %}
-        </a>
+    </div>
+  </div>
+
+  {% if history %}
+  <div class="card bm-panel mb-3">
+    <div class="card-body">
+      <h2 class="h6">{% trans '최근 동기화' %}</h2>
+      <div class="table-responsive">
+        <table class="table table-sm mb-0 small">
+          <thead><tr>
+            <th>{% trans '시각' %}</th><th>{% trans '경로' %}</th>
+            <th class="text-end">{% trans '새 기록' %}</th><th class="text-end">{% trans '갱신' %}</th>
+            <th class="text-end">{% trans '못 찾은 곡' %}</th>
+          </tr></thead>
+          <tbody>
+          {% for h in history %}
+            <tr>
+              <td>{{ h.created_at|date:"Y-m-d H:i" }}</td>
+              <td>{% if h.source == 'app' %}{% trans '앱' %}{% else %}{% trans '웹' %}{% endif %}</td>
+              <td class="text-end">{{ h.created }}</td><td class="text-end">{{ h.improved }}</td>
+              <td class="text-end">{{ h.unmatched }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
+  {% endif %}
 </div>
 {% endblock %}

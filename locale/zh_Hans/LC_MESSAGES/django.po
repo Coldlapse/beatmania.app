@@ -252,17 +252,29 @@ msgstr "用于连接 IIDXwidget 应用的个人令牌。"
 msgid "IIDX는 레인 전체 높이를 1000으로 본다. 서든 플러스는 위에서 내려오는 덮개의 높이이고, 리프트는 아래에서 올라오는 덮개의 높이다. 둘 다 같은 1000 기준의 절대값이라, 보이는 넓이는 <b>1000 − 서든 − 리프트</b>가 된다."
 msgstr "IIDX 把整条轨道的高度视为 1000。SUDDEN+ 是从上方降下的遮罩高度，LIFT 是从下方升起的遮罩高度。两者都是以同一个 1000 为基准的绝对值，因此可见范围为 <b>1000 − SUDDEN+ − LIFT</b>。"
 
+msgid "INFINITAS 를 켜 둔 동안 옆에 상주하면서 기록이 바뀔 때마다 자동으로 올리는 앱을 준비하고 있습니다. 위와 같은 API 토큰을 씁니다."
+msgstr "我们正在准备一款应用：在 INFINITAS 运行期间常驻后台，记录变化时自动上传。它使用同一个 API 令牌。"
+
+msgid "INF오소리를 쓰신다면 이 위치에 있습니다:"
+msgstr "如果您使用 INFOhSorry，文件在这里："
+
 msgid "IR Profile"
 msgstr "IR 主页"
 
 msgid "JPG · PNG · GIF · WebP, 최대 2MB. 정사각형 이미지를 권장합니다."
 msgstr "JPG、PNG、GIF 或 WebP，最大 2MB。建议使用正方形图片。"
 
+msgid "Reflux 가 만든 <code>tracker.tsv</code> 를 올리면 레벨 10 이상 채보의 클리어 램프와 등급을 서열표에 반영합니다."
+msgstr "上传 Reflux 生成的 <code>tracker.tsv</code>，即可将 10 级以上谱面的通关灯和评级反映到难度表。"
+
 msgid "SP 단위"
 msgstr "SP 段位"
 
 msgid "SPL 난이도 지원 추가"
 msgstr "新增 SPL 难度支持"
+
+msgid "UTF-8 로 읽을 수 없는 파일입니다."
+msgstr "无法以 UTF-8 读取该文件。"
 
 msgid "X-0000-0000-0000"
 msgstr "X-0000-0000-0000"
@@ -324,6 +336,9 @@ msgstr "本工具适用于与 IIDX 结构相同的皮肤，例如 beatoraja 的 
 msgid "textage.cc (수록곡 출처)"
 msgstr "textage.cc（曲目来源）"
 
+msgid "tracker.tsv 형식이 아닙니다. Reflux 가 만든 파일을 올려 주세요."
+msgstr "这不是 tracker.tsv 格式。请上传 Reflux 生成的文件。"
+
 msgid "you@example.com"
 msgstr "you@example.com"
 
@@ -360,6 +375,9 @@ msgstr "同一访客浏览多个难度表也只计一次"
 msgid "같은 토큰을 그대로 씁니다. 따로 발급받을 것은 없습니다."
 msgstr "直接使用相同的令牌。无需另行发放。"
 
+msgid "같은 파일을 다시 올려도 결과는 같습니다."
+msgstr "再次上传同一文件，结果不变。"
+
 msgid "개발 로드맵"
 msgstr "开发路线图"
 
@@ -380,6 +398,9 @@ msgstr "隐私政策"
 
 msgid "개인정보처리방침에 동의해야 가입할 수 있습니다."
 msgstr "需要同意隐私政策才能注册。"
+
+msgid "갱신"
+msgstr "已更新"
 
 msgid "건의 및 난이도 갱신 요청, 서버 상태 등은"
 msgstr "建议、难度更新请求与服务器状态请参见"
@@ -404,6 +425,9 @@ msgstr "一个读取游戏记录、自动填写难度表通关灯与分数的程
 
 msgid "게임 화면에 나오는 ID 입니다. 앞글자를 고르고 네 자리씩 입력하세요."
 msgstr "游戏画面上显示的 ID。请先选择首字母，再每四位分别输入。"
+
+msgid "경로"
+msgstr "途径"
 
 msgid "계정 삭제(탈퇴)도 <a href=\"/account/\">계정 설정</a>에서 직접 할 수 있습니다."
 msgstr "注销账号也可在<a href=\"/account/\">账号设置</a>中自行完成。"
@@ -570,6 +594,9 @@ msgstr "用于保持登录状态的会话信息与最后登录时间。"
 msgid "로그인하러 가기"
 msgstr "前往登录"
 
+msgid "로그인하면 올릴 수 있습니다."
+msgstr "登录后即可上传。"
+
 msgid "로봇 확인에 실패했습니다. 다시 시도해 주세요."
 msgstr "机器人验证失败，请重试。"
 
@@ -606,11 +633,23 @@ msgstr "邮件中的 6 位数字"
 msgid "명령"
 msgstr "命令"
 
+msgid "못 찾은 곡"
+msgstr "未找到的曲目"
+
+msgid "못 찾은 곡 보기"
+msgstr "查看未找到的曲目"
+
 msgid "무엇을 하나요"
 msgstr "这一步做什么"
 
+msgid "반영했습니다"
+msgstr "已应用"
+
 msgid "발급일"
 msgstr "发放日期"
+
+msgid "변화 없음"
+msgstr "无变化"
 
 msgid "변환할 리프트"
 msgstr "要换算的 LIFT"
@@ -684,6 +723,9 @@ msgstr "beatoraja / IIDX 的 LIFT"
 msgid "비토라쟈 서든"
 msgstr "beatoraja SUDDEN+"
 
+msgid "빈 파일입니다."
+msgstr "文件为空。"
+
 msgid "사이트 전체를 HTTPS로 제공합니다."
 msgstr "整站通过 HTTPS 提供。"
 
@@ -704,6 +746,9 @@ msgstr "状态"
 
 msgid "상태 점검"
 msgstr "状态检查"
+
+msgid "새 기록"
+msgstr "新增"
 
 msgid "새 비밀번호"
 msgstr "新密码"
@@ -801,6 +846,9 @@ msgstr "不会将收集的信息出售或转交他人。"
 msgid "순위표 등 사이트 곳곳에 표시되는 공개 이름입니다. 다른 사람과 같아도 되며 언제든 바꿀 수 있습니다. 주소에 쓰이는 아이디와는 다릅니다."
 msgstr "在排行榜等站内各处显示的公开名称。可以与他人相同，并且随时可以修改。与网址中使用的 ID 不同。"
 
+msgid "시각"
+msgstr "时间"
+
 msgid "시도 횟수를 넘겼습니다. 인증 코드를 다시 받아 주세요."
 msgstr "尝试次数过多，请重新获取验证码。"
 
@@ -849,6 +897,9 @@ msgstr "还没有账号？"
 msgid "아직 기록이 없습니다. IIDXwidget 을 연결하면 여기에 쌓입니다."
 msgstr "还没有记录。连接 IIDXwidget 后会显示在这里。"
 
+msgid "앱"
+msgstr "应用"
+
 msgid "언어 선택"
 msgstr "语言"
 
@@ -876,6 +927,9 @@ msgstr "今日击键数"
 msgid "올라간 기록은 <a href=\"%(mypage_url)s\">일일 타건 기록</a>에서 볼 수 있습니다."
 msgstr "上传的记录可在<a href=\"%(mypage_url)s\">每日击键记录</a>中查看。"
 
+msgid "올리기"
+msgstr "上传"
+
 msgid "옵션"
 msgstr "选项"
 
@@ -884,6 +938,9 @@ msgstr "Overjoy 难度表（备份）"
 
 msgid "외부 도구 연동을 쓰는 경우 그 인증 토큰."
 msgstr "如果使用外部工具联动，则包括其认证令牌。"
+
+msgid "웹"
+msgstr "网页"
 
 msgid "웹 서비스"
 msgstr "网页服务"
@@ -1020,6 +1077,9 @@ msgstr "请检查您填写的内容。"
 msgid "입력한 아이디가 그대로 서열표 주소에 들어가며, 누구나 이 주소로 당신의 서열표를 볼 수 있습니다. 실명이나 다른 곳에서 쓰는 아이디는 피하세요."
 msgstr "你输入的用户名会直接出现在难度表网址中，任何人都可以通过该网址查看你的难度表。请避免使用真实姓名或在其他平台使用的用户名。"
 
+msgid "자동 동기화 앱"
+msgstr "自动同步应用"
+
 msgid "자동 스크롤"
 msgstr "自动滚动"
 
@@ -1031,6 +1091,9 @@ msgstr "你可以随时在<a href=\"/account/\">账号设置</a>中查看和修�
 
 msgid "작동 원리와 계산식"
 msgstr "工作原理与计算公式"
+
+msgid "잠시 뒤에 다시 올려 주세요."
+msgstr "请稍后再试。"
 
 msgid "재발급"
 msgstr "重新发放"
@@ -1070,6 +1133,9 @@ msgstr "准备中"
 
 msgid "준비 중입니다"
 msgstr "准备中"
+
+msgid "지금 기록보다 좋을 때만 올립니다. 직접 입력한 기록을 낮추지 않습니다."
+msgstr "仅在比现有记录更好时更新，不会降低您手动输入的记录。"
 
 msgid "지금 등록된 이메일"
 msgstr "当前邮箱"
@@ -1128,6 +1194,9 @@ msgstr "最近"
 msgid "최근 %(h)s시간 · %(m)s분마다 점검"
 msgstr "最近 %(h)s 小时 · 每 %(m)s 分钟检查"
 
+msgid "최근 동기화"
+msgstr "最近同步"
+
 msgid "최종 수정일"
 msgstr "最后更新日期"
 
@@ -1166,6 +1235,15 @@ msgstr "令牌仅向会员发放。"
 
 msgid "투덱 서든"
 msgstr "IIDX SUDDEN+"
+
+msgid "파일로 올리기"
+msgstr "上传文件"
+
+msgid "파일을 골라 주세요."
+msgstr "请选择文件。"
+
+msgid "파일이 너무 큽니다."
+msgstr "文件过大。"
 
 msgid "파일이 너무 큽니다. %(limit)dMB 이하로 올려주세요."
 msgstr "文件太大，请上传 %(limit)dMB 以内的文件。"
