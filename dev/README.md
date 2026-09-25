@@ -30,7 +30,7 @@ dev DB 에는 **라이브 데이터가 익명화 없이** 들어 있습니다.
 ## dev 서버
 
 ```powershell
-$py = "C:\Users\Vegarian\anaconda3\envs\bmapp39\python.exe"
+$py = "$env:USERPROFILE\anaconda3\envs\bmapp39\python.exe"
 & $py manage.py runserver 0.0.0.0:8731 --noreload --settings=dev.settings_dev
 ```
 
