@@ -196,11 +196,16 @@ IIDX 와 beatoraja 사이의 서든+ 값을 환산합니다. 리프트를 함께
 | `GET` | `/json/recommend/<아이디>/<타입>/` | 추천 곡 |
 | `GET` | `/json/recommend/<아이디>/<타입>/<레벨>/` | 레벨을 좁힌 추천 곡 |
 | `GET` | `/status/views.json` | 사이트뷰 시계열 |
+| `GET` | `/status/health.json` | 가동 상태 요약 (외부 감시용) |
 | `GET` | `/my-page/typing.json` | 타건 기록 시계열 |
 | `GET` | `/overjoy/header.json` | BMS 구동기가 읽는 규약 주소 |
 
 > `/overjoy/header.json` 은 **주소를 바꾸지 말아 주세요.** BMS 구동기 쪽에
 > 등록돼 있어서, 바꾸면 사용자가 직접 재등록해야 합니다.
+>
+> `/status/health.json` 도 외부 감시탑이 1분마다 읽는 주소라 바꾸지 말아 주세요.
+> DB 에 닿지 않으면 500 이 아니라 **503** 을 돌려줍니다. 감시하는 쪽이 이 차이로
+> "사이트 장애" 와 "DB 장애" 를 나눠 읽습니다.
 
 ### API
 

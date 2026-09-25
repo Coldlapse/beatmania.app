@@ -19,7 +19,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.utils import timezone
 from django.utils.translation import gettext as _
-from django.views.decorators.http import require_GET
+from django.views.decorators.http import require_GET, require_safe
 
 from hitcount.models import Hit
 
@@ -283,3 +283,63 @@ def views_json(request):
             },
         },
     })
+
+
+def _iso(dt):
+    return timezone.localtime(dt).replace(microsecond=0).isoformat()
+
+
+@require_safe
+def health_json(request):
+    """외부 감시탑(polygon, status.polygon.nz)이 1분마다 읽는 상태 요약.
+
+    live.db  — 요청 때 **따로 연 연결**로 SELECT 1 을 한 번 한 결과.
+               앱 연결은 mysqld 가 얼어붙으면 무제한으로 묶인다
+               (health.check_db_isolated 참고). 그러면 워커가 gunicorn
+               timeout 까지 붙잡혀 502 가 나가고, 감시탑은 DB 장애를
+               사이트 장애로 읽는다.
+    checks   — cron(`manage.py healthcheck`)이 쌓은 대상별 최신 행.
+
+    live 를 따로 싣는 이유: checks 는 DB 에 저장되므로 DB 가 죽으면 저장이
+    실패해 마지막 행이 "DB 정상" 인 채 남는다. checks 만 보면 DB 가 죽은
+    동안 계속 정상으로 보인다.
+
+    DB 가 죽으면 500 이 아니라 503 을 준다. 감시탑은 500 을 "사이트 장애" 로,
+    503 + live.db=down 을 "DB 만 장애" 로 구별해 읽는다.
+
+    일부러 하지 않는 것
+      - run_all() / _refresh_if_stale() — 1분마다 불리는데 외부 점검은 최대
+        8초씩 걸리고 상대에게도 부담이다. 주기 점검은 cron 의 몫이다.
+      - note — 예외 이름·메시지가 들어 있어 내부 구성이 샌다. 공개 경로다.
+      - 통계·템플릿·세션 — 감시탑은 이 경로 하나로 사이트 헬스까지 겸한다.
+        여기에 무언가 더 기대면 사이트가 멀쩡해도 장애로 보인다. 가볍게 둔다.
+
+    require_safe 인 이유: HEAD 도 받아야 `curl -I` 로 헤더를 확인할 수 있다.
+    """
+    status, _note, ms = health._timed(health.check_db_isolated)
+    live_ok = status == health.OK
+
+    checks = []
+    if live_ok:
+        try:
+            for t in health.CHECKS:
+                row = (models.HealthCheck.objects
+                       .filter(target=t).order_by('-checked_at')
+                       .values('status', 'latency_ms', 'checked_at').first())
+                if row:
+                    checks.append({'target': t, 'status': row['status'],
+                                   'latencyMs': row['latency_ms'],
+                                   'checkedAt': _iso(row['checked_at'])})
+        except Exception:
+            # SELECT 1 은 됐는데 이 읽기가 실패했다. 지금 상태는 live 가
+            # 말하고 있으니 checks 만 비우고 200 을 유지한다.
+            checks = []
+
+    resp = JsonResponse({
+        'generatedAt': _iso(timezone.now()),
+        'live': {'db': {'status': status, 'latencyMs': ms}},
+        'checks': checks,
+    }, status=200 if live_ok else 503)
+    # Cloudflare 뒤다. 캐시되면 죽은 DB 가 살아 보인다.
+    resp['Cache-Control'] = 'no-store'
+    return resp

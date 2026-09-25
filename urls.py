@@ -81,6 +81,9 @@ urlpatterns = [
     url(r'^status/$', views_status.service_status, name='service_status'),
     url(r'^status/views\.json$', views_status.views_json,
         name='status_views_json'),
+    # 외부 감시탑이 1분마다 읽는다. 아래 status/<machine_id>/ 는 끝이 / 라 겹치지 않는다.
+    url(r'^status/health\.json$', views_status.health_json,
+        name='status_health_json'),
     url(r'^analytics/$',
         RedirectView.as_view(pattern_name='service_status', permanent=True)),
     # 일일 타건 기록. 로그인하지 않아도 열린다 — 리더보드가 있어서 남이 봐도

@@ -79,6 +79,43 @@ def check_db():
     return OK, ''
 
 
+# check_db_isolated 의 제한 시간. 연결 3 + 읽기 3 ≈ 최악 6초로, 외부 감시탑의
+# 요청 제한(10초) 안에 503 이 나간다.
+ISOLATED_DB_TIMEOUT = 3
+
+
+def check_db_isolated():
+    """앱 연결을 쓰지 않고 따로 연결을 열어 SELECT 1 을 한다.
+
+    /status/health.json 전용. check_db 로는 안 되는 이유:
+    PyMySQL 의 connect_timeout 은 TCP 연결에만 걸린다. mysqld 가 얼어붙어도
+    커널은 TCP 를 backlog 로 받아 주므로, 연결은 되고 서버 인사가 오지 않아
+    read_timeout(앱 연결은 무제한)까지 묶인다. 앱 전체에 read_timeout 을 걸 수는
+    없다 — 대시보드의 갱신 요청이 수십 초 걸린다. 그래서 이 점검만 따로 연다.
+
+    연결 인자는 새로 짓지 않고 Django 가 쓰는 것을 그대로 가져와 제한 시간만
+    덮어쓴다. 호스트·계정·문자셋이 앱 연결과 어긋나면 "이 점검만 통과/실패"
+    하는 일이 생긴다.
+    """
+    from django.db import connections
+    import MySQLdb      # settings.py 의 install_as_MySQLdb() — 실제로는 PyMySQL
+
+    params = connections['default'].get_connection_params()
+    params.update(connect_timeout=ISOLATED_DB_TIMEOUT,
+                  read_timeout=ISOLATED_DB_TIMEOUT,
+                  write_timeout=ISOLATED_DB_TIMEOUT)
+    conn = MySQLdb.connect(**params)
+    try:
+        cur = conn.cursor()
+        cur.execute('SELECT 1')
+        row = cur.fetchone()
+    finally:
+        conn.close()     # 1분마다 불린다. 새는 연결이 쌓이면 안 된다.
+    if not row or row[0] != 1:
+        return DOWN, '질의 결과가 예상과 다름'
+    return OK, ''
+
+
 def _fetch(url, marker, label):
     r = requests.get(url, timeout=TIMEOUT,
                      headers={'User-Agent': 'beatmania.app health check'})

@@ -45,7 +45,7 @@ $py = "C:\Users\Vegarian\anaconda3\envs\bmapp39\python.exe"
 설정하실 필요는 없습니다(이미 설정돼 있으면 그것을 존중합니다).
 
 ```powershell
-& $py dev\checks\run_all.py          # 넷을 한꺼번에 돌립니다. 실패하면 exit 1
+& $py dev\checks\run_all.py          # 다섯을 한꺼번에 돌립니다. 실패하면 exit 1
 ```
 
 | 스크립트 | 무엇을 보나 | 기대값 |
@@ -54,8 +54,10 @@ $py = "C:\Users\Vegarian\anaconda3\envs\bmapp39\python.exe"
 | `livecheck.py` | 주요 화면 12종의 상태·응답시간·쿼리 수, 콜레이션 | 실패 0 / 총 12 |
 | `test_urls.py` | 새 주소, 옛 주소 301, 비공개 프로필, 가입 폼 문구 | 총 실패 0 |
 | `untranslated.py` | 번역이 빠진 한국어 원문 | 0개 |
+| `health_json.py` | `/status/health.json` 의 모양·503·캐시 헤더, DB 를 실제로 끊었을 때(거부·무응답·멈춘 서버) | 총 실패 0 |
 
-`livecheck.py` 와 `test_urls.py` 는 **dev MySQL 이 떠 있어야** 돕니다.
+`livecheck.py`, `test_urls.py`, `health_json.py` 는 **dev MySQL 이 떠 있어야** 돕니다.
+`health_json.py` 는 DB 를 끊는 경우를 하위 프로세스로 돌려서 20초쯤 걸립니다.
 `run_all.py` 는 `compilecheck` 의 OK 개수는 보지 않습니다 — 파일이 늘면 같이 늘기
 때문에 FAIL 만 봅니다.
 

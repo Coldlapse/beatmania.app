@@ -43,7 +43,9 @@ DATABASES = {
         'PORT': os.environ.get('DEV_DB_PORT', '3307'),
         # ?쇱씠釉뚯? 媛숈? 媛믪씠?댁빞 ?쒕떎. utf8(=utf8mb3) 濡??먮㈃ ?대え吏媛 ???ㅼ뼱媛怨?
         # ?ㅼ젣濡?愿由ъ옄 ??쒕낫??濡쒓렇媛 洹??뚮Ц???듭㎏濡?鍮꾩뿀???곸씠 ?덈떎.
-        'OPTIONS': {'charset': os.environ.get('DEV_DB_CHARSET', 'utf8mb4')},
+        'OPTIONS': {'charset': os.environ.get('DEV_DB_CHARSET', 'utf8mb4'),
+                    # 운영과 같은 값. settings.py 의 설명 참고.
+                    'connect_timeout': int(os.environ.get('DB_CONNECT_TIMEOUT', '3'))},
     }
 }
 

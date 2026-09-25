@@ -191,7 +191,24 @@ DATABASES = {
         #   (1270, "Illegal mix of collations ... for operation 'concat'")
         # 로 실패한다. 관리자 대시보드의 명령 로그가 이모지를 쏟아내므로
         # 실제로 이 경로에서 터졌다.
-        'OPTIONS': {'charset': env('DB_CHARSET', 'utf8mb4')}
+        #
+        # connect_timeout: PyMySQL 에서는 **TCP 연결에만** 걸린다(기본 10초).
+        # 연결 직후 settimeout(None) 으로 풀리고, 서버 인사(handshake)와 질의는
+        # read_timeout 을 따른다. 그래서 이 값이 막는 것은 SYN 에 응답이 없는
+        # 경우(backlog 가 가득 참, 방화벽)뿐이다. 그 경우 기본 10초면 외부 감시탑의
+        # 요청 제한(10초)을 넘겨 "사이트 무응답" 으로 읽히고, 3초면
+        # /status/health.json 이 503(DB 장애)을 제때 돌려준다.
+        #
+        # read_timeout 은 넣지 않는다. 대시보드에서 updateSongInfinitas 를 돌리는
+        # 요청은 수십 초 걸린다(gunicorn --timeout 120 의 이유). 그 대가로
+        # mysqld 가 얼어붙어 TCP 는 받고 인사를 안 하는 경우 앱 연결은 묶인다.
+        # /status/health.json 은 그 경우도 가려내야 해서 read_timeout 을 건
+        # 별도 연결을 쓴다(iidxrank/health.py 의 check_db_isolated). 두 경우 모두
+        # dev/checks/health_json.py 에서 재 봤다.
+        #
+        # CONN_MAX_AGE 가 0(요청마다 새 연결)이라 이 값이 매 요청에 걸린다.
+        'OPTIONS': {'charset': env('DB_CHARSET', 'utf8mb4'),
+                    'connect_timeout': int(env('DB_CONNECT_TIMEOUT', '3'))}
     }
 }
 
