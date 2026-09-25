@@ -121,12 +121,105 @@ class IIDXSheetParser:
                 "url": f"{self.base_url}?gid=1184656976&single=true",
                 "level": 12,
                 "default_type": "SPA"
-            }
+            },
+            # 11레벨 — 다른 시트·다른 표기라 따로 읽는다(_parse_sp11).
+            {"table_name": "SP11N", "table_title": "SP11N", "level": 11,
+             "default_type": "SPA", "loader": "sp11", "gid": "411493762"},
+            {"table_name": "SP11H", "table_title": "SP11H", "level": 11,
+             "default_type": "SPA", "loader": "sp11", "gid": "1585306050"},
         ]
         
         # 유사도 매칭을 위해 DB의 모든 곡 제목을 캐싱
         self.db_titles = list(Song.objects.values_list('songtitle', flat=True).distinct())
         self.match_threshold = 85
+
+    # --- 11레벨 서열표 --------------------------------------------------------
+    #
+    # 시트: 1e7gdUmBk3zUGSxVGC--8p6w2TIWMLBcLzOcmWoeOx6Y ("ノーマルゲージ" · "ハードゲージ" 탭)
+    # 마지막 갱신이 2023-07-23 이라 지금 돌려도 바뀌는 것이 거의 없다. 시트가 다시
+    # 움직이면 따라가도록 붙여 둔다.
+    #
+    # 12레벨 시트와 표기가 다르다(시트 1행의 범례로 확인, 2026-09-26):
+    #   파란 배경(#cfe2f3) = 個人差枠 → '개인차'   (12레벨은 빨간 글자가 개인차)
+    #   빨간 글자          = 最新の更新 → 최근 바뀐 곡일 뿐, 분류와 무관
+    #   회색 글자          = 削除候補   → 분류는 그대로
+    #   곡 이름 끝 (H)/(L) = SPH/SPL, 없으면 SPA
+    #   열: 未定, S+, S, A … F (+ 하드는 超個人差). 未定 은 분류가 아니라 넣지 않는다.
+    #
+    # 공개 게시(pubhtml)가 아니라 htmlview 라 headless 브라우저 없이 HTTP 로 읽힌다.
+    SP11_SHEET = 'https://docs.google.com/spreadsheets/d/1e7gdUmBk3zUGSxVGC--8p6w2TIWMLBcLzOcmWoeOx6Y/htmlview/sheet?headers=false&gid=%s'
+    SP11_TIERS = ['F', 'E', 'D', 'C', 'B', 'A', 'S', 'S+']
+    _RX_SUFFIX = re.compile(r'\s*[(（]\s*([HL])\s*[)）]\s*$')
+
+    def _parse_sp11(self, sheet_info):
+        """11레벨 탭 → (parsed_data, fail_count). 읽지 못하면 (None, 0)."""
+        from iidxrank.records_import import norm_title
+        try:
+            r = requests.get(self.SP11_SHEET % sheet_info['gid'], timeout=30)
+            r.raise_for_status()
+        except Exception as e:
+            print(f"❌ 시트 로드 실패: {e}")
+            return None, 0
+        soup = BeautifulSoup(r.text, 'html.parser')
+
+        # 클래스 → 배경색. 개인차 표시는 범례 셀 '個人差枠' 의 배경색을 그대로 쓴다.
+        bg = {}
+        for style in soup.find_all('style'):
+            for cls, body in re.findall(r'\.(s\d+)\{([^}]*)\}', style.string or ''):
+                m = re.search(r'background-color:\s*(#[0-9a-fA-F]{3,6})', body)
+                if m:
+                    bg[cls] = m.group(1).lower()
+        table = soup.find('table', class_='waffle')
+        if table is None:
+            print("❌ 테이블을 찾을 수 없습니다.")
+            return None, 0
+        rows = [[(td.get_text(strip=True), (td.get('class') or [''])[0]) for td in tr.find_all('td')]
+                for tr in table.find_all('tr')]
+        legend = next((cls for row in rows for text, cls in row if text == '個人差枠'), None)
+        indiv_bg = bg.get(legend)
+        header_idx = next((i for i, row in enumerate(rows) if row and row[0][0] == '未定'), None)
+        if header_idx is None or not indiv_bg:
+            print("❌ 머리글(未定…) 이나 개인차 범례를 찾지 못했습니다 — 시트 모양이 바뀌었습니다.")
+            return None, 0
+        headers = [text.replace('＋', '+') for text, _ in rows[header_idx]]
+
+        hard = '超個人差' in headers
+        offset = 1 if hard else 0                    # 하드는 초개인차가 맨 앞(정렬 1)
+        songs = {}
+        for sid, title, ty in Song.objects.filter(songlevel=sheet_info['level'], songtype__in=('SPH', 'SPA', 'SPL')) \
+                .values_list('id', 'songtitle', 'songtype'):
+            songs.setdefault((norm_title(title), ty), []).append(sid)
+        song_obj = {s.id: s for s in Song.objects.filter(songlevel=sheet_info['level'])}
+
+        parsed, fails = {}, []
+        for row in rows[header_idx + 1:]:
+            for col, (text, cls) in enumerate(row):
+                if not text or col >= len(headers):
+                    continue
+                tier = headers[col]
+                if tier == '超個人差':
+                    name, c_type, c_sort = '초개인차', 1, 1.0
+                elif tier in self.SP11_TIERS:
+                    i = self.SP11_TIERS.index(tier)
+                    indiv = bg.get(cls) == indiv_bg
+                    name = '%s %s' % ('개인차' if indiv else '지력', tier)
+                    c_type = 0 if indiv else 1
+                    c_sort = float(2 * i + (1 if indiv else 2) + offset)
+                else:
+                    continue                         # 未定 — 분류 없음
+                m = self._RX_SUFFIX.search(text)
+                ty = 'SP' + m.group(1) if m else sheet_info['default_type']
+                title = text[:m.start()] if m else text
+                ids = songs.get((norm_title(title), ty), [])
+                if len(ids) != 1:
+                    fails.append('%s [%s]' % (title, ty))
+                    continue
+                parsed[ids[0]] = {'song': song_obj[ids[0]], 'cat_name': name,
+                                  'c_type': c_type, 'c_sort': c_sort, 'score': 100}
+        print(f"🔍 {len(parsed)}곡 분류, 곡 DB 에서 못 찾은 것 {len(fails)}곡")
+        for f in fails[:30]:
+            print(f"   - {f}")
+        return parsed, len(fails)
 
     def _get_red_classes(self, soup):
         red_classes = []
@@ -142,6 +235,11 @@ class IIDXSheetParser:
 
     def process_sheet(self, sheet_info, mode):
         print(f"\n🚀 [{sheet_info['table_title']}] 시트 매핑 프로세스 시작 (모드: {mode})...")
+        if sheet_info.get('loader') == 'sp11':
+            parsed_data, fail_count = self._parse_sp11(sheet_info)
+            if parsed_data is not None:
+                self._apply(sheet_info, parsed_data, fail_count, mode)
+            return
         
         try:
             from playwright.sync_api import sync_playwright
@@ -307,8 +405,15 @@ class IIDXSheetParser:
                     else:
                         fail_count += 1
 
+        self._apply(sheet_info, parsed_data, fail_count, mode)
+
+    def _apply(self, sheet_info, parsed_data, fail_count, mode):
         # ----------------------------------------------------
         # 2단계: DB 갱신 분기 (RESET / UPDATE)
+        #
+        # parsed_data: {song_id: {'song', 'cat_name', 'c_type', 'c_sort', 'score'}}
+        # 12레벨(pubhtml·빨간 글자)과 11레벨(htmlview·파란 배경)은 읽는 법만 다르고
+        # 여기서부터는 같다.
         # ----------------------------------------------------
         rank_table, _ = RankTable.objects.get_or_create(
             tablename=sheet_info['table_name'],
