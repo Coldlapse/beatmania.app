@@ -29,8 +29,14 @@ class Command(BaseCommand):
         version = -1
         if options.get('set_version'):
             version = options['set_version']
-        if options.get('test'):
-            updatedb.TEST = options['test']
+        # 매번 명시적으로 정한다. 관리자 대시보드는 명령을 웹 프로세스 안에서
+        # call_command 로 돌리므로 모듈 전역이 다음 실행까지 남는다. 예전에는
+        # --test 일 때만 켜고 끄지 않아서, 테스트 실행 뒤의 진짜 실행도 테스트로
+        # 돌았다 — 로그엔 "added" 가 찍히는데 DB 엔 아무것도 안 들어갔다
+        # (2026-09-24 Viridian·Akatsuki, 라이브 기록으로 확인).
+        updatedb.TEST = options.get('test') or 0
+        if updatedb.TEST:
+            self.stdout.write(self.style.WARNING("⚠️ 테스트 모드: 곡을 DB 에 저장하지 않습니다."))
         
         self.stdout.write(self.style.SUCCESS("1️⃣ Textage 곡 데이터(Song) 업데이트를 시작합니다..."))
         updatedb.update_from_infinitas(version)

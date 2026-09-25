@@ -51,7 +51,11 @@ def update_song_by_object(song, do_add=True):
                     calcweight_hd=0,
                     calclevel_exh=0,
                     calcweight_exh=0)
-            print("song %s/%s(%d) added (id %d)" % (song['title'], song['diff'], song['level'], song_id))
+            # 테스트 모드면 저장하지 않았다는 것을 로그에 남긴다. 예전에는 둘 다
+            # "added" 라 찍혀 저장 안 된 것을 알아채지 못했다.
+            print("song %s/%s(%d) %s (id %d)" % (song['title'], song['diff'], song['level'],
+                                                 'added' if TEST == 0 else 'would be added (TEST, not saved)',
+                                                 song_id))
             added = 1
     #else:
     #    if (obj_song.songlevel != song['level'] or

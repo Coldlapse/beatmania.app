@@ -66,10 +66,26 @@ _STRIP = re.compile(
     r'＊*†♪☆★♥♡&＆#＃%@_+=|]')
 
 
+# 장식 글자를 보통 글자로. 사람이 옮겨 적은 표(스코어 난이도표 이미지 등)는 게임 제목의
+# 장식을 빼고 쓰는 일이 많다(Präludium → Praludium, VØID → VOID, BLO§OM → BLOSSOM,
+# RINИE → RINNE). 소문자로 바꾼 뒤에 적용한다.
+_FOLD = str.maketrans({'χ': 'x', 'ƒ': 'f', 'ø': 'o', 'æ': 'ae', 'œ': 'oe', 'ß': 'ss', '§': 'ss',
+                       'ə': 'e', 'и': 'n', 'я': 'r', 'ǝ': 'e', '¡': ''})
+
+
 def norm_title(t):
     t = html.unescape(t or '').translate(_CONFUSABLE)
-    t = unicodedata.normalize('NFKC', t).lower()
-    return _STRIP.sub('', t)
+    t = unicodedata.normalize('NFKC', t).lower().translate(_FOLD)
+    # 발음 구별 기호(ä é ö ū ...)를 떼어 낸다.
+    t = ''.join(ch for ch in unicodedata.normalize('NFKD', t) if not unicodedata.combining(ch))
+    t = _STRIP.sub('', unicodedata.normalize('NFC', t))
+    return _ALIASES.get(t, t)
+
+
+# 글자 치환으로 못 맞추는 표기 차이. 정규화된 값끼리 적는다.
+# 게임(Reflux)은 'CODE:0', 곡 DB(textage)는 'CODE:Ø' — 숫자 0 과 글자 Ø 를 모두 o 로
+# 접으면 다른 곡(숫자 0 이 든 제목)까지 섞일 수 있어 이 곡만 잇는다(2026-09-26 전수조사).
+_ALIASES = {'code0': 'codeo'}
 
 
 class TsvError(ValueError):
