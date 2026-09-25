@@ -1,4 +1,4 @@
-{% load static %}
+{% load static i18n %}
 <div class="profile-header-container" id="refactored-header">
   <div class="refactored-inner-container">
     <div class="profile-main-info">
@@ -26,6 +26,17 @@
           <span class="profile-dan dan-dp dan{{ userdata.dpclass }}">{{ userdata.dpclassstr }}</span>
         </div>
       </div>
+      {% comment %}
+        CPI(추정). cpi.makecir.com 이 공개하는 채보별 값으로 계산한 근사치다.
+        칸에는 숫자만 두고, 추정이라는 것과 출처는 풍선 도움말과 CPI 페이지에서 밝힌다.
+      {% endcomment %}
+      {% if userdata.cpi %}
+      <a class="profile-cpi" href="{{ userdata.cpi_url }}"
+         title="{% blocktrans with n=userdata.cpi.charts %}SP☆12 {{ n }}채보의 클리어 램프로 계산한 추정값입니다. 채보별 값은 cpi.makecir.com 의 공개 수치를 씁니다. 문제가 있으면 알려 주세요.{% endblocktrans %}">
+        <span class="profile-cpi-label">CPI</span>
+        <span class="profile-cpi-value">{{ userdata.cpi.value }}</span>
+      </a>
+      {% endif %}
     </div>
     
     <div class="rank-nav-container">
@@ -36,6 +47,12 @@
           <li><a href="{{ userdata.table_base }}SP11H/" class="nav-link">SP11 HARD</a></li>
           <li><a href="{{ userdata.table_base }}SP11N/" class="nav-link">SP11 NORMAL</a></li>
           <li><a href="{{ userdata.table_base }}SP10H/" class="nav-link">SP10 HARD</a></li>
+        </ul>
+        {% comment %} 스코어 난이도표 — 클리어 램프 옆의 등급을 보는 표다(load_scoring_tables) {% endcomment %}
+        <ul class="nav nav-pills">
+          <li class="rank-nav-title"><small>SP SCORE</small></li>
+          <li><a href="{{ userdata.table_base }}SP12S/" class="nav-link">SP12 SCORE</a></li>
+          <li><a href="{{ userdata.table_base }}SP10S/" class="nav-link">SP10 SCORE</a></li>
         </ul>
         <ul class="nav nav-pills">
             <li class="rank-nav-title"><small>DOUBLE PLAY</small></li>

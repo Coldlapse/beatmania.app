@@ -156,6 +156,17 @@ body {
 }
 .profile-dan.dan1 { background-color: #6c757d; }
 
+/* CPI(추정) — 이름 블록 오른쪽 */
+.profile-cpi {
+  flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end;
+  text-decoration: none; color: inherit; line-height: 1.1;
+  padding: .5rem .85rem; border-radius: 12px; background: var(--bm-pill-rail-bg);
+}
+.profile-cpi:hover { background: var(--bm-pill-hover-bg); color: inherit; }
+.profile-cpi-label { font-size: .72rem; font-weight: 700; letter-spacing: .08em; opacity: .75; }
+.profile-cpi-value { font-size: clamp(1.4rem, 4vw, 2rem); font-weight: 800; letter-spacing: -.02em; }
+.profile-cpi-note { font-size: .7rem; opacity: .7; }
+
 @media (max-width: 575.98px) {
   .profile-main-info { gap: 1rem; padding: 1.25rem 0; }
   .profile-avatar { width: 64px; height: 64px; padding: 3px; border-width: 2px; }
@@ -886,3 +897,20 @@ body.bm-rankpage #rankimg { margin-top: .5rem; }
 .bm-cf-incidents { list-style: none; padding-left: 0; }
 .bm-cf-incidents li + li { margin-top: .25rem; }
 .bm-cf-item .bm-health-dot { flex: none; }
+
+/* --- CPI(추정) 페이지 (user/cpi.html) ------------------------------------ */
+.bm-cpi-hero { line-height: 1.1; }
+.bm-cpi-label { font-size: .8rem; font-weight: 700; letter-spacing: .08em; color: var(--bm-text-muted); }
+.bm-cpi-label span { font-weight: 400; margin-left: .25rem; }
+.bm-cpi-value { font-size: 2.6rem; font-weight: 800; letter-spacing: -.02em; }
+.bm-cpi-sub { font-size: .8rem; color: var(--bm-text-muted); }
+.bm-cpi-table td { font-size: .9rem; }
+.bm-cpi-type { font-size: .7rem; font-weight: 700; padding: 0 .35em; border-radius: 4px; background: var(--bm-surface-3); }
+.bm-cpi-type-SPL { background: #7c2d5a; color: #fff; }
+.bm-cpi-lamp { display: inline-block; min-width: 3.2em; text-align: center; font-size: .72rem; font-weight: 700;
+  padding: .1em .4em; border-radius: 4px; color: #fff; }
+.bm-cpi-lamp-3 { background: var(--bm-clear-easy); }
+.bm-cpi-lamp-4 { background: var(--bm-clear-normal); }
+.bm-cpi-lamp-5 { background: var(--bm-clear-hard); }
+.bm-cpi-lamp-6 { background: var(--bm-clear-exhard); color: #222; }
+.bm-cpi-lamp-7 { background: var(--bm-clear-fc); color: #06343a; }

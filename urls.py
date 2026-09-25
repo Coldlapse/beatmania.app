@@ -35,6 +35,7 @@ import iidxrank.views_manage as views_manage
 import iidxrank.views_overjoy as views_overjoy
 import iidxrank.views_status as views_status
 import iidxrank.views_sync as views_sync
+import iidxrank.views_cpi as views_cpi
 import iidxrank.views_typing as views_typing
 
 # 서열표 한 개에 딸린 하위 경로. 내 것과 남의 것이 같은 모양을 갖도록 공유한다.
@@ -57,6 +58,9 @@ urlpatterns = [
     url(r'^$', views.userpage, name='home'),
     url(r'^table/(?P<tablename>\w+)/', include(table_patterns)),
     url(r'^u/(?P<username>[\w-]+)/$', views.userpage, name='userpage'),
+    # CPI(추정). 공개 규칙은 서열표와 같다.
+    url(r'^cpi/$', views_cpi.cpi_page, name='cpi_page'),
+    url(r'^u/(?P<username>[\w-]+)/cpi/$', views_cpi.cpi_page, name='cpi_page_user'),
     url(r'^u/(?P<username>[\w-]+)/table/(?P<tablename>\w+)/', include(table_patterns)),
 
     # --- 일반 페이지 -------------------------------------------------------
@@ -146,6 +150,7 @@ urlpatterns = [
     url(r'^api/v1/update-machine-status/$',
         views.update_machine_status_api, name='update_machine_status_api'),
     url(r'^api/v1/records/$', views_sync.records_api, name='records_api'),
+    url(r'^api/v1/me/$', views_sync.me_api, name='me_api'),
 
     # --- 관리자 대시보드 (staff 전용) --------------------------------------
     url(r'^manage/$', views_manage.dashboard, name='manage_dashboard'),

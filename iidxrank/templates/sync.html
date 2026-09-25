@@ -54,8 +54,17 @@
       <p class="text-body-secondary">
         {% blocktrans %}Reflux 가 만든 <code>tracker.tsv</code> 를 올리면 레벨 10 이상 채보의 클리어 램프와 등급을 서열표에 반영합니다.{% endblocktrans %}
       </p>
+      {% comment %}
+        tracker.tsv 는 Reflux 가 쓰는 파일이다. 사람마다 Reflux 를 띄우는 길이 달라
+        파일이 있는 곳도 다르다. INF오소리를 안내하는 것은 그 앱이 내부에서 Reflux 를
+        돌려 같은 파일을 이미 만들어 두기 때문이다 — INF오소리의 코드를 가져온 것은
+        아니다(그 저장소에는 라이선스가 없다).
+      {% endcomment %}
+      <p class="small mb-1">{% trans '파일은 Reflux 를 어떻게 띄우는지에 따라 이곳에 있습니다.' %}</p>
       <ul class="small text-body-secondary">
-        <li>{% trans 'INF오소리를 쓰신다면 이 위치에 있습니다:' %} <code>%APPDATA%\infohsorry\Reflux\tracker.tsv</code></li>
+        <li>{% trans 'Reflux 를 직접 실행한다면: Reflux.exe 가 있는 폴더' %}</li>
+        <li>{% trans 'INF오소리를 쓴다면: INF오소리도 내부에서 Reflux 를 실행해 같은 파일을 만들어 둡니다.' %}
+          <code>%APPDATA%\infohsorry\Reflux\tracker.tsv</code></li>
         <li>{% trans '지금 기록보다 좋을 때만 올립니다. 직접 입력한 기록을 낮추지 않습니다.' %}</li>
         <li>{% trans '같은 파일을 다시 올려도 결과는 같습니다.' %}</li>
       </ul>
@@ -77,6 +86,21 @@
       <p class="text-body-secondary mb-0">
         {% blocktrans %}INFINITAS 를 켜 둔 동안 옆에 상주하면서 기록이 바뀔 때마다 자동으로 올리는 앱을 준비하고 있습니다. 위와 같은 API 토큰을 씁니다.{% endblocktrans %}
       </p>
+    </div>
+  </div>
+
+  {% comment %} 게임 기록을 읽는 부분은 남의 오픈소스에 기대고 있다. 출처를 밝힌다. {% endcomment %}
+  <div class="card bm-panel mb-3">
+    <div class="card-body">
+      <h2 class="h6">{% trans '함께 쓰는 프로젝트' %}</h2>
+      <ul class="small text-body-secondary mb-0">
+        <li><a href="https://github.com/olji/Reflux" target="_blank" rel="noopener">Reflux</a> (olji, MIT) —
+          {% trans 'INFINITAS 가 실행되는 동안 게임 기록을 읽어 tracker.tsv 로 남기는 도구입니다. 이 페이지와 동기화 앱이 읽는 파일이 이것입니다.' %}</li>
+        <li><a href="https://github.com/OhSorry-DP/Reflux" target="_blank" rel="noopener">OhSorry-DP/Reflux</a> (MIT) —
+          {% trans '최신 INFINITAS 패치에 대응한 Reflux 포크입니다. 원본은 2026년 5월 이후 갱신이 없어, 동기화 앱은 이 판을 받아 씁니다.' %}</li>
+        <li><a href="https://github.com/OhSorry-DP" target="_blank" rel="noopener">{% trans 'INF오소리' %}</a> —
+          {% trans '같은 Reflux 를 쓰는 기록 분석 앱입니다. 이미 쓰고 계신 분이 그 파일을 그대로 올리거나 동기화 앱과 함께 쓸 수 있게 연동했습니다. 코드를 가져오지는 않았습니다.' %}</li>
+      </ul>
     </div>
   </div>
 

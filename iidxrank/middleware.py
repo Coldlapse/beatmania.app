@@ -25,6 +25,7 @@ _ALLOW = [
     r'^/$',
     r'^/table/',
     r'^/u/',
+    r'^/cpi/',
     r'^/json/',
     r'^/status/',
     r'^/musiclist/',

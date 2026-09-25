@@ -168,6 +168,14 @@ try:
                 HTTP_AUTHORIZATION='Token ' + tok)
     check('너무 큼 → 400 (500 아님)', rr.status_code == 400, str(rr.status_code))
 
+    print('=== 6-1. 토큰 확인 API ===')
+    rr = c.get('/api/v1/me/', HTTP_AUTHORIZATION='Token ' + tok)
+    check('me 200 · 아이디·프로필 주소', rr.status_code == 200 and rr.json() ==
+          {'username': u.username, 'profile_url': '/u/%s/' % u.username}, str(rr.content[:120]))
+    check('me 에 이메일 없음', b'@' not in rr.content)
+    check('me 틀린 토큰 401', c.get('/api/v1/me/', HTTP_AUTHORIZATION='Token nope').status_code == 401)
+    check('me POST 405', c.post('/api/v1/me/', HTTP_AUTHORIZATION='Token ' + tok).status_code == 405)
+
     print('=== 7. 웹 ===')
     models.RecordSync.objects.filter(user=u).delete()
     check('비로그인 GET 200', Client().get('/sync/').status_code == 200)

@@ -102,3 +102,30 @@ def records_api(request):
     except records_import.TsvError as e:
         return JsonResponse({'error': str(e)}, status=400)
     return JsonResponse(result)
+
+
+def _token_user(request):
+    """Authorization: Token <키> → 사용자. 없거나 틀리면 None."""
+    auth = request.headers.get('Authorization', '')
+    if not auth.startswith('Token '):
+        return None
+    tok = (models.ApiToken.objects.select_related('user')
+           .filter(key=auth.split(' ', 1)[1].strip()).first())
+    return tok.user if tok and tok.user.is_active else None
+
+
+def me_api(request):
+    """토큰이 누구의 것인지. 동기화 앱이 토큰을 넣는 순간 확인하고,
+    '내 서열표' 링크를 만드는 데 쓴다.
+
+    GET /api/v1/me/  →  {"username": ..., "profile_url": "/u/<아이디>/"}
+    아이디는 이미 공개 프로필 주소에 드러나는 값이라 새로 알려 주는 것이 없다.
+    이메일 같은 다른 정보는 싣지 않는다.
+    """
+    if request.method != 'GET':
+        return JsonResponse({'error': 'GET method is required.'}, status=405)
+    user = _token_user(request)
+    if user is None:
+        return JsonResponse({'error': 'Invalid token.'}, status=401)
+    return JsonResponse({'username': user.username,
+                         'profile_url': '/u/%s/' % user.username})

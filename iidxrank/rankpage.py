@@ -372,6 +372,13 @@ def get_udata_from_player(player, username=None):
         userdata['has_avatar'] = bool(player.avatar)
         # 사이트 닉네임. 서열표에 보이는 DJ NAME(iidxnick)과는 별개다.
         userdata['nickname'] = (player.user.first_name or player.user.username)             if player.user else ''
+        # CPI(추정). 프로필이 CPI 계산 때문에 깨지면 안 된다 — 실패하면 칸만 빠진다.
+        try:
+            from iidxrank import cpi
+            userdata['cpi'] = cpi.for_player(player)
+            userdata['cpi_url'] = ('/u/%s/cpi/' % username) if username else '/cpi/'
+        except Exception:
+            userdata['cpi'] = None
     return userdata
 
 """

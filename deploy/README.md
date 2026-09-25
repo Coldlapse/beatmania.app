@@ -383,13 +383,21 @@ sudo ./svc.sh start
 
 ```cron
 */5 * * * * cd /srv/beatmania/app && /usr/bin/docker compose exec -T app python manage.py healthcheck >> /var/log/beatmania-health.log 2>&1
+17 5 * * * cd /srv/beatmania/app && /usr/bin/docker compose exec -T app python manage.py update_cpi >> /var/log/beatmania-cpi.log 2>&1
 ```
+
+`update_cpi` 는 cpi.makecir.com 의 채보별 CPI 값을 **하루 한 번, 한 페이지만** 받습니다(프로필의 CPI 추정용).
+원 사이트에 부담을 주지 않으려는 것이라 주기를 줄이지 말아 주세요. 끄려면 `iidxrank/cpi.py` 의 `ENABLED` 를 `False` 로 둡니다.
 
 - `-T` 가 없으면 TTY 가 없는 cron 환경에서 실패합니다
 - `docker` 를 절대 경로로 쓴 것은 cron 의 PATH 가 짧기 때문입니다
 
 곡 데이터 갱신(`updateSongInfinitas`)은 관리자 대시보드에서 사람이 확인하며
 돌리는 대화형 명령이라 cron 에는 넣지 않습니다.
+이 명령은 SP12 서열표(구글 시트)에 더해 SP11 NORMAL·HARD 서열표도 동기화합니다.
+
+스코어 난이도표(SP10S·SP12S)는 이미지가 원본이라 `update/data/scoring_sp*.tsv` 를 고친 뒤
+`python manage.py load_scoring_tables` 로 무엇이 매칭되는지 먼저 보고, `--apply` 로 만듭니다.
 
 ---
 

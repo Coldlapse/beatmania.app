@@ -1,0 +1,103 @@
+{% extends "common.html" %}
+{% load i18n %}
+{% comment %}
+  CPI(추정) 페이지 — /cpi/ 와 /u/<아이디>/cpi/ (iidxrank/views_cpi.py).
+  공개 규칙과 공유 버튼은 서열표와 같다.
+  계산 방법은 iidxrank/cpi.py 머리말에 있다.
+{% endcomment %}
+{% block page_title %}CPI{% endblock %}
+{% block body %}
+
+{% include "top.html" %}
+{% include "profileheader.html" %}
+
+<div id="container">
+  {% if not detail %}
+  <div class="card bm-panel mb-3">
+    <div class="card-body text-center py-4">
+      <h2 class="h5">{% trans 'CPI 를 계산할 기록이 부족합니다' %}</h2>
+      <p class="text-body-secondary mb-0">
+        {% blocktrans with n=min_charts %}SP☆12 클리어 램프가 {{ n }}채보 이상 있어야 추정할 수 있습니다.{% endblocktrans %}
+      </p>
+    </div>
+  </div>
+  {% else %}
+
+  <div class="card bm-panel mb-3">
+    <div class="card-body">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div class="bm-cpi-hero">
+          <div class="bm-cpi-label">CPI <span>{% trans '추정' %}</span></div>
+          <div class="bm-cpi-value">{{ detail.value }}</div>
+          <div class="bm-cpi-sub">{% blocktrans with n=detail.charts %}SP☆12 {{ n }}채보 기준{% endblocktrans %}</div>
+        </div>
+        {% if own %}
+        <div class="text-end">
+          <button id="share" type="button" class="btn btn-sm btn-outline-secondary" title="{% trans '공유 주소 복사' %}">
+            <i class="bi bi-share me-1" aria-hidden="true"></i>{% trans '공유' %}</button>
+          {% if private %}
+          <div class="small text-body-secondary mt-1 bm-cpi-private">
+            <i class="bi bi-lock" aria-hidden="true"></i>
+            {% trans '프로필이 비공개라 공유 주소는 다른 사람에게 열리지 않습니다.' %}
+            <a href="/account/">{% trans '설정' %}</a>
+          </div>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+
+      <details class="mt-3">
+        <summary class="small">{% trans '어떻게 계산하나요' %}</summary>
+        <ul class="small text-body-secondary mt-2 mb-0">
+          {% comment %} 퍼센트는 변수로 뺀다 — blocktrans 안의 % 는 %% 로 바뀌어 번역을 못 찾는다(실제로 한국어로 남았다). {% endcomment %}
+          <li>{% blocktrans with half="50%" mid="25~75%" %}채보별 값은 <a href="https://cpi.makecir.com/" target="_blank" rel="noopener">cpi.makecir.com</a> 이 공개하는 램프별 적정CPI(달성률 {{ half }} 지점)와 개인차도({{ mid }} 폭)입니다.{% endblocktrans %}</li>
+          <li>{% trans '각 채보·램프를 "달성했는가" 로 보고, 모든 기록을 가장 잘 설명하는 CPI 를 찾습니다(최대우도). ASSIST 는 FAILED 로, 기록 없는 채보는 뺍니다.' %}</li>
+          <li>{% trans '원래 CPI 는 약 3만 명의 램프와 직접 비교해 계산하므로 같은 값이 나오지 않습니다. 공개 사용자 9명과 비교했을 때 평균 13점, 가장 크게 35점 차이가 났습니다(2026-09-26).' %}</li>
+          {% if detail.fetched_at %}<li>{% blocktrans with d=detail.fetched_at|date:"Y-m-d" %}채보별 값 갱신: {{ d }}{% endblocktrans %}</li>{% endif %}
+          <li>{% trans '문제가 있으면 디스코드로 알려 주세요.' %}</li>
+        </ul>
+      </details>
+    </div>
+  </div>
+
+  <div class="card bm-panel mb-3">
+    <div class="card-body">
+      <h2 class="h6 mb-1">{% trans '달성 난도가 높은 기록' %}</h2>
+      <p class="small text-body-secondary">
+        {% trans '채보마다 가장 높은 램프 하나를, 그 램프의 적정CPI 가 높은 순으로 보여 줍니다. 달성 확률은 이 CPI 의 플레이어가 그 램프를 달성할 확률입니다 — 낮을수록 실력에 비해 잘 해낸 기록입니다.' %}
+      </p>
+      <div class="table-responsive">
+        <table class="table table-sm align-middle mb-0 bm-cpi-table">
+          <thead><tr>
+            <th>#</th><th>{% trans '곡' %}</th><th>{% trans '램프' %}</th>
+            <th class="text-end">{% trans '적정CPI' %}</th><th class="text-end">{% trans '달성 확률' %}</th>
+          </tr></thead>
+          <tbody>
+          {% for r in detail.top %}
+            <tr>
+              <td class="text-body-secondary">{{ forloop.counter }}</td>
+              <td>{{ r.title }} <span class="bm-cpi-type bm-cpi-type-{{ r.type }}">{{ r.type|slice:"2:" }}</span></td>
+              <td><span class="bm-cpi-lamp bm-cpi-lamp-{{ r.lamp }}">{{ r.lamp_name }}</span></td>
+              <td class="text-end">{{ r.mu }}</td>
+              <td class="text-end">{{ r.prob|floatformat:0 }}%</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+{% if own %}
+<script>
+  // 서열표의 공유 버튼과 같다: /u/<아이디>/cpi/ 를 복사한다.
+  document.getElementById('share').addEventListener('click', function () {
+    navigator.clipboard.writeText(location.origin + '/u/{{ user.username|escapejs }}/cpi/').then(function () {
+      alert('{% trans "클립보드에 CPI 공유 주소가 복사되었습니다!" %}');
+    });
+  });
+</script>
+{% endif %}
+{% endblock %}

@@ -80,6 +80,10 @@
 
       <hr>
 
+      <p class="small text-body-secondary">
+        {% blocktrans %}프로필의 CPI(추정)는 <a href="https://cpi.makecir.com/" target="_blank" rel="noopener">cpi.makecir.com</a> 이 공개하는 SP☆12 채보별 수치로 계산한 근사치입니다. 원래 CPI 와 수십 점 차이가 날 수 있습니다. 문제가 있으면 디스코드로 알려 주세요.{% endblocktrans %}
+      </p>
+
       <p class="mb-0">
         {% blocktrans %}이 사이트가 마음에 드셨다면 <a href="https://buymeacoffee.com/sadang" target="_blank" rel="noopener">커피 한 잔<i class="bi bi-cup-hot-fill ms-1"></i></a> 부탁드립니다. 서버 유지에 보탬이 됩니다.{% endblocktrans %}
       </p>
@@ -123,12 +127,14 @@
           border-radius: 50%;
       }
 
-      /* 완료된 항목 */
-      .roadmap-item.completed::before {
+      /* 완료된 항목과 지금 진행 중인 항목(current) — 둘 다 파란 점 */
+      .roadmap-item.completed::before,
+      .roadmap-item.current::before {
           border-color: var(--bm-accent);
           background-color: var(--bm-accent);
       }
-      .roadmap-item.completed .roadmap-date {
+      .roadmap-item.completed .roadmap-date,
+      .roadmap-item.current .roadmap-date {
           color: var(--bm-accent);
       }
 
@@ -263,22 +269,21 @@
                   </div>
             </div>
 
-            <div class="roadmap-item">
-                <div class="roadmap-date">{% trans '2026 Q3 (진행 중)' %}</div>
+            <div class="roadmap-item completed">
+                <div class="roadmap-date">{% trans '2026 Q3 (완료)' %}</div>
                 <div class="roadmap-title">{% trans '데이터 연동 및 시스템 고도화' %}</div>
                 <div class="roadmap-desc">
-                      {% trans '- healthcheck 구현(완료)' %}<br>
-                      {% trans '- 타건 기록 리더보드 추가(완료)' %}<br>
-                      {% trans '- 다국어 지원(영문·일본어·중국어) 번역 추가(완료)' %}<br>
-                      {% trans '- CPI 사이트 연계 레이팅 시스템 및 리더보드 구현' %}<br>
+                      {% trans '- healthcheck 구현' %}<br>
+                      {% trans '- 타건 기록 리더보드 추가' %}<br>
+                      {% trans '- 다국어 지원(영문·일본어·중국어) 번역 추가' %}<br>
+                      {% trans '- CPI 연계 레이팅 추정 도입' %}<br>
                       {% trans '- Reflux를 통한 자동 데이터 갱신 구현' %}<br>
-                      {% trans '- 로깅 서버 구현' %}<br>
                       {% trans '- 전체 코드 전수 리팩토링 및 구조 정리' %}
                   </div>
             </div>
 
-            <div class="roadmap-item">
-                <div class="roadmap-date">{% trans '2026 Q4 ~ (예정)' %}</div>
+            <div class="roadmap-item current">
+                <div class="roadmap-date">2026 Q4 ~</div>
                 <div class="roadmap-title">{% trans '서비스 개발 마무리 및 운영' %}</div>
                 <div class="roadmap-desc">
                       {% trans '- 서비스 개발을 마무리하고, 유지보수와 장애 대응에 집중' %}

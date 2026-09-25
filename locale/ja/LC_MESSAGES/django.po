@@ -36,6 +36,9 @@ msgstr "- BMS(beatoraja) プレイヤー向けの白数字コンバーター実�
 msgid "- CPI 사이트 연계 레이팅 시스템 및 리더보드 구현"
 msgstr "- CPI サイトと連携したレーティングシステムとリーダーボードの実装"
 
+msgid "- CPI 연계 레이팅 추정 도입"
+msgstr "- CPI 連携のレーティング推定を導入"
+
 msgid "- INFINITAS의 레겐데리아 업뎃에 맞추어 서열표에 [L] 난이도가 지원되도록 기능 추가, 곡 배경색으로 구분하도록 설정"
 msgstr "- INFINITAS のレジェンダリア追加に合わせて難易度表で [L] 難易度に対応し、曲の背景色で区別するよう設定"
 
@@ -44,6 +47,9 @@ msgstr "- Reflux による自動データ更新の実装"
 
 msgid "- SSL 인증서 적용 및 점수순 정렬 추가"
 msgstr "- SSL 証明書の適用とスコア順ソートの追加"
+
+msgid "- healthcheck 구현"
+msgstr "- ヘルスチェックの実装"
 
 msgid "- healthcheck 구현(완료)"
 msgstr "- ヘルスチェックの実装(完了)"
@@ -59,6 +65,9 @@ msgstr "- iidxranktable プロジェクトをクローンし INFINITAS の収録
 
 msgid "- 난이도표 UI 한글화"
 msgstr "- 難易度表 UI の韓国語化"
+
+msgid "- 다국어 지원(영문·일본어·중국어) 번역 추가"
+msgstr "- 多言語対応(英語・日本語・中国語)の翻訳を追加"
 
 msgid "- 다국어 지원(영문·일본어·중국어) 번역 추가(완료)"
 msgstr "- 多言語対応(英語・日本語・中国語)の翻訳を追加(完了)"
@@ -98,6 +107,9 @@ msgstr "- コード全体の総点検リファクタリングと構造の整理"
 
 msgid "- 점수(랭크)순 정렬 기능 구현"
 msgstr "- スコア(ランク)順ソート機能の実装"
+
+msgid "- 타건 기록 리더보드 추가"
+msgstr "- 打鍵記録リーダーボードの追加"
 
 msgid "- 타건 기록 리더보드 추가(완료)"
 msgstr "- 打鍵記録リーダーボードの追加(完了)"
@@ -140,6 +152,9 @@ msgstr "2026 Q2（完了）"
 
 msgid "2026 Q2 (진행 중)"
 msgstr "2026 Q2（進行中）"
+
+msgid "2026 Q3 (완료)"
+msgstr "2026 Q3（完了）"
 
 msgid "2026 Q3 (진행 중)"
 msgstr "2026 Q3（進行中）"
@@ -216,6 +231,9 @@ msgstr "beatoraja の LITONE 系スキンなど、IIDX と同じ構造で作ら�
 msgid "Buy me a coffee"
 msgstr "Buy me a coffee"
 
+msgid "CPI 를 계산할 기록이 부족합니다"
+msgstr "CPI を推定する記録が足りません"
+
 msgid "Cloudflare 상태"
 msgstr "Cloudflare の状態"
 
@@ -258,11 +276,20 @@ msgstr "IIDXwidget アプリと連携するための個人トークンです。"
 msgid "IIDX는 레인 전체 높이를 1000으로 본다. 서든 플러스는 위에서 내려오는 덮개의 높이이고, 리프트는 아래에서 올라오는 덮개의 높이다. 둘 다 같은 1000 기준의 절대값이라, 보이는 넓이는 <b>1000 − 서든 − 리프트</b>가 된다."
 msgstr "IIDX はレーン全体の高さを 1000 とみなします。SUDDEN+ は上から降りてくるカバーの高さ、LIFT は下から上がってくるカバーの高さです。どちらも同じ 1000 を基準にした絶対値なので、見える範囲は <b>1000 − SUDDEN+ − LIFT</b> になります。"
 
+msgid "INFINITAS 가 실행되는 동안 게임 기록을 읽어 tracker.tsv 로 남기는 도구입니다. 이 페이지와 동기화 앱이 읽는 파일이 이것입니다."
+msgstr "INFINITAS の起動中にゲーム記録を読み取り、tracker.tsv に書き出すツールです。このページと同期アプリが読むのはこのファイルです。"
+
 msgid "INFINITAS 를 켜 둔 동안 옆에 상주하면서 기록이 바뀔 때마다 자동으로 올리는 앱을 준비하고 있습니다. 위와 같은 API 토큰을 씁니다."
 msgstr "INFINITAS の起動中に常駐し、記録が変わるたびに自動でアップロードするアプリを準備中です。同じ API トークンを使います。"
 
+msgid "INF오소리"
+msgstr "INFOhSorry"
+
 msgid "INF오소리를 쓰신다면 이 위치에 있습니다:"
 msgstr "INFOhSorry をお使いなら、ここにあります:"
+
+msgid "INF오소리를 쓴다면: INF오소리도 내부에서 Reflux 를 실행해 같은 파일을 만들어 둡니다."
+msgstr "INFOhSorry をお使いの場合: INFOhSorry も内部で Reflux を実行し、同じファイルを作成します。"
 
 msgid "IR Profile"
 msgstr "IR プロフィール"
@@ -273,11 +300,23 @@ msgstr "JPG・PNG・GIF・WebP、最大2MB。正方形の画像を推奨しま�
 msgid "Reflux 가 만든 <code>tracker.tsv</code> 를 올리면 레벨 10 이상 채보의 클리어 램프와 등급을 서열표에 반영합니다."
 msgstr "Reflux が作成した <code>tracker.tsv</code> をアップロードすると、レベル10以上の譜面のクリアランプとDJレベルを難易度表に反映します。"
 
+msgid "Reflux 를 직접 실행한다면: Reflux.exe 가 있는 폴더"
+msgstr "Reflux を直接起動している場合: Reflux.exe のあるフォルダ"
+
 msgid "SP 단위"
 msgstr "SP 段位"
 
 msgid "SPL 난이도 지원 추가"
 msgstr "SPL 難易度対応の追加"
+
+msgid "SP☆12 %(n)s채보 기준"
+msgstr "SP☆12 %(n)s 譜面から"
+
+msgid "SP☆12 %(n)s채보의 클리어 램프로 계산한 추정값입니다. 채보별 값은 cpi.makecir.com 의 공개 수치를 씁니다. 문제가 있으면 알려 주세요."
+msgstr "SP☆12 %(n)s譜面のクリアランプから計算した推定値です。譜面ごとの値は cpi.makecir.com の公開数値を使っています。問題があればお知らせください。"
+
+msgid "SP☆12 클리어 램프가 %(n)s채보 이상 있어야 추정할 수 있습니다."
+msgstr "SP☆12 のクリアランプが %(n)s 譜面以上必要です。"
 
 msgid "UTF-8 로 읽을 수 없는 파일입니다."
 msgstr "UTF-8 として読めないファイルです。"
@@ -375,6 +414,12 @@ msgstr "登録時のメールアドレスを認証すると新しいパスワー
 msgid "가입할 때 쓴 이메일을 인증하면 아이디를 알려 드립니다."
 msgstr "登録時のメールアドレスを認証すると ID をお知らせします。"
 
+msgid "각 채보·램프를 \"달성했는가\" 로 보고, 모든 기록을 가장 잘 설명하는 CPI 를 찾습니다(최대우도). ASSIST 는 FAILED 로, 기록 없는 채보는 뺍니다."
+msgstr "各譜面・ランプを「達成したか」として扱い、全記録を最もよく説明する CPI を求めます(最尤推定)。ASSIST は FAILED として扱い、記録のない譜面は除きます。"
+
+msgid "같은 Reflux 를 쓰는 기록 분석 앱입니다. 이미 쓰고 계신 분이 그 파일을 그대로 올리거나 동기화 앱과 함께 쓸 수 있게 연동했습니다. 코드를 가져오지는 않았습니다."
+msgstr "同じ Reflux を使う記録分析アプリです。すでにお使いの方がそのファイルをそのままアップロードしたり、同期アプリと併用したりできるよう連携しました。コードは流用していません。"
+
 msgid "같은 방문자가 여러 서열표를 봐도 한 번으로 셉니다"
 msgstr "同じ訪問者が複数の難易度表を見ても 1 回として数えます"
 
@@ -465,6 +510,9 @@ msgstr "アカウントごとに 1 つ発行される鍵です。下のプログ
 msgid "계정마다 하나씩 발급되며, 프로그램 설정에 넣으면 됩니다."
 msgstr "アカウントごとに 1 つ発行され、プログラムの設定に入れるだけです。"
 
+msgid "곡"
+msgstr "曲"
+
 msgid "곡 랭킹"
 msgstr "曲ランキング"
 
@@ -476,6 +524,9 @@ msgstr "曲名検索"
 
 msgid "공개를 원하지 않으면 가입 후 <b>설정 → 프로필 비공개</b>를 켜면 됩니다. 켜면 이 주소로 접속해도 아무것도 보이지 않고, 유저 목록에도 나타나지 않습니다. 언제든 다시 끌 수 있습니다."
 msgstr "公開したくない場合は、登録後に <b>設定 → プロフィール非公開</b> を有効にしてください。有効にするとこの URL では何も表示されず、ユーザー一覧にも出ません。いつでも解除できます。"
+
+msgid "공유"
+msgstr "共有"
 
 msgid "공유 주소 복사"
 msgstr "共有URLをコピー"
@@ -549,6 +600,12 @@ msgstr "次へ"
 msgid "다크 모드로 전환"
 msgstr "ダークモードに切替"
 
+msgid "달성 난도가 높은 기록"
+msgstr "達成難度の高い記録"
+
+msgid "달성 확률"
+msgstr "達成確率"
+
 msgid "대기 현황"
 msgstr "待ち状況"
 
@@ -584,6 +641,9 @@ msgstr "元に戻すことはできません。"
 
 msgid "디스코드"
 msgstr "Discord"
+
+msgid "램프"
+msgstr "ランプ"
 
 msgid "램프순"
 msgstr "ランプ順"
@@ -653,6 +713,9 @@ msgstr "見つからない曲を表示"
 
 msgid "무엇을 하나요"
 msgstr "ここで行うこと"
+
+msgid "문제가 있으면 디스코드로 알려 주세요."
+msgstr "問題があれば Discord でお知らせください。"
 
 msgid "반영했습니다"
 msgstr "反映しました"
@@ -912,6 +975,9 @@ msgstr "まだ記録がありません。IIDXwidget を connect すればここ�
 msgid "앱"
 msgstr "アプリ"
 
+msgid "어떻게 계산하나요"
+msgstr "計算方法"
+
 msgid "언어 선택"
 msgstr "言語"
 
@@ -956,6 +1022,9 @@ msgstr "外部監視塔を見る"
 
 msgid "외부 도구 연동을 쓰는 경우 그 인증 토큰."
 msgstr "外部ツール連携を使う場合、その認証トークン。"
+
+msgid "원래 CPI 는 약 3만 명의 램프와 직접 비교해 계산하므로 같은 값이 나오지 않습니다. 공개 사용자 9명과 비교했을 때 평균 13점, 가장 크게 35점 차이가 났습니다(2026-09-26)."
+msgstr "本来の CPI は約3万人のランプと直接比較して計算するため、同じ値にはなりません。公開ユーザー9名と比べた差は平均13点、最大35点でした(2026-09-26)。"
 
 msgid "웹"
 msgstr "ウェブ"
@@ -1125,6 +1194,9 @@ msgstr "保存"
 msgid "저희는 계정 인증과 아이디·비밀번호 찾기 외의 목적으로는 메일을 보내지 않습니다. 마케팅 메일도 보내지 않습니다."
 msgstr "当サイトはアカウント認証と ID・パスワードの確認以外の目的でメールを送ることはありません。マーケティングメールもお送りしません。"
 
+msgid "적정CPI"
+msgstr "適正CPI"
+
 msgid "전체"
 msgstr "全期間"
 
@@ -1206,6 +1278,18 @@ msgstr "直近 7 日間で"
 msgid "지난 기록"
 msgstr "過去の記録"
 
+msgid "채보마다 가장 높은 램프 하나를, 그 램프의 적정CPI 가 높은 순으로 보여 줍니다. 달성 확률은 이 CPI 의 플레이어가 그 램프를 달성할 확률입니다 — 낮을수록 실력에 비해 잘 해낸 기록입니다."
+msgstr "譜面ごとの最高ランプを、そのランプの適正CPIが高い順に表示します。達成確率はこの CPI のプレイヤーがそのランプを達成する確率で、低いほど実力以上の記録です。"
+
+msgid "채보별 값 갱신: %(d)s"
+msgstr "譜面別の値の更新: %(d)s"
+
+msgid "채보별 값은 <a href=\"https://cpi.makecir.com/\" target=\"_blank\" rel=\"noopener\">cpi.makecir.com</a> 이 공개하는 램프별 적정CPI(달성률 %(half)s 지점)와 개인차도(%(mid)s 폭)입니다."
+msgstr "譜面ごとの値は <a href=\"https://cpi.makecir.com/\" target=\"_blank\" rel=\"noopener\">cpi.makecir.com</a> が公開しているランプ別の適正CPI(達成率%(half)sの点)と個人差度(%(mid)sの幅)です。"
+
+msgid "채보별 값은 <a href=\"https://cpi.makecir.com/\" target=\"_blank\" rel=\"noopener\">cpi.makecir.com</a> 이 공개하는 램프별 적정CPI(달성률 50% 지점)와 개인차도(25~75% 폭)입니다."
+msgstr "譜面ごとの値は <a href=\"https://cpi.makecir.com/\" target=\"_blank\" rel=\"noopener\">cpi.makecir.com</a> が公開しているランプ別の適正CPI(達成率50%の点)と個人差度(25〜75%の幅)です。"
+
 msgid "초기화"
 msgstr "リセット"
 
@@ -1218,8 +1302,14 @@ msgstr "直近 %(h)s 時間・%(m)s 分ごとに確認"
 msgid "최근 동기화"
 msgstr "最近の同期"
 
+msgid "최신 INFINITAS 패치에 대응한 Reflux 포크입니다. 원본은 2026년 5월 이후 갱신이 없어, 동기화 앱은 이 판을 받아 씁니다."
+msgstr "最新の INFINITAS パッチに対応した Reflux のフォークです。本家は2026年5月以降更新がないため、同期アプリはこちらを使います。"
+
 msgid "최종 수정일"
 msgstr "最終更新日"
+
+msgid "추정"
+msgstr "推定"
 
 msgid "추후 예정"
 msgstr "今後の予定"
@@ -1232,6 +1322,9 @@ msgstr "有効にすると、他のユーザーから難易度表・ユーザー
 
 msgid "클리어 기록 가져오기"
 msgstr "クリア記録の取り込み"
+
+msgid "클립보드에 CPI 공유 주소가 복사되었습니다!"
+msgstr "CPI の共有アドレスをクリップボードにコピーしました！"
 
 msgid "타건 수"
 msgstr "打鍵数"
@@ -1259,6 +1352,9 @@ msgstr "IIDX SUDDEN+"
 
 msgid "파일로 올리기"
 msgstr "ファイルでアップロード"
+
+msgid "파일은 Reflux 를 어떻게 띄우는지에 따라 이곳에 있습니다."
+msgstr "ファイルの場所は Reflux の起動方法によって異なります。"
 
 msgid "파일을 골라 주세요."
 msgstr "ファイルを選択してください。"
@@ -1305,6 +1401,12 @@ msgstr "プロフィールが非公開のためランキングには載りませ
 msgid "프로필을 비공개로 설정한 분은 순위에서 제외됩니다"
 msgstr "プロフィールを非公開にしている方はランキングから除外されます"
 
+msgid "프로필의 CPI(추정)는 <a href=\"https://cpi.makecir.com/\" target=\"_blank\" rel=\"noopener\">cpi.makecir.com</a> 이 공개하는 SP☆12 채보별 수치로 계산한 근사치입니다. 원래 CPI 와 수십 점 차이가 날 수 있습니다. 문제가 있으면 디스코드로 알려 주세요."
+msgstr "プロフィールの CPI(推定)は <a href=\"https://cpi.makecir.com/\" target=\"_blank\" rel=\"noopener\">cpi.makecir.com</a> が公開している SP☆12 譜面ごとの数値から計算した近似値です。本来の CPI と数十ポイントずれることがあります。問題があれば Discord でお知らせください。"
+
+msgid "프로필이 비공개라 공유 주소는 다른 사람에게 열리지 않습니다."
+msgstr "プロフィールが非公開のため、共有アドレスは他の人には開けません。"
+
 msgid "플레이 기록 — 서열표에서 곡별로 기록한 클리어 램프와 점수."
 msgstr "プレイ記録 — 難易度表で曲ごとに記録したクリアランプとスコア。"
 
@@ -1319,6 +1421,9 @@ msgstr "1 日に何回叩いたかを記録してこのサイトに送ります�
 
 msgid "한 번 더 입력"
 msgstr "もう一度入力"
+
+msgid "함께 쓰는 프로젝트"
+msgstr "利用しているプロジェクト"
 
 msgid "합계"
 msgstr "合計"

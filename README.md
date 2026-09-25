@@ -214,6 +214,7 @@ IIDX 와 beatoraja 사이의 서든+ 값을 환산합니다. 리프트를 함께
 | `POST` | `/api/v1/update-typing-count/` | `Authorization: Token <키>` | 타건 수 누적 |
 | `POST` | `/api/v1/update-machine-status/` | `Authorization: Token <키>` (운영자 전용) | 기계 대기열 갱신 |
 | `POST` | `/api/v1/records/` | `Authorization: Token <키>` | 게임 기록(`tracker.tsv` 본문) 반영 |
+| `GET` | `/api/v1/me/` | `Authorization: Token <키>` | 토큰 주인의 아이디 확인(동기화 앱이 씁니다) |
 
 ```bash
 curl -X POST https://beatmania.app/api/v1/update-typing-count/ \
@@ -233,7 +234,7 @@ curl -X POST https://beatmania.app/api/v1/update-typing-count/ \
 | `records` | 토큰을 가진 **모든 사용자** | 자기 서열표 기록만 바꿉니다 |
 | `update-machine-status` | **운영자 계정의 토큰만** | 기계 대기열은 모든 방문자가 함께 보는 값이라, 아무나 바꿀 수 있으면 안 됩니다 |
 
-`records` 는 Reflux 가 만든 `tracker.tsv` 를 **본문 그대로** 받습니다
+`records` 는 [Reflux](https://github.com/olji/Reflux)(MIT)가 만든 `tracker.tsv` 를 **본문 그대로** 받습니다. 게임 옆에 상주하며 이 파일을 보내는 앱은 [beatmania.app-synchronizer](https://github.com/Coldlapse/beatmania.app-synchronizer) 입니다(Reflux 포크 [OhSorry-DP/Reflux](https://github.com/OhSorry-DP/Reflux) 사용)
 (`Content-Type: text/tab-separated-values; charset=utf-8`). 레벨 10 이상 채보의
 클리어 램프와 등급을 **지금 기록보다 좋을 때만** 올리고, 같은 파일을 다시 보내도 결과가 같습니다.
 응답은 `{created, improved, unchanged, unmatched, unmatched_titles}` 입니다.

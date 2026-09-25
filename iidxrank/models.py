@@ -345,3 +345,19 @@ class RecordSync(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+
+
+class CpiValue(models.Model):
+    """cpi.makecir.com 이 공개하는 SP☆12 채보별 램프 난이도(iidxrank/cpi.py).
+
+    하루 한 번 통째로 갈아 끼운다(manage.py update_cpi). 원 사이트 값을 그대로
+    담아 두는 자리라, 원 사이트 운영자가 원하지 않으면 이 표를 비우면 된다.
+    """
+    song = models.ForeignKey(Song, on_delete=models.CASCADE, related_name='cpi_values')
+    lamp = models.SmallIntegerField()                  # 3 EASY ~ 7 FC (iidx.py 번호)
+    mu = models.FloatField(null=True)                  # 적정CPI. None = 아무도 달성 못 함
+    width = models.FloatField(null=True)               # 개인차도(달성률 25~75% 폭)
+    fetched_at = models.DateTimeField()
+
+    class Meta:
+        unique_together = [('song', 'lamp')]

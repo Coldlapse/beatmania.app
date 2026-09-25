@@ -36,6 +36,9 @@ msgstr "- 为 BMS(beatoraja) 玩家实现白数字换算器"
 msgid "- CPI 사이트 연계 레이팅 시스템 및 리더보드 구현"
 msgstr "- 实现与 CPI 站点联动的评分系统与排行榜"
 
+msgid "- CPI 연계 레이팅 추정 도입"
+msgstr "- 引入基于 CPI 的评分估算"
+
 msgid "- INFINITAS의 레겐데리아 업뎃에 맞추어 서열표에 [L] 난이도가 지원되도록 기능 추가, 곡 배경색으로 구분하도록 설정"
 msgstr "- 配合 INFINITAS 的 LEGGENDARIA 更新，难度表支持 [L] 难度，并以曲目背景色区分"
 
@@ -44,6 +47,9 @@ msgstr "- 通过 Reflux 实现数据自动更新"
 
 msgid "- SSL 인증서 적용 및 점수순 정렬 추가"
 msgstr "- 应用 SSL 证书并新增按分数排序"
+
+msgid "- healthcheck 구현"
+msgstr "- 实现健康检查"
 
 msgid "- healthcheck 구현(완료)"
 msgstr "- 实现健康检查（已完成）"
@@ -59,6 +65,9 @@ msgstr "- 克隆 iidxranktable 项目并导入 INFINITAS 收录曲"
 
 msgid "- 난이도표 UI 한글화"
 msgstr "- 难度表 UI 韩语化"
+
+msgid "- 다국어 지원(영문·일본어·중국어) 번역 추가"
+msgstr "- 新增多语言支持（英语、日语、中文）"
 
 msgid "- 다국어 지원(영문·일본어·중국어) 번역 추가(완료)"
 msgstr "- 新增多语言支持（英语、日语、中文）（已完成）"
@@ -98,6 +107,9 @@ msgstr "- 对全部代码进行通盘重构并整理结构"
 
 msgid "- 점수(랭크)순 정렬 기능 구현"
 msgstr "- 实现按分数（等级）排序"
+
+msgid "- 타건 기록 리더보드 추가"
+msgstr "- 新增击键记录排行榜"
 
 msgid "- 타건 기록 리더보드 추가(완료)"
 msgstr "- 新增击键记录排行榜（已完成）"
@@ -140,6 +152,9 @@ msgstr "2026 Q2（已完成）"
 
 msgid "2026 Q2 (진행 중)"
 msgstr "2026 Q2（进行中）"
+
+msgid "2026 Q3 (완료)"
+msgstr "2026 Q3（已完成）"
 
 msgid "2026 Q3 (진행 중)"
 msgstr "2026 Q3（进行中）"
@@ -216,6 +231,9 @@ msgstr "本工具适用于与 IIDX 结构相同的皮肤，例如 beatoraja 的 
 msgid "Buy me a coffee"
 msgstr "Buy me a coffee"
 
+msgid "CPI 를 계산할 기록이 부족합니다"
+msgstr "记录不足，无法估算 CPI"
+
 msgid "Cloudflare 상태"
 msgstr "Cloudflare 状态"
 
@@ -258,11 +276,20 @@ msgstr "用于连接 IIDXwidget 应用的个人令牌。"
 msgid "IIDX는 레인 전체 높이를 1000으로 본다. 서든 플러스는 위에서 내려오는 덮개의 높이이고, 리프트는 아래에서 올라오는 덮개의 높이다. 둘 다 같은 1000 기준의 절대값이라, 보이는 넓이는 <b>1000 − 서든 − 리프트</b>가 된다."
 msgstr "IIDX 把整条轨道的高度视为 1000。SUDDEN+ 是从上方降下的遮罩高度，LIFT 是从下方升起的遮罩高度。两者都是以同一个 1000 为基准的绝对值，因此可见范围为 <b>1000 − SUDDEN+ − LIFT</b>。"
 
+msgid "INFINITAS 가 실행되는 동안 게임 기록을 읽어 tracker.tsv 로 남기는 도구입니다. 이 페이지와 동기화 앱이 읽는 파일이 이것입니다."
+msgstr "在 INFINITAS 运行期间读取游戏记录并写入 tracker.tsv 的工具。本页面和同步应用读取的就是这个文件。"
+
 msgid "INFINITAS 를 켜 둔 동안 옆에 상주하면서 기록이 바뀔 때마다 자동으로 올리는 앱을 준비하고 있습니다. 위와 같은 API 토큰을 씁니다."
 msgstr "我们正在准备一款应用：在 INFINITAS 运行期间常驻后台，记录变化时自动上传。它使用同一个 API 令牌。"
 
+msgid "INF오소리"
+msgstr "INFOhSorry"
+
 msgid "INF오소리를 쓰신다면 이 위치에 있습니다:"
 msgstr "如果您使用 INFOhSorry，文件在这里："
+
+msgid "INF오소리를 쓴다면: INF오소리도 내부에서 Reflux 를 실행해 같은 파일을 만들어 둡니다."
+msgstr "如果使用 INFOhSorry：它会在内部运行 Reflux 并生成同一文件。"
 
 msgid "IR Profile"
 msgstr "IR 主页"
@@ -273,11 +300,23 @@ msgstr "JPG、PNG、GIF 或 WebP，最大 2MB。建议使用正方形图片。"
 msgid "Reflux 가 만든 <code>tracker.tsv</code> 를 올리면 레벨 10 이상 채보의 클리어 램프와 등급을 서열표에 반영합니다."
 msgstr "上传 Reflux 生成的 <code>tracker.tsv</code>，即可将 10 级以上谱面的通关灯和评级反映到难度表。"
 
+msgid "Reflux 를 직접 실행한다면: Reflux.exe 가 있는 폴더"
+msgstr "如果直接运行 Reflux：Reflux.exe 所在的文件夹"
+
 msgid "SP 단위"
 msgstr "SP 段位"
 
 msgid "SPL 난이도 지원 추가"
 msgstr "新增 SPL 难度支持"
+
+msgid "SP☆12 %(n)s채보 기준"
+msgstr "基于 %(n)s 张 SP☆12 谱面"
+
+msgid "SP☆12 %(n)s채보의 클리어 램프로 계산한 추정값입니다. 채보별 값은 cpi.makecir.com 의 공개 수치를 씁니다. 문제가 있으면 알려 주세요."
+msgstr "根据 SP☆12 %(n)s 张谱面的通关灯计算的估算值。各谱面数值使用 cpi.makecir.com 公开的数据。如有问题请告诉我们。"
+
+msgid "SP☆12 클리어 램프가 %(n)s채보 이상 있어야 추정할 수 있습니다."
+msgstr "需要至少 %(n)s 张 SP☆12 谱面的通关灯才能估算。"
 
 msgid "UTF-8 로 읽을 수 없는 파일입니다."
 msgstr "无法以 UTF-8 读取该文件。"
@@ -375,6 +414,12 @@ msgstr "验证注册时使用的邮箱后即可设置新密码。"
 msgid "가입할 때 쓴 이메일을 인증하면 아이디를 알려 드립니다."
 msgstr "验证注册时使用的邮箱后即可查看 ID。"
 
+msgid "각 채보·램프를 \"달성했는가\" 로 보고, 모든 기록을 가장 잘 설명하는 CPI 를 찾습니다(최대우도). ASSIST 는 FAILED 로, 기록 없는 채보는 뺍니다."
+msgstr "将每个谱面·灯视为\"是否达成\"，求出最能解释全部记录的 CPI(最大似然)。ASSIST 按 FAILED 处理，无记录的谱面不计。"
+
+msgid "같은 Reflux 를 쓰는 기록 분석 앱입니다. 이미 쓰고 계신 분이 그 파일을 그대로 올리거나 동기화 앱과 함께 쓸 수 있게 연동했습니다. 코드를 가져오지는 않았습니다."
+msgstr "使用同一 Reflux 的记录分析应用。为了让现有用户可以直接上传该文件或与同步应用同时使用而做了联动。未使用其代码。"
+
 msgid "같은 방문자가 여러 서열표를 봐도 한 번으로 셉니다"
 msgstr "同一访客浏览多个难度表也只计一次"
 
@@ -465,6 +510,9 @@ msgstr "每个账号发放一个的钥匙。下列程序都用这一个令牌确
 msgid "계정마다 하나씩 발급되며, 프로그램 설정에 넣으면 됩니다."
 msgstr "每个账号发放一个，填入程序设置即可。"
 
+msgid "곡"
+msgstr "曲目"
+
 msgid "곡 랭킹"
 msgstr "歌曲排行"
 
@@ -476,6 +524,9 @@ msgstr "搜索曲名"
 
 msgid "공개를 원하지 않으면 가입 후 <b>설정 → 프로필 비공개</b>를 켜면 됩니다. 켜면 이 주소로 접속해도 아무것도 보이지 않고, 유저 목록에도 나타나지 않습니다. 언제든 다시 끌 수 있습니다."
 msgstr "如果不希望被公开，注册后开启 <b>设置 → 资料不公开</b> 即可。开启后此网址不会显示任何内容，也不会出现在用户列表中。随时可以关闭。"
+
+msgid "공유"
+msgstr "分享"
 
 msgid "공유 주소 복사"
 msgstr "复制分享链接"
@@ -549,6 +600,12 @@ msgstr "下一页"
 msgid "다크 모드로 전환"
 msgstr "切换到深色模式"
 
+msgid "달성 난도가 높은 기록"
+msgstr "达成难度高的记录"
+
+msgid "달성 확률"
+msgstr "达成概率"
+
 msgid "대기 현황"
 msgstr "排队情况"
 
@@ -584,6 +641,9 @@ msgstr "此操作无法撤销。"
 
 msgid "디스코드"
 msgstr "Discord"
+
+msgid "램프"
+msgstr "灯"
 
 msgid "램프순"
 msgstr "按通关灯"
@@ -653,6 +713,9 @@ msgstr "查看未找到的曲目"
 
 msgid "무엇을 하나요"
 msgstr "这一步做什么"
+
+msgid "문제가 있으면 디스코드로 알려 주세요."
+msgstr "如有问题请在 Discord 告诉我们。"
 
 msgid "반영했습니다"
 msgstr "已应用"
@@ -912,6 +975,9 @@ msgstr "还没有记录。连接 IIDXwidget 后会显示在这里。"
 msgid "앱"
 msgstr "应用"
 
+msgid "어떻게 계산하나요"
+msgstr "计算方法"
+
 msgid "언어 선택"
 msgstr "语言"
 
@@ -956,6 +1022,9 @@ msgstr "查看外部监控塔"
 
 msgid "외부 도구 연동을 쓰는 경우 그 인증 토큰."
 msgstr "如果使用外部工具联动，则包括其认证令牌。"
+
+msgid "원래 CPI 는 약 3만 명의 램프와 직접 비교해 계산하므로 같은 값이 나오지 않습니다. 공개 사용자 9명과 비교했을 때 평균 13점, 가장 크게 35점 차이가 났습니다(2026-09-26)."
+msgstr "原 CPI 是与约 3 万名玩家的灯直接比较计算的，因此数值不会相同。与 9 名公开用户比较，平均相差 13 分，最大相差 35 分(2026-09-26)。"
 
 msgid "웹"
 msgstr "网页"
@@ -1125,6 +1194,9 @@ msgstr "保存"
 msgid "저희는 계정 인증과 아이디·비밀번호 찾기 외의 목적으로는 메일을 보내지 않습니다. 마케팅 메일도 보내지 않습니다."
 msgstr "除账号验证和找回 ID、密码之外，我们不会因其他目的发送邮件，也没有营销邮件。"
 
+msgid "적정CPI"
+msgstr "适正CPI"
+
 msgid "전체"
 msgstr "全部"
 
@@ -1206,6 +1278,18 @@ msgstr "在过去 7 天内"
 msgid "지난 기록"
 msgstr "历史记录"
 
+msgid "채보마다 가장 높은 램프 하나를, 그 램프의 적정CPI 가 높은 순으로 보여 줍니다. 달성 확률은 이 CPI 의 플레이어가 그 램프를 달성할 확률입니다 — 낮을수록 실력에 비해 잘 해낸 기록입니다."
+msgstr "按每个谱面的最高灯，以该灯的适正CPI从高到低显示。达成概率是该 CPI 的玩家达成此灯的概率，越低说明越超出实力。"
+
+msgid "채보별 값 갱신: %(d)s"
+msgstr "谱面数值更新: %(d)s"
+
+msgid "채보별 값은 <a href=\"https://cpi.makecir.com/\" target=\"_blank\" rel=\"noopener\">cpi.makecir.com</a> 이 공개하는 램프별 적정CPI(달성률 %(half)s 지점)와 개인차도(%(mid)s 폭)입니다."
+msgstr "各谱面数值为 <a href=\"https://cpi.makecir.com/\" target=\"_blank\" rel=\"noopener\">cpi.makecir.com</a> 公开的各灯适正CPI(达成率 %(half)s 处)与个人差度(%(mid)s 的宽度)。"
+
+msgid "채보별 값은 <a href=\"https://cpi.makecir.com/\" target=\"_blank\" rel=\"noopener\">cpi.makecir.com</a> 이 공개하는 램프별 적정CPI(달성률 50% 지점)와 개인차도(25~75% 폭)입니다."
+msgstr "各谱面数值为 <a href=\"https://cpi.makecir.com/\" target=\"_blank\" rel=\"noopener\">cpi.makecir.com</a> 公开的各灯适正CPI(达成率 50% 处)与个人差度(25~75% 的宽度)。"
+
 msgid "초기화"
 msgstr "重置"
 
@@ -1218,8 +1302,14 @@ msgstr "最近 %(h)s 小时 · 每 %(m)s 分钟检查"
 msgid "최근 동기화"
 msgstr "最近同步"
 
+msgid "최신 INFINITAS 패치에 대응한 Reflux 포크입니다. 원본은 2026년 5월 이후 갱신이 없어, 동기화 앱은 이 판을 받아 씁니다."
+msgstr "适配最新 INFINITAS 补丁的 Reflux 分支。原版自 2026 年 5 月后未再更新，因此同步应用使用此版本。"
+
 msgid "최종 수정일"
 msgstr "最后更新日期"
+
+msgid "추정"
+msgstr "估算"
 
 msgid "추후 예정"
 msgstr "后续计划"
@@ -1232,6 +1322,9 @@ msgstr "开启后，他人将无法在难度表和用户列表中看到你。"
 
 msgid "클리어 기록 가져오기"
 msgstr "导入通关记录"
+
+msgid "클립보드에 CPI 공유 주소가 복사되었습니다!"
+msgstr "CPI 分享链接已复制到剪贴板！"
 
 msgid "타건 수"
 msgstr "打键数"
@@ -1259,6 +1352,9 @@ msgstr "IIDX SUDDEN+"
 
 msgid "파일로 올리기"
 msgstr "上传文件"
+
+msgid "파일은 Reflux 를 어떻게 띄우는지에 따라 이곳에 있습니다."
+msgstr "文件位置取决于您如何运行 Reflux。"
 
 msgid "파일을 골라 주세요."
 msgstr "请选择文件。"
@@ -1305,6 +1401,12 @@ msgstr "你的资料为不公开，因此不会出现在排行榜。你的记录
 msgid "프로필을 비공개로 설정한 분은 순위에서 제외됩니다"
 msgstr "将资料设为不公开的用户不计入排行榜"
 
+msgid "프로필의 CPI(추정)는 <a href=\"https://cpi.makecir.com/\" target=\"_blank\" rel=\"noopener\">cpi.makecir.com</a> 이 공개하는 SP☆12 채보별 수치로 계산한 근사치입니다. 원래 CPI 와 수십 점 차이가 날 수 있습니다. 문제가 있으면 디스코드로 알려 주세요."
+msgstr "个人资料中的 CPI(估算)是根据 <a href=\"https://cpi.makecir.com/\" target=\"_blank\" rel=\"noopener\">cpi.makecir.com</a> 公开的 SP☆12 各谱面数值计算的近似值，可能与原 CPI 相差数十分。如有问题请在 Discord 告诉我们。"
+
+msgid "프로필이 비공개라 공유 주소는 다른 사람에게 열리지 않습니다."
+msgstr "您的个人资料为非公开，他人无法打开分享链接。"
+
 msgid "플레이 기록 — 서열표에서 곡별로 기록한 클리어 램프와 점수."
 msgstr "游玩记录 — 你在难度表上按曲目记录的通关灯与分数。"
 
@@ -1319,6 +1421,9 @@ msgstr "统计每天的打键数并发送到本站。发送的数值会累积在
 
 msgid "한 번 더 입력"
 msgstr "请再输入一次"
+
+msgid "함께 쓰는 프로젝트"
+msgstr "所使用的项目"
 
 msgid "합계"
 msgstr "合计"
