@@ -153,6 +153,15 @@ def reset_password(request):
             if user is not None:
                 user.set_password(form.cleaned_data['new_password'])
                 user.save()
+                # 재설정은 1회 인증의 조건(이메일 확인, 새 비밀번호 규칙, 그 주소를
+                # 쓰는 계정이 하나뿐 — recoverable_user 가 보장)을 모두 지난다.
+                # 기록하지 않으면 재설정 직후 로그인에서 인증 메일이 한 번 더 간다.
+                sec = accounts.security_of(user)
+                if not sec.newrulepassed:
+                    sec.newrulepassed = True
+                    sec.email_verified_at = timezone.now()
+                    sec.migrated_at = timezone.now()
+                    sec.save()
             accounts.clear_verification(request, V.RESET_PW)
             done = True
     else:

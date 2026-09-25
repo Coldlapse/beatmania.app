@@ -11,6 +11,7 @@ from django.core.paginator import Paginator
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.models import User
 from django.db.models import F
+from iidxrank import accounts
 from iidxrank import models
 from iidxrank import forms
 import settings
@@ -271,6 +272,15 @@ def join(request):
             # automatically create player object
             #rp.get_player_from_user(user)
             rp.newplayer(user)
+            # 가입 폼이 이메일 인증과 새 비밀번호 규칙을 이미 요구한다. 그 사실을
+            # 남기지 않으면 미들웨어가 새 가입자를 '기존 사용자'로 보고 1회 인증
+            # 화면으로 보내, 가입 직후 인증 메일이 한 번 더 나간다.
+            # (2026-09-02 ~ 09-26 가입자 8명 전원이 그렇게 두 번 인증했다.)
+            sec = accounts.security_of(user)
+            sec.newrulepassed = True
+            sec.email_verified_at = timezone.now()
+            sec.save()
+            accounts.clear_verification(request, 'signup')
             user = authenticate(username=form.data['id'], password=form.data['password'])
             login_django(request, user)
             return redirect('home')
