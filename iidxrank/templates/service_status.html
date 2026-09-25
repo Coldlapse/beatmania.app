@@ -122,11 +122,51 @@
       {% endfor %}
 
       <p class="small text-body-secondary mt-3 mb-0">
-        {% blocktrans %}이 점검은 beatmania.app 안에서 스스로를 확인한 결과입니다. 사이트 자체가 내려가면 이 페이지도 열리지 않으므로, 바깥에서 같은 항목을 확인하는 점검기를 따로 둘 예정입니다.{% endblocktrans %}
-        <span class="bm-health-external">{% trans '(외부 점검기: 준비 중)' %}</span>
+        {% blocktrans %}이 점검은 beatmania.app 안에서 스스로를 확인한 결과입니다. 사이트 자체가 내려가면 이 페이지도 열리지 않으므로, 바깥에 외부 감시탑을 따로 두었습니다. 외부 감시탑은 1분마다 사이트와 데이터베이스, Cloudflare 상태를 확인합니다.{% endblocktrans %}
+        <a class="bm-health-external" href="{{ watchtower_url }}" target="_blank" rel="noopener">{% trans '외부 감시탑 보기' %} <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i></a>
       </p>
     </div>
   </div>
+
+  {% comment %}
+    외부 감시탑(stats.polygon.nz)의 Cloudflare 항목. 감시탑 화면은 iframe 을
+    막아 두었고(frame-ancestors 'none') 공개 JSON 에는 CORS 가 없어, 서버가
+    받아 이 사이트 모양으로 그린다(views_status._watchtower, 60초 캐시).
+    못 받으면 이 칸을 통째로 숨긴다 — 이 페이지가 감시탑에 기대어 깨지면 안 된다.
+  {% endcomment %}
+  {% if watchtower %}
+  <div class="card bm-panel mt-3">
+    <div class="card-body">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+        <h2 class="h6 mb-0">{% trans 'Cloudflare 상태' %}</h2>
+        <span class="small text-body-secondary">{% trans '관련 거점·서비스' %}</span>
+      </div>
+      <div class="bm-cf-grid">
+        {% for c in watchtower.components %}
+        <div class="bm-cf-item">
+          <span class="bm-health-dot bm-health-{{ c.status }}" aria-hidden="true"></span>
+          <span>{{ c.name }}</span>
+        </div>
+        {% endfor %}
+      </div>
+      {% if watchtower.incidents %}
+      <ul class="bm-cf-incidents small mt-3 mb-0">
+        {% for i in watchtower.incidents %}
+        <li>
+          <i class="bi bi-exclamation-triangle-fill text-warning" aria-hidden="true"></i>
+          {% if i.url %}<a href="{{ i.url }}" target="_blank" rel="noopener">{{ i.name }}</a>{% else %}{{ i.name }}{% endif %}
+          {% if i.status %}<span class="text-body-secondary">· {{ i.status }}</span>{% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      <p class="small text-body-secondary mt-3 mb-0">
+        {% trans '데이터 출처' %}: <a href="{{ watchtower_url }}" target="_blank" rel="noopener">{% trans '외부 감시탑' %}</a>
+        {% if watchtower.at %}· {% blocktrans with when=watchtower.at|timesince %}{{ when }} 전 확인{% endblocktrans %}{% endif %}
+      </p>
+    </div>
+  </div>
+  {% endif %}
 </div>
 
 <script>

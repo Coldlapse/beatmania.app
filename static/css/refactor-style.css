@@ -878,3 +878,11 @@ body.bm-rankpage #rankimg { margin-top: .5rem; }
 .bm-sync-num { font-size: 1.5rem; font-weight: 700; line-height: 1.2; }
 .bm-sync-label { font-size: .8rem; color: var(--bm-text-muted); }
 .bm-sync-file { max-width: 22rem; }
+
+/* --- 외부 감시탑의 Cloudflare 항목 (service_status.html) ---------------- */
+.bm-cf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); gap: .45rem 1rem; }
+.bm-cf-item { display: flex; align-items: center; gap: .5rem; font-size: .9rem; min-width: 0; }
+.bm-cf-item span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bm-cf-incidents { list-style: none; padding-left: 0; }
+.bm-cf-incidents li + li { margin-top: .25rem; }
+.bm-cf-item .bm-health-dot { flex: none; }

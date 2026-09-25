@@ -15,6 +15,9 @@ msgstr "%(tool_name)s needs an API token"
 msgid "%(when)s 전 점검"
 msgstr "checked %(when)s ago"
 
+msgid "%(when)s 전 확인"
+msgstr "checked %(when)s ago"
+
 msgid "(외부 점검기: 준비 중)"
 msgstr "(External checker: coming soon)"
 
@@ -212,6 +215,9 @@ msgstr "This works with skins built to the same structure as IIDX, such as the L
 
 msgid "Buy me a coffee"
 msgstr "Buy me a coffee"
+
+msgid "Cloudflare 상태"
+msgstr "Cloudflare status"
 
 msgid "DJ %(dj)s (%(nick)s) 님의 서열표 페이지에 접근하셨습니다. 읽기 전용입니다."
 msgstr "You are viewing DJ %(dj)s (%(nick)s)'s rank table page. It is read-only."
@@ -480,6 +486,9 @@ msgstr "shared"
 msgid "과거 기록이 없습니다."
 msgstr "No past records."
 
+msgid "관련 거점·서비스"
+msgstr "Relevant locations and services"
+
 msgid "관리자"
 msgstr "Admin"
 
@@ -557,6 +566,9 @@ msgstr "Data sync"
 
 msgid "데이터 연동 및 시스템 고도화"
 msgstr "Data integration and system upgrades"
+
+msgid "데이터 출처"
+msgstr "Data source"
 
 msgid "데이터베이스"
 msgstr "Database"
@@ -936,6 +948,12 @@ msgstr "Options"
 msgid "옵조 난이도표 백업"
 msgstr "Overjoy Table (backup)"
 
+msgid "외부 감시탑"
+msgstr "external watchtower"
+
+msgid "외부 감시탑 보기"
+msgstr "View the external watchtower"
+
 msgid "외부 도구 연동을 쓰는 경우 그 인증 토큰."
 msgstr "If you use external tool integration, its authentication token."
 
@@ -974,6 +992,9 @@ msgstr "This site does not accept things like credit card numbers or national ID
 
 msgid "이 이메일로 가입된 아이디입니다."
 msgstr "The ID registered with this email."
+
+msgid "이 점검은 beatmania.app 안에서 스스로를 확인한 결과입니다. 사이트 자체가 내려가면 이 페이지도 열리지 않으므로, 바깥에 외부 감시탑을 따로 두었습니다. 외부 감시탑은 1분마다 사이트와 데이터베이스, Cloudflare 상태를 확인합니다."
+msgstr "These checks are beatmania.app checking itself. If the site goes down, this page goes down with it, so there is a separate external watchtower outside. It checks the site, the database and Cloudflare every minute."
 
 msgid "이 점검은 beatmania.app 안에서 스스로를 확인한 결과입니다. 사이트 자체가 내려가면 이 페이지도 열리지 않으므로, 바깥에서 같은 항목을 확인하는 점검기를 따로 둘 예정입니다."
 msgstr "These checks run inside beatmania.app itself. If the site goes down this page will not open either, so a separate external checker is planned."

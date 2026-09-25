@@ -15,6 +15,9 @@ msgstr "%(tool_name)s の連携には API トークンが必要です"
 msgid "%(when)s 전 점검"
 msgstr "%(when)s前に確認"
 
+msgid "%(when)s 전 확인"
+msgstr "%(when)s前に確認"
+
 msgid "(외부 점검기: 준비 중)"
 msgstr "（外部チェッカー: 準備中）"
 
@@ -212,6 +215,9 @@ msgstr "beatoraja の LITONE 系スキンなど、IIDX と同じ構造で作ら�
 
 msgid "Buy me a coffee"
 msgstr "Buy me a coffee"
+
+msgid "Cloudflare 상태"
+msgstr "Cloudflare の状態"
 
 msgid "DJ %(dj)s (%(nick)s) 님의 서열표 페이지에 접근하셨습니다. 읽기 전용입니다."
 msgstr "DJ %(dj)s（%(nick)s）さんの難易度表ページを表示しています。読み取り専用です。"
@@ -480,6 +486,9 @@ msgstr "共通"
 msgid "과거 기록이 없습니다."
 msgstr "過去の記録はありません。"
 
+msgid "관련 거점·서비스"
+msgstr "関連拠点・サービス"
+
 msgid "관리자"
 msgstr "管理"
 
@@ -557,6 +566,9 @@ msgstr "データ連携"
 
 msgid "데이터 연동 및 시스템 고도화"
 msgstr "データ連携とシステム高度化"
+
+msgid "데이터 출처"
+msgstr "データ出典"
 
 msgid "데이터베이스"
 msgstr "データベース"
@@ -936,6 +948,12 @@ msgstr "オプション"
 msgid "옵조 난이도표 백업"
 msgstr "Overjoy 難易度表（バックアップ）"
 
+msgid "외부 감시탑"
+msgstr "外部監視塔"
+
+msgid "외부 감시탑 보기"
+msgstr "外部監視塔を見る"
+
 msgid "외부 도구 연동을 쓰는 경우 그 인증 토큰."
 msgstr "外部ツール連携を使う場合、その認証トークン。"
 
@@ -974,6 +992,9 @@ msgstr "当サイトはクレジットカード情報や住民登録番号のよ
 
 msgid "이 이메일로 가입된 아이디입니다."
 msgstr "このメールアドレスで登録された ID です。"
+
+msgid "이 점검은 beatmania.app 안에서 스스로를 확인한 결과입니다. 사이트 자체가 내려가면 이 페이지도 열리지 않으므로, 바깥에 외부 감시탑을 따로 두었습니다. 외부 감시탑은 1분마다 사이트와 데이터베이스, Cloudflare 상태를 확인합니다."
+msgstr "この点検は beatmania.app が自分自身を確認した結果です。サイトが落ちるとこのページも開けないため、外部に監視塔を別に置いています。外部監視塔は1分ごとにサイト・データベース・Cloudflare の状態を確認します。"
 
 msgid "이 점검은 beatmania.app 안에서 스스로를 확인한 결과입니다. 사이트 자체가 내려가면 이 페이지도 열리지 않으므로, 바깥에서 같은 항목을 확인하는 점검기를 따로 둘 예정입니다."
 msgstr "この確認は beatmania.app 自身が内部で行った結果です。サイト自体が落ちればこのページも開けないため、外部から同じ項目を確認するチェッカーを別途用意する予定です。"

@@ -15,6 +15,9 @@ msgstr "%(tool_name)s 需要 API 令牌"
 msgid "%(when)s 전 점검"
 msgstr "%(when)s前检查"
 
+msgid "%(when)s 전 확인"
+msgstr "%(when)s前确认"
+
 msgid "(외부 점검기: 준비 중)"
 msgstr "（外部检查器：准备中）"
 
@@ -212,6 +215,9 @@ msgstr "本工具适用于与 IIDX 结构相同的皮肤，例如 beatoraja 的 
 
 msgid "Buy me a coffee"
 msgstr "Buy me a coffee"
+
+msgid "Cloudflare 상태"
+msgstr "Cloudflare 状态"
 
 msgid "DJ %(dj)s (%(nick)s) 님의 서열표 페이지에 접근하셨습니다. 읽기 전용입니다."
 msgstr "您正在查看 DJ %(dj)s（%(nick)s）的难度表页面，此页面为只读。"
@@ -480,6 +486,9 @@ msgstr "通用"
 msgid "과거 기록이 없습니다."
 msgstr "没有历史记录。"
 
+msgid "관련 거점·서비스"
+msgstr "相关节点与服务"
+
 msgid "관리자"
 msgstr "管理"
 
@@ -557,6 +566,9 @@ msgstr "数据联动"
 
 msgid "데이터 연동 및 시스템 고도화"
 msgstr "数据联动与系统升级"
+
+msgid "데이터 출처"
+msgstr "数据来源"
 
 msgid "데이터베이스"
 msgstr "数据库"
@@ -936,6 +948,12 @@ msgstr "选项"
 msgid "옵조 난이도표 백업"
 msgstr "Overjoy 难度表（备份）"
 
+msgid "외부 감시탑"
+msgstr "外部监控塔"
+
+msgid "외부 감시탑 보기"
+msgstr "查看外部监控塔"
+
 msgid "외부 도구 연동을 쓰는 경우 그 인증 토큰."
 msgstr "如果使用外部工具联动，则包括其认证令牌。"
 
@@ -974,6 +992,9 @@ msgstr "本站不接收信用卡信息或身份证号一类的信息，也没有
 
 msgid "이 이메일로 가입된 아이디입니다."
 msgstr "使用该邮箱注册的 ID。"
+
+msgid "이 점검은 beatmania.app 안에서 스스로를 확인한 결과입니다. 사이트 자체가 내려가면 이 페이지도 열리지 않으므로, 바깥에 외부 감시탑을 따로 두었습니다. 외부 감시탑은 1분마다 사이트와 데이터베이스, Cloudflare 상태를 확인합니다."
+msgstr "这些检查是 beatmania.app 对自身的检查。网站宕机时本页也无法打开，因此在外部另设了监控塔。外部监控塔每分钟检查网站、数据库和 Cloudflare 的状态。"
 
 msgid "이 점검은 beatmania.app 안에서 스스로를 확인한 결과입니다. 사이트 자체가 내려가면 이 페이지도 열리지 않으므로, 바깥에서 같은 항목을 확인하는 점검기를 따로 둘 예정입니다."
 msgstr "此检查是 beatmania.app 内部自我确认的结果。若站点本身宕机，本页面也无法打开，因此计划另设从外部检查相同项目的检查器。"

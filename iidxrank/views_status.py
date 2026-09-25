@@ -13,6 +13,8 @@
 """
 import datetime
 
+import requests
+from django.core.cache import cache
 from django.db.models import Count
 from django.db.models.functions import TruncDate, TruncHour
 from django.http import JsonResponse
@@ -153,6 +155,62 @@ def _uptime():
     return out
 
 
+# --- 외부 감시탑 ------------------------------------------------------------
+#
+# 이 페이지의 상태 점검은 beatmania.app 이 스스로를 본 결과라, 사이트가 통째로
+# 죽으면 아무것도 알려 주지 못한다. 그래서 바깥(오라클 인스턴스)에 감시탑을 따로
+# 두었다(polygon 쪽 작업, 2026-09-26). 감시탑은 1분마다 /status/health.json 과
+# Cloudflare 상태를 본다.
+#
+# 여기에는 그중 Cloudflare 부분만 옮겨 싣는다. 감시탑 화면은 frame-ancestors 'none'
+# 이라 iframe 으로 넣을 수 없고, 공개 JSON 에는 CORS 헤더가 없어 브라우저가 직접
+# 받을 수도 없다. 그래서 서버가 받아 이 사이트의 모양으로 그린다.
+#
+# 감시탑이 죽어도 이 페이지는 떠야 한다. 짧게 기다리고, 실패도 캐시해서 감시탑이
+# 내려가 있는 동안 요청마다 기다리지 않게 한다.
+WATCHTOWER_URL = 'https://stats.polygon.nz/'
+WATCHTOWER_API = 'https://stats.polygon.nz/api/public/status'
+WATCHTOWER_TTL = 60           # 초. 감시탑 갱신 주기와 같다
+WATCHTOWER_TIMEOUT = 2
+_WT_KEY = 'watchtower:cloudflare'
+_WT_STATUS = {'up': health.OK, 'degraded': health.DEGRADED, 'down': health.DOWN}
+
+
+def _watchtower():
+    """감시탑의 Cloudflare 항목. 못 받았으면 None."""
+    hit = cache.get(_WT_KEY)
+    if hit is not None:
+        return hit or None                 # {} 는 "실패를 캐시한 것"
+    out = {}
+    try:
+        r = requests.get(WATCHTOWER_API, timeout=WATCHTOWER_TIMEOUT,
+                         headers={'User-Agent': 'beatmania.app status page'})
+        r.raise_for_status()
+        d = r.json()
+        cf = d.get('cloudflare') or {}
+        comps = [{'name': str(c.get('name', ''))[:80],
+                  'status': _WT_STATUS.get(c.get('status'), 'none')}
+                 for c in cf.get('components') or [] if c.get('name')]
+        incidents = []
+        for i in cf.get('incidents') or []:
+            url = str(i.get('url') or '')
+            incidents.append({
+                'name': str(i.get('name', ''))[:160],
+                'status': str(i.get('status', ''))[:40],
+                # 남의 데이터라 링크는 Cloudflare 상태 페이지로 가는 것만 싣는다.
+                'url': url if url.startswith('https://www.cloudflarestatus.com/') else '',
+            })
+        if comps:
+            at = d.get('at')
+            out = {'components': comps, 'incidents': incidents,
+                   'at': (datetime.datetime.fromtimestamp(at / 1000, tz=datetime.timezone.utc)
+                          if isinstance(at, (int, float)) else None)}
+    except (requests.RequestException, ValueError, TypeError, AttributeError):
+        out = {}
+    cache.set(_WT_KEY, out, WATCHTOWER_TTL)
+    return out or None
+
+
 @require_GET
 def service_status(request):
     _refresh_if_stale()
@@ -164,6 +222,8 @@ def service_status(request):
         'health': _uptime(),
         'health_stale_minutes': int(SELF_CHECK_AFTER.total_seconds() // 60),
         'health_window_hours': int(UPTIME_WINDOW.total_seconds() // 3600),
+        'watchtower': _watchtower(),
+        'watchtower_url': WATCHTOWER_URL,
     })
 
 
