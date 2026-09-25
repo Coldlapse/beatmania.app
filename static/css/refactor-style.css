@@ -305,6 +305,47 @@ body {
   #refactor-navbar .navbar-nav .nav-link { padding: .55rem .75rem; }
 }
 
+/* 폰 폭: 상단바를 한 줄로.
+ *
+ * 로그아웃 상태에서 한 줄에 필요한 폭이 약 467px 였다(제목 138 + 아이콘 묶음 289
+ * + 여백). 폰은 360~430px 이라 아이콘 묶음이 늘 둘째 줄로 떨어졌다(실측).
+ * 바깥 링크 둘을 메뉴로 보내고(top.html 의 .bm-nav-extras), 제목·간격을 조금
+ * 줄인다. 360px 미만(구형 소형 폰)에서는 테마 토글도 메뉴로 보낸다. */
+.bm-nav-extras { display: flex; flex-direction: column; border-top: 1px solid var(--bm-border-strong); margin-top: .25rem; padding-top: .25rem; }
+#refactor-navbar .bm-nav-extras .nav-link {
+  display: flex; align-items: center; gap: .6rem; width: 100%;
+  text-align: left; background: none; border: 0; border-radius: .5rem;
+  padding: .55rem .75rem;               /* 위 메뉴 항목과 같은 여백 */
+  color: var(--bm-nav-link); font-weight: 500;
+}
+#refactor-navbar .bm-nav-extras .nav-link:hover,
+#refactor-navbar .bm-nav-extras .nav-link:focus-visible {
+  color: var(--bm-nav-link-hover); background-color: var(--bm-pill-hover-bg);
+}
+.bm-extra-theme { display: none !important; }
+@media (max-width: 575.98px) {
+  #refactor-navbar .bm-bar-out { display: none; }
+  #refactor-navbar .bm-brand { font-size: 1.15rem; margin-right: .5rem; }
+  #refactor-navbar .bm-lang-btn::after { display: none; }
+  #refactor-navbar .bm-bar-theme { margin-right: .25rem !important; }
+  #refactor-navbar .navbar-toggler { margin-left: .25rem !important; padding: .2rem .4rem; }
+  /* 일본어 'ログイン' 은 한국어보다 넓어 360px 에서도 넘쳤다(실측). */
+  #refactor-navbar .bm-icon-btn { padding: .4rem .45rem; }
+  #refactor-navbar .btn-sm { padding-left: .45rem; padding-right: .45rem; }
+}
+/* 768px 이상에서만 아이디를 글자로 보인다. 긴 아이디(실측 최장 15자)가
+   576~640px 에서 상단바를 둘째 줄로 밀었다(md 부터로 올림). 길이도 묶는다.
+   1200~1399px 은 메뉴 일곱 개가 펼쳐지는 구간이라 아이디까지 넣으면 가로로
+   넘친다(1200px 에서 77px, 실측) — 그 구간은 아이콘만. */
+.bm-user-name {
+  display: inline-block; max-width: 8rem; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom;
+}
+@media (max-width: 359.98px) {
+  #refactor-navbar .bm-bar-theme { display: none; }
+  .bm-extra-theme { display: flex !important; }
+}
+
 /* --- 공용 페이지 요소 ----------------------------------------------------- */
 .bm-page-title {
   font-size: 1.6rem;
