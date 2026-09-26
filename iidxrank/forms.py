@@ -39,11 +39,15 @@ def check_password_lenient(user, raw):
     return stripped != raw and user.check_password(stripped)
 
 
-def authenticate_lenient(username, raw):
-    """check_password_lenient 와 같은 규칙의 authenticate."""
-    user = authenticate(username=username, password=raw)
+def authenticate_lenient(username, raw, request=None):
+    """check_password_lenient 와 같은 규칙의 authenticate.
+
+    request 는 로그인 시도 제한(auth_backend)이 IP 를 알기 위해 넘긴다. 공백을 뺀 두 번째 대조는
+    request 없이 부른다 — 한 번의 로그인 시도가 실패 두 번으로 세이지 않게(잠김 여부는 첫 대조가 이미 봤다).
+    """
+    user = authenticate(request, username=username, password=raw)
     if user is None and raw.strip() != raw:
-        user = authenticate(username=username, password=raw.strip())
+        user = authenticate(None, username=username, password=raw.strip())
     return user
 
 
@@ -58,7 +62,13 @@ class LoginForm(forms.Form):
             strip=False, widget=forms.PasswordInput(attrs={
                 'autocomplete': 'current-password', 'placeholder': _('비밀번호')}))
 
+    def __init__(self, *args, request=None, **kwargs):
+        # 로그인 시도 제한은 IP 를 봐야 해서 request 를 받는다(없으면 제한 없이 대조만 한다)
+        self.request = request
+        super(LoginForm, self).__init__(*args, **kwargs)
+
     def clean(self):
+        from iidxrank import client_ip, throttle
         cleaned_data = super(LoginForm, self).clean()
         if ('id' not in cleaned_data):
             return
@@ -66,7 +76,15 @@ class LoginForm(forms.Form):
             return
         _username = cleaned_data['id']
         _password = cleaned_data['password']
-        user = authenticate_lenient(_username, _password)
+        # 잠겼으면 왜 안 되는지 알려 준다. 잠김은 (아이디, IP) 조합이나 IP 단위라, 이 문구가
+        # 그 아이디가 있는지를 알려 주지는 않는다(없는 아이디로 틀려도 똑같이 잠긴다).
+        if self.request is not None:
+            blocked, left = throttle.login_blocked(_username, client_ip.get(self.request))
+            if blocked:
+                raise forms.ValidationError(
+                    _('로그인 시도가 너무 많습니다. %(min)d분 뒤에 다시 시도해 주세요.'),
+                    params={'min': max(1, (left + 59) // 60)})
+        user = authenticate_lenient(_username, _password, self.request)
         if (user==None):
             raise forms.ValidationError('ID or Password does not exists.')
         # 뷰는 이 사용자를 그대로 쓴다. 전에는 뷰가 날것 form.data 로 한 번 더 authenticate 해서,
@@ -131,12 +149,14 @@ class JoinForm(forms.Form):
         email = accounts.normalize(self.cleaned_data['email'])
         if not accounts.is_email_shaped(email):
             raise forms.ValidationError(_('이메일 주소 형식이 올바르지 않습니다.'))
-        if accounts.email_taken(email):
-            raise forms.ValidationError(_('이미 다른 계정이 쓰고 있는 이메일입니다.'))
+        # 인증 확인을 먼저 본다. 전에는 중복 검사가 먼저라, 캡차·인증 없이 이 폼만 보내도
+        # "이미 쓰는 이메일" 로 가입 여부가 샜다. 이제 중복 문구는 그 주소의 메일함을 연 사람만 본다.
         done = accounts.verified_email(self.request, 'signup') if self.request else None
         if done != email:
             raise forms.ValidationError(
                 _('이메일 인증을 먼저 끝내 주세요. 주소를 바꾸셨다면 다시 인증해야 합니다.'))
+        if accounts.email_taken(email):
+            raise forms.ValidationError(_('이미 다른 계정이 쓰고 있는 이메일입니다.'))
         return email
 
     def clean_password(self):

@@ -44,12 +44,25 @@ def _allowed_purpose(request, purpose):
 
 def _body(request):
     try:
-        return json.loads(request.body or b'{}')
+        data = json.loads(request.body or b'{}')
     except (json.JSONDecodeError, UnicodeDecodeError):
         return {}
+    # 배열·숫자 본문이면 data.get 에서 500 이었다
+    return data if isinstance(data, dict) else {}
 
 
 def verify_send(request):
+    """인증 코드 발송.
+
+    로그인하지 않은 목적(가입·아이디 찾기·비밀번호 재설정)은 **가입 여부와 상관없이 같은 응답**을
+    준다(2026-09-26). 전에는 가입은 "이미 다른 계정이 쓰고 있는 이메일", 찾기·재설정은 가입 여부에
+    따라 다른 문구를 돌려줘서 주소를 넣어 보는 것만으로 가입자 목록을 캐낼 수 있었다.
+      - 가입: 이미 쓰이는 주소면 코드 대신 "이미 가입된 주소" 안내 메일을 그 주소로 보낸다
+      - 찾기·재설정: 대상 계정이 없으면 메일을 보내지 않는다(응답은 같다)
+    발송 한도·재발송 간격도 가입 여부와 상관없이 같은 순서로 본다.
+    로그인한 사람의 목적(이메일 변경·1회 인증)은 전처럼 "이미 쓰이는 주소" 를 알려 준다 — 로그인이
+    필요하고 발송 한도가 걸려 있어 목록을 캐내는 데 쓰기 어렵다.
+    """
     if request.method != 'POST':
         return JsonResponse({'ok': False, 'message': 'POST only'}, status=405)
     data = _body(request)
@@ -60,23 +73,37 @@ def verify_send(request):
         return JsonResponse(
             {'ok': False, 'message': _('지금은 이 인증을 진행할 수 없습니다.')},
             status=403)
+    if not accounts.is_email_shaped(email):
+        return JsonResponse({'ok': False, 'message': _('이메일 주소 형식이 올바르지 않습니다.')})
 
-    # 목적별로 "그 주소가 쓸 수 있는 주소인가" 가 다르다.
-    if purpose in (V.SIGNUP, V.CHANGE, V.MIGRATE):
-        exclude = request.user if request.user.is_authenticated else None
-        if accounts.email_taken(email, exclude_user=exclude):
+    limited = accounts.send_limit_message(request, email)
+    if limited:
+        return JsonResponse({'ok': False, 'message': str(limited)})
+    left = accounts.seconds_until_resend(request, email, purpose)
+    if left:
+        return JsonResponse({'ok': False, 'message': _('%(sec)d초 뒤에 다시 보낼 수 있습니다.') % {'sec': left}})
+
+    if purpose in (V.CHANGE, V.MIGRATE):
+        if accounts.email_taken(email, exclude_user=request.user):
             return JsonResponse(
                 {'ok': False,
                  'message': _('이미 다른 계정이 쓰고 있는 이메일입니다.')})
-    elif purpose in (V.FIND_ID, V.RESET_PW):
-        # 가입 여부를 알려 주지 않는다. 없는 주소여도 같은 응답을 주고
-        # 메일만 보내지 않는다 - 그러지 않으면 가입자 목록을 캐낼 수 있다.
-        if accounts.recoverable_user(email) is None:
-            return JsonResponse(
-                {'ok': True,
-                 'message': _('가입된 주소라면 인증 코드를 보냈습니다.')})
+        accounts.note_send_request(request, email, purpose)
+        ok, message = accounts.send_code(request, email, purpose)
+        return JsonResponse({'ok': ok, 'message': str(message)})
 
-    ok, message = accounts.send_code(request, email, purpose)
+    accounts.note_send_request(request, email, purpose)
+    if purpose == V.SIGNUP:
+        sent = _('인증 코드를 보냈습니다. 메일함을 확인해 주세요.')
+        if accounts.email_taken(email):
+            accounts.send_already_registered(request, email)
+            return JsonResponse({'ok': True, 'message': str(sent)})
+    else:   # FIND_ID, RESET_PW
+        sent = _('가입된 주소라면 인증 코드를 보냈습니다. 메일이 오지 않으면 스팸함을 확인하거나 5분 뒤에 다시 요청해 주세요.')
+        if accounts.recoverable_user(email) is None:
+            return JsonResponse({'ok': True, 'message': str(sent)})
+
+    ok, message = accounts.send_code(request, email, purpose, success_message=sent)
     return JsonResponse({'ok': ok, 'message': str(message)})
 
 

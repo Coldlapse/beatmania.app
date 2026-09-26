@@ -245,6 +245,7 @@ docker compose run --rm app python manage.py showmigrations
 cd /srv/beatmania/app
 docker compose build                                    # 브라우저를 받으므로 오래 걸립니다
 docker compose run --rm app python manage.py migrate
+docker compose run --rm app python manage.py createcachetable   # 로그인·메일 횟수 제한 테이블(이미 있으면 그대로)
 docker compose up -d
 docker compose ps                                       # STATUS 가 healthy 여야 합니다
 ```
@@ -316,6 +317,7 @@ cd /srv/beatmania/app
 git pull
 docker compose build
 docker compose run --rm app python manage.py migrate
+docker compose run --rm app python manage.py createcachetable   # 로그인·메일 횟수 제한 테이블(이미 있으면 그대로)
 docker compose up -d
 docker compose logs -f app
 ```

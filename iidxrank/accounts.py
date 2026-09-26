@@ -9,10 +9,14 @@
     clear_verification(request, purpose) 인증 기록을 지운다
 
 세션에도 결과를 남기는 이유: 가입 폼이 비밀번호 오류 등으로 다시 그려져도
-이메일 인증이 풀리면 안 된다. 반대로 재발송 간격은 세션이 아니라 DB 로 잰다 -
-쿠키를 지우는 것만으로 우회되면 안 되기 때문이다.
+이메일 인증이 풀리면 안 된다.
+
+횟수 제한(2026-09-26, iidxrank/throttle.py): 발송은 IP·주소·사이트 전체 한도, 재발송 간격은
+브라우저(세션)마다, 코드 오입력은 (주소, 목적)마다 하루 한도. 가입 여부에 따라 응답이 달라지지
+않게 하는 것이 이 파일 규칙의 절반이다 — 달라지면 그 차이로 가입자 목록을 캐낼 수 있다.
 """
 
+import logging
 import re
 import secrets
 
@@ -24,7 +28,9 @@ from django.utils import timezone
 from django.utils.translation import get_language
 from django.utils.translation import gettext as _
 
-from iidxrank import models
+from iidxrank import client_ip, models, throttle
+
+log = logging.getLogger(__name__)
 
 # 세션에 인증 결과를 담는 자리. 목적별로 따로 둔다 - 가입 인증이 이메일 변경
 # 인증으로 재활용되면 안 된다.
@@ -36,7 +42,7 @@ EMAIL_RE = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]{2,}$')
 
 
 def is_email_shaped(value):
-    return bool(value) and bool(EMAIL_RE.match(value.strip()))
+    return isinstance(value, str) and bool(EMAIL_RE.match(value.strip()))
 
 
 def normalize(email):
@@ -46,7 +52,8 @@ def normalize(email):
     a.b@gmail.com 과 ab@gmail.com 을 같은 주소로 보게 되는데, 그것을 다르게
     쓰고 있는 기존 사용자가 있으면 중복으로 걸려 버린다.
     """
-    return (email or '').strip().lower()
+    # JSON 으로 숫자·목록이 와도 500 이 나지 않게 문자열만 받는다
+    return email.strip().lower() if isinstance(email, str) else ''
 
 
 # ---------------------------------------------------------------------------
@@ -105,22 +112,6 @@ def _new_code():
     return '%06d' % secrets.randbelow(1000000)
 
 
-def _latest(email, purpose):
-    return (models.EmailVerification.objects
-            .filter(email=normalize(email), purpose=purpose)
-            .order_by('-created_at').first())
-
-
-def seconds_until_resend(email, purpose):
-    """지금 다시 보낼 수 있나. 0 이면 보낼 수 있고, 양수면 그만큼 남았다."""
-    row = _latest(email, purpose)
-    if row is None:
-        return 0
-    waited = (timezone.now() - row.last_sent_at).total_seconds()
-    left = settings.EMAIL_RESEND_INTERVAL - waited
-    return max(0, int(left + 0.999))
-
-
 def _subject(purpose):
     """메일 제목.
 
@@ -148,16 +139,57 @@ def _heading(purpose):
     }[purpose]
 
 
-def send_code(request, email, purpose):
-    """코드를 만들어 보낸다. (성공여부, 메시지) 를 돌려준다."""
+def _cooldown_parts(request, email, purpose):
+    return (normalize(email), purpose, request.session.session_key or '')
+
+
+def seconds_until_resend(request, email, purpose):
+    """이 브라우저가 이 주소·목적으로 다시 보낼 수 있을 때까지 남은 초. 0 이면 지금 보낼 수 있다.
+
+    예전에는 (주소, 목적)의 마지막 발송으로 쟀다. 그러면 남이 내 주소로 5분마다 요청하는 것만으로
+    나는 영영 새 코드를 받을 수 없었다. 이제 브라우저(세션)마다 잰다. 쿠키를 지워 이 간격을
+    건너뛰는 것은 주소당·IP당 발송 한도(throttle)가 막는다.
+
+    가입 여부와 상관없이 같은 규칙이다 — 가입된 주소에만 간격이 생기면 그 차이로 가입 여부가 샌다.
+    """
+    return throttle.seconds_left('mail_cool', *_cooldown_parts(request, email, purpose))
+
+
+def send_limit_message(request, email):
+    """발송 한도에 걸렸으면 안내 문구, 아니면 None. 가입 여부와 상관없이 같은 순서로 본다."""
+    ip = client_ip.get(request)
+    if (throttle.over(throttle.MAIL_DAY[0], 'mail_day')
+            or (ip and throttle.over(throttle.MAIL_IP[0], 'mail_ip', ip))
+            or throttle.over(throttle.MAIL_ADDR[0], 'mail_addr', normalize(email))):
+        return _('지금은 인증 메일을 보낼 수 없습니다. 잠시 뒤에 다시 시도해 주세요.')
+    return None
+
+
+def note_send_request(request, email, purpose):
+    """발송 요청 하나를 센다(실제로 메일이 나갔는지와 상관없이). 재발송 간격도 여기서 시작한다."""
+    if not request.session.session_key:
+        request.session.save()
+    ip = client_ip.get(request)
+    if ip:
+        throttle.hit('mail_ip', throttle.MAIL_IP[1], ip)
+    throttle.hit('mail_addr', throttle.MAIL_ADDR[1], normalize(email))
+    throttle.hit('mail_cool', settings.EMAIL_RESEND_INTERVAL, *_cooldown_parts(request, email, purpose))
+
+
+def _deliver(email, subject, text_body, html_body):
+    """실제 발송. 사이트 전체 하루 발송량을 여기서 센다."""
+    msg = EmailMultiAlternatives(subject, text_body, settings.DEFAULT_FROM_EMAIL, [email])
+    msg.attach_alternative(html_body, 'text/html')
+    msg.send(fail_silently=False)
+    throttle.hit('mail_day', throttle.MAIL_DAY[1])
+
+
+def send_code(request, email, purpose, success_message=None):
+    """코드를 만들어 보낸다. (성공여부, 메시지) 를 돌려준다.
+
+    형식 검사·발송 한도·재발송 간격은 부르는 쪽(views_account.verify_send)이 먼저 본다.
+    """
     email = normalize(email)
-    if not is_email_shaped(email):
-        return False, _('이메일 주소 형식이 올바르지 않습니다.')
-
-    left = seconds_until_resend(email, purpose)
-    if left:
-        return False, _('%(sec)d초 뒤에 다시 보낼 수 있습니다.') % {'sec': left}
-
     if not request.session.session_key:
         request.session.save()
 
@@ -189,40 +221,84 @@ def send_code(request, email, purpose):
         'lang': get_language() or 'ko',
     })
 
-    msg = EmailMultiAlternatives(
-        subject, text_body, settings.DEFAULT_FROM_EMAIL, [email])
-    msg.attach_alternative(html_body, 'text/html')
-    msg.send(fail_silently=False)
-    return True, _('인증 코드를 보냈습니다. 메일함을 확인해 주세요.')
+    try:
+        _deliver(email, subject, text_body, html_body)
+    except Exception as e:
+        # 전에는 여기서 500 이 났고, 메일은 안 갔는데 재발송 간격만 소모됐다.
+        # 코드를 지우고 간격도 풀어 바로 다시 요청할 수 있게 한다.
+        log.warning('verification mail failed: %s', type(e).__name__)
+        row.delete()
+        throttle.reset('mail_cool', *_cooldown_parts(request, email, purpose))
+        return False, _('메일을 보내지 못했습니다. 잠시 뒤에 다시 시도해 주세요.')
+    return True, (success_message or _('인증 코드를 보냈습니다. 메일함을 확인해 주세요.'))
+
+
+def send_already_registered(request, email):
+    """가입하려는 주소가 이미 쓰이고 있을 때 — 화면 대신 그 주소의 메일함으로 알린다.
+
+    화면에 "이미 쓰는 이메일" 이라고 보여 주면 누구나 주소를 넣어 가입 여부를 알아낼 수 있었다.
+    메일함의 주인만 이 사실을 알게 한다. 링크는 넣지 않는다(인증 메일과 같은 원칙 — verify_code.html).
+    실패해도 화면 응답은 같게 둔다(여기서 달라지면 그것이 곧 신호다).
+    """
+    subject = str(_('[beatmania.app] 이미 가입된 이메일 주소입니다'))
+    lines = [
+        _('이 이메일 주소로 가입된 beatmania.app 계정이 이미 있습니다.'),
+        _('아이디가 기억나지 않으면 로그인 화면의 "아이디 찾기" 를, 비밀번호가 기억나지 않으면 "비밀번호 재설정" 을 이용해 주세요.'),
+    ]
+    text_body = '\n\n'.join(str(x) for x in lines) + '\n\n' + str(_(
+        '이 메일은 beatmania.app 의 계정 인증 때문에 발송되었습니다.\n'
+        '본인이 요청한 것이 아니라면 이 메일을 무시하셔도 됩니다.\n'))
+    html_body = render_to_string('mail/verify_code.html', {
+        'subject': subject,
+        'heading': _('이미 가입된 이메일 주소입니다'),
+        'code': None,
+        'lines': lines,
+        'lang': get_language() or 'ko',
+    })
+    try:
+        _deliver(normalize(email), subject, text_body, html_body)
+    except Exception as e:
+        log.warning('already-registered mail failed: %s', type(e).__name__)
 
 
 def check_code(request, email, purpose, code):
-    """코드를 대조한다. 맞으면 세션에 인증 사실을 남긴다."""
+    """코드를 대조한다. 맞으면 세션에 인증 사실을 남긴다.
+
+    실패 문구는 하나다. 예전에는 "먼저 코드를 받아 주세요"(그 주소로 보낸 코드가 없다) ·
+    "다른 브라우저" · "N번 남음" 이 갈려, 가입되지 않은 주소(코드가 없음)와 가입된 주소가 구별됐다.
+    """
+    generic = _('인증 코드가 맞지 않거나 만료되었습니다. 코드를 요청한 브라우저에서 입력해 주세요.')
     email = normalize(email)
-    code = (code or '').strip()
-    row = _latest(email, purpose)
-    if row is None:
-        return False, _('먼저 인증 코드를 받아 주세요.')
+    code = code.strip() if isinstance(code, str) else ''
 
-    age = (timezone.now() - row.created_at).total_seconds()
-    if age > settings.EMAIL_CODE_TTL:
-        return False, _('인증 코드가 만료되었습니다. 다시 받아 주세요.')
+    # (주소, 목적)당 하루 오입력 한도. 코드가 바뀌어도 누적한다 — 전에는 코드 하나에 5번이라
+    # 5분마다 새 코드를 받으면 하루 약 1,440번 추측할 수 있었다. 코드가 없는 주소도 똑같이 센다.
+    if throttle.over(throttle.CODE_FAIL[0], 'code_fail', email, purpose):
+        return False, _('오늘은 인증 코드를 너무 많이 틀렸습니다. 내일 다시 시도해 주세요.')
 
-    if row.attempts >= settings.EMAIL_CODE_MAX_ATTEMPTS:
-        return False, _('시도 횟수를 넘겼습니다. 인증 코드를 다시 받아 주세요.')
+    sk = request.session.session_key
+    # 이 브라우저가 받은, 아직 쓰지 않은 가장 최근 코드. 남이 같은 주소로 요청한 코드는 보지 않는다.
+    row = (models.EmailVerification.objects
+           .filter(email=email, purpose=purpose, session_key=sk, verified_at__isnull=True)
+           .order_by('-created_at').first()) if sk else None
 
-    # 코드를 알아낸 제3자가 다른 브라우저에서 쓰지 못하게 한다.
-    if row.session_key and row.session_key != request.session.session_key:
-        return False, _('인증을 시작한 브라우저에서 진행해 주세요.')
+    ok = (row is not None
+          and (timezone.now() - row.created_at).total_seconds() <= settings.EMAIL_CODE_TTL
+          and row.attempts < settings.EMAIL_CODE_MAX_ATTEMPTS
+          # compare_digest 는 ASCII 가 아닌 문자열(전각 숫자 등)에 TypeError 를 낸다
+          and code.isascii() and code.isdigit()
+          and secrets.compare_digest(row.code, code))
+    if not ok:
+        throttle.hit('code_fail', throttle.CODE_FAIL[1], email, purpose)
+        if row is not None:
+            row.attempts += 1
+            row.save(update_fields=['attempts'])
+        return False, generic
 
-    if not secrets.compare_digest(row.code, code):
-        row.attempts += 1
-        row.save(update_fields=['attempts'])
-        left = settings.EMAIL_CODE_MAX_ATTEMPTS - row.attempts
-        return False, _('인증 코드가 맞지 않습니다. (%(n)d번 남음)') % {'n': max(0, left)}
-
+    # 한 번 쓴 코드는 다시 통과하지 않는다(위 조회가 verified_at 이 빈 것만 본다)
     row.verified_at = timezone.now()
     row.save(update_fields=['verified_at'])
+    throttle.reset('code_fail', email, purpose)
 
     store = request.session.get(SESSION_KEY, {})
     store[purpose] = {'email': email, 'at': timezone.now().timestamp()}

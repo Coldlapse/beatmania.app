@@ -219,6 +219,151 @@ try:
     finally:
         models.HealthCheck.objects.filter(pk__in=[h.pk for h in hc]).delete()
 
+    # ── 2-b ────────────────────────────────────────────────────────────────
+    from django.conf import settings as dj_settings
+    from django.core import mail
+    from django.core.cache import caches
+    from django.test import RequestFactory, override_settings
+    from iidxrank import accounts as acc
+    from iidxrank import throttle as thr
+    from iidxrank.client_ip import RealClientIPMiddleware
+    caches['throttle'].clear()
+
+    print('=== 2b-1. 실제 IP ===')
+    check('미들웨어가 맨 앞', dj_settings.MIDDLEWARE[0] == 'iidxrank.client_ip.RealClientIPMiddleware')
+    mw = RealClientIPMiddleware(lambda r: r)
+    r = mw(RequestFactory().get('/', HTTP_CF_CONNECTING_IP='203.0.113.5', HTTP_X_FORWARDED_FOR='1.2.3.4'))
+    check('CF-Connecting-IP → REMOTE_ADDR·X-Forwarded-For',
+          r.META['REMOTE_ADDR'] == '203.0.113.5' and r.META['HTTP_X_FORWARDED_FOR'] == '203.0.113.5')
+    r = mw(RequestFactory().get('/', HTTP_CF_CONNECTING_IP='nope', REMOTE_ADDR='127.0.0.1'))
+    check('IP 가 아닌 값은 무시', r.META['REMOTE_ADDR'] == '127.0.0.1')
+
+    def ipc(ip):
+        return Client(HTTP_CF_CONNECTING_IP=ip)
+
+    print('=== 2b-2. 로그인 시도 제한 ===')
+    lg = User.objects.create_user('zz_sec_lg', password='Lg-right-77')
+    extra.append(lg)
+    newplayer(lg)
+    models.AccountSecurity.objects.update_or_create(user=lg, defaults={'newrulepassed': True})
+    a = ipc('198.51.100.1')
+    for _i in range(10):
+        a.post('/login/', {'id': 'zz_sec_lg', 'password': 'wrong-pw-%d' % _i})
+    r = a.post('/login/', {'id': 'zz_sec_lg', 'password': 'Lg-right-77'})
+    check('10번 틀린 뒤에는 맞는 비밀번호도 막힘', r.status_code == 200 and '_auth_user_id' not in a.session
+          and '로그인 시도가 너무 많습니다' in r.content.decode())
+    b = ipc('198.51.100.2')
+    r = b.post('/login/', {'id': 'zz_sec_lg', 'password': 'Lg-right-77'})
+    check('다른 IP 에서는 정상 로그인', r.status_code == 302 and '_auth_user_id' in b.session)
+    adm = ipc('198.51.100.1')
+    r = adm.post('/admin/login/?next=/admin/', {'username': 'zz_sec_lg', 'password': 'Lg-right-77'})
+    check('관리자 로그인에도 같은 잠금', '_auth_user_id' not in adm.session)
+    ghost = ipc('198.51.100.3')
+    for _i in range(10):
+        ghost.post('/login/', {'id': 'zz_sec_nobody', 'password': 'wrong-pw-x'})
+    r = ghost.post('/login/', {'id': 'zz_sec_nobody', 'password': 'wrong-pw-x'})
+    check('없는 아이디도 똑같이 잠김(존재 여부 안 샘)', '로그인 시도가 너무 많습니다' in r.content.decode())
+    many = ipc('198.51.100.4')
+    for _i in range(30):
+        many.post('/login/', {'id': 'zz_sec_n%02d' % _i, 'password': 'wrong-pw-x'})
+    r = many.post('/login/', {'id': 'zz_sec_lg', 'password': 'Lg-right-77'})
+    check('한 IP 가 30번 틀리면 다른 아이디도 막힘', '_auth_user_id' not in many.session)
+    ok_ip = ipc('198.51.100.5')
+    for _i in range(9):
+        ok_ip.post('/login/', {'id': 'zz_sec_lg', 'password': 'wrong'})
+    ok_ip.post('/login/', {'id': 'zz_sec_lg', 'password': 'Lg-right-77'})
+    check('성공하면 그 조합의 실패는 지워진다', thr.count('login_pair', 'zz_sec_lg', '198.51.100.5') == 0)
+
+    print('=== 2b-3. 가입 여부가 응답으로 새지 않는다 ===')
+    taken = User.objects.create_user('zz_sec_tk', email='zz_sec_taken@example.com', password='x-Unused-123')
+    extra.append(taken)
+    models.AccountSecurity.objects.update_or_create(user=taken, defaults={'newrulepassed': True})
+    send = lambda c, email, purpose: c.post('/account/verify/send/', json.dumps({'email': email, 'purpose': purpose}),
+                                            content_type='application/json').json()
+    chk = lambda c, email, purpose, code: c.post('/account/verify/check/', json.dumps(
+        {'email': email, 'purpose': purpose, 'code': code}), content_type='application/json').json()
+    import re as _re
+
+    def last_code():
+        return _re.search(r'\b(\d{6})\b', mail.outbox[-1].body).group(1)
+
+    with override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend'):
+        mail.outbox = []
+        r1 = send(ipc('198.51.100.10'), 'zz_sec_taken@example.com', 'signup')
+        r2 = send(ipc('198.51.100.11'), 'zz_sec_fresh@example.com', 'signup')
+        check('가입: 이미 쓰는 주소와 새 주소의 응답이 같다', r1 == r2 and r1.get('ok') is True, '%s / %s' % (r1, r2))
+        subjects = [m.subject for m in mail.outbox]
+        check('이미 쓰는 주소에는 코드 대신 안내 메일', len(mail.outbox) == 2 and '이미 가입된' in subjects[0]
+              and not _re.search(r'\b\d{6}\b', mail.outbox[0].body), str(subjects))
+        mail.outbox = []
+        r1 = send(ipc('198.51.100.12'), 'zz_sec_taken@example.com', 'find_id')
+        r2 = send(ipc('198.51.100.13'), 'zz_sec_none@example.com', 'find_id')
+        check('아이디 찾기: 가입·미가입 응답이 같다', r1 == r2 and r1.get('ok') is True, '%s / %s' % (r1, r2))
+        check('메일은 가입된 주소에만 간다', len(mail.outbox) == 1 and mail.outbox[0].to == ['zz_sec_taken@example.com'])
+        c1, c2 = ipc('198.51.100.14'), ipc('198.51.100.15')
+        send(c1, 'zz_sec_taken@example.com', 'reset_pw')
+        send(c2, 'zz_sec_none2@example.com', 'reset_pw')
+        s1 = send(c1, 'zz_sec_taken@example.com', 'reset_pw')
+        s2 = send(c2, 'zz_sec_none2@example.com', 'reset_pw')
+        norm = lambda m: _re.sub(r'\d+', 'N', m.get('message', ''))
+        check('재발송 간격 문구도 같다', norm(s1) == norm(s2) and s1.get('ok') is False, '%s / %s' % (s1, s2))
+        k1 = chk(c1, 'zz_sec_taken@example.com', 'reset_pw', '000000')
+        k2 = chk(c2, 'zz_sec_none2@example.com', 'reset_pw', '000000')
+        check('코드 확인 실패 문구가 같다', k1 == k2, '%s / %s' % (k1, k2))
+
+        print('=== 2b-4. 메일 발송 한도 ===')
+        caches['throttle'].clear()
+        f = ipc('198.51.100.20')
+        rs = [send(f, 'zz_sec_ip%02d@example.com' % i, 'find_id') for i in range(11)]
+        check('IP 당 1시간 10번, 11번째는 거부', all(x.get('ok') for x in rs[:10]) and rs[10].get('ok') is False,
+              str(rs[10]))
+        rs = [send(ipc('198.51.100.%d' % (30 + i)), 'zz_sec_addr@example.com', 'find_id') for i in range(6)]
+        check('주소당 1시간 5번, 6번째는 거부', all(x.get('ok') for x in rs[:5]) and rs[5].get('ok') is False,
+              str(rs[5]))
+        for _i in range(thr.MAIL_DAY[0]):
+            thr.hit('mail_day', thr.MAIL_DAY[1])
+        r = send(ipc('198.51.100.40'), 'zz_sec_day@example.com', 'signup')
+        check('사이트 전체 하루 100통을 넘으면 거부', r.get('ok') is False, str(r))
+        caches['throttle'].clear()
+        real_deliver = acc._deliver
+
+        def boom(*a, **k):
+            raise OSError('smtp down')
+        acc._deliver = boom
+        try:
+            g = ipc('198.51.100.41')
+            before = models.EmailVerification.objects.filter(email='zz_sec_fail@example.com').count()
+            r = send(g, 'zz_sec_fail@example.com', 'signup')
+            check('발송 실패는 500 이 아니라 안내', r.get('ok') is False and '보내지 못했습니다' in r.get('message', ''), str(r))
+            check('실패한 코드는 남지 않는다',
+                  models.EmailVerification.objects.filter(email='zz_sec_fail@example.com').count() == before)
+            acc._deliver = real_deliver
+            r = send(g, 'zz_sec_fail@example.com', 'signup')
+            check('실패 뒤 바로 다시 요청할 수 있다', r.get('ok') is True, str(r))
+        finally:
+            acc._deliver = real_deliver
+
+        print('=== 2b-5. 인증 코드 ===')
+        caches['throttle'].clear()
+        mail.outbox = []
+        me, other = ipc('198.51.100.50'), ipc('198.51.100.51')
+        send(me, 'zz_sec_taken@example.com', 'reset_pw')
+        my_code = last_code()
+        send(other, 'zz_sec_taken@example.com', 'reset_pw')      # 남이 같은 주소로 요청
+        k = chk(me, 'zz_sec_taken@example.com', 'reset_pw', my_code)
+        check('남이 같은 주소로 요청해도 내 코드는 통한다', k.get('ok') is True, str(k))
+        k = chk(me, 'zz_sec_taken@example.com', 'reset_pw', my_code)
+        check('한 번 쓴 코드는 다시 통하지 않는다', k.get('ok') is False, str(k))
+        caches['throttle'].clear()
+        for _i in range(10):
+            chk(me, 'zz_sec_none3@example.com', 'reset_pw', '%06d' % _i)
+        k = chk(me, 'zz_sec_none3@example.com', 'reset_pw', '123456')
+        check('하루 10번 틀리면 그날은 막힘', k.get('ok') is False and '오늘은' in k.get('message', ''), str(k))
+        k = chk(me, 'zz_sec_taken@example.com', 'reset_pw', '１２３４５６')
+        check('전각 숫자 코드도 500 이 아니다', k.get('ok') is False)
+    models.EmailVerification.objects.filter(email__startswith='zz_sec_').delete()
+    caches['throttle'].clear()
+
     print('=== 1-2·2-1. 지운 페이지·JSON (유저 랭킹, 추천) ===')
     player.iidxmeid = 'user_zz_sec_a'
     player.save()

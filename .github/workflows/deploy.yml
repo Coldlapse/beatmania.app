@@ -76,6 +76,9 @@ jobs:
           set -euo pipefail
           cd "$APP_DIR"
           docker compose run --rm app python manage.py migrate --noinput
+          # 로그인·메일 횟수 제한이 쓰는 DB 캐시 테이블(settings.CACHES['throttle']).
+          # 이미 있으면 아무것도 하지 않는다 — 매번 돌려도 된다.
+          docker compose run --rm app python manage.py createcachetable
 
       - name: 다시 띄우기
         run: |

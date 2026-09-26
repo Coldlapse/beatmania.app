@@ -311,6 +311,7 @@ pip install -r requirements.txt
 
 cp .env.example .env      # DJANGO_SECRET_KEY, DB_PASSWORD, reCAPTCHA 키를 채웁니다
 python manage.py migrate
+python manage.py createcachetable   # 로그인·메일 횟수 제한 테이블(이미 있으면 그대로)
 python manage.py createsuperuser
 python manage.py runserver
 ```
@@ -356,6 +357,7 @@ docker compose logs -f app
 
 ```bash
 docker compose run --rm app python manage.py migrate
+docker compose run --rm app python manage.py createcachetable   # 로그인·메일 횟수 제한 테이블(이미 있으면 그대로)
 docker compose exec -T app python manage.py healthcheck
 ```
 

@@ -242,7 +242,7 @@ def login(request):
     if (request.user.is_authenticated):
         return redirect('home')
     if (request.method == "POST"):
-        form = forms.LoginForm(request.POST)
+        form = forms.LoginForm(request.POST, request=request)
         if (form.is_valid()):
             login_django(request, form.user_cache)
             return redirect('home')

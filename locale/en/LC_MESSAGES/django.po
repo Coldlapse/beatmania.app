@@ -345,6 +345,9 @@ msgstr "[beatmania.app] Find-ID verification code"
 msgid "[beatmania.app] 이메일 변경 인증 코드"
 msgstr "[beatmania.app] Email change verification code"
 
+msgid "[beatmania.app] 이미 가입된 이메일 주소입니다"
+msgstr "[beatmania.app] This email address is already registered"
+
 msgid "\"%(name)s\" 은(는) 사용할 수 없는 아이디입니다."
 msgstr "\"%(name)s\" cannot be used as an ID."
 
@@ -398,6 +401,9 @@ msgstr "Uptime history"
 
 msgid "가입된 주소라면 인증 코드를 보냈습니다."
 msgstr "If that address is registered, we have sent a verification code."
+
+msgid "가입된 주소라면 인증 코드를 보냈습니다. 메일이 오지 않으면 스팸함을 확인하거나 5분 뒤에 다시 요청해 주세요."
+msgstr "If this address is registered, we have sent a code. If no email arrives, check your spam folder or request again in 5 minutes."
 
 msgid "가입하고 IIDXwidget 을 연결하면 하루에 몇 번 쳤는지가 여기에 쌓이고, 아래 순위에도 오릅니다."
 msgstr "Sign up and connect IIDXwidget, and your daily keystrokes will collect here and appear in the ranking below."
@@ -684,6 +690,9 @@ msgstr "Log in"
 msgid "로그인 상태를 유지하기 위한 세션 정보와 마지막 로그인 시각."
 msgstr "Session information used to keep you logged in, and your last login time."
 
+msgid "로그인 시도가 너무 많습니다. %(min)d분 뒤에 다시 시도해 주세요."
+msgstr "Too many login attempts. Please try again in %(min)d minutes."
+
 msgid "로그인하러 가기"
 msgstr "Go to login"
 
@@ -722,6 +731,9 @@ msgstr "Open menu"
 
 msgid "메일로 받은 6자리 숫자"
 msgstr "The 6-digit number from the email"
+
+msgid "메일을 보내지 못했습니다. 잠시 뒤에 다시 시도해 주세요."
+msgstr "The email could not be sent. Please try again later."
 
 msgid "명령"
 msgstr "Command"
@@ -987,6 +999,9 @@ msgstr "Show my ID"
 msgid "아이디, DJ NAME, 프로필 사진, 플레이 기록은 공개 프로필 주소에서 누구나 볼 수 있습니다. 계정 설정에서 <b>프로필 비공개</b>를 켜면 다른 사람이 볼 수 없습니다."
 msgstr "Your ID, DJ NAME, profile photo and play records are visible to anyone at your public profile address. Turn on <b>private profile</b> in account settings and no one else can see them."
 
+msgid "아이디가 기억나지 않으면 로그인 화면의 \"아이디 찾기\" 를, 비밀번호가 기억나지 않으면 \"비밀번호 재설정\" 을 이용해 주세요."
+msgstr "If you forgot your ID, use \"Find ID\" on the login page; if you forgot your password, use \"Reset password\"."
+
 msgid "아이디는 공개 주소가 됩니다."
 msgstr "Your username becomes a public URL."
 
@@ -1028,6 +1043,9 @@ msgstr "Letters, digits and underscore only, 4 or more characters. Cannot be cha
 
 msgid "오늘"
 msgstr "Today"
+
+msgid "오늘은 인증 코드를 너무 많이 틀렸습니다. 내일 다시 시도해 주세요."
+msgstr "Too many incorrect codes today. Please try again tomorrow."
 
 msgid "오늘의 타건 수"
 msgstr "Today's keystrokes"
@@ -1080,6 +1098,9 @@ msgstr "Valid for %(min)s minutes."
 msgid "이 메일은 beatmania.app 의 계정 인증 때문에 발송되었습니다. 본인이 요청한 것이 아니라면 이 메일을 무시하셔도 됩니다."
 msgstr "This email was sent for account verification on beatmania.app. If you did not request it, you can ignore this message."
 
+msgid "이 메일은 beatmania.app 의 계정 인증 때문에 발송되었습니다.\n본인이 요청한 것이 아니라면 이 메일을 무시하셔도 됩니다.\n"
+msgstr "This email was sent for beatmania.app account verification.\nIf you did not request it, you can ignore this email.\n"
+
 msgid "이 방침이 바뀌면 이 페이지에서 알립니다."
 msgstr "If this policy changes we will announce it on this page."
 
@@ -1088,6 +1109,9 @@ msgstr "If you like this site, consider <a href=\"https://buymeacoffee.com/sadan
 
 msgid "이 사이트는 신용카드 정보나 주민등록번호 같은 정보를 받지 않으며, 저장할 자리도 두지 않았습니다."
 msgstr "This site does not accept things like credit card numbers or national ID numbers, and has no place to store them."
+
+msgid "이 이메일 주소로 가입된 beatmania.app 계정이 이미 있습니다."
+msgstr "A beatmania.app account already exists for this email address."
 
 msgid "이 이메일로 가입된 아이디입니다."
 msgstr "The ID registered with this email."
@@ -1137,6 +1161,9 @@ msgstr "Your email address and IP address are never made public."
 msgid "이메일은 계정 인증 및 아이디, 비밀번호 찾기에만 사용됩니다. 그 이외에는 어떤 상황에도 이메일을 사용하거나 임의로 이메일을 발송하지 않습니다. 당연히, 마케팅 메일도 없습니다."
 msgstr "Your email is used only for account verification and for recovering your ID or password. We will not use it for anything else, and we will never send you unsolicited mail. No marketing email, of course."
 
+msgid "이미 가입된 이메일 주소입니다"
+msgstr "This email address is already registered"
+
 msgid "이미 계정이 있으신가요?"
 msgstr "Already have an account?"
 
@@ -1160,6 +1187,9 @@ msgstr "Finish verification"
 
 msgid "인증 코드가 만료되었습니다. 다시 받아 주세요."
 msgstr "The code has expired. Please request a new one."
+
+msgid "인증 코드가 맞지 않거나 만료되었습니다. 코드를 요청한 브라우저에서 입력해 주세요."
+msgstr "The code is incorrect or has expired. Enter it in the browser where you requested it."
 
 msgid "인증 코드가 맞지 않습니다. (%(n)d번 남음)"
 msgstr "That code is not correct. (%(n)d attempts left)"
@@ -1292,6 +1322,9 @@ msgstr "so far"
 
 msgid "지금은 이 인증을 진행할 수 없습니다."
 msgstr "This verification is not available right now."
+
+msgid "지금은 인증 메일을 보낼 수 없습니다. 잠시 뒤에 다시 시도해 주세요."
+msgstr "We cannot send a verification email right now. Please try again later."
 
 msgid "지난 1년"
 msgstr "Last year"

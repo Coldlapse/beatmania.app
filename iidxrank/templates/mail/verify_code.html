@@ -41,11 +41,23 @@
             <td style="padding:18px 28px 0 28px;">
               <div style="font-size:20px; font-weight:700; color:#212529;
                           letter-spacing:-.01em;">{{ heading }}</div>
+              {% comment %}
+                code 가 없으면 안내 메일이다(예: 가입하려는 주소가 이미 쓰이고 있을 때 —
+                accounts.send_already_registered). 코드 칸 대신 lines 를 문단으로 보여 준다.
+              {% endcomment %}
+              {% if code %}
               <div style="font-size:14px; color:#5c6670; line-height:1.7;
                           margin-top:8px;">{% trans '아래 인증 코드를 입력해 주세요.' %}</div>
+              {% else %}
+                {% for line in lines %}
+              <div style="font-size:14px; color:#3d4650; line-height:1.7;
+                          margin-top:10px;">{{ line }}</div>
+                {% endfor %}
+              {% endif %}
             </td>
           </tr>
 
+          {% if code %}
           <tr>
             <td style="padding:20px 28px 0 28px;">
               <div style="background:#f1f5fb; border:1px solid #dbe4f0;
@@ -67,6 +79,7 @@
               </div>
             </td>
           </tr>
+          {% endif %}
 
           <tr>
             <td style="padding:22px 28px 0 28px;">

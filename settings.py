@@ -133,6 +133,9 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE = (
+    # 맨 앞: 방문자 실제 IP(CF-Connecting-IP)를 REMOTE_ADDR 로 옮긴다. 뒤의 모든 것이
+    # 이 값을 본다(로그인·메일 횟수 제한, 조회수). 믿는 전제는 iidxrank/client_ip.py 머리말.
+    'iidxrank.client_ip.RealClientIPMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     # LocaleMiddleware 는 Session 뒤, Common 앞에 와야 한다.
     # 세션·쿠키에 저장된 언어를 읽어야 하고, Common 이 URL 을 확정하기 전에
@@ -152,6 +155,21 @@ MIDDLEWARE = (
     'whitenoise.middleware.WhiteNoiseMiddleware',
 )
 
+
+# 로그인 시도 제한이 걸린 인증 백엔드(iidxrank/auth_backend.py). 일반 로그인과 /admin/ 이 같이 쓴다.
+AUTHENTICATION_BACKENDS = ['iidxrank.auth_backend.ThrottledModelBackend']
+
+# 캐시. default 는 워커마다 따로 있는 메모리(Django 기본) — CPI·디스코드 공지처럼 잠깐 들고
+# 있으면 되는 값에 쓴다. 횟수 제한은 워커 5개가 같은 값을 봐야 해서 DB 테이블에 둔다.
+# 테이블은 `manage.py createcachetable` 이 만든다(배포 워크플로가 매번 돌린다).
+CACHES = {
+    'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'},
+    'throttle': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'bm_throttle',
+        'OPTIONS': {'MAX_ENTRIES': 20000},
+    },
+}
 
 ROOT_URLCONF = 'urls'
 
