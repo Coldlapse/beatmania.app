@@ -14,6 +14,8 @@ class Command(BaseCommand):
         # 💡 추가된 인수: 초기화 모드와 갱신 모드
         parser.add_argument('--reset', action='store_true', help='기존 서열표 데이터를 모두 날리고 처음부터 매핑합니다.')
         parser.add_argument('--update', action='store_true', help='기존 데이터를 보존하며 변동된 곡만 갱신합니다.')
+        parser.add_argument('--tables', choices=['all', 'sp', 'dp'], default='all',
+                            help='갱신할 서열표: all(기본) · sp(구글 시트) · dp(zasa)')
 
     def handle(self, *args, **options):
         # 인수 유효성 검사 (reset, update 중 하나는 반드시 있어야 함)
@@ -46,7 +48,11 @@ class Command(BaseCommand):
         if not options.get('test'):
             try:
                 parser = IIDXSheetParser()
+                which = options.get('tables') or 'all'
                 for sheet in parser.target_sheets:
+                    is_dp = sheet['table_name'].startswith('DP')
+                    if (which == 'sp' and is_dp) or (which == 'dp' and not is_dp):
+                        continue
                     # 💡 mode 매개변수를 추가로 넘겨줍니다.
                     parser.process_sheet(sheet, mode)
             except Exception as e:

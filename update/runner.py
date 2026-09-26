@@ -61,7 +61,7 @@ COMMANDS = [
     Cmd(
         'updateSongInfinitas',
         'INFINITAS 수록곡 + 서열표 갱신',
-        'textage.cc 에서 수록곡을 가져오고, 구글 시트의 서열표를 읽어 곡을 '
+        'textage.cc 에서 수록곡을 가져오고, 서열표(SP: 구글 시트, DP: zasa)를 읽어 곡을 '
         '카테고리에 매핑한다. 평소 쓰던 갱신 작업이다. 서열표 안에서 위치가 '
         '바뀐 곡이 있으면 실행을 멈추고 어느 것을 적용할지 물어본다.',
         options=[
@@ -73,6 +73,11 @@ COMMANDS = [
                 help='DB 에 쓰지 않고 동작만 확인한다. 서열표 매핑은 건너뛴다.'),
             Opt('set_version', 'int', '버전 지정',
                 help='비워두면 전체를 대상으로 한다.'),
+            Opt('tables', 'choice', '대상 표', choices=[
+                ('all', 'SP·DP 전부'),
+                ('sp', 'SP 만 (구글 시트)'),
+                ('dp', 'DP 만 (zasa 비공식 난이도표)'),
+            ], default='all'),
         ],
         duration='수 분 (중간에 확인을 요청할 수 있음)',
         requires='playwright (브라우저 바이너리 필요), textage.cc · Google Sheets 접근',

@@ -127,6 +127,12 @@ class IIDXSheetParser:
              "default_type": "SPA", "loader": "sp11", "gid": "411493762"},
             {"table_name": "SP11H", "table_title": "SP11H", "level": 11,
              "default_type": "SPA", "loader": "sp11", "gid": "1585306050"},
+            # DP — zasa 비공식 난이도표(노멀 게이지 기준, 아케이드판). 분류 이름은 원본의 수치 그대로
+            # (예: 12.4). default_type 은 'DP' 여야 한다 — 표를 새로 만들 때 type 이 되고,
+            # 'DPA' 로 두면 H·L 채보가 표 대상에서 빠진다(rankpage.search_songs_from_ranktable).
+            {"table_name": "DP12", "table_title": "DP12", "level": 12, "default_type": "DP", "loader": "zasa"},
+            {"table_name": "DP11", "table_title": "DP11", "level": 11, "default_type": "DP", "loader": "zasa"},
+            {"table_name": "DP10", "table_title": "DP10", "level": 10, "default_type": "DP", "loader": "zasa"},
         ]
         
         # 유사도 매칭을 위해 DB의 모든 곡 제목을 캐싱
@@ -221,6 +227,93 @@ class IIDXSheetParser:
             print(f"   - {f}")
         return parsed, len(fails)
 
+    # ── DP (zasa) ──────────────────────────────────────────────────────────
+    #
+    # 원본: https://zasa.sakura.ne.jp/dp/run.php (SNJ@KMZS, beatmaniaIIDX DP 非公式難易度表).
+    # 전곡표 한 장에 모든 채보의 공식 ☆와 비공식 수치가 있다 — 한 행에 H·A·L 칸과 제목 칸:
+    #   <td class="rank"><a ...><span class="A">☆12 (12.4)</span></a></td> ... <td class="music">제목</td>
+    # 그래서 DP10·11·12 를 갱신해도 **요청은 한 번**이다(인스턴스에 담아 둔다).
+    # 원본은 아케이드판 기준이라(SP 참고표도 그렇다) INFINITAS 전용곡·아케이드 삭제곡은 없다 — 그런 곡은
+    # _apply 의 Type 2(원본에 없음 → 그대로 둠)로 남는다. 공식 레벨이 INFINITAS 와 다른 채보는 그 레벨의
+    # 곡을 찾지 못해 '못 찾음' 으로 빠진다.
+    ZASA_URL = 'https://zasa.sakura.ne.jp/dp/run.php'
+    _RX_ZASA_ROW = re.compile(
+        r'<tr>((?:<td class="rank">.*?</td>){3})<td class="music">(.*?)</td></tr>', re.S)
+    _RX_ZASA_CELL = re.compile(r'<span class="([HAL])">☆(\d+)\s*\(([\d.]+)\)</span>')
+
+    def _zasa_rows(self):
+        """[(제목, 'DPH'|'DPA'|'DPL', 공식 레벨, '12.4')]. 실패하면 None."""
+        if getattr(self, '_zasa_cache', None) is not None:
+            return self._zasa_cache
+        try:
+            r = requests.get(self.ZASA_URL, timeout=60,
+                             headers={'User-Agent': 'beatmania.app rank table sync (https://beatmania.app)'})
+            r.raise_for_status()
+            r.encoding = 'utf-8'
+        except Exception as e:
+            print(f"❌ zasa 전곡표 로드 실패: {e}")
+            return None
+        rows = []
+        for cells, title in self._RX_ZASA_ROW.findall(r.text):
+            title = html.unescape(re.sub(r'<[^>]+>', '', title)).strip()
+            for cls, lv, val in self._RX_ZASA_CELL.findall(cells):
+                rows.append((title, 'DP' + cls, int(lv), val))
+        if not rows:
+            print("❌ zasa 전곡표에서 채보를 하나도 읽지 못했습니다 — 페이지 모양이 바뀌었습니다.")
+            return None
+        self._zasa_cache = rows
+        return rows
+
+    def _parse_zasa(self, sheet_info):
+        """DP n레벨 → (parsed_data, fail_count). 곡 매칭은 SP11 과 같다: (정규화 제목, 타입)을
+        그 레벨의 곡으로 거르고 정확히 한 곡일 때만 받는다."""
+        from iidxrank.records_import import norm_title
+        rows = self._zasa_rows()
+        if rows is None:
+            return None, 0
+        level = sheet_info['level']
+        songs = {}
+        for sid, title, ty in Song.objects.filter(songlevel=level, songtype__in=('DPH', 'DPA', 'DPL')) \
+                .values_list('id', 'songtitle', 'songtype'):
+            songs.setdefault((norm_title(title), ty), []).append(sid)
+        song_obj = {x.id: x for x in Song.objects.filter(songlevel=level, songtype__in=('DPH', 'DPA', 'DPL'))}
+        parsed, fails = {}, []
+        for title, ty, lv, val in rows:
+            if lv != level:
+                continue
+            ids = songs.get((norm_title(title), ty), [])
+            if len(ids) != 1:
+                fails.append('%s [%s]' % (title, ty))
+                continue
+            # c_sort 는 새 분류를 만들 때만 쓰인다. 순서는 반영 뒤 _renumber_numeric_categories 가 맞춘다
+            parsed[ids[0]] = {'song': song_obj[ids[0]], 'cat_name': val, 'c_type': 1,
+                              'c_sort': float(val), 'score': 100}
+        print(f"🔍 {len(parsed)}곡 분류, 곡 DB 에서 못 찾은 것 {len(fails)}곡(INFINITAS 에 없는 곡 포함)")
+        for f in fails[:30]:
+            print(f"   - {f}")
+        return parsed, len(fails)
+
+    @staticmethod
+    def _renumber_numeric_categories(rank_table):
+        """이름이 수치인 분류(12.4 등)의 정렬값을 수치 순서대로 다시 매긴다.
+
+        DP 분류의 정렬값은 서수다(12.7=11, 12.6=10 … 11.6=2, 전용곡=1). 원본에 새 수치가 생기면
+        (예: 12.8) 서수 사이에 끼울 자리가 없어 순서가 깨진다. 수치가 아닌 분류(INFINITAS 전용곡 등)는
+        그대로 두고, 수치 분류를 그 위에 작은 것부터 차례로 놓는다 — 지금 모양과 같은 방향이다.
+        """
+        cats = list(RankCategory.objects.filter(ranktable=rank_table))
+        numeric, other = [], []
+        for c in cats:
+            try:
+                numeric.append((float(c.categoryname), c))
+            except ValueError:
+                other.append(c)
+        base = max([c.sortindex for c in other] or [0]) + 1
+        for i, (_v, c) in enumerate(sorted(numeric, key=lambda x: x[0])):
+            if c.sortindex != base + i:
+                c.sortindex = base + i
+                c.save(update_fields=['sortindex'])
+
     def _get_red_classes(self, soup):
         red_classes = []
         for style_tag in soup.find_all('style'):
@@ -235,8 +328,9 @@ class IIDXSheetParser:
 
     def process_sheet(self, sheet_info, mode):
         print(f"\n🚀 [{sheet_info['table_title']}] 시트 매핑 프로세스 시작 (모드: {mode})...")
-        if sheet_info.get('loader') == 'sp11':
-            parsed_data, fail_count = self._parse_sp11(sheet_info)
+        if sheet_info.get('loader') in ('sp11', 'zasa'):
+            parse = self._parse_sp11 if sheet_info['loader'] == 'sp11' else self._parse_zasa
+            parsed_data, fail_count = parse(sheet_info)
             if parsed_data is not None:
                 self._apply(sheet_info, parsed_data, fail_count, mode)
             return
@@ -424,6 +518,13 @@ class IIDXSheetParser:
             }
         )
 
+        # DP 표는 RESET 하지 않는다. 원본(zasa)은 아케이드판이라 INFINITAS 전용곡이 없고, 그 곡들은
+        # 관리자가 손으로 'INFINITAS 전용곡' 분류에 넣어 둔 것이다(라이브 DP11 31·DP10 27곡). 비우고 다시
+        # 쓰면 그 손작업이 사라진다. 변동분 갱신으로 돌린다.
+        if mode == "RESET" and sheet_info.get('loader') == 'zasa':
+            print("⚠️ DP 표는 초기화하지 않습니다(INFINITAS 전용곡 분류 보존) — 변동분 갱신으로 진행합니다.")
+            mode = "UPDATE"
+
         # --- [RESET 모드] ---
         if mode == "RESET":
             with transaction.atomic():
@@ -457,7 +558,18 @@ class IIDXSheetParser:
         # 그래서 순서를 뒤집었다 — **읽어서 분석하고, 묻고, 답이 온 뒤에 한
         # 트랜잭션으로 전부 적용한다.** 덤으로 Type 0 도 사용자가 결정하기 전에
         # 먼저 반영되는 일이 없어진다.
-        current_items = {item.song_id: item for item in RankItem.objects.filter(rankcategory__ranktable=rank_table).select_related('rankcategory', 'song')}
+        # 같은 곡이 한 표에 둘 이상 들어 있는 경우가 있다(라이브 DP12 9곡·DP11 8곡·DP10 3곡 — 예전에 개정
+        # 채보를 따로 넣던 흔적). dict 로 모으면 하나만 비교되고 나머지는 화면에 계속 남는다. 하나만 남긴다:
+        # 원본과 같은 분류에 있는 것, 없으면 가장 나중에 넣은 것. 나머지는 적용 단계에서 지운다.
+        by_song = {}
+        for item in RankItem.objects.filter(rankcategory__ranktable=rank_table).select_related('rankcategory', 'song').order_by('id'):
+            by_song.setdefault(item.song_id, []).append(item)
+        current_items, duplicate_items = {}, []
+        for sid, items in by_song.items():
+            want = parsed_data.get(sid, {}).get('cat_name')
+            keep = next((x for x in items if x.rankcategory.categoryname == want), items[-1])
+            current_items[sid] = keep
+            duplicate_items.extend(x for x in items if x is not keep)
 
         type_0_new = []
         type_1_updates = []
@@ -529,6 +641,11 @@ class IIDXSheetParser:
         # 결정이 끝났다. 이제 한 트랜잭션으로 전부 적용한다.
         updated_count = 0
         with transaction.atomic():
+            if duplicate_items:
+                print(f"\n🧹 같은 곡의 중복 항목 {len(duplicate_items)}건을 지웁니다(곡마다 하나만 남김):")
+                for x in duplicate_items:
+                    print(f"  - {x.song.songtitle} ({x.song.songtype}) [{x.rankcategory.categoryname}]")
+                RankItem.objects.filter(id__in=[x.id for x in duplicate_items]).delete()
             # [Type 0]
             for d in type_0_new:
                 cat, _ = RankCategory.objects.get_or_create(
@@ -552,6 +669,9 @@ class IIDXSheetParser:
                     item.info = f"Updated via Update ({n_data['score']}%)"
                     item.save()
                     updated_count += 1
+
+            if sheet_info.get('loader') == 'zasa':
+                self._renumber_numeric_categories(rank_table)
 
             # 시간 갱신
             rank_table.time = timezone.now()
