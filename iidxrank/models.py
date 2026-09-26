@@ -365,3 +365,37 @@ class CpiValue(models.Model):
 
     class Meta:
         unique_together = [('song', 'lamp')]
+
+
+class BpiValue(models.Model):
+    """BPIManager(bpi2.poyashi.me)가 공개하는 SP☆11·12 채보별 BPI V2 값(iidxrank/bpi.py).
+
+    원본 목록을 **전부** 담는다 — 곡 DB 에서 못 찾은 채보(song=None)도. 합산 BPI 의 분모(☆12 채보 수)와
+    '안 친 채보는 예측값으로 채운다' 는 규칙이 원본 목록 전체를 기준으로 하기 때문이다.
+    하루 한 번 통째로 갈아 끼운다(manage.py update_bpi).
+    """
+    source_id = models.IntegerField(unique=True)       # 원본 songId(채보마다 하나)
+    song = models.ForeignKey(Song, null=True, on_delete=models.SET_NULL, related_name='bpi_values')
+    title = models.CharField(max_length=200)
+    songtype = models.CharField(max_length=3)          # SPH / SPA / SPL
+    level = models.SmallIntegerField()                 # 원본의 ☆
+    notes = models.IntegerField()
+    wr = models.IntegerField(null=True)                # 세계 기록 EX SCORE
+    kavg = models.IntegerField(null=True)              # 개전 평균(표시용)
+    coef = models.FloatField(null=True)                # 곡별 곡선 지수. None = 원본의 -1(없음)
+    mu = models.FloatField(null=True)                  # None = 원본이 아직 계산하지 않은 채보
+    sigma = models.FloatField(null=True)
+    residual_var = models.FloatField(null=True)
+    fetched_at = models.DateTimeField()
+
+
+class BpiBest(models.Model):
+    """플레이어별 합산 BPI 의 지금까지 최고값(BPIManager 의 ratchetTotalBpi 와 같은 규칙).
+
+    V2 합산은 안 친 채보를 실력 추정값으로 채우므로, 기록이 하나도 나빠지지 않아도 새 기록 하나로
+    값이 내려갈 수 있다. 원 사이트는 저장할 때 이전 최고값과 max 를 잡는다 — 같이 따른다.
+    EX SCORE 를 손으로 낮추면(잘못 넣은 것 고치기) 지운다(views.py exscore).
+    """
+    player = models.OneToOneField(Player, on_delete=models.CASCADE, related_name='bpi_best')
+    value = models.FloatField()
+    updated_at = models.DateTimeField(auto_now=True)

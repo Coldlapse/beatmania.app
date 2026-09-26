@@ -387,6 +387,13 @@ def get_udata_from_player(player, username=None):
             userdata['cpi_url'] = ('/u/%s/cpi/' % username) if username else '/cpi/'
         except Exception:
             userdata['cpi'] = None
+        # 합산 BPI. CPI 와 같은 이유로 실패하면 칸만 빠진다.
+        try:
+            from iidxrank import bpi
+            userdata['bpi'] = bpi.for_player(player)
+            userdata['bpi_url'] = ('/u/%s/bpi/' % username) if username else '/bpi/'
+        except Exception:
+            userdata['bpi'] = None
     return userdata
 
 """

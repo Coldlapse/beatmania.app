@@ -207,6 +207,9 @@ msgstr "Built by cloning the iidxranktable repository by <a href=\"%(kuna)s\" ta
 msgid "<a href=\"/privacy/\" target=\"_blank\" rel=\"noopener\">개인정보처리방침</a>을 읽었고 이에 동의합니다."
 msgstr "I have read and agree to the <a href=\"/privacy/\" target=\"_blank\" rel=\"noopener\">Privacy Policy</a>."
 
+msgid "<a href=\"https://bpi2.poyashi.me/\" target=\"_blank\" rel=\"noopener\">BPIManager</a> 의 BPI V2 와 같은 식으로 계산합니다. 채보별 값(세계 기록·분포 모수)은 BPIManager 가 공개하는 값을 하루 한 번 받아 씁니다."
+msgstr "Calculated with the same formula as BPI V2 on <a href=\"https://bpi2.poyashi.me/\" target=\"_blank\" rel=\"noopener\">BPIManager</a>. Per-chart values (world records and distribution parameters) are fetched once a day from BPIManager's public data."
+
 msgid "<b>비트매니아 IIDX INFINITAS</b>의 수록곡들만 제공합니다."
 msgstr "Covers only songs available in <b>beatmania IIDX INFINITAS</b>."
 
@@ -228,6 +231,15 @@ msgstr "Get an API token"
 msgid "API 토큰 보기"
 msgstr "View API token"
 
+msgid "BPI 가 높은 기록"
+msgstr "Highest BPI records"
+
+msgid "BPI 를 계산할 기록이 없습니다"
+msgstr "No records to calculate BPI"
+
+msgid "BPIManager 에 표시되는 값과 다르면 디스코드로 알려 주세요."
+msgstr "If the value differs from what BPIManager shows, please let us know on Discord."
+
 msgid "Beatoraja의 LITONE 계열 스킨 등 IIDX와 동일한 구조로 제작된 스킨에 대응합니다. 일부 LITONE 버전은 IIDX AC 계산식대로의 서든 계산을 지원하지만, 일부 버전은 Beatoraja의 서든 계산대로 작동합니다. 확인 후 이용해주세요."
 msgstr "This works with skins built to the same structure as IIDX, such as the LITONE family for beatoraja. Some LITONE versions calculate SUDDEN+ the way IIDX AC does, while others follow beatoraja's own calculation. Please check which one your skin uses before relying on this."
 
@@ -248,6 +260,9 @@ msgstr "DJ NAME"
 
 msgid "DP 단위"
 msgstr "DP class"
+
+msgid "EX SCORE 가 있는 SP☆11·12 채보를 BPI 가 높은 순으로 보여 줍니다."
+msgstr "SP☆11/12 charts with an EX SCORE, sorted by BPI (highest first)."
 
 msgid "EX SCORE 는 0 에서 %(n)d 사이여야 합니다."
 msgstr "EX SCORE must be between 0 and %(n)d."
@@ -321,11 +336,20 @@ msgstr "SP class"
 msgid "SPL 난이도 지원 추가"
 msgstr "SPL difficulty support"
 
+msgid "SP☆12 %(n)s채보 기록 기준"
+msgstr "Based on %(n)s SP☆12 chart records"
+
 msgid "SP☆12 %(n)s채보 기준"
 msgstr "Based on %(n)s SP☆12 charts"
 
+msgid "SP☆12 %(n)s채보의 EX SCORE 로 계산한 합산 BPI 입니다. 계산식과 채보별 값은 BPIManager(bpi2.poyashi.me)를 따릅니다. 문제가 있으면 알려 주세요."
+msgstr "Total BPI calculated from EX SCOREs on %(n)s SP☆12 charts. The formula and per-chart values follow BPIManager (bpi2.poyashi.me). Let us know if something looks wrong."
+
 msgid "SP☆12 %(n)s채보의 클리어 램프로 계산한 추정값입니다. 채보별 값은 cpi.makecir.com 의 공개 수치를 씁니다. 문제가 있으면 알려 주세요."
 msgstr "Estimated from clear lamps on %(n)s SP☆12 charts, using the per-chart values published by cpi.makecir.com. Please let us know if there is any problem."
+
+msgid "SP☆12 채보의 EX SCORE 가 하나 이상 있어야 합산 BPI 를 계산할 수 있습니다. 데이터 동기화 앱이나 서열표에서 EX SCORE 를 넣어 주세요."
+msgstr "Total BPI needs at least one EX SCORE on an SP☆12 chart. Add EX SCOREs with the data sync app or on the rank tables."
 
 msgid "SP☆12 클리어 램프가 %(n)s채보 이상 있어야 추정할 수 있습니다."
 msgstr "An estimate needs clear lamps on at least %(n)s SP☆12 charts."
@@ -885,6 +909,9 @@ msgstr "Status checks"
 msgid "새 기록"
 msgstr "New"
 
+msgid "새 기록 하나로 추정 실력이 내려가면 합산 값도 내려갈 수 있어, BPIManager 처럼 지금까지의 최고값을 보여 줍니다. EX SCORE 를 손으로 낮추면 최고값을 지우고 다시 계산합니다."
+msgstr "A single new record can lower the estimated skill and thus the total, so, like BPIManager, the highest value so far is shown. Lowering an EX SCORE by hand clears that best value and recalculates."
+
 msgid "새 비밀번호"
 msgstr "New password"
 
@@ -1338,6 +1365,9 @@ msgstr "Coming soon"
 msgid "중요 공지"
 msgstr "Important"
 
+msgid "지금 기록만으로 계산한 값: %(v)s"
+msgstr "Value from current records only: %(v)s"
+
 msgid "지금 기록보다 좋을 때만 올립니다. 직접 입력한 기록을 낮추지 않습니다."
 msgstr "Records are only raised when better. Records you entered by hand are never lowered."
 
@@ -1397,6 +1427,9 @@ msgstr "Your best lamp on each chart, sorted by that lamp's appropriate CPI. The
 
 msgid "채보별 값 갱신: %(d)s"
 msgstr "Per-chart values updated: %(d)s"
+
+msgid "채보별 값 갱신: %(d)s · 모델 상수: %(c)s"
+msgstr "Per-chart values updated: %(d)s · Model constants: %(c)s"
 
 msgid "채보별 값은 <a href=\"https://cpi.makecir.com/\" target=\"_blank\" rel=\"noopener\">cpi.makecir.com</a> 이 공개하는 램프별 적정CPI(달성률 %(half)s 지점)와 개인차도(%(mid)s 폭)입니다."
 msgstr "Per-chart values are the per-lamp appropriate CPI (%(half)s clear point) and individual-difference width (%(mid)s) published by <a href=\"https://cpi.makecir.com/\" target=\"_blank\" rel=\"noopener\">cpi.makecir.com</a>."
@@ -1559,6 +1592,12 @@ msgstr "Projects we build on"
 
 msgid "합계"
 msgstr "Total"
+
+msgid "합산 BPI"
+msgstr "Total BPI"
+
+msgid "합산 BPI 는 SP☆12 전 채보를 대상으로 합니다. 친 채보는 그 BPI 를, 안 친 채보는 친 기록으로 추정한 실력에서 예측한 값을 넣어 모읍니다."
+msgstr "Total BPI covers every SP☆12 chart. Played charts use their BPI; unplayed charts use a value predicted from the skill estimated from your records."
 
 msgid "해당 기간에 기록이 없습니다."
 msgstr "No records in this period."

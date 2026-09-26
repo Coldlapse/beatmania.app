@@ -386,10 +386,15 @@ sudo ./svc.sh start
 ```cron
 */5 * * * * cd /srv/beatmania/app && /usr/bin/docker compose exec -T app python manage.py healthcheck >> /var/log/beatmania-health.log 2>&1
 17 5 * * * cd /srv/beatmania/app && /usr/bin/docker compose exec -T app python manage.py update_cpi >> "$HOME/beatmania-cpi.log" 2>&1
+37 5 * * * cd /srv/beatmania/app && /usr/bin/docker compose exec -T app python manage.py update_bpi >> "$HOME/beatmania-bpi.log" 2>&1
 ```
 
 `update_cpi` 는 cpi.makecir.com 의 채보별 CPI 값을 **하루 한 번, 한 페이지만** 받습니다(프로필의 CPI 추정용).
 원 사이트에 부담을 주지 않으려는 것이라 주기를 줄이지 말아 주세요. 끄려면 `iidxrank/cpi.py` 의 `ENABLED` 를 `False` 로 둡니다.
+
+`update_bpi` 는 bpi2.poyashi.me(BPIManager)의 SP☆11·12 채보별 BPI V2 값을 **하루 한 번, 요청 한 번**(약 0.8MB) 받습니다
+(프로필의 합산 BPI 용). 같은 이유로 주기를 줄이지 말아 주세요. 끄려면 `iidxrank/bpi.py` 의 `ENABLED` 를 `False` 로 둡니다.
+원 사이트가 모델 상수(`modelConstants.ts`)를 다시 만들면 `iidxrank/bpi.py` 의 상수도 바꿔야 합니다 — API 로는 오지 않습니다.
 
 - `-T` 가 없으면 TTY 가 없는 cron 환경에서 실패합니다
 - `docker` 를 절대 경로로 쓴 것은 cron 의 PATH 가 짧기 때문입니다

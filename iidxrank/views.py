@@ -470,8 +470,14 @@ def modify(request):
             if ex is None:
                 return JsonResponse({'code': 0, 'message': _('저장했습니다.'), 'exscore': None})
             pr = models.PlayRecord(song=song, player=player)
+        lowered = pr.exscore is not None and (ex is None or ex < pr.exscore)
         pr.exscore = ex
         pr.save()
+        if lowered:
+            # 합산 BPI 는 최고값을 붙잡아 둔다(bpi.BpiBest). 잘못 넣은 높은 값을 고쳤는데 그 값이
+            # 계속 남으면 안 되므로 최고값을 지우고 지금 기록으로 다시 잰다.
+            from iidxrank import bpi
+            bpi.forget_best(player)
         return JsonResponse({'code': 0, 'message': _('저장했습니다.'), 'exscore': ex})
     else:
         return JsonResponse({'code': 1, 'message': 'invalid action'})

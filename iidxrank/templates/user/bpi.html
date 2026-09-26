@@ -1,0 +1,85 @@
+{% extends "common.html" %}
+{% load i18n %}
+{% comment %}
+  BPI 페이지 — /bpi/ 와 /u/<아이디>/bpi/ (iidxrank/views_bpi.py).
+  공개 규칙과 공유 버튼은 서열표·CPI 페이지와 같다.
+  계산 방법은 iidxrank/bpi.py 머리말에 있다.
+{% endcomment %}
+{% block page_title %}BPI{% endblock %}
+{% block body %}
+
+{% include "top.html" %}
+{% include "profileheader.html" %}
+
+<div id="container">
+  {% if not detail %}
+  <div class="card bm-panel mb-3">
+    <div class="card-body text-center py-4">
+      <h2 class="h5">{% trans 'BPI 를 계산할 기록이 없습니다' %}</h2>
+      <p class="text-body-secondary mb-0">
+        {% trans 'SP☆12 채보의 EX SCORE 가 하나 이상 있어야 합산 BPI 를 계산할 수 있습니다. 데이터 동기화 앱이나 서열표에서 EX SCORE 를 넣어 주세요.' %}
+      </p>
+    </div>
+  </div>
+  {% else %}
+
+  <div class="card bm-panel mb-3">
+    <div class="card-body">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div class="bm-cpi-hero">
+          <div class="bm-cpi-label">{% trans '합산 BPI' %}</div>
+          <div class="bm-cpi-value">{{ detail.value|floatformat:2 }}</div>
+          <div class="bm-cpi-sub">{% blocktrans with n=detail.charts12 %}SP☆12 {{ n }}채보 기록 기준{% endblocktrans %}</div>
+        </div>
+        {% if own %}
+        {% with share_path="/u/"|add:user.username|add:"/bpi/" %}
+        {% include "widgets/share_box.html" with share_path=share_path private=private %}
+        {% endwith %}
+        {% endif %}
+      </div>
+
+      <details class="mt-3">
+        <summary class="small">{% trans '어떻게 계산하나요' %}</summary>
+        <ul class="small text-body-secondary mt-2 mb-0">
+          <li>{% blocktrans %}<a href="https://bpi2.poyashi.me/" target="_blank" rel="noopener">BPIManager</a> 의 BPI V2 와 같은 식으로 계산합니다. 채보별 값(세계 기록·분포 모수)은 BPIManager 가 공개하는 값을 하루 한 번 받아 씁니다.{% endblocktrans %}</li>
+          <li>{% trans '합산 BPI 는 SP☆12 전 채보를 대상으로 합니다. 친 채보는 그 BPI 를, 안 친 채보는 친 기록으로 추정한 실력에서 예측한 값을 넣어 모읍니다.' %}</li>
+          <li>{% trans '새 기록 하나로 추정 실력이 내려가면 합산 값도 내려갈 수 있어, BPIManager 처럼 지금까지의 최고값을 보여 줍니다. EX SCORE 를 손으로 낮추면 최고값을 지우고 다시 계산합니다.' %}</li>
+          {% if detail.fresh < detail.value %}<li>{% blocktrans with v=detail.fresh|floatformat:2 %}지금 기록만으로 계산한 값: {{ v }}{% endblocktrans %}</li>{% endif %}
+          {% if detail.fetched_at %}<li>{% blocktrans with d=detail.fetched_at|date:"Y-m-d" c=detail.constants_date %}채보별 값 갱신: {{ d }} · 모델 상수: {{ c }}{% endblocktrans %}</li>{% endif %}
+          <li>{% trans 'BPIManager 에 표시되는 값과 다르면 디스코드로 알려 주세요.' %}</li>
+        </ul>
+      </details>
+    </div>
+  </div>
+
+  <div class="card bm-panel mb-3">
+    <div class="card-body">
+      <h2 class="h6 mb-1">{% trans 'BPI 가 높은 기록' %}</h2>
+      <p class="small text-body-secondary">
+        {% trans 'EX SCORE 가 있는 SP☆11·12 채보를 BPI 가 높은 순으로 보여 줍니다.' %}
+      </p>
+      <div class="table-responsive">
+        <table class="table table-sm align-middle mb-0 bm-cpi-table">
+          <thead><tr>
+            <th>#</th><th>{% trans '곡' %}</th><th class="text-end">EX SCORE</th>
+            <th class="text-end">BPI</th>
+          </tr></thead>
+          <tbody>
+          {% for r in detail.top %}
+            <tr>
+              <td class="text-body-secondary">{{ forloop.counter }}</td>
+              <td>{{ r.title }} <span class="bm-cpi-type bm-cpi-type-{{ r.type }}">{{ r.type|slice:"2:" }}</span>
+                <span class="text-body-secondary small">☆{{ r.level }}</span></td>
+              <td class="text-end">{{ r.ex }} <span class="text-body-secondary small">({{ r.rate|floatformat:2 }}%)</span></td>
+              <td class="text-end fw-bold">{{ r.bpi|floatformat:2 }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

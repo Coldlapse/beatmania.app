@@ -156,7 +156,8 @@ body {
 }
 .profile-dan.dan1 { background-color: #6c757d; }
 
-/* CPI(추정) — 이름 블록 오른쪽 */
+/* 합산 BPI · CPI(추정) — 이름 블록 오른쪽. 칸 너비를 1fr 로 맞춰 두 칸이 같은 크기다 */
+.profile-scores { flex-shrink: 0; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: .5rem; }
 .profile-cpi {
   flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end;
   text-decoration: none; color: inherit; line-height: 1.1;
@@ -170,6 +171,9 @@ body {
 @media (max-width: 575.98px) {
   .profile-main-info { gap: 1rem; padding: 1.25rem 0; }
   .profile-avatar { width: 64px; height: 64px; padding: 3px; border-width: 2px; }
+  /* 좁은 화면에서는 두 칸을 세로로 쌓아 이름 자리를 남긴다(크기는 여전히 같다) */
+  .profile-scores { grid-auto-flow: row; gap: .35rem; }
+  .profile-scores .profile-cpi { padding: .35rem .7rem; }
 }
 
 /* --- Rank Table Navigation ---------------------------------------------- */

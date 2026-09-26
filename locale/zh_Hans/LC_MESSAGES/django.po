@@ -207,6 +207,9 @@ msgstr "基于 <a href=\"%(kuna)s\" target=\"_blank\" rel=\"noopener\">@lazykuna
 msgid "<a href=\"/privacy/\" target=\"_blank\" rel=\"noopener\">개인정보처리방침</a>을 읽었고 이에 동의합니다."
 msgstr "我已阅读并同意<a href=\"/privacy/\" target=\"_blank\" rel=\"noopener\">隐私政策</a>。"
 
+msgid "<a href=\"https://bpi2.poyashi.me/\" target=\"_blank\" rel=\"noopener\">BPIManager</a> 의 BPI V2 와 같은 식으로 계산합니다. 채보별 값(세계 기록·분포 모수)은 BPIManager 가 공개하는 값을 하루 한 번 받아 씁니다."
+msgstr "采用与 <a href=\"https://bpi2.poyashi.me/\" target=\"_blank\" rel=\"noopener\">BPIManager</a> 的 BPI V2 相同的公式计算。各谱面数值(世界纪录・分布参数)每天从 BPIManager 公开的数据获取一次。"
+
 msgid "<b>비트매니아 IIDX INFINITAS</b>의 수록곡들만 제공합니다."
 msgstr "仅收录 <b>beatmania IIDX INFINITAS</b> 中的曲目。"
 
@@ -228,6 +231,15 @@ msgstr "获取 API 令牌"
 msgid "API 토큰 보기"
 msgstr "查看 API 令牌"
 
+msgid "BPI 가 높은 기록"
+msgstr "BPI 最高的记录"
+
+msgid "BPI 를 계산할 기록이 없습니다"
+msgstr "没有可用于计算 BPI 的记录"
+
+msgid "BPIManager 에 표시되는 값과 다르면 디스코드로 알려 주세요."
+msgstr "如果与 BPIManager 显示的数值不同,请在 Discord 告诉我们。"
+
 msgid "Beatoraja의 LITONE 계열 스킨 등 IIDX와 동일한 구조로 제작된 스킨에 대응합니다. 일부 LITONE 버전은 IIDX AC 계산식대로의 서든 계산을 지원하지만, 일부 버전은 Beatoraja의 서든 계산대로 작동합니다. 확인 후 이용해주세요."
 msgstr "本工具适用于与 IIDX 结构相同的皮肤，例如 beatoraja 的 LITONE 系列。部分 LITONE 版本按 IIDX AC 的公式计算 SUDDEN+，另一部分版本则依照 beatoraja 自身的算法。请确认后再使用。"
 
@@ -248,6 +260,9 @@ msgstr "DJ NAME"
 
 msgid "DP 단위"
 msgstr "DP 段位"
+
+msgid "EX SCORE 가 있는 SP☆11·12 채보를 BPI 가 높은 순으로 보여 줍니다."
+msgstr "按 BPI 从高到低显示有 EX SCORE 的 SP☆11・12 谱面。"
 
 msgid "EX SCORE 는 0 에서 %(n)d 사이여야 합니다."
 msgstr "EX SCORE 必须在 0 到 %(n)d 之间。"
@@ -321,11 +336,20 @@ msgstr "SP 段位"
 msgid "SPL 난이도 지원 추가"
 msgstr "新增 SPL 难度支持"
 
+msgid "SP☆12 %(n)s채보 기록 기준"
+msgstr "基于 %(n)s 个 SP☆12 谱面的记录"
+
 msgid "SP☆12 %(n)s채보 기준"
 msgstr "基于 %(n)s 张 SP☆12 谱面"
 
+msgid "SP☆12 %(n)s채보의 EX SCORE 로 계산한 합산 BPI 입니다. 계산식과 채보별 값은 BPIManager(bpi2.poyashi.me)를 따릅니다. 문제가 있으면 알려 주세요."
+msgstr "根据 %(n)s 个 SP☆12 谱面的 EX SCORE 计算的总合 BPI。计算公式和各谱面数值遵循 BPIManager(bpi2.poyashi.me)。如有问题请告诉我们。"
+
 msgid "SP☆12 %(n)s채보의 클리어 램프로 계산한 추정값입니다. 채보별 값은 cpi.makecir.com 의 공개 수치를 씁니다. 문제가 있으면 알려 주세요."
 msgstr "根据 SP☆12 %(n)s 张谱面的通关灯计算的估算值。各谱面数值使用 cpi.makecir.com 公开的数据。如有问题请告诉我们。"
+
+msgid "SP☆12 채보의 EX SCORE 가 하나 이상 있어야 합산 BPI 를 계산할 수 있습니다. 데이터 동기화 앱이나 서열표에서 EX SCORE 를 넣어 주세요."
+msgstr "计算总合 BPI 需要至少一个 SP☆12 谱面的 EX SCORE。请通过数据同步应用或难度表输入 EX SCORE。"
 
 msgid "SP☆12 클리어 램프가 %(n)s채보 이상 있어야 추정할 수 있습니다."
 msgstr "需要至少 %(n)s 张 SP☆12 谱面的通关灯才能估算。"
@@ -885,6 +909,9 @@ msgstr "状态检查"
 msgid "새 기록"
 msgstr "新增"
 
+msgid "새 기록 하나로 추정 실력이 내려가면 합산 값도 내려갈 수 있어, BPIManager 처럼 지금까지의 최고값을 보여 줍니다. EX SCORE 를 손으로 낮추면 최고값을 지우고 다시 계산합니다."
+msgstr "一条新记录可能使估计实力下降,从而使总合值下降,因此与 BPIManager 一样显示迄今为止的最高值。手动调低 EX SCORE 时会清除最高值并重新计算。"
+
 msgid "새 비밀번호"
 msgstr "新密码"
 
@@ -1338,6 +1365,9 @@ msgstr "准备中"
 msgid "중요 공지"
 msgstr "重要公告"
 
+msgid "지금 기록만으로 계산한 값: %(v)s"
+msgstr "仅按当前记录计算的值: %(v)s"
+
 msgid "지금 기록보다 좋을 때만 올립니다. 직접 입력한 기록을 낮추지 않습니다."
 msgstr "仅在比现有记录更好时更新，不会降低您手动输入的记录。"
 
@@ -1397,6 +1427,9 @@ msgstr "按每个谱面的最高灯，以该灯的适正CPI从高到低显示。
 
 msgid "채보별 값 갱신: %(d)s"
 msgstr "谱面数值更新: %(d)s"
+
+msgid "채보별 값 갱신: %(d)s · 모델 상수: %(c)s"
+msgstr "各谱面数值更新: %(d)s · 模型常数: %(c)s"
 
 msgid "채보별 값은 <a href=\"https://cpi.makecir.com/\" target=\"_blank\" rel=\"noopener\">cpi.makecir.com</a> 이 공개하는 램프별 적정CPI(달성률 %(half)s 지점)와 개인차도(%(mid)s 폭)입니다."
 msgstr "各谱面数值为 <a href=\"https://cpi.makecir.com/\" target=\"_blank\" rel=\"noopener\">cpi.makecir.com</a> 公开的各灯适正CPI(达成率 %(half)s 处)与个人差度(%(mid)s 的宽度)。"
@@ -1559,6 +1592,12 @@ msgstr "所使用的项目"
 
 msgid "합계"
 msgstr "合计"
+
+msgid "합산 BPI"
+msgstr "总合 BPI"
+
+msgid "합산 BPI 는 SP☆12 전 채보를 대상으로 합니다. 친 채보는 그 BPI 를, 안 친 채보는 친 기록으로 추정한 실력에서 예측한 값을 넣어 모읍니다."
+msgstr "总合 BPI 以全部 SP☆12 谱面为对象。已玩谱面使用其 BPI,未玩谱面使用根据记录估计的实力所预测的值进行汇总。"
 
 msgid "해당 기간에 기록이 없습니다."
 msgstr "该时间段内没有记录。"
