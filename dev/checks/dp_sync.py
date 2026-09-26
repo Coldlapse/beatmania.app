@@ -82,7 +82,16 @@ try:
     RankItem.objects.create(rankcategory=c_only, song=other, info='')  # 원본에 없는 전용곡
     asked = []
     _prompt.ask = lambda **kw: asked.append(kw) or ''                   # 넘기기(기본값)
+    import datetime as _dt
+    from django.utils import timezone as _tz
+    RankTable.objects.filter(pk=tb.pk).update(time=_tz.now() - _dt.timedelta(days=400))
     p.process_sheet(sheet, 'UPDATE')
+    t_after = RankTable.objects.get(pk=tb.pk).time
+    check("돌리면 서열표 'updated' 가 돌린 시각으로(옮긴 곡이 없어도)", abs((_tz.now() - t_after).total_seconds()) < 120, str(t_after))
+    import json as _json
+    from iidxrank.rankpage import DateTimeEncoder
+    check('화면에 넘기는 시각(epoch)이 서버 시간대와 상관없이 맞다',
+          abs(_json.loads(_json.dumps({'t': t_after}, cls=DateTimeEncoder))['t'] - t_after.timestamp()) < 1)
     items = list(RankItem.objects.filter(rankcategory__ranktable=tb).select_related('rankcategory'))
     check('위치가 다르면 관리자에게 묻는다(SP 와 같다)', len(asked) == 1 and '1건' in asked[0]['question'],
           str([x.get('question') for x in asked]))

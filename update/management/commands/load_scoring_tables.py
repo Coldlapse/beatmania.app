@@ -18,19 +18,22 @@ import os
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
+from django.utils import timezone
 
 from iidxrank import models
 from iidxrank.records_import import norm_title
 
 DATA = os.path.join(os.path.dirname(__file__), '..', '..', 'data')
 TIERS = ['E', 'D', 'C', 'B', 'A', 'A+', 'S', 'S+']        # 쉬운 쪽이 작은 정렬값
-COPYRIGHT = 'スコア難易度表: けんたんチャンネル基準 (2026年8月)'
+# 서열표 좌하단 표기는 다른 서열표처럼 beatmania.app 만 둔다(사용자 결정 2026-09-26).
+# 원본: スコア難易度表 けんたんチャンネル基準 (2026年8月), SP12 는 協力 KKM* SOMORI NIKE. — 제목의 'by KENTAN' 으로 밝힌다.
+COPYRIGHT = 'beatmania.app'
 
 TABLES = [
     {'file': 'scoring_sp10.tsv', 'name': 'SP10S', 'title': 'IIDX INFINITAS SP ☆10 Scoring Rank by KENTAN', 'level': 10,
      'copyright': COPYRIGHT},
     {'file': 'scoring_sp12.tsv', 'name': 'SP12S', 'title': 'IIDX INFINITAS SP ☆12 Scoring Rank by KENTAN', 'level': 12,
-     'copyright': COPYRIGHT + ' / 協力 KKM* SOMORI NIKE.'},
+     'copyright': COPYRIGHT},
 ]
 
 
@@ -107,7 +110,9 @@ class Command(BaseCommand):
                 table, _ = models.RankTable.objects.update_or_create(
                     tablename=t['name'],
                     defaults={'tabletitle': t['title'], 'level': t['level'], 'type': 'SP',
-                              'copyright': t['copyright'][:100]})
+                              'copyright': t['copyright'][:100],
+                              # 'updated' 는 이 명령을 돌린 날짜다(다른 서열표의 갱신 스크립트와 같다)
+                              'time': timezone.now()})
                 models.RankItem.objects.filter(rankcategory__ranktable=table).delete()
                 models.RankCategory.objects.filter(ranktable=table).delete()
                 # 분류 이름은 'Tier S+' 처럼 원본 표기를 따른다.

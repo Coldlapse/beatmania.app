@@ -1,7 +1,6 @@
 #-*- coding: utf-8 -*-
 from iidxrank import iidx
 from iidxrank import models
-import time
 from datetime import datetime
 import json
 import copy
@@ -230,9 +229,9 @@ def get_ranktable_statistic(ranktable):
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, datetime):
-            return time.mktime(o.timetuple())
-            #time.mktime(ranktable.time.timetuple())
-            #return o.isoformat()
+            # 전에는 time.mktime(o.timetuple()) — 시간대를 버리고 서버 시간대로 다시 읽어서, 서버가 UTC 가
+            # 아니면(예: KST 인 dev) 서열표의 Updated 날짜가 9시간 어긋났다. 라이브 컨테이너는 UTC 라 맞았다.
+            return o.timestamp()
         return json.JSONEncoder.default(self,o)
 
 # <script> 안에 그대로 박을 JSON 이라 < > & 를 유니코드 이스케이프로 바꾼다(Django json_script 와 같은 처리).
