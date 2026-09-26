@@ -345,6 +345,9 @@ msgstr "Upload the <code>tracker.tsv</code> made by Reflux to apply clear lamps 
 msgid "Reflux 를 직접 실행한다면: Reflux.exe 가 있는 폴더"
 msgstr "If you run Reflux yourself: the folder containing Reflux.exe"
 
+msgid "Reflux 패치 대응 포크와 게임 패치마다 바뀌는 오프셋은 <a href=\"https://github.com/OhSorry-DP\" target=\"_blank\" rel=\"noopener\">INF오소리(OhSorry-DP)</a> 측이 공개한 것을 씁니다. 진심으로 감사드립니다."
+msgstr "The patched Reflux fork and the memory offsets that change with each game patch are published by <a href=\"https://github.com/OhSorry-DP\" target=\"_blank\" rel=\"noopener\">INF OhSorry (OhSorry-DP)</a>. We sincerely thank them."
+
 msgid "SP 단위"
 msgstr "SP class"
 

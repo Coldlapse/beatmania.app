@@ -41,6 +41,10 @@
       <li>{% url 'api_token' as token_url %}{% blocktrans %}앱의 API 토큰 칸에 <a href="{{ token_url }}">API 토큰</a>을 넣습니다.{% endblocktrans %}</li>
       <li>{% blocktrans %}게임을 켜고 곡 선택 화면에 한 번 들어가면 기록이 올라갑니다. INF오소리와 동시 실행이 가능하며, 충돌이 일어나지 않게끔 설계했습니다.{% endblocktrans %}</li>
     </ol>
+    {% comment %} 앱이 쓰는 Reflux 포크와 패치별 오프셋의 출처 — 앱 설정 화면·README 에도 같은 감사의 말이 있다 {% endcomment %}
+    <p class="bm-app-credit small text-body-secondary mb-3">
+      {% blocktrans %}Reflux 패치 대응 포크와 게임 패치마다 바뀌는 오프셋은 <a href="https://github.com/OhSorry-DP" target="_blank" rel="noopener">INF오소리(OhSorry-DP)</a> 측이 공개한 것을 씁니다. 진심으로 감사드립니다.{% endblocktrans %}
+    </p>
     <a class="btn btn-primary btn-sm mt-auto align-self-start" href="https://github.com/Coldlapse/beatmania.app-synchronizer/releases/latest"
        target="_blank" rel="noopener">
       <i class="bi bi-download me-1" aria-hidden="true"></i>{% trans '최신 버전 받기' %}</a>

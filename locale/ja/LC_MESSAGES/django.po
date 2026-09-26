@@ -345,6 +345,9 @@ msgstr "Reflux が作成した <code>tracker.tsv</code> をアップロードす
 msgid "Reflux 를 직접 실행한다면: Reflux.exe 가 있는 폴더"
 msgstr "Reflux を直接起動している場合: Reflux.exe のあるフォルダ"
 
+msgid "Reflux 패치 대응 포크와 게임 패치마다 바뀌는 오프셋은 <a href=\"https://github.com/OhSorry-DP\" target=\"_blank\" rel=\"noopener\">INF오소리(OhSorry-DP)</a> 측이 공개한 것을 씁니다. 진심으로 감사드립니다."
+msgstr "Reflux のパッチ対応フォークと、ゲームのパッチごとに変わるオフセットは <a href=\"https://github.com/OhSorry-DP\" target=\"_blank\" rel=\"noopener\">INFオソリ(OhSorry-DP)</a> 側が公開しているものを使っています。心より感謝申し上げます。"
+
 msgid "SP 단위"
 msgstr "SP 段位"
 
