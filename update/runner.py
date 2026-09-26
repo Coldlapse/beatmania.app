@@ -397,17 +397,27 @@ def start(command_name, raw_options, user):
 
     reap_stale()
 
-    # 겹쳐 돌면 같은 테이블을 동시에 갈아엎는다
-    if CommandRun.objects.filter(
-            status__in=[CommandRun.PENDING, CommandRun.RUNNING,
-                        CommandRun.WAITING]).exists():
+    # 겹쳐 돌면 같은 테이블을 동시에 갈아엎는다.
+    # '실행 중인가' 확인과 행 생성 사이를 잠금으로 묶는다 — 전에는 두 요청이 거의 동시에 오면 둘 다
+    # 확인을 통과해 두 작업이 함께 돌 수 있었다. 잠금은 워커끼리 공유하는 DB 캐시(throttle)의 add()
+    # 이고(이미 있으면 False), 30초 뒤 저절로 풀린다(도중에 죽어도 남지 않게).
+    from django.core.cache import caches
+    lock = caches['throttle']
+    if not lock.add('runner:start-lock', 1, 30):
         return None, '이미 실행 중인 작업이 있습니다. 끝난 뒤에 다시 시도하세요.'
+    try:
+        if CommandRun.objects.filter(
+                status__in=[CommandRun.PENDING, CommandRun.RUNNING,
+                            CommandRun.WAITING]).exists():
+            return None, '이미 실행 중인 작업이 있습니다. 끝난 뒤에 다시 시도하세요.'
 
-    kwargs, label = build_kwargs(cmd, raw_options)
-    run = CommandRun.objects.create(
-        command=cmd.name, options=label,
-        started_by=user if user and user.is_authenticated else None,
-        status=CommandRun.PENDING)
+        kwargs, label = build_kwargs(cmd, raw_options)
+        run = CommandRun.objects.create(
+            command=cmd.name, options=label,
+            started_by=user if user and user.is_authenticated else None,
+            status=CommandRun.PENDING)
+    finally:
+        lock.delete('runner:start-lock')
 
     t = threading.Thread(target=_run, args=(run.pk, cmd.name, kwargs),
                          name='cmdrun-%d' % run.pk)

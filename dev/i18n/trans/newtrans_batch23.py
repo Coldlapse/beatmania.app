@@ -55,3 +55,29 @@ TRANS = {
     'このメールは beatmania.app のアカウント認証のために送信されました。\nお心当たりがない場合は、このメールを無視してください。\n',
     '此邮件因 beatmania.app 账户验证而发送。\n如果不是您本人的请求，请忽略此邮件。\n'),
 }
+
+# ── 이메일 변경 알림 (accounts.send_email_changed_notice) ─────────────────
+TRANS.update({
+'[beatmania.app] 이메일 주소가 변경되었습니다': (
+    '[beatmania.app] Your email address was changed',
+    '[beatmania.app] メールアドレスが変更されました',
+    '[beatmania.app] 您的邮箱地址已更改'),
+'이메일 주소가 변경되었습니다': (
+    'Your email address was changed', 'メールアドレスが変更されました', '您的邮箱地址已更改'),
+'계정 %(id)s 의 이메일 주소가 %(new)s 로 변경되었습니다.': (
+    'The email address of account %(id)s was changed to %(new)s.',
+    'アカウント %(id)s のメールアドレスが %(new)s に変更されました。',
+    '账户 %(id)s 的邮箱地址已更改为 %(new)s。'),
+'본인이 변경한 것이 아니라면 사이트 디스코드로 운영자에게 바로 알려 주세요.': (
+    'If you did not make this change, please tell the operator on the site Discord right away.',
+    'ご自身で変更していない場合は、サイトの Discord で運営者にすぐお知らせください。',
+    '如果不是您本人更改的，请立即在网站的 Discord 告知管理员。'),
+})
+
+# ── 403 화면 (templates/403.html) ─────────────────────────────────────────
+TRANS.update({
+'접근할 수 없음': ('Access denied', 'アクセスできません', '无法访问'),
+'이 페이지에 접근할 수 없습니다': ('You cannot access this page', 'このページにはアクセスできません', '您无法访问此页面'),
+'이 계정으로는 쓸 수 없는 기능입니다.': (
+    'This feature is not available for this account.', 'このアカウントでは使えない機能です。', '此账户无法使用该功能。'),
+})

@@ -103,7 +103,7 @@ def verify_send(request):
         if accounts.recoverable_user(email) is None:
             return JsonResponse({'ok': True, 'message': str(sent)})
 
-    ok, message = accounts.send_code(request, email, purpose, success_message=sent)
+    ok, message = accounts.send_code(request, email, purpose, success_message=sent, background=True)
     return JsonResponse({'ok': ok, 'message': str(message)})
 
 
@@ -131,8 +131,11 @@ def change_email(request):
         form = forms.ChangeEmailForm(request, request.POST)
         if form.is_valid():
             user = request.user
+            old_email = user.email
             user.email = form.cleaned_data['email']
             user.save(update_fields=['email'])
+            # 이전 주소로 알린다 — 세션을 빼앗은 사람이 바꿨다면 원래 주인이 알 수 있게
+            accounts.send_email_changed_notice(user, old_email, user.email)
             sec = accounts.security_of(user)
             sec.email_verified_at = timezone.now()
             sec.save(update_fields=['email_verified_at'])

@@ -14,7 +14,7 @@
 import datetime
 
 import requests
-from django.core.cache import cache
+from django.core.cache import cache, caches
 from django.db.models import Count
 from django.db.models.functions import TruncDate, TruncHour
 from django.http import JsonResponse
@@ -92,16 +92,26 @@ def _refresh_if_stale():
               .values_list('checked_at', flat=True).first())
     if newest and timezone.now() - newest < SELF_CHECK_AFTER:
         return
+    # 한 번에 한 요청만 점검한다. 전에는 오래된 상태에서 방문자가 몰리면 요청마다 외부 점검
+    # (textage·구글 시트, 각각 최대 8초)을 따로 돌려 워커 5개가 한꺼번에 묶일 수 있었다.
+    # 잠금은 워커끼리 공유하는 DB 캐시(throttle)에 둔다 — add() 는 이미 있으면 False 다.
+    # 60초 뒤 저절로 풀린다(점검이 도중에 죽어도 잠금이 남지 않게). 잠금을 못 잡은 요청은 기존 결과로 그린다.
+    lock = caches['throttle']
+    if not lock.add('status:refresh-lock', 1, 60):
+        return
     try:
         results = health.run_all()
     except Exception:
         # 상태 페이지가 점검 때문에 통째로 죽으면 안 된다.
+        lock.delete('status:refresh-lock')
         return
     models.HealthCheck.objects.bulk_create([
         models.HealthCheck(target=r['target'], status=r['status'],
                            latency_ms=r['latency_ms'], note=r['note'][:200],
                            checked_at=r['checked_at'])
         for r in results])
+    # 기록했으니 잠금을 푼다(다음 점검은 SELF_CHECK_AFTER 가 정한다)
+    lock.delete('status:refresh-lock')
 
 
 def _uptime():

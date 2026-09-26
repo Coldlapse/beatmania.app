@@ -1,0 +1,22 @@
+{% extends "common.html" %}
+{% load i18n %}
+{% comment %}
+  403(권한 없음) 화면. Django 가 PermissionDenied 를 만나면 이 템플릿을 그린다.
+  전에는 템플릿이 없어 사이트 모양 없이 "403 Forbidden" 글자만 나왔다(2026-09-26 추가).
+  모양은 user/unavailable.html 과 같다. CSRF 실패 403 은 이것이 아니라 Django 의 CSRF 화면이다.
+{% endcomment %}
+{% block page_title %}{% trans '접근할 수 없음' %}{% endblock %}
+{% block body %}
+{% include "top.html" %}
+
+<main class="bm-auth">
+  <div class="bm-auth-card card text-center">
+    <div class="card-body">
+      <i class="bi bi-shield-lock bm-private-icon" aria-hidden="true"></i>
+      <h1 class="bm-auth-title mt-3">{% trans '이 페이지에 접근할 수 없습니다' %}</h1>
+      <p class="text-body-secondary mb-1">{% trans '이 계정으로는 쓸 수 없는 기능입니다.' %}</p>
+      <a href="/" class="btn btn-primary mt-3">{% trans '서열표로 돌아가기' %}</a>
+    </div>
+  </div>
+</main>
+{% endblock %}

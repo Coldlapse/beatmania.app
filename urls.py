@@ -35,6 +35,7 @@ import iidxrank.views_status as views_status
 import iidxrank.views_sync as views_sync
 import iidxrank.views_cpi as views_cpi
 import iidxrank.views_notice as views_notice
+import iidxrank.csp as csp
 import iidxrank.views_typing as views_typing
 
 # 서열표 한 개에 딸린 하위 경로. 내 것과 남의 것이 같은 모양을 갖도록 공유한다.
@@ -58,6 +59,8 @@ urlpatterns = [
     # CPI(추정). 공개 규칙은 서열표와 같다.
     url(r'^cpi/$', views_cpi.cpi_page, name='cpi_page'),
     url(r'^u/(?P<username>[\w-]+)/cpi/$', views_cpi.cpi_page, name='cpi_page_user'),
+    # CSP 위반 보고(보고 전용 모드, iidxrank/csp.py)
+    url(r'^csp-report/$', csp.report, name='csp_report'),
     url(r'^notice/(?P<idx>\d+)/$', views_notice.notice_fragment, name='notice_fragment'),
     url(r'^u/(?P<username>[\w-]+)/table/(?P<tablename>\w+)/', include(table_patterns)),
 

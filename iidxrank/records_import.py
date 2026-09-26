@@ -181,7 +181,8 @@ def apply(user, text, source):
     for title, slot, level, clear, grade, ex in rows:
         sid = index.find(title, slot, level)
         if sid is None:
-            missing.append('%s [%s %d]' % (title, slot, level))
+            # 제목 길이를 자른다 — 세션·응답에 싣는 값이라, 한 줄이 수 MB 인 제목을 넣으면 세션이 부풀었다
+            missing.append('%s [%s %d]' % (title[:200], slot, level))
             continue
         c0, g0, e0 = matched.get(sid, (0, 0, 0))
         matched[sid] = (max(c0, clear), max(g0, grade), max(e0, ex))

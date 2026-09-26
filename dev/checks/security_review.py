@@ -287,7 +287,7 @@ try:
     def last_code():
         return _re.search(r'\b(\d{6})\b', mail.outbox[-1].body).group(1)
 
-    with override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend'):
+    with override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend', EMAIL_SEND_ASYNC=False):
         mail.outbox = []
         r1 = send(ipc('198.51.100.10'), 'zz_sec_taken@example.com', 'signup')
         r2 = send(ipc('198.51.100.11'), 'zz_sec_fresh@example.com', 'signup')
@@ -334,12 +334,19 @@ try:
             g = ipc('198.51.100.41')
             before = models.EmailVerification.objects.filter(email='zz_sec_fail@example.com').count()
             r = send(g, 'zz_sec_fail@example.com', 'signup')
-            check('발송 실패는 500 이 아니라 안내', r.get('ok') is False and '보내지 못했습니다' in r.get('message', ''), str(r))
+            check('로그인 전 목적: 발송 실패여도 응답은 같다(500 아님)', r.get('ok') is True, str(r))
             check('실패한 코드는 남지 않는다',
                   models.EmailVerification.objects.filter(email='zz_sec_fail@example.com').count() == before)
-            acc._deliver = real_deliver
             r = send(g, 'zz_sec_fail@example.com', 'signup')
-            check('실패 뒤 바로 다시 요청할 수 있다', r.get('ok') is True, str(r))
+            check('재발송 간격은 그대로 걸린다', r.get('ok') is False and '초 뒤' in r.get('message', ''), str(r))
+            chg = Client(HTTP_CF_CONNECTING_IP='198.51.100.42')
+            chg.force_login(v)
+            r = send(chg, 'zz_sec_newaddr@example.com', 'change')
+            check('로그인한 목적(이메일 변경): 실패를 알린다',
+                  r.get('ok') is False and '보내지 못했습니다' in r.get('message', ''), str(r))
+            acc._deliver = real_deliver
+            r = send(chg, 'zz_sec_newaddr@example.com', 'change')
+            check('그 뒤 바로 다시 요청할 수 있다', r.get('ok') is True, str(r))
         finally:
             acc._deliver = real_deliver
 
@@ -361,7 +368,146 @@ try:
         check('하루 10번 틀리면 그날은 막힘', k.get('ok') is False and '오늘은' in k.get('message', ''), str(k))
         k = chk(me, 'zz_sec_taken@example.com', 'reset_pw', '１２３４５６')
         check('전각 숫자 코드도 500 이 아니다', k.get('ok') is False)
+    print('=== p1-1. 응답 시간으로 가입 여부가 새지 않는다(백그라운드 발송) ===')
+    import time as _t
+    caches['throttle'].clear()
+    with override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend', EMAIL_SEND_ASYNC=True):
+        mail.outbox = []
+        slow_real = acc._deliver
+
+        def slow(*a, **k):
+            _t.sleep(1.5)          # 느린 SMTP 흉내
+            return slow_real(*a, **k)
+        acc._deliver = slow
+        try:
+            t0 = _t.time()
+            ra = send(ipc('198.51.100.60'), 'zz_sec_taken@example.com', 'reset_pw')
+            ta = _t.time() - t0
+            t0 = _t.time()
+            rb = send(ipc('198.51.100.61'), 'zz_sec_none4@example.com', 'reset_pw')
+            tb = _t.time() - t0
+            check('가입된 주소도 SMTP 를 기다리지 않는다(<1초)', ta < 1.0, '%.2fs' % ta)
+            check('두 응답 시간 차이 0.5초 미만', abs(ta - tb) < 0.5, '%.2fs / %.2fs' % (ta, tb))
+            acc.wait_for_mail()
+            check('메일은 응답 뒤에 나간다', len(mail.outbox) == 1 and mail.outbox[0].to == ['zz_sec_taken@example.com'])
+        finally:
+            acc._deliver = slow_real
+
+    print('=== p1-3. 이메일 변경: 비밀번호 재확인, 이전 주소 알림 ===')
+    caches['throttle'].clear()
+    ce = User.objects.create_user('zz_sec_ce', email='zz_sec_old@example.com', password='Ce-right-55')
+    extra.append(ce)
+    newplayer(ce)
+    models.AccountSecurity.objects.update_or_create(user=ce, defaults={'newrulepassed': True})
+    with override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend', EMAIL_SEND_ASYNC=False):
+        mail.outbox = []
+        cc = Client(HTTP_CF_CONNECTING_IP='198.51.100.70')
+        cc.force_login(ce)
+        send(cc, 'zz_sec_new@example.com', 'change')
+        code = last_code()
+        chk(cc, 'zz_sec_new@example.com', 'change', code)
+        r = cc.post('/account/email/', {'email': 'zz_sec_new@example.com', 'current_password': 'wrong-pw-1'})
+        ce.refresh_from_db()
+        check('비밀번호가 틀리면 바뀌지 않는다', ce.email == 'zz_sec_old@example.com')
+        mail.outbox = []
+        r = cc.post('/account/email/', {'email': 'zz_sec_new@example.com', 'current_password': 'Ce-right-55'})
+        ce.refresh_from_db()
+        check('맞으면 바뀐다', ce.email == 'zz_sec_new@example.com', '%s %s' % (r.status_code, ce.email))
+        check('이전 주소로 알림(새 주소는 가림)', len(mail.outbox) == 1 and mail.outbox[0].to == ['zz_sec_old@example.com']
+              and 'zz***@example.com' in mail.outbox[0].body and 'zz_sec_new@' not in mail.outbox[0].body,
+              str([(m.to, m.body[:80]) for m in mail.outbox]))
     models.EmailVerification.objects.filter(email__startswith='zz_sec_').delete()
+    caches['throttle'].clear()
+
+    print('=== p2. 2순위 ===')
+    from iidxrank import views_status, health as _health
+    from update import runner as _runner
+    caches['throttle'].clear()
+    # 서비스 현황 점검 잠금
+    calls = []
+    real_run_all = _health.run_all
+    _health.run_all = lambda: calls.append(1) or []
+    try:
+        models.HealthCheck.objects.filter(target__startswith='zz').delete()
+        caches['throttle'].add('status:refresh-lock', 1, 60)
+        stale = models.HealthCheck.objects.order_by('-checked_at').first()
+        if stale:
+            models.HealthCheck.objects.update()     # 아무것도 바꾸지 않음(가독용)
+        with override_settings():
+            views_status.SELF_CHECK_AFTER_saved = views_status.SELF_CHECK_AFTER
+            import datetime as _dt
+            views_status.SELF_CHECK_AFTER = _dt.timedelta(seconds=-1)     # 늘 오래됐다고 보게
+            views_status._refresh_if_stale()
+            check('잠금을 누가 쥐고 있으면 점검하지 않는다', calls == [], str(calls))
+            caches['throttle'].delete('status:refresh-lock')
+            views_status._refresh_if_stale()
+            check('잠금이 없으면 한 번 점검', calls == [1], str(calls))
+            check('점검 뒤 잠금을 푼다', caches['throttle'].get('status:refresh-lock') is None)
+            views_status.SELF_CHECK_AFTER = views_status.SELF_CHECK_AFTER_saved
+    finally:
+        _health.run_all = real_run_all
+    # 프록시 설정·미들웨어 순서
+    check('USE_X_FORWARDED_HOST 꺼짐', not getattr(dj_settings, 'USE_X_FORWARDED_HOST', False))
+    body = Client(HTTP_X_FORWARDED_HOST='evil.example').get('/overjoy/header.json').content.decode()
+    check('X-Forwarded-Host 로 사이트 주소가 바뀌지 않는다', 'evil.example' not in body, body[:120])
+    mw = list(dj_settings.MIDDLEWARE)
+    check('SecurityMiddleware·WhiteNoise 가 앞쪽(2·3번째)',
+          mw[1] == 'django.middleware.security.SecurityMiddleware'
+          and mw[2] == 'whitenoise.middleware.WhiteNoiseMiddleware', str(mw[:4]))
+    r = Client().get('/withdraw/')                 # 로그인 강제 리다이렉트(앞에서 끝나는 응답)
+    check('리다이렉트 응답에도 보안 헤더', r.status_code == 302 and r.get('X-Content-Type-Options') == 'nosniff',
+          '%s %s' % (r.status_code, r.get('X-Content-Type-Options')))
+    # CSP 보고 전용
+    r = Client().get('/about/')
+    check('HTML 에 CSP(보고 전용) 헤더', "default-src 'self'" in r.get('Content-Security-Policy-Report-Only', '')
+          and not r.has_header('Content-Security-Policy'))
+    check('JSON 에는 CSP 헤더 없음', not Client().get('/status/health.json').has_header('Content-Security-Policy-Report-Only'))
+    rep = {'csp-report': {'violated-directive': 'script-src', 'blocked-uri': 'https://evil.example/x.js?q=secret',
+                          'document-uri': 'https://beatmania.app/about/?token=abc'}}
+    r = Client().post('/csp-report/', json.dumps(rep), content_type='application/csp-report')
+    check('보고 받기 204', r.status_code == 204, str(r.status_code))
+    check('보고 GET 405', Client().get('/csp-report/').status_code == 405)
+    check('보고가 너무 크면 413', Client().post('/csp-report/', 'x' * 20000, content_type='application/json').status_code == 413)
+    check('보고 JSON 아니면 400', Client().post('/csp-report/', 'nope', content_type='application/json').status_code == 400)
+    from iidxrank import csp as _csp
+    check('보고 로그에는 쿼리를 남기지 않는다', _csp._where('https://evil.example/x.js?q=secret') == 'evil.example/x.js')
+    # 500 나던 입력
+    tj = Client()
+    tj.force_login(v)
+    check('?days=abc 는 200', tj.get('/my-page/typing.json?days=abc').status_code == 200)
+    # 403 화면
+    r = csu.get('/withdraw/')
+    check('403 이 사이트 모양으로', r.status_code == 403 and 'bm-auth-card' in r.content.decode())
+    # 관리자 표 편집 API
+    su_post = lambda d: csu.post('/update/rankedit/SP12H/', d).json()
+    check('없어진 동작은 invalid access', su_post({'action': 'category', 'id': '1'}).get('message') == 'invalid access')
+    check('숫자가 아닌 입력은 500 대신 메시지',
+          su_post({'action': 'songcategory', 'id': 'x', 'category': 'y'}).get('message') == 'invalid parameter')
+    check('없는 항목을 빼려 하면 500 대신 메시지',
+          su_post({'action': 'songcategory', 'id': '0', 'category': '-1', 'songid': '0'}).get('message') == 'nothing to remove')
+    # 관리자 명령 동시 실행 잠금
+    caches['throttle'].add('runner:start-lock', 1, 30)
+    run, err = _runner.start('cleanDuplicateSongs', {}, su)   # 잠금에 막혀 실제로 돌지 않는다
+    check('시작 잠금을 누가 쥐고 있으면 실행하지 않는다', run is None and '이미 실행 중' in (err or ''), str(err))
+    caches['throttle'].delete('runner:start-lock')
+    # 기기 현황 API: 전용 그룹 계정만 허용, 일반 계정·superuser 403
+    from django.contrib.auth.models import Group
+    grp, _c = Group.objects.get_or_create(name='machine-status')
+    dev_user = User.objects.create_user('zz_sec_dev')
+    extra.append(dev_user)
+    dev_user.set_unusable_password()
+    dev_user.save()
+    dev_user.groups.add(grp)
+    body = json.dumps({'machine_id': 'zz-sec-machine', 'waiting_count': 3})
+    mpost = lambda tok: Client().post('/api/v1/update-machine-status/', body, content_type='application/json',
+                                      HTTP_AUTHORIZATION='Token ' + tok)
+    check('기기 전용 계정 토큰은 허용', mpost(models.ApiToken.objects.create(user=dev_user).key).status_code == 200)
+    plain = models.ApiToken.objects.get_or_create(user=v)[0].key
+    check('일반 계정 토큰은 403', mpost(plain).status_code == 403)
+    check('superuser 토큰은 이제 403(전용 계정만)', mpost(models.ApiToken.objects.get_or_create(user=su)[0].key).status_code == 403)
+    models.MachineStatus.objects.filter(machine_id='zz-sec-machine').delete()
+    if not grp.user_set.exclude(pk=dev_user.pk).exists() and _c:
+        grp.delete()
     caches['throttle'].clear()
 
     print('=== 1-2·2-1. 지운 페이지·JSON (유저 랭킹, 추천) ===')

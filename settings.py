@@ -75,7 +75,9 @@ BEHIND_PROXY = env_bool('DJANGO_BEHIND_PROXY', False)
 
 if BEHIND_PROXY:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    USE_X_FORWARDED_HOST = True
+    # USE_X_FORWARDED_HOST 는 켜지 않는다(2026-09-26 제거). Apache 가 ProxyPreserveHost On 으로
+    # Host 를 그대로 넘기므로 필요 없고, 켜 두면 방문자가 보낸 X-Forwarded-Host 를 사이트 주소로
+    # 믿게 된다(build_absolute_uri 를 쓰는 overjoy/header.json 등).
 
 # 쿠키에 Secure 를 붙이고 HSTS 를 낸다. 이 둘을 위 스위치에 묶은 것은 취향이
 # 아니라 순서 문제다. is_secure() 가 False 인 채로 SESSION_COOKIE_SECURE 를
@@ -136,6 +138,14 @@ MIDDLEWARE = (
     # 맨 앞: 방문자 실제 IP(CF-Connecting-IP)를 REMOTE_ADDR 로 옮긴다. 뒤의 모든 것이
     # 이 값을 본다(로그인·메일 횟수 제한, 조회수). 믿는 전제는 iidxrank/client_ip.py 머리말.
     'iidxrank.client_ip.RealClientIPMiddleware',
+    # 보안 헤더(HSTS·nosniff·Referrer-Policy)를 모든 응답에 붙이려면 앞에 와야 한다. 전에는 거의
+    # 맨 끝이라, 앞에서 끝나는 응답(1회 인증 리다이렉트, CSRF 403, APPEND_SLASH 301)에 빠졌다.
+    'django.middleware.security.SecurityMiddleware',
+    # 정적 파일은 여기서 끝난다 — 아래 미들웨어(세션·인증 등)와 뷰까지 가지 않는다. WhiteNoise 문서가
+    # 권하는 자리(SecurityMiddleware 바로 뒤)다. 전에는 맨 끝이라 정적 파일 요청도 세션·인증을 다 거쳤다.
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    # CSP 는 보고 전용으로 시작한다(iidxrank/csp.py)
+    'iidxrank.csp.CSPReportOnlyMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     # LocaleMiddleware 는 Session 뒤, Common 앞에 와야 한다.
     # 세션·쿠키에 저장된 언어를 읽어야 하고, Common 이 URL 을 확정하기 전에
@@ -150,9 +160,6 @@ MIDDLEWARE = (
     #'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    # 정적 파일은 여기서 끝난다. 아래 미들웨어와 뷰까지 가지 않는다.
-    'whitenoise.middleware.WhiteNoiseMiddleware',
 )
 
 
@@ -355,6 +362,9 @@ EMAIL_CODE_TTL = int(env('EMAIL_CODE_TTL', str(60 * 60)))
 EMAIL_RESEND_INTERVAL = int(env('EMAIL_RESEND_INTERVAL', str(5 * 60)))
 # 코드 입력을 몇 번까지 틀릴 수 있나. 넘으면 코드를 버리고 다시 받아야 한다.
 EMAIL_CODE_MAX_ATTEMPTS = int(env('EMAIL_CODE_MAX_ATTEMPTS', '5'))
+# 로그인 전 목적(가입·찾기·재설정)의 메일을 응답 뒤에 보낸다 — 응답 시간으로 가입 여부가 새지 않게.
+# 자세한 사정은 iidxrank/accounts.py '백그라운드 발송'. 검사에서만 끈다.
+EMAIL_SEND_ASYNC = env_bool('EMAIL_SEND_ASYNC', True)
 
 
 # ---------------------------------------------------------------------------

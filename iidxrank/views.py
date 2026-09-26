@@ -537,11 +537,15 @@ def update_typing_count_api(request):
 # --- 2. 사용자가 웹에서 볼 마이페이지 뷰 ---
 
 # --- 대기 현황 API ---
+MACHINE_STATUS_GROUP = 'machine-status'
+
+
 @csrf_exempt
 def update_machine_status_api(request):
     """오프라인 기계의 대기 인원을 에이전트(현장 PC)가 올리는 API.
 
-    인증: Authorization: Token <키>. 그리고 그 토큰의 주인이 superuser 여야 한다.
+    인증: Authorization: Token <키>. 그리고 그 토큰의 주인이 기기 전용 그룹(machine-status)에 있어야 한다.
+    (2026-09-26 전에는 superuser 였다 — 아래 '왜 is_superuser' 문단은 그때의 판단이고, 지금은 전용 계정으로 좁혔다.)
 
     왜 토큰만으로는 부족한가 — 이 사이트의 API 토큰은 타건 기록을 올리려고
     사용자 누구나 발급받는다(현재 55명). 그 토큰으로 남의 오락실 대기열까지
@@ -571,7 +575,13 @@ def update_machine_status_api(request):
     user = api_token.user
     # 유효한 토큰이지만 권한이 없는 경우다. 401(누구인지 모르겠다)이 아니라
     # 403(누구인지는 알겠는데 안 된다)이 맞다.
-    if not (user.is_active and user.is_superuser):
+    #
+    # 기기 전용 계정(그룹 MACHINE_STATUS_GROUP)의 토큰만 받는다(2026-09-26). 전에는 superuser 토큰이었는데,
+    # 현장 PC 가 털리면 그 토큰으로 superuser 의 기록 동기화 API 까지 쓸 수 있었다. 전용 계정의 토큰은
+    # 털려도 대기 인원 보고만 할 수 있다(그 계정에는 기록도 권한도 없다).
+    # superuser 는 더 받지 않는다 — 전환 기간 없이 바로 끊었다(사용자 결정, 현장 PC 토큰 교체는 급하지 않음).
+    allowed = user.groups.filter(name=MACHINE_STATUS_GROUP).exists()
+    if not (user.is_active and allowed):
         return JsonResponse(
             {'error': 'This token is not allowed to update machine status.'},
             status=403)

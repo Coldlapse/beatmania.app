@@ -9,75 +9,41 @@ from iidxrank import models
 
 
 def json_rankedit(request):
-  # staff / admin only
+  """곡을 다른 분류로 옮기거나(category=분류 pk) 표에서 뺀다(category=-1). staff 전용.
+
+  예전에는 song·category·table 동작도 있었는데 셋 다 호출하면 500 이었다(정의 전 변수 사용,
+  request.POST(...) 호출, RankItem 에 없는 remove()). 부르는 곳도 rankedit.html 의 songcategory
+  하나뿐이라 지웠다(2026-09-26). 입력이 없거나 숫자가 아니면 500 대신 오류 메시지를 준다.
+  """
   if not request.user.is_staff:
     return JsonResponse({'message': 'access denied'})
-
-  # in case of POST? -> return JSON result
-  if (request.method == "POST"):
-    if (request.POST['action'] == 'song'):
-      pk = int(request.POST['id'])
-      obj = models.RankItem.objects.filter(id=pk).first()
-      if (obj == None):
-        return JsonResponse({'message': 'wrong object id'})
-      pk_cate = int(request.POST['categoryid'])
-      if (pk_cate == -1):
-        obj.remove()
-      else:
-        obj_cate = models.RankCategory.objects.filter(id=pk_cate).first()
-        if (obj_cate == None):
-          return JsonResponse({'message': 'wrong category id'})
-        obj.title = request.POST['title']
-        obj.tag = request.POST['tag']
-        obj.category = obj_cate;
-        obj.save();
-      return JsonResponse({'message': 'successfully done'})
-    elif (request.POST['action'] == 'category'):
-      pk = int(request.POST['id'])
-      obj_cate = models.RankCategory.objects.filter(id=obj_cate).first()
-      if (obj_cate == None):
-        return JsonResponse({'message': 'wrong category id'})
-      obj_cate.title = request.POST['title']
-      obj_cate.categorytype = int(request.POST(['categorytype']))
-      obj_cate.sortindex = float(request.POST(['sortindex']))
-      obj_cate.save()
-      return JsonResponse({'message': 'successfully done'})
-    elif (request.POST['action'] == 'table'):
-      return JsonResponse({'message': 'not implemented'})
-    elif (request.POST['action'] == 'songcategory'):
-      pk = int(request.POST['id'])
-      obj = models.RankItem.objects.filter(id=pk).first()
-      pk_cate = int(request.POST['category'])
-      if (pk_cate == -1):
-        obj_cate = None
-      else:
-        obj_cate = models.RankCategory.objects.filter(id=pk_cate).first()
-        if (obj_cate == None):
-          return JsonResponse({'message': 'wrong category id'})
-      if (obj == None):
-        # create rankitem object
-        # in case of none-created rankitem
-        # if even songid doesn't exists,
-        # then - serious error.
-        songpk = int(request.POST['songid'])
-        obj_song = models.Song.objects.filter(id=songpk).first()
-        if (obj_song == None):
-          return JsonResponse({'messasge': 'wrong object id'})
-        else:
-          obj = models.RankItem.objects.create(
-                  rankcategory = obj_cate,
-                  song = obj_song,
-                  info = ''
-                  )
-      else:
-        # delete or modify songitem's category
-        if (obj_cate == None):
-          print('deleted')
-          obj.delete()
-        else:
-          print('%s to %s' % (obj.song.songtitle, obj_cate.categoryname))
-          obj.rankcategory = obj_cate
-          obj.save()
-      return JsonResponse({'message': 'successfully done'})
-  else:
+  if request.method != "POST" or request.POST.get('action') != 'songcategory':
     return JsonResponse({'message': 'invalid access'})
+  try:
+    pk = int(request.POST.get('id', '0'))
+    pk_cate = int(request.POST.get('category', ''))
+    songpk = int(request.POST.get('songid', '0'))
+  except ValueError:
+    return JsonResponse({'message': 'invalid parameter'})
+
+  obj = models.RankItem.objects.filter(id=pk).first()
+  obj_cate = None
+  if pk_cate != -1:
+    obj_cate = models.RankCategory.objects.filter(id=pk_cate).first()
+    if obj_cate is None:
+      return JsonResponse({'message': 'wrong category id'})
+
+  if obj is None:
+    # 표에 아직 없는 곡을 분류에 넣는다. 분류 없이(-1) 새로 만들 수는 없다 — rankcategory 는 NOT NULL
+    if obj_cate is None:
+      return JsonResponse({'message': 'nothing to remove'})
+    obj_song = models.Song.objects.filter(id=songpk).first()
+    if obj_song is None:
+      return JsonResponse({'message': 'wrong object id'})
+    models.RankItem.objects.create(rankcategory=obj_cate, song=obj_song, info='')
+  elif obj_cate is None:
+    obj.delete()
+  else:
+    obj.rankcategory = obj_cate
+    obj.save()
+  return JsonResponse({'message': 'successfully done'})

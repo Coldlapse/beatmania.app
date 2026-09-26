@@ -19,10 +19,12 @@
 import logging
 import re
 import secrets
+import threading
 
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import EmailMultiAlternatives
+from django.db import connections
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import get_language
@@ -176,6 +178,42 @@ def note_send_request(request, email, purpose):
     throttle.hit('mail_cool', settings.EMAIL_RESEND_INTERVAL, *_cooldown_parts(request, email, purpose))
 
 
+# ── 백그라운드 발송 ───────────────────────────────────────────────────────
+#
+# 로그인하지 않은 목적(가입·아이디 찾기·비밀번호 재설정)은 메일을 응답 뒤에 보낸다(2026-09-26).
+# 같은 자리에서 보내면 SMTP 가 응답을 붙잡아, 메일을 보내는 경우(가입된 주소)와 보내지 않는
+# 경우(가입 안 된 주소)가 응답 시간으로 갈렸다 — 라이브 실측 4,366ms 대 210ms. 문구를 같게 해도
+# 시간만 재면 가입 여부를 알 수 있었다.
+# 대가: 발송이 실패해도 화면은 "보냈습니다" 다. 실패하면 코드를 지우고 로그만 남기며, 사용자는
+# 재발송 간격(5분) 뒤 다시 요청한다(안내 문구가 그렇게 말한다).
+# 로그인한 목적(이메일 변경·1회 인증)은 가입 여부를 숨길 일이 없어 전처럼 그 자리에서 보내고
+# 실패를 알린다.
+_pending = []
+
+
+def _later(job):
+    """job 을 응답 뒤에 돌린다. EMAIL_SEND_ASYNC=False 면 그 자리에서(검사용)."""
+    if not getattr(settings, 'EMAIL_SEND_ASYNC', True):
+        job()
+        return
+
+    def run():
+        try:
+            job()
+        finally:
+            # 스레드가 연 DB 연결(코드 행 삭제, 발송량 카운터)을 닫는다 — 안 닫으면 쌓인다
+            connections.close_all()
+    t = threading.Thread(target=run, name='bm-mail', daemon=True)
+    t.start()
+    _pending[:] = [x for x in _pending if x.is_alive()] + [t]
+
+
+def wait_for_mail(timeout=10):
+    """백그라운드 발송이 끝나기를 기다린다(검사용)."""
+    for t in list(_pending):
+        t.join(timeout)
+
+
 def _deliver(email, subject, text_body, html_body):
     """실제 발송. 사이트 전체 하루 발송량을 여기서 센다."""
     msg = EmailMultiAlternatives(subject, text_body, settings.DEFAULT_FROM_EMAIL, [email])
@@ -184,10 +222,11 @@ def _deliver(email, subject, text_body, html_body):
     throttle.hit('mail_day', throttle.MAIL_DAY[1])
 
 
-def send_code(request, email, purpose, success_message=None):
+def send_code(request, email, purpose, success_message=None, background=False):
     """코드를 만들어 보낸다. (성공여부, 메시지) 를 돌려준다.
 
     형식 검사·발송 한도·재발송 간격은 부르는 쪽(views_account.verify_send)이 먼저 본다.
+    background=True 면 응답 뒤에 보내고 늘 성공으로 답한다(위 '백그라운드 발송' 참조).
     """
     email = normalize(email)
     if not request.session.session_key:
@@ -220,6 +259,20 @@ def send_code(request, email, purpose, success_message=None):
         'min': minutes,
         'lang': get_language() or 'ko',
     })
+
+    if background:
+        pk = row.pk
+
+        def job():
+            try:
+                _deliver(email, subject, text_body, html_body)
+            except Exception as e:
+                # 코드를 지워 이 코드로는 인증되지 않게 한다. 재발송 간격은 그대로 둔다
+                # (응답은 이미 "보냈습니다" 로 나갔고, 문구가 5분 뒤 다시 요청하라고 안내한다)
+                log.warning('verification mail failed (background): %s', type(e).__name__)
+                models.EmailVerification.objects.filter(pk=pk).delete()
+        _later(job)
+        return True, (success_message or _('인증 코드를 보냈습니다. 메일함을 확인해 주세요.'))
 
     try:
         _deliver(email, subject, text_body, html_body)
@@ -255,10 +308,47 @@ def send_already_registered(request, email):
         'lines': lines,
         'lang': get_language() or 'ko',
     })
-    try:
-        _deliver(normalize(email), subject, text_body, html_body)
-    except Exception as e:
-        log.warning('already-registered mail failed: %s', type(e).__name__)
+    def job():
+        try:
+            _deliver(normalize(email), subject, text_body, html_body)
+        except Exception as e:
+            log.warning('already-registered mail failed: %s', type(e).__name__)
+    # 가입 인증과 같은 시간에 답하도록 이것도 응답 뒤에 보낸다
+    _later(job)
+
+
+def _mask(email):
+    """알림 메일에 새 주소를 보여 줄 때 가린다: ab***@gmail.com"""
+    local, _at, domain = (email or '').partition('@')
+    return '%s***@%s' % (local[:2], domain) if domain else '***'
+
+
+def send_email_changed_notice(user, old_email, new_email):
+    """이메일이 바뀌었다고 **이전 주소**로 알린다(1순위-3, 2026-09-26).
+
+    세션을 빼앗은 사람이 이메일을 자기 것으로 바꾸면 그 뒤 비밀번호 재설정까지 가져갈 수 있다.
+    이전 주소의 주인이 그 사실을 알게 한다. 새 주소는 가려서 보여 준다. 링크는 넣지 않는다.
+    """
+    old_email = normalize(old_email)
+    if not is_email_shaped(old_email) or old_email == normalize(new_email):
+        return
+    subject = str(_('[beatmania.app] 이메일 주소가 변경되었습니다'))
+    lines = [
+        _('계정 %(id)s 의 이메일 주소가 %(new)s 로 변경되었습니다.') % {
+            'id': user.get_username(), 'new': _mask(normalize(new_email))},
+        _('본인이 변경한 것이 아니라면 사이트 디스코드로 운영자에게 바로 알려 주세요.'),
+    ]
+    text_body = '\n\n'.join(str(x) for x in lines) + '\n'
+    html_body = render_to_string('mail/verify_code.html', {
+        'subject': subject, 'heading': _('이메일 주소가 변경되었습니다'),
+        'code': None, 'lines': lines, 'lang': get_language() or 'ko'})
+
+    def job():
+        try:
+            _deliver(old_email, subject, text_body, html_body)
+        except Exception as e:
+            log.warning('email-changed notice failed: %s', type(e).__name__)
+    _later(job)
 
 
 def check_code(request, email, purpose, code):

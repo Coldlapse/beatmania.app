@@ -27,6 +27,7 @@ _ALLOW = [
     r'^/u/',
     r'^/cpi/',
     r'^/notice/',
+    r'^/csp-report/',
     r'^/json/',
     r'^/status/',
     r'^/converter/',

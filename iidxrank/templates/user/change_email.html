@@ -19,6 +19,7 @@
   {% csrf_token %}
   {% bootstrap_field form.email layout='vertical' %}
   {% include "user/_verify_email.html" with purpose=purpose email_field='email' %}
+  <div class="mt-3">{% bootstrap_field form.current_password layout='vertical' %}</div>
   <button type="submit" class="btn btn-primary w-100 mt-3">{% trans '이메일 바꾸기' %}</button>
 </form>
 <script src="{% static 'js/verify-email.js' %}?v=20260902a"></script>

@@ -148,7 +148,10 @@ def typing_json(request):
     if not request.user.is_authenticated:
         return JsonResponse({'labels': [], 'data': []})
 
-    days = int(request.GET.get('days', 30))
+    try:
+        days = int(request.GET.get('days', 30))
+    except (TypeError, ValueError):      # ?days=abc 가 500 이었다
+        days = 30
     days = max(7, min(days, 365))
     end = timezone.localdate()
     start = end - datetime.timedelta(days=days - 1)

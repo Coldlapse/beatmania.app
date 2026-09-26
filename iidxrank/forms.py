@@ -458,6 +458,17 @@ class ChangeEmailForm(_VerifiedEmailForm):
         label=_('새 이메일'),
         widget=forms.EmailInput(attrs={
             'autocomplete': 'email', 'placeholder': _('you@example.com')}))
+    # 현재 비밀번호를 한 번 더 받는다(2026-09-26). 세션만 쥔 사람이 이메일을 자기 것으로 바꾸면
+    # 그 뒤 비밀번호 재설정까지 가져갈 수 있었다. 1회 인증(MigrateForm)은 따로라 해당 없다.
+    current_password = forms.CharField(
+        label=_('현재 비밀번호'),
+        strip=False, widget=forms.PasswordInput(attrs={'autocomplete': 'current-password'}))
+
+    def clean_current_password(self):
+        pw = self.cleaned_data['current_password']
+        if not check_password_lenient(self.request.user, pw):
+            raise forms.ValidationError(_('현재 비밀번호가 맞지 않습니다.'))
+        return pw
 
     def clean(self):
         from iidxrank import accounts
