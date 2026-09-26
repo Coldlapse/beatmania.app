@@ -232,3 +232,34 @@ $(function() {
     }
   }
 });
+
+/*
+ * 공유 상자 (templates/widgets/share_box.html)
+ *
+ * 열릴 때 주소(현재 출처 + data-share-path)를 채우고 선택해 둔다. 클립보드 버튼은 복사한 뒤
+ * 아이콘을 잠깐 체크로 바꾼다 — 전에는 alert 로 알렸다. 클립보드 API 가 막힌 환경(http 등)에서는
+ * 주소가 이미 선택돼 있으니 사용자가 직접 복사할 수 있다.
+ */
+$(function () {
+  document.querySelectorAll('.bm-share').forEach(function (box) {
+    var input = box.querySelector('.bm-share-url');
+    var copy = box.querySelector('.bm-share-copy');
+    box.addEventListener('shown.bs.dropdown', function () {
+      input.value = location.origin + box.dataset.sharePath;
+      input.focus();
+      input.select();
+    });
+    copy.addEventListener('click', function () {
+      var icon = copy.querySelector('i');
+      function done() {
+        icon.className = 'bi bi-clipboard-check';
+        setTimeout(function () { icon.className = 'bi bi-clipboard'; }, 1500);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(input.value).then(done, function () { input.select(); });
+      } else {
+        input.select();
+      }
+    });
+  });
+});

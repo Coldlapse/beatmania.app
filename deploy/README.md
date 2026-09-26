@@ -385,7 +385,7 @@ sudo ./svc.sh start
 
 ```cron
 */5 * * * * cd /srv/beatmania/app && /usr/bin/docker compose exec -T app python manage.py healthcheck >> /var/log/beatmania-health.log 2>&1
-17 5 * * * cd /srv/beatmania/app && /usr/bin/docker compose exec -T app python manage.py update_cpi >> /var/log/beatmania-cpi.log 2>&1
+17 5 * * * cd /srv/beatmania/app && /usr/bin/docker compose exec -T app python manage.py update_cpi >> "$HOME/beatmania-cpi.log" 2>&1
 ```
 
 `update_cpi` 는 cpi.makecir.com 의 채보별 CPI 값을 **하루 한 번, 한 페이지만** 받습니다(프로필의 CPI 추정용).

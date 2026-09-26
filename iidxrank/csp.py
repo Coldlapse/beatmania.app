@@ -13,6 +13,8 @@ CSP 는 XSS 가 다시 생겼을 때 두 번째 벽이다: 허락한 곳이 아�
   - cdn.discordapp.com / media.discordapp.net  디스코드 공지 칸의 아바타·첨부 이미지
   - www.googletagmanager.com / *.google-analytics.com   Google Analytics(common.html 의 gtag).
     템플릿 검색에서 놓쳤다가 보고 전용 모드의 첫 보고로 찾았다(2026-09-26) — 이 모드를 먼저 켠 이유다
+  - static.cloudflareinsights.com / cloudflareinsights.com   Cloudflare 방문 통계. 코드에는 없고 Cloudflare 가
+    가장자리에서 페이지에 끼워 넣는다 — 라이브 보고로 찾았다(2026-09-26)
 막는 모드로 바꾸는 것은 보고를 몇 주 모아 본 뒤의 일이다. 'unsafe-inline' 이 남아 있는 한 막는 모드도
 인라인 주입은 막지 못한다 — 그것까지 가려면 인라인 스크립트를 파일로 빼는 작업이 먼저다.
 """
@@ -31,13 +33,13 @@ log = logging.getLogger(__name__)
 POLICY = '; '.join([
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.google.com https://www.gstatic.com"
-    " https://www.googletagmanager.com https://www.google-analytics.com",
+    " https://www.googletagmanager.com https://www.google-analytics.com https://static.cloudflareinsights.com",
     "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com",
     "font-src 'self' data: https://cdn.jsdelivr.net https://fonts.gstatic.com",
     "img-src 'self' data: blob: https://cdn.discordapp.com https://media.discordapp.net"
     " https://www.google-analytics.com https://www.googletagmanager.com",
     "connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com"
-    " https://www.googletagmanager.com",
+    " https://www.googletagmanager.com https://cloudflareinsights.com",
     "frame-src https://www.google.com",
     "object-src 'none'",
     "base-uri 'self'",

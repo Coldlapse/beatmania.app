@@ -267,6 +267,9 @@ msgstr "IIDX DJ name"
 msgid "IIDX 서든 플러스"
 msgstr "IIDX SUDDEN+"
 
+msgid "IIDX/BMS 스트리밍용 타건 비주얼라이저 위젯입니다. 이 위젯 프로그램에서 카운팅된 타건 횟수를 beatmania.app 에 기록할 수 있습니다."
+msgstr "A key-press visualizer widget for IIDX/BMS streaming. The key presses it counts can be recorded on beatmania.app."
+
 msgid "IIDXwidget 받기"
 msgstr "Get IIDXwidget"
 
@@ -287,6 +290,9 @@ msgstr "A tool that reads game records while INFINITAS is running and writes the
 
 msgid "INFINITAS 를 켜 둔 동안 옆에 상주하면서 기록이 바뀔 때마다 자동으로 올리는 앱을 준비하고 있습니다. 위와 같은 API 토큰을 씁니다."
 msgstr "We are preparing an app that stays running alongside INFINITAS and uploads your records automatically whenever they change. It uses the same API token."
+
+msgid "INFINITAS 를 켜 둔 동안 트레이에 머물며, 기록이 바뀌면 클리어 램프·DJ RANK·EX SCORE 를 서열표에 자동으로 반영합니다."
+msgstr "Stays in the tray while INFINITAS is running and applies clear lamps, DJ RANK and EX SCORE to your rank tables whenever your records change."
 
 msgid "INF오소리"
 msgstr "INFOhSorry"
@@ -495,6 +501,12 @@ msgstr "A program that will read your game records and fill in clear lamps and s
 msgid "게임 화면에 나오는 ID 입니다. 앞글자를 고르고 네 자리씩 입력하세요."
 msgstr "The ID shown on the game screen. Pick the leading letter, then enter four digits in each box."
 
+msgid "게임을 켜고 곡 선택 화면에 한 번 들어가면 기록이 올라갑니다. INF오소리를 쓰고 있다면 그대로 두셔도 됩니다."
+msgstr "Start the game and enter the song select screen once to upload your records. If you use INFOhSorry, you can keep using it as is."
+
+msgid "게임을 켜고 곡 선택 화면에 한 번 들어가면 기록이 올라갑니다. INF오소리와 동시 실행이 가능하며, 충돌이 일어나지 않게끔 설계했습니다."
+msgstr "Start the game and enter the song select screen once to upload your records. It can run alongside INFOhSorry and is designed not to conflict with it."
+
 msgid "경로"
 msgstr "Via"
 
@@ -548,6 +560,9 @@ msgstr "If you would rather stay hidden, turn on <b>Settings → Private profile
 
 msgid "공유"
 msgstr "Share"
+
+msgid "공유 주소"
+msgstr "Share link"
 
 msgid "공유 주소 복사"
 msgstr "Copy share link"
@@ -1029,6 +1044,9 @@ msgstr "No announcements yet."
 msgid "앱"
 msgstr "App"
 
+msgid "앱의 API 토큰 칸에 <a href=\"%(token_url)s\">API 토큰</a>을 넣습니다."
+msgstr "Enter your <a href=\"%(token_url)s\">API token</a> in the app."
+
 msgid "어떻게 계산하나요"
 msgstr "How is this calculated?"
 
@@ -1401,6 +1419,15 @@ msgstr "Recent syncs"
 msgid "최신 INFINITAS 패치에 대응한 Reflux 포크입니다. 원본은 2026년 5월 이후 갱신이 없어, 동기화 앱은 이 판을 받아 씁니다."
 msgstr "A Reflux fork that keeps up with the latest INFINITAS patches. The original has not been updated since May 2026, so the sync app downloads this version."
 
+msgid "최신 버전 받기"
+msgstr "Download latest"
+
+msgid "최신 버전(2.1.0 이상)을 받아 설치합니다."
+msgstr "Download and install the latest version (2.1.0 or later)."
+
+msgid "최신 버전을 받아 설치합니다. 처음 실행할 때 \"Windows에서 PC를 보호했습니다\" 가 뜨면 추가 정보 → 실행을 누릅니다."
+msgstr "Download and install the latest version. If \"Windows protected your PC\" appears on first launch, click More info → Run anyway."
+
 msgid "최종 수정일"
 msgstr "Last updated"
 
@@ -1413,6 +1440,9 @@ msgstr "Planned"
 msgid "충분한 플레이 기록(FAIL이 없거나 전부 HC~EXHC 이상이거나)이 없을 경우에는 수치가 올바르게 표시되지 않을 수 있습니다."
 msgstr "Without enough play records (no FAILs, or everything at HC~EXHC or above), these numbers may not be accurate."
 
+msgid "켜 두면 타건 수가 자동으로 올라가고, <a href=\"%(mypage_url)s\">일일 타건 기록</a>에서 볼 수 있습니다."
+msgstr "Keep it running and your key count is sent automatically; see it in <a href=\"%(mypage_url)s\">Daily keystrokes</a>."
+
 msgid "켜면 다른 사람이 내 서열표와 유저 목록에서 나를 볼 수 없습니다."
 msgstr "When on, others cannot see you in rank tables or the user list."
 
@@ -1421,6 +1451,9 @@ msgstr "Import Clear Records"
 
 msgid "클립보드에 CPI 공유 주소가 복사되었습니다!"
 msgstr "The CPI share link has been copied to the clipboard!"
+
+msgid "클립보드에 복사"
+msgstr "Copy to clipboard"
 
 msgid "타건 수"
 msgstr "Keystrokes"
@@ -1463,6 +1496,9 @@ msgstr "That file is too large. Please upload %(limit)dMB or less."
 
 msgid "표시 방식"
 msgstr "View mode"
+
+msgid "프로그램 설정에 <a href=\"%(token_url)s\">API 토큰</a>을 넣고 저장합니다."
+msgstr "Enter your <a href=\"%(token_url)s\">API token</a> in the program settings and save."
 
 msgid "프로그램을 켜 두면 타건 수가 자동으로 올라갑니다."
 msgstr "Leave the program running and keystrokes upload automatically."

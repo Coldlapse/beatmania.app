@@ -65,9 +65,14 @@ try:
     check('하드 20개(적정 1400~1780) → 1700~1900 사이', 1700 <= mid <= 1900, str(mid))
     few, n2 = cpi.estimate({sid: 5 for sid in ids[:cpi.MIN_CHARTS - 1]})
     check('채보가 %d개 미만이면 추정 안 함' % cpi.MIN_CHARTS, few is None and n2 == cpi.MIN_CHARTS - 1)
-    a, _ = est(lambda i: 2)
-    f, _ = est(lambda i: 1)
-    check('ASSIST 는 FAILED 와 같다', a == f, '%s %s' % (a, f))
+    a, _ = est(lambda i: 2 if i % 2 else 5)
+    f, _ = est(lambda i: 1 if i % 2 else 5)
+    check('ASSIST 는 FAILED 와 같다', a is not None and a == f, '%s %s' % (a, f))
+    # 달성·미달성이 한쪽뿐이면 범위 끝(-1000/5000)이 나오던 것 — 라이브 첫 실행에서 4명이 -1000 이었다
+    allf, n4 = est(lambda i: 1)
+    check('전부 FAILED 면 추정 안 함(-1000 이 아니라)', allf is None and n4 == 40, str(allf))
+    allfc, _ = est(lambda i: 7)
+    check('전부 FC 면 추정 안 함(상한이 아니라)', allfc is None, str(allfc))
     np_, n3 = est(lambda i: 0)
     check('NO PLAY 만 있으면 추정 안 함', np_ is None and n3 == 0)
 finally:
@@ -101,17 +106,26 @@ try:
     sids = list(models.CpiValue.objects.values_list('song_id', flat=True).distinct()[:12])
     models.PlayRecord.objects.bulk_create([models.PlayRecord(player=pl, song_id=x, playclear=5, playscore=6) for x in sids])
     from django.core.cache import cache
-    cache.delete('cpi:%d' % pl.pk)
+    cache.clear()          # CPI 캐시 키에 적재 시각이 들어가 키를 짚어 지우기보다 비운다
     page = c.get('/cpi/').content.decode()
     check('기록이 있으면 내 페이지에 공유 버튼', 'id="share"' in page and 'bm-cpi-hero' in page, str(len(sids)))
-    check('공개 상태에선 비공개 안내 없음', 'bm-cpi-private' not in page)
-    check('공유 주소는 /u/<아이디>/cpi/', "/u/zz_cpi_check/cpi/" in page)
+    check('공개 상태에선 비공개 안내 없음', 'bm-share-private' not in page)
+    check('공유 주소는 /u/<아이디>/cpi/', 'data-share-path="/u/zz_cpi_check/cpi/"' in page)
     check('남이 보면 공유 버튼 없음', 'id="share"' not in Client().get('/u/zz_cpi_check/cpi/').content.decode())
     pl.private = True
     pl.save()
     page = c.get('/cpi/').content.decode()
-    check('비공개여도 내 페이지는 200 · 공유 버튼 + 비공개 안내', 'id="share"' in page and 'bm-cpi-private' in page)
+    check('비공개여도 내 페이지는 200 · 공유 버튼 + 비공개 안내', 'id="share"' in page and 'bm-share-private' in page)
     check('비공개면 남에게 404', Client().get('/u/zz_cpi_check/cpi/').status_code == 404)
+    # 서열표의 공유 상자도 같은 부품이다
+    models.AccountSecurity.objects.update_or_create(user=u, defaults={'newrulepassed': True})
+    tpage = c.get('/table/SP12H/').content.decode()
+    check('서열표 공유 상자: 주소와 비공개 안내', 'data-share-path="/u/zz_cpi_check/table/SP12H/"' in tpage
+          and 'bm-share-private' in tpage and 'bm-share-copy' in tpage)
+    check('서열표: 곧바로 복사하던 alert 는 없다', '서열표 공유 주소가 복사되었습니다' not in tpage)
+    pl.private = False
+    pl.save()
+    check('공개면 서열표 공유 상자에 비공개 안내 없음', 'bm-share-private' not in c.get('/table/SP12H/').content.decode())
     models.PlayRecord.objects.filter(player=pl).delete()
 finally:
     models.Player.objects.filter(user=u).delete()

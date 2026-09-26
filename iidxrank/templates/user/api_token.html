@@ -72,46 +72,10 @@
   </div>
   {% endif %}
 
-  {% comment %} 토큰을 쓰는 곳. 지금 하나, 앞으로 하나. {% endcomment %}
+  {% comment %} 토큰을 쓰는 곳 — 앱 받기·사용법은 widgets/app_guide.html 한 곳에 있다 {% endcomment %}
   <div class="row g-3">
-    <div class="col-12 col-lg-6">
-      <div class="card bm-panel h-100">
-        <div class="card-body">
-          <h2 class="bm-panel-title">
-            <i class="bi bi-keyboard me-2" aria-hidden="true"></i>IIDXwidget</h2>
-          <p class="text-body-secondary">
-            {% blocktrans %}하루에 몇 번 쳤는지를 기록해 이 사이트로 보냅니다. 보낸 값은 '일일 타건 기록'에 쌓입니다.{% endblocktrans %}
-          </p>
-          <ol class="bm-steps">
-            <li>{% blocktrans %}IIDXwidget 설정에 위 토큰을 넣고 저장합니다.{% endblocktrans %}</li>
-            <li>{% blocktrans %}프로그램을 켜 두면 타건 수가 자동으로 올라갑니다.{% endblocktrans %}</li>
-            <li>{% url 'my_page' as mypage_url %}{% blocktrans %}올라간 기록은 <a href="{{ mypage_url }}">일일 타건 기록</a>에서 볼 수 있습니다.{% endblocktrans %}</li>
-          </ol>
-          <a class="btn btn-outline-secondary btn-sm"
-             href="https://github.com/Coldlapse/IIDXwidget"
-             target="_blank" rel="noopener">
-            {% trans '내려받기' %} <i class="bi bi-box-arrow-up-right small" aria-hidden="true"></i>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-12 col-lg-6">
-      <div class="card bm-panel h-100 bm-panel-muted">
-        <div class="card-body">
-          <h2 class="bm-panel-title">
-            <i class="bi bi-arrow-repeat me-2" aria-hidden="true"></i>{% trans '데이터 연동' %}
-            <span class="badge bm-badge-soon ms-1">{% trans '준비 중' %}</span>
-          </h2>
-          <p class="text-body-secondary">
-            {% blocktrans %}게임 기록을 읽어 서열표의 클리어 램프와 점수를 자동으로 채워 넣을 프로그램입니다. 지금은 손으로 입력해야 하는 부분입니다.{% endblocktrans %}
-          </p>
-          <p class="text-body-secondary mb-0">
-            {% blocktrans %}같은 토큰을 그대로 씁니다. 따로 발급받을 것은 없습니다.{% endblocktrans %}
-          </p>
-        </div>
-      </div>
-    </div>
+    <div class="col-12 col-lg-6">{% include "widgets/app_guide.html" with app="sync" %}</div>
+    <div class="col-12 col-lg-6">{% include "widgets/app_guide.html" with app="iidxwidget" %}</div>
   </div>
 </div>
 

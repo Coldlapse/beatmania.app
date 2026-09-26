@@ -32,17 +32,9 @@
           <div class="bm-cpi-sub">{% blocktrans with n=detail.charts %}SP☆12 {{ n }}채보 기준{% endblocktrans %}</div>
         </div>
         {% if own %}
-        <div class="text-end">
-          <button id="share" type="button" class="btn btn-sm btn-outline-secondary" title="{% trans '공유 주소 복사' %}">
-            <i class="bi bi-share me-1" aria-hidden="true"></i>{% trans '공유' %}</button>
-          {% if private %}
-          <div class="small text-body-secondary mt-1 bm-cpi-private">
-            <i class="bi bi-lock" aria-hidden="true"></i>
-            {% trans '프로필이 비공개라 공유 주소는 다른 사람에게 열리지 않습니다.' %}
-            <a href="/account/">{% trans '설정' %}</a>
-          </div>
-          {% endif %}
-        </div>
+        {% with share_path="/u/"|add:user.username|add:"/cpi/" %}
+        {% include "widgets/share_box.html" with share_path=share_path private=private %}
+        {% endwith %}
         {% endif %}
       </div>
 
@@ -90,14 +82,4 @@
   {% endif %}
 </div>
 
-{% if own %}
-<script>
-  // 서열표의 공유 버튼과 같다: /u/<아이디>/cpi/ 를 복사한다.
-  document.getElementById('share').addEventListener('click', function () {
-    navigator.clipboard.writeText(location.origin + '/u/{{ user.username|escapejs }}/cpi/').then(function () {
-      alert('{% trans "클립보드에 CPI 공유 주소가 복사되었습니다!" %}');
-    });
-  });
-</script>
-{% endif %}
 {% endblock %}

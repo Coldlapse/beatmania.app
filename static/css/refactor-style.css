@@ -1001,3 +1001,13 @@ body.bm-rankpage #rankimg { margin-top: .5rem; }
   font-size: .78rem; color: var(--bm-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .dn-reply img { border-radius: 50%; }
 .dn-reply span { overflow: hidden; text-overflow: ellipsis; }
+
+/* --- 공유 상자 (widgets/share_box.html) — 서열표·CPI 공용 ------------------ */
+.bm-share-menu { width: 22rem; max-width: calc(100vw - 32px); }
+.bm-share-url { font-size: .82rem; }
+.bm-share-private { line-height: 1.5; }
+
+/* --- 연동 앱 받기·사용법 (widgets/app_guide.html) ------------------------- */
+.bm-app-guide-os { margin-left: .4rem; font-size: .7rem; font-weight: 600; padding: .1em .45em; border-radius: 4px;
+  background: var(--bm-surface-3); color: var(--bm-text-muted); vertical-align: middle; }
+.bm-app-guide .bm-steps li { margin-bottom: .25rem; }

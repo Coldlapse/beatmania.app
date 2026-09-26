@@ -23,6 +23,7 @@
 
   {% trans "하루에 몇 번 쳤는지 세어 보냅니다." as tool_desc %}
   {% include "_token_bar.html" with tool_name="IIDXwidget" %}
+  {% include "widgets/app_guide.html" with app="iidxwidget" %}
 
   {% if user.is_authenticated %}
   <div class="card bm-panel mb-3">

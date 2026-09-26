@@ -1,0 +1,31 @@
+{% load i18n %}
+{% comment %}
+  공유 버튼 + 주소 상자. 서열표(user/rankview.html)와 CPI 페이지(user/cpi.html)가 같이 쓴다.
+
+    {% include "widgets/share_box.html" with share_path="/u/아이디/..." private=True %}
+
+  전에는 버튼을 누르면 곧바로 클립보드에 복사하고 alert 를 띄웠다. 무엇이 복사됐는지 보이지 않았고,
+  비공개 사용자에게는 "남에게 열리지 않는다" 는 사실을 따로 알려야 했다. 이제 버튼 자리에서 주소를
+  보여 주고, 오른쪽의 클립보드 버튼으로 복사한다. 비공개 안내는 상자 아래에 둔다.
+  동작(주소 채우기·복사)은 static/js/common.js 의 .bm-share 처리.
+{% endcomment %}
+<div class="dropdown bm-share" data-share-path="{{ share_path }}">
+  <button id="share" type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown"
+          data-bs-auto-close="outside" aria-expanded="false" title="{% trans '공유' %}">
+    <i class="bi bi-share me-1" aria-hidden="true"></i>{% trans '공유' %}</button>
+  <div class="dropdown-menu dropdown-menu-end p-2 bm-share-menu">
+    <label class="form-label small mb-1" for="bm-share-url">{% trans '공유 주소' %}</label>
+    <div class="input-group input-group-sm">
+      <input id="bm-share-url" type="text" class="form-control bm-share-url" readonly>
+      <button type="button" class="btn btn-outline-secondary bm-share-copy"
+              title="{% trans '클립보드에 복사' %}" aria-label="{% trans '클립보드에 복사' %}">
+        <i class="bi bi-clipboard" aria-hidden="true"></i></button>
+    </div>
+    {% if private %}
+    <div class="small text-body-secondary mt-2 bm-share-private">
+      <i class="bi bi-lock me-1" aria-hidden="true"></i>{% trans '프로필이 비공개라 공유 주소는 다른 사람에게 열리지 않습니다.' %}
+      <a href="/account/">{% trans '설정' %}</a>
+    </div>
+    {% endif %}
+  </div>
+</div>

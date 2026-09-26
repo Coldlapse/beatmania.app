@@ -1,0 +1,47 @@
+{% load i18n %}
+{% comment %}
+  연동 앱 받기 + 간단한 사용법. 일일 타건 기록(my_page.html)·데이터 동기화(sync.html)·API 토큰
+  (user/api_token.html)이 같이 쓴다 — 한곳만 고치면 세 화면이 어긋나므로 조각으로 뺐다.
+
+    {% include "widgets/app_guide.html" with app="iidxwidget" %}   또는 app="sync"
+
+  받기 링크는 GitHub 의 releases/latest 다. GitHub 가 그때그때 최신 릴리스로 넘겨 주므로 새 버전을
+  낼 때 이 파일을 고칠 필요가 없다(특정 버전 주소를 박지 않는다).
+{% endcomment %}
+{% comment %} 본문을 세로 flex 로 두고 버튼을 mt-auto 로 아래에 붙인다 — API 토큰 페이지처럼 두 카드가
+  나란히 높이를 맞출 때 설명 길이가 달라도 받기 버튼이 같은 줄에 온다 {% endcomment %}
+<div class="card bm-panel bm-app-guide h-100 mb-3">
+  <div class="card-body d-flex flex-column">
+    {% if app == "iidxwidget" %}
+    <h2 class="bm-panel-title h6">
+      <i class="bi bi-keyboard me-2" aria-hidden="true"></i>IIDXwidget
+      <span class="bm-app-guide-os">Windows</span></h2>
+    <p class="text-body-secondary small mb-2">
+      {% blocktrans %}IIDX/BMS 스트리밍용 타건 비주얼라이저 위젯입니다. 이 위젯 프로그램에서 카운팅된 타건 횟수를 beatmania.app 에 기록할 수 있습니다.{% endblocktrans %}
+    </p>
+    <ol class="bm-steps small mb-3">
+      <li>{% blocktrans %}최신 버전(2.1.0 이상)을 받아 설치합니다.{% endblocktrans %}</li>
+      <li>{% url 'api_token' as token_url %}{% blocktrans %}프로그램 설정에 <a href="{{ token_url }}">API 토큰</a>을 넣고 저장합니다.{% endblocktrans %}</li>
+      <li>{% url 'my_page' as mypage_url %}{% blocktrans %}켜 두면 타건 수가 자동으로 올라가고, <a href="{{ mypage_url }}">일일 타건 기록</a>에서 볼 수 있습니다.{% endblocktrans %}</li>
+    </ol>
+    <a class="btn btn-primary btn-sm mt-auto align-self-start" href="https://github.com/Coldlapse/IIDXwidget/releases/latest"
+       target="_blank" rel="noopener">
+      <i class="bi bi-download me-1" aria-hidden="true"></i>{% trans '최신 버전 받기' %}</a>
+    {% else %}
+    <h2 class="bm-panel-title h6">
+      <i class="bi bi-arrow-repeat me-2" aria-hidden="true"></i>beatmania.app Synchronizer
+      <span class="bm-app-guide-os">Windows</span></h2>
+    <p class="text-body-secondary small mb-2">
+      {% blocktrans %}INFINITAS 를 켜 둔 동안 트레이에 머물며, 기록이 바뀌면 클리어 램프·DJ RANK·EX SCORE 를 서열표에 자동으로 반영합니다.{% endblocktrans %}
+    </p>
+    <ol class="bm-steps small mb-3">
+      <li>{% blocktrans %}최신 버전을 받아 설치합니다. 처음 실행할 때 "Windows에서 PC를 보호했습니다" 가 뜨면 추가 정보 → 실행을 누릅니다.{% endblocktrans %}</li>
+      <li>{% url 'api_token' as token_url %}{% blocktrans %}앱의 API 토큰 칸에 <a href="{{ token_url }}">API 토큰</a>을 넣습니다.{% endblocktrans %}</li>
+      <li>{% blocktrans %}게임을 켜고 곡 선택 화면에 한 번 들어가면 기록이 올라갑니다. INF오소리와 동시 실행이 가능하며, 충돌이 일어나지 않게끔 설계했습니다.{% endblocktrans %}</li>
+    </ol>
+    <a class="btn btn-primary btn-sm mt-auto align-self-start" href="https://github.com/Coldlapse/beatmania.app-synchronizer/releases/latest"
+       target="_blank" rel="noopener">
+      <i class="bi bi-download me-1" aria-hidden="true"></i>{% trans '최신 버전 받기' %}</a>
+    {% endif %}
+  </div>
+</div>

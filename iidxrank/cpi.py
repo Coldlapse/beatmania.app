@@ -140,6 +140,11 @@ def estimate(clears):
             obs.append((mu, s, clear >= lamp))
     if used < MIN_CHARTS:
         return None, used
+    # 달성한 것과 못 한 것이 둘 다 있어야 추정이 된다. 전부 못 했으면(예: SP☆12 가 FAILED·ASSIST 뿐)
+    # 우도가 아래로 끝없이 커져 탐색 하한(-1000)에 붙고, 전부 했으면 상한에 붙는다 — 그 값은 추정이 아니라
+    # 범위의 끝이다. 라이브 첫 실행에서 4명이 -1000 으로 나왔다(2026-09-26). 그런 경우는 값을 내지 않는다.
+    if all(ok for _mu, _s, ok in obs) or not any(ok for _mu, _s, ok in obs):
+        return None, used
     # 오목 함수의 최댓값 — 황금분할 탐색
     lo, hi = R_LO, R_HI
     g = (math.sqrt(5) - 1) / 2
@@ -154,14 +159,31 @@ def estimate(clears):
             hi, b, fb = b, a, fa
             a = hi - g * (hi - lo)
             fa = _loglik(a, obs)
-    return round((lo + hi) / 2), used
+    value = (lo + hi) / 2
+    # 한쪽뿐이 아니어도(예: 쉬운 채보 하나만 FAILED 로 달성 못 함) 최댓값이 범위 끝에 붙을 수 있다 — 같은 이유로 버린다
+    if value < R_LO + 5 or value > R_HI - 5:
+        return None, used
+    return round(value), used
+
+
+def _data_version():
+    """채보별 CPI 값의 마지막 적재 시각(정수 초). 60초만 기억한다 — 요청마다 DB 에 묻지 않게."""
+    v = cache.get('cpi:version')
+    if v is None:
+        last = models.CpiValue.objects.order_by('-fetched_at').values_list('fetched_at', flat=True).first()
+        v = int(last.timestamp()) if last else 0
+        cache.set('cpi:version', v, 60)
+    return v
 
 
 def for_player(player):
     """프로필에 쓸 값. {'value': 1843, 'charts': 312} 또는 None. 10분 캐시."""
     if not ENABLED or player is None:
         return None
-    key = 'cpi:%d' % player.pk
+    # 키에 채보별 값의 적재 시각을 넣는다. 캐시는 워커(5개)마다 따로 있는 메모리라, update_cpi 가 값을
+    # 바꿔도 각 워커는 옛 결과를 10분 들고 있었다 — 첫 적재 직후에는 '기록이 부족합니다' 와 실제 값이
+    # 새로고침마다 번갈아 나왔다(2026-09-26 라이브). 적재 시각이 바뀌면 키가 바뀌어 곧바로 다시 계산한다.
+    key = 'cpi:%d:%s' % (player.pk, _data_version())
     hit = cache.get(key)
     if hit is not None:
         return hit or None

@@ -510,6 +510,17 @@ try:
         grp.delete()
     caches['throttle'].clear()
 
+    print('=== 앱 받기 안내 (widgets/app_guide.html) ===')
+    SYNC_URL = 'https://github.com/Coldlapse/beatmania.app-synchronizer/releases/latest'
+    WIDGET_URL = 'https://github.com/Coldlapse/IIDXwidget/releases/latest'
+    ga = Client()
+    ga.force_login(v)
+    for path, want in (('/sync/', [SYNC_URL]), ('/my-page/', [WIDGET_URL]), ('/account/token/', [SYNC_URL, WIDGET_URL])):
+        body = ga.get(path).content.decode()
+        check('%s 에 최신 버전 링크' % path, all(u in body for u in want) and '준비 중' not in body
+              and '준비하고 있습니다' not in body)
+    check('비로그인 동기화 페이지에도 앱 안내', SYNC_URL in Client().get('/sync/').content.decode())
+
     print('=== 1-2·2-1. 지운 페이지·JSON (유저 랭킹, 추천) ===')
     player.iidxmeid = 'user_zz_sec_a'
     player.save()

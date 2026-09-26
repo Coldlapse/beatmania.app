@@ -80,6 +80,8 @@ def get_pdata(request, username, tablename):
         pdata = rp.get_pdata_from_player(player, table)
         # 로그인한 본인만 편집할 수 있다
         pdata['editable'] = bool(player)
+        # 공유 상자에 '비공개라 남에게 열리지 않는다' 를 적을지
+        pdata['share_private'] = bool(player and player.private)
     else:
         player, reason = rp.find_player_from_id(username)
         if player is None:

@@ -81,3 +81,56 @@ TRANS.update({
 '이 계정으로는 쓸 수 없는 기능입니다.': (
     'This feature is not available for this account.', 'このアカウントでは使えない機能です。', '此账户无法使用该功能。'),
 })
+
+# ── 공유 상자 (widgets/share_box.html) ───────────────────────────────────
+TRANS.update({
+'공유 주소': ('Share link', '共有アドレス', '分享链接'),
+'클립보드에 복사': ('Copy to clipboard', 'クリップボードにコピー', '复制到剪贴板'),
+})
+
+# ── 연동 앱 받기·사용법 (widgets/app_guide.html) ─────────────────────────
+TRANS.update({
+'최신 버전 받기': ('Download latest', '最新版をダウンロード', '下载最新版'),
+'최신 버전(2.1.0 이상)을 받아 설치합니다.': (
+    'Download and install the latest version (2.1.0 or later).',
+    '最新版(2.1.0 以上)をダウンロードしてインストールします。',
+    '下载并安装最新版（2.1.0 及以上）。'),
+'프로그램 설정에 <a href="%(token_url)s">API 토큰</a>을 넣고 저장합니다.': (
+    'Enter your <a href="%(token_url)s">API token</a> in the program settings and save.',
+    'プログラムの設定に <a href="%(token_url)s">API トークン</a> を入力して保存します。',
+    '在程序设置中填入 <a href="%(token_url)s">API 令牌</a> 并保存。'),
+'켜 두면 타건 수가 자동으로 올라가고, <a href="%(mypage_url)s">일일 타건 기록</a>에서 볼 수 있습니다.': (
+    'Keep it running and your key count is sent automatically; see it in <a href="%(mypage_url)s">Daily keystrokes</a>.',
+    '起動しておくと打鍵数が自動で送信され、<a href="%(mypage_url)s">日別打鍵記録</a>で確認できます。',
+    '保持运行即可自动上传击键数，可在<a href="%(mypage_url)s">每日击键记录</a>中查看。'),
+'INFINITAS 를 켜 둔 동안 트레이에 머물며, 기록이 바뀌면 클리어 램프·DJ RANK·EX SCORE 를 서열표에 자동으로 반영합니다.': (
+    'Stays in the tray while INFINITAS is running and applies clear lamps, DJ RANK and EX SCORE to your rank tables whenever your records change.',
+    'INFINITAS の起動中はトレイに常駐し、記録が変わるとクリアランプ・DJ RANK・EX SCORE を序列表に自動で反映します。',
+    '在 INFINITAS 运行期间常驻托盘，记录变化时自动将通关灯、DJ RANK、EX SCORE 同步到难度表。'),
+'최신 버전을 받아 설치합니다. 처음 실행할 때 "Windows에서 PC를 보호했습니다" 가 뜨면 추가 정보 → 실행을 누릅니다.': (
+    'Download and install the latest version. If "Windows protected your PC" appears on first launch, click More info → Run anyway.',
+    '最新版をダウンロードしてインストールします。初回起動時に「Windows によって PC が保護されました」と表示されたら、詳細情報 → 実行 を押してください。',
+    '下载并安装最新版。首次运行若出现"Windows 已保护你的电脑"，请点击"更多信息"→"仍要运行"。'),
+'앱의 API 토큰 칸에 <a href="%(token_url)s">API 토큰</a>을 넣습니다.': (
+    'Enter your <a href="%(token_url)s">API token</a> in the app.',
+    'アプリの API トークン欄に <a href="%(token_url)s">API トークン</a> を入力します。',
+    '在应用的 API 令牌栏中填入 <a href="%(token_url)s">API 令牌</a>。'),
+'게임을 켜고 곡 선택 화면에 한 번 들어가면 기록이 올라갑니다. INF오소리를 쓰고 있다면 그대로 두셔도 됩니다.': (
+    'Start the game and enter the song select screen once to upload your records. If you use INFOhSorry, you can keep using it as is.',
+    'ゲームを起動して選曲画面に一度入ると記録が送信されます。INFOhSorry をお使いの場合もそのままで構いません。',
+    '启动游戏并进入一次选曲画面即可上传记录。如果正在使用 INFOhSorry，保持原样即可。'),
+})
+
+TRANS.update({
+'IIDX/BMS 스트리밍용 타건 비주얼라이저 위젯입니다. 이 위젯 프로그램에서 카운팅된 타건 횟수를 beatmania.app 에 기록할 수 있습니다.': (
+    'A key-press visualizer widget for IIDX/BMS streaming. The key presses it counts can be recorded on beatmania.app.',
+    'IIDX/BMS 配信用の打鍵ビジュアライザーウィジェットです。このウィジェットで数えた打鍵数を beatmania.app に記録できます。',
+    '用于 IIDX/BMS 直播的击键可视化小组件。可以将该小组件统计的击键次数记录到 beatmania.app。'),
+})
+
+TRANS.update({
+'게임을 켜고 곡 선택 화면에 한 번 들어가면 기록이 올라갑니다. INF오소리와 동시 실행이 가능하며, 충돌이 일어나지 않게끔 설계했습니다.': (
+    'Start the game and enter the song select screen once to upload your records. It can run alongside INFOhSorry and is designed not to conflict with it.',
+    'ゲームを起動して選曲画面に一度入ると記録が送信されます。INFOhSorry と同時に起動でき、競合しないよう設計しています。',
+    '启动游戏并进入一次选曲画面即可上传记录。可与 INFOhSorry 同时运行，并已设计为不会发生冲突。'),
+})

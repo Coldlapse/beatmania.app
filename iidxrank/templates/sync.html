@@ -48,6 +48,9 @@
     {% endif %}
   {% endif %}
 
+  {% comment %} 앱이 기본 경로다. 파일로 올리기는 그 아래 — 앱을 쓰지 않는 사람을 위한 길 {% endcomment %}
+  {% include "widgets/app_guide.html" with app="sync" %}
+
   <div class="card bm-panel mb-3">
     <div class="card-body">
       <h2 class="h5"><i class="bi bi-upload me-1" aria-hidden="true"></i>{% trans '파일로 올리기' %}</h2>
@@ -77,15 +80,6 @@
       {% else %}
       <p class="mb-0 small">{% trans '로그인하면 올릴 수 있습니다.' %}</p>
       {% endif %}
-    </div>
-  </div>
-
-  <div class="card bm-panel mb-3 bm-panel-muted">
-    <div class="card-body">
-      <h2 class="h5"><i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i>{% trans '자동 동기화 앱' %}</h2>
-      <p class="text-body-secondary mb-0">
-        {% blocktrans %}INFINITAS 를 켜 둔 동안 옆에 상주하면서 기록이 바뀔 때마다 자동으로 올리는 앱을 준비하고 있습니다. 위와 같은 API 토큰을 씁니다.{% endblocktrans %}
-      </p>
     </div>
   </div>
 

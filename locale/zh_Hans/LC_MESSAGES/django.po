@@ -267,6 +267,9 @@ msgstr "IIDX DJ NAME"
 msgid "IIDX 서든 플러스"
 msgstr "IIDX SUDDEN+"
 
+msgid "IIDX/BMS 스트리밍용 타건 비주얼라이저 위젯입니다. 이 위젯 프로그램에서 카운팅된 타건 횟수를 beatmania.app 에 기록할 수 있습니다."
+msgstr "用于 IIDX/BMS 直播的击键可视化小组件。可以将该小组件统计的击键次数记录到 beatmania.app。"
+
 msgid "IIDXwidget 받기"
 msgstr "获取 IIDXwidget"
 
@@ -287,6 +290,9 @@ msgstr "在 INFINITAS 运行期间读取游戏记录并写入 tracker.tsv 的工
 
 msgid "INFINITAS 를 켜 둔 동안 옆에 상주하면서 기록이 바뀔 때마다 자동으로 올리는 앱을 준비하고 있습니다. 위와 같은 API 토큰을 씁니다."
 msgstr "我们正在准备一款应用：在 INFINITAS 运行期间常驻后台，记录变化时自动上传。它使用同一个 API 令牌。"
+
+msgid "INFINITAS 를 켜 둔 동안 트레이에 머물며, 기록이 바뀌면 클리어 램프·DJ RANK·EX SCORE 를 서열표에 자동으로 반영합니다."
+msgstr "在 INFINITAS 运行期间常驻托盘，记录变化时自动将通关灯、DJ RANK、EX SCORE 同步到难度表。"
 
 msgid "INF오소리"
 msgstr "INFOhSorry"
@@ -495,6 +501,12 @@ msgstr "一个读取游戏记录、自动填写难度表通关灯与分数的程
 msgid "게임 화면에 나오는 ID 입니다. 앞글자를 고르고 네 자리씩 입력하세요."
 msgstr "游戏画面上显示的 ID。请先选择首字母，再每四位分别输入。"
 
+msgid "게임을 켜고 곡 선택 화면에 한 번 들어가면 기록이 올라갑니다. INF오소리를 쓰고 있다면 그대로 두셔도 됩니다."
+msgstr "启动游戏并进入一次选曲画面即可上传记录。如果正在使用 INFOhSorry，保持原样即可。"
+
+msgid "게임을 켜고 곡 선택 화면에 한 번 들어가면 기록이 올라갑니다. INF오소리와 동시 실행이 가능하며, 충돌이 일어나지 않게끔 설계했습니다."
+msgstr "启动游戏并进入一次选曲画面即可上传记录。可与 INFOhSorry 同时运行，并已设计为不会发生冲突。"
+
 msgid "경로"
 msgstr "途径"
 
@@ -548,6 +560,9 @@ msgstr "如果不希望被公开，注册后开启 <b>设置 → 资料不公开
 
 msgid "공유"
 msgstr "分享"
+
+msgid "공유 주소"
+msgstr "分享链接"
 
 msgid "공유 주소 복사"
 msgstr "复制分享链接"
@@ -1029,6 +1044,9 @@ msgstr "暂无公告。"
 msgid "앱"
 msgstr "应用"
 
+msgid "앱의 API 토큰 칸에 <a href=\"%(token_url)s\">API 토큰</a>을 넣습니다."
+msgstr "在应用的 API 令牌栏中填入 <a href=\"%(token_url)s\">API 令牌</a>。"
+
 msgid "어떻게 계산하나요"
 msgstr "计算方法"
 
@@ -1401,6 +1419,15 @@ msgstr "最近同步"
 msgid "최신 INFINITAS 패치에 대응한 Reflux 포크입니다. 원본은 2026년 5월 이후 갱신이 없어, 동기화 앱은 이 판을 받아 씁니다."
 msgstr "适配最新 INFINITAS 补丁的 Reflux 分支。原版自 2026 年 5 月后未再更新，因此同步应用使用此版本。"
 
+msgid "최신 버전 받기"
+msgstr "下载最新版"
+
+msgid "최신 버전(2.1.0 이상)을 받아 설치합니다."
+msgstr "下载并安装最新版（2.1.0 及以上）。"
+
+msgid "최신 버전을 받아 설치합니다. 처음 실행할 때 \"Windows에서 PC를 보호했습니다\" 가 뜨면 추가 정보 → 실행을 누릅니다."
+msgstr "下载并安装最新版。首次运行若出现\"Windows 已保护你的电脑\"，请点击\"更多信息\"→\"仍要运行\"。"
+
 msgid "최종 수정일"
 msgstr "最后更新日期"
 
@@ -1413,6 +1440,9 @@ msgstr "后续计划"
 msgid "충분한 플레이 기록(FAIL이 없거나 전부 HC~EXHC 이상이거나)이 없을 경우에는 수치가 올바르게 표시되지 않을 수 있습니다."
 msgstr "若游玩记录不足（没有 FAIL，或全部为 HC~EXHC 以上），数值可能无法正确显示。"
 
+msgid "켜 두면 타건 수가 자동으로 올라가고, <a href=\"%(mypage_url)s\">일일 타건 기록</a>에서 볼 수 있습니다."
+msgstr "保持运行即可自动上传击键数，可在<a href=\"%(mypage_url)s\">每日击键记录</a>中查看。"
+
 msgid "켜면 다른 사람이 내 서열표와 유저 목록에서 나를 볼 수 없습니다."
 msgstr "开启后，他人将无法在难度表和用户列表中看到你。"
 
@@ -1421,6 +1451,9 @@ msgstr "导入通关记录"
 
 msgid "클립보드에 CPI 공유 주소가 복사되었습니다!"
 msgstr "CPI 分享链接已复制到剪贴板！"
+
+msgid "클립보드에 복사"
+msgstr "复制到剪贴板"
 
 msgid "타건 수"
 msgstr "打键数"
@@ -1463,6 +1496,9 @@ msgstr "文件太大，请上传 %(limit)dMB 以内的文件。"
 
 msgid "표시 방식"
 msgstr "显示方式"
+
+msgid "프로그램 설정에 <a href=\"%(token_url)s\">API 토큰</a>을 넣고 저장합니다."
+msgstr "在程序设置中填入 <a href=\"%(token_url)s\">API 令牌</a> 并保存。"
 
 msgid "프로그램을 켜 두면 타건 수가 자동으로 올라갑니다."
 msgstr "保持程序运行，打键数会自动上传。"

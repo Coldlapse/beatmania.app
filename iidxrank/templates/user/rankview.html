@@ -129,12 +129,6 @@ $(function () {
     dorender(rendermode_current);
   });
 
-  $("#share").click(function () {
-    window.navigator.clipboard.writeText(
-      location.origin + "/u/" + username + "/table/" + tablename + "/").then(() => {
-      alert("클립보드에 서열표 공유 주소가 복사되었습니다!");
-    })
-  })
 });
 
 // sort by name, basically.
@@ -269,8 +263,9 @@ $(function () { dorender("clear"); });
         <i class="bi bi-pencil-square" aria-hidden="true"></i></a>
       {% endif %}
       {% if editable %}
-      <button id="share" type="button" class="btn btn-sm btn-outline-secondary" title="{% trans '공유 주소 복사' %}">
-        <i class="bi bi-share" aria-hidden="true"></i></button>
+      {% with share_path="/u/"|add:user.username|add:"/table/"|add:tableinfo.tablename|add:"/" %}
+      {% include "widgets/share_box.html" with share_path=share_path private=share_private %}
+      {% endwith %}
       {% endif %}
 
       <div class="btn-group btn-group-sm" role="group" aria-label="{% trans '정렬' %}">
