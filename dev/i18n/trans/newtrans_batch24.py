@@ -69,3 +69,13 @@ TRANS = {
     '总合 BPI 以全部 SP☆12 谱面为对象。已玩谱面使用其 BPI,未玩谱面使用根据记录估计的实力所预测的值进行汇总。'),
 
 }
+
+TRANS['SP☆12 EX SCORE 가 아직 없어 합산 BPI 를 계산하지 못했습니다. 데이터 동기화 앱이나 서열표에서 EX SCORE 를 넣으면 나타납니다.'] = (
+    'No SP☆12 EX SCORE yet, so Total BPI could not be calculated. It will appear once you add EX SCOREs with the data sync app or on the rank tables.',
+    'SP☆12 の EX SCORE がまだないため、総合BPIを計算できませんでした。データ同期アプリか序列表で EX SCORE を入力すると表示されます。',
+    '尚无 SP☆12 的 EX SCORE,无法计算总合 BPI。通过数据同步应用或难度表输入 EX SCORE 后即会显示。')
+
+TRANS['CPI 를 추정할 SP☆12 클리어 램프 기록이 부족합니다. 눌러서 자세한 조건을 볼 수 있습니다.'] = (
+    'Not enough SP☆12 clear lamps to estimate CPI. Click to see the requirements.',
+    'CPI を推定するための SP☆12 クリアランプの記録が足りません。クリックすると条件を確認できます。',
+    '用于估算 CPI 的 SP☆12 通关灯记录不足。点击可查看具体条件。')

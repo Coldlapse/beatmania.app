@@ -249,6 +249,9 @@ msgstr "Buy me a coffee"
 msgid "CPI 를 계산할 기록이 부족합니다"
 msgstr "Not enough records to estimate CPI"
 
+msgid "CPI 를 추정할 SP☆12 클리어 램프 기록이 부족합니다. 눌러서 자세한 조건을 볼 수 있습니다."
+msgstr "Not enough SP☆12 clear lamps to estimate CPI. Click to see the requirements."
+
 msgid "Cloudflare 상태"
 msgstr "Cloudflare status"
 
@@ -347,6 +350,9 @@ msgstr "Total BPI calculated from EX SCOREs on %(n)s SP☆12 charts. The formula
 
 msgid "SP☆12 %(n)s채보의 클리어 램프로 계산한 추정값입니다. 채보별 값은 cpi.makecir.com 의 공개 수치를 씁니다. 문제가 있으면 알려 주세요."
 msgstr "Estimated from clear lamps on %(n)s SP☆12 charts, using the per-chart values published by cpi.makecir.com. Please let us know if there is any problem."
+
+msgid "SP☆12 EX SCORE 가 아직 없어 합산 BPI 를 계산하지 못했습니다. 데이터 동기화 앱이나 서열표에서 EX SCORE 를 넣으면 나타납니다."
+msgstr "No SP☆12 EX SCORE yet, so Total BPI could not be calculated. It will appear once you add EX SCOREs with the data sync app or on the rank tables."
 
 msgid "SP☆12 채보의 EX SCORE 가 하나 이상 있어야 합산 BPI 를 계산할 수 있습니다. 데이터 동기화 앱이나 서열표에서 EX SCORE 를 넣어 주세요."
 msgstr "Total BPI needs at least one EX SCORE on an SP☆12 chart. Add EX SCOREs with the data sync app or on the rank tables."

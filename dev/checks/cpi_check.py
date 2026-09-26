@@ -101,6 +101,8 @@ try:
     page = c.get('/cpi/').content.decode()
     check('내 페이지 200', c.get('/cpi/').status_code == 200)
     check('기록이 없으면 안내 문구', 'CPI 를 계산할 기록이 부족합니다' in page)
+    prof0 = c.get('/table/SP12H/').content.decode()
+    check("기록이 없어도 CPI 뱃지는 보임('-', 흐리게)", 'class="profile-cpi is-empty" href="/cpi/"' in prof0)
     check('비로그인 /cpi/ 도 200', Client().get('/cpi/').status_code == 200)
     # 기록이 있어 CPI 가 계산되는 경우: CPI 값이 있는 채보 12개에 HARD 기록을 만든다
     sids = list(models.CpiValue.objects.values_list('song_id', flat=True).distinct()[:12])

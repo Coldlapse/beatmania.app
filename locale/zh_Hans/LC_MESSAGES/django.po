@@ -249,6 +249,9 @@ msgstr "Buy me a coffee"
 msgid "CPI 를 계산할 기록이 부족합니다"
 msgstr "记录不足，无法估算 CPI"
 
+msgid "CPI 를 추정할 SP☆12 클리어 램프 기록이 부족합니다. 눌러서 자세한 조건을 볼 수 있습니다."
+msgstr "用于估算 CPI 的 SP☆12 通关灯记录不足。点击可查看具体条件。"
+
 msgid "Cloudflare 상태"
 msgstr "Cloudflare 状态"
 
@@ -347,6 +350,9 @@ msgstr "根据 %(n)s 个 SP☆12 谱面的 EX SCORE 计算的总合 BPI。计算
 
 msgid "SP☆12 %(n)s채보의 클리어 램프로 계산한 추정값입니다. 채보별 값은 cpi.makecir.com 의 공개 수치를 씁니다. 문제가 있으면 알려 주세요."
 msgstr "根据 SP☆12 %(n)s 张谱面的通关灯计算的估算值。各谱面数值使用 cpi.makecir.com 公开的数据。如有问题请告诉我们。"
+
+msgid "SP☆12 EX SCORE 가 아직 없어 합산 BPI 를 계산하지 못했습니다. 데이터 동기화 앱이나 서열표에서 EX SCORE 를 넣으면 나타납니다."
+msgstr "尚无 SP☆12 的 EX SCORE,无法计算总合 BPI。通过数据同步应用或难度表输入 EX SCORE 后即会显示。"
 
 msgid "SP☆12 채보의 EX SCORE 가 하나 이상 있어야 합산 BPI 를 계산할 수 있습니다. 데이터 동기화 앱이나 서열표에서 EX SCORE 를 넣어 주세요."
 msgstr "计算总合 BPI 需要至少一个 SP☆12 谱面的 EX SCORE。请通过数据同步应用或难度表输入 EX SCORE。"

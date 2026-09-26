@@ -380,18 +380,24 @@ def get_udata_from_player(player, username=None):
         userdata['has_avatar'] = bool(player.avatar)
         # 사이트 닉네임. 서열표에 보이는 DJ NAME(iidxnick)과는 별개다.
         userdata['nickname'] = (player.user.first_name or player.user.username)             if player.user else ''
-        # CPI(추정). 프로필이 CPI 계산 때문에 깨지면 안 된다 — 실패하면 칸만 빠진다.
+        # CPI(추정). 값이 없어도 칸은 보인다('-') — BPI 와 같다. 프로필이 CPI 계산 때문에 깨지면 안 된다 —
+        # 실패하거나 기능이 꺼져 있으면 칸만 빠진다.
+        userdata['cpi_badge'] = False
         try:
             from iidxrank import cpi
             userdata['cpi'] = cpi.for_player(player)
             userdata['cpi_url'] = ('/u/%s/cpi/' % username) if username else '/cpi/'
+            userdata['cpi_badge'] = cpi.ENABLED
         except Exception:
             userdata['cpi'] = None
-        # 합산 BPI. CPI 와 같은 이유로 실패하면 칸만 빠진다.
+        # 합산 BPI. CPI 와 달리 값이 없어도 칸은 보인다('-') — 눌러서 BPI 페이지의 안내(EX SCORE 를
+        # 넣으라는 것)로 갈 수 있게. 계산이 실패하거나 기능이 꺼져 있으면 칸을 뺀다.
+        userdata['bpi_badge'] = False
         try:
             from iidxrank import bpi
             userdata['bpi'] = bpi.for_player(player)
             userdata['bpi_url'] = ('/u/%s/bpi/' % username) if username else '/bpi/'
+            userdata['bpi_badge'] = bpi.ENABLED
         except Exception:
             userdata['bpi'] = None
     return userdata

@@ -129,6 +129,9 @@ try:
     page = c.get('/bpi/').content.decode()
     check('기록이 없으면 안내 문구', 'BPI 를 계산할 기록이 없습니다' in page)
     check('비로그인 /bpi/ 도 200', Client().get('/bpi/').status_code == 200)
+    prof0 = c.get('/table/SP12H/').content.decode()
+    check("기록이 없어도 BPI 뱃지는 보임('-', 흐리게)", 'profile-cpi profile-bpi is-empty' in prof0
+          and '<span class="profile-cpi-value">-</span>' in prof0)
 
     vals = list(models.BpiValue.objects.filter(level=12, song__isnull=False, mu__isnull=False)[:20])
     if len(vals) < 20:

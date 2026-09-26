@@ -158,6 +158,8 @@ body {
 
 /* 합산 BPI · CPI(추정) — 이름 블록 오른쪽. 칸 너비를 1fr 로 맞춰 두 칸이 같은 크기다 */
 .profile-scores { flex-shrink: 0; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: .5rem; }
+/* 값이 '-' 여도 숫자가 있을 때와 칸 크기가 같게(값이 생겨도 자리가 흔들리지 않게) */
+.profile-scores .profile-cpi { min-width: 5.75rem; }
 .profile-cpi {
   flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end;
   text-decoration: none; color: inherit; line-height: 1.1;
@@ -167,13 +169,21 @@ body {
 .profile-cpi-label { font-size: .72rem; font-weight: 700; letter-spacing: .08em; opacity: .75; }
 .profile-cpi-value { font-size: clamp(1.4rem, 4vw, 2rem); font-weight: 800; letter-spacing: -.02em; }
 .profile-cpi-note { font-size: .7rem; opacity: .7; }
+.profile-cpi.is-empty .profile-cpi-value { opacity: .45; }   /* 값 없음('-') — 칸은 두고 흐리게 */
 
 @media (max-width: 575.98px) {
   .profile-main-info { gap: 1rem; padding: 1.25rem 0; }
   .profile-avatar { width: 64px; height: 64px; padding: 3px; border-width: 2px; }
   /* 좁은 화면에서는 두 칸을 세로로 쌓아 이름 자리를 남긴다(크기는 여전히 같다) */
   .profile-scores { grid-auto-flow: row; gap: .35rem; }
-  .profile-scores .profile-cpi { padding: .35rem .7rem; }
+  .profile-scores .profile-cpi { padding: .35rem .7rem; min-width: 4.75rem; }
+}
+/* 아주 좁은 폰(320px 등)에서는 두 칸이 이름 자리를 먹어 이름·IIDX ID 가 단어 중간에서 끊겼다.
+   이름 아래 한 줄로 내려 가로로 나란히(같은 크기) 둔다 */
+@media (max-width: 374.98px) {
+  .profile-main-info { flex-wrap: wrap; row-gap: .75rem; }
+  .profile-scores { width: 100%; grid-auto-flow: column; }
+  .profile-scores .profile-cpi { flex-direction: row; justify-content: space-between; align-items: baseline; }
 }
 
 /* --- Rank Table Navigation ---------------------------------------------- */
