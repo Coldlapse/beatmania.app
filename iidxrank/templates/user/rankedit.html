@@ -1,12 +1,21 @@
-<!-- rank edit for individual song -->
+{% load i18n %}
+{% comment %}
+  서열표에서 곡을 누르면 뜨는 편집 팝업 (/rankedit/<곡 pk>/, views.rankedit).
+  램프·DJ RANK 버튼의 동작은 user/rankview.html 이 붙인다.
+
+  EX SCORE 는 BPI 계산용이라 서열표 그림에는 넣지 않고 이 팝업 오른쪽 위에만 보인다.
+  저장은 /modify/ 의 action=exscore. 빈 칸으로 저장하면 지운다(n/a).
+  CLEAR LAMP · DJ RANK · EX SCORE 는 게임 화면의 용어라 번역하지 않는다.
+{% endcomment %}
 <div class="rankedit">
 {% if valid %}
   <div class="rankedit-toolset">
-    <div class="row">
+    <div class="rankedit-head">
       <span class="title">{{ title }}</span>
+      <span class="rankedit-ex">EX SCORE : <b id="ex-current">{% if item.exscore is None %}n/a{% else %}{{ item.exscore }}{% endif %}</b></span>
     </div>
-    <div class="row rank-item">
-      <span class="name">CLEAR</span>
+    <div class="rank-item rankedit-section rankedit-lamps">
+      <span class="name">CLEAR LAMP</span>
       <button class="btn edit-button edit-clear edit-clear-0 curr-clear-{{ item.clear }}" data-clear="0"></button>
       <button class="btn edit-button edit-clear edit-clear-1 curr-clear-{{ item.clear }}" data-clear="1"></button>
       <button class="btn edit-button edit-clear edit-clear-2 curr-clear-{{ item.clear }}" data-clear="2"></button>
@@ -16,14 +25,26 @@
       <button class="btn edit-button edit-clear edit-clear-6 curr-clear-{{ item.clear }}" data-clear="6"></button>
       <button class="btn edit-button edit-clear edit-clear-7" data-clear="7"></button>
     </div>
-    <div class="row rank-item">
-      <span class="name">SCORE</span>
+    <div class="rank-item rankedit-section rankedit-ranks">
+      <span class="name">DJ RANK</span>
       <button class="btn edit-button edit-rank edit-rank-F" data-rank="0"></button>
+      <button class="btn edit-button edit-rank edit-rank-E" data-rank="1"></button>
+      <button class="btn edit-button edit-rank edit-rank-D" data-rank="2"></button>
+      <button class="btn edit-button edit-rank edit-rank-C" data-rank="3"></button>
       <button class="btn edit-button edit-rank edit-rank-B" data-rank="4"></button>
       <button class="btn edit-button edit-rank edit-rank-A" data-rank="5"></button>
       <button class="btn edit-button edit-rank edit-rank-AA" data-rank="6"></button>
       <button class="btn edit-button edit-rank edit-rank-AAA" data-rank="7"></button>
       <button class="btn edit-button edit-rank edit-rank-MAX" data-rank="8"></button>
+    </div>
+    <div class="rank-item rankedit-section rankedit-exrow">
+      <span class="name">EX SCORE</span>
+      <form class="rankedit-ex-form" autocomplete="off">
+        <input type="text" class="form-control form-control-sm edit-ex-input" inputmode="numeric" pattern="[0-9]*"
+               maxlength="4" value="{% if item.exscore is not None %}{{ item.exscore }}{% endif %}"
+               aria-label="EX SCORE">
+        <button type="submit" class="btn edit-button edit-ex-save">{% trans '저장' %}</button>
+      </form>
     </div>
   </div>
 {% else %}

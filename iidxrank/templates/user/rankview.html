@@ -5,7 +5,7 @@
 {% load static %}
 
 
-<script type="text/javascript" src="{% static 'js/table.default2.skin.js' %}?v=260902a"></script>
+<script type="text/javascript" src="{% static 'js/table.default2.skin.js' %}?v=260926a"></script>
 <script type="text/javascript" src="{% static 'js/table.js' %}?v=260901"></script>
 
 <link href='https://fonts.googleapis.com/css?family=Comfortaa' rel='stylesheet' type='text/css'>
@@ -19,13 +19,14 @@ var tablename = "{{ tableinfo.tablename }}";
 var editmode = ("{{ editable }}"=="True");
 var ftitle = "{{ tableinfo.title }} - DJ {{ userdata.name }}"
 var fname = ftitle + ".png";
-var username = "{{ user.username }}"
+var username = "{{ user.username|escapejs }}"
 
 
 
 ////////////////////////////////
 // table data & sort
 
+{% comment %} |safe 인 것은 rp.serialize_ranktable 이 < > & 를 이스케이프해 두기 때문이다 {% endcomment %}
 var tabledata = {{ tabledata_json|safe }};
 //console.log(tabledata);
 var tabledata_orig = tabledata;
@@ -214,6 +215,24 @@ function dorender(rendermode)
           t.Redraw(tabledata);
           return false;
         });
+        // EX SCORE — 숫자만 받는다. 서열표 그림은 다시 그리지 않는다(표에 보이지 않는 값)
+        $('.edit-ex-input').on('input', function () {
+          this.value = this.value.replace(/\D/g, '').slice(0, 4);
+        });
+        $('.rankedit-ex-form').on('submit', function (e) {
+          e.preventDefault();
+          var raw = $(this).find('.edit-ex-input').val().trim();
+          var v = JSON.stringify({ id: item.pkid, exscore: raw === '' ? null : parseInt(raw, 10) });
+          $.ajax({
+            url: '/modify/', type: 'POST',
+            data: { action: 'exscore', v: v, csrfmiddlewaretoken: $('#editform [name=csrfmiddlewaretoken]').val() },
+            success: function (r) {
+              showMessage(r.message);
+              if (r.code === 0) { $('#ex-current').text(r.exscore === null ? 'n/a' : r.exscore); }
+            }
+          });
+          return false;
+        });
       });
     }
     {% endif %}
@@ -309,13 +328,6 @@ $(function () { dorender("clear"); });
 
   <!-- rank table -->
   <div id="rankimg">
-  </div>
-  <div class="hidden">
-    <form id="imgdownload" action="/imgdownload/" method="POST">
-      {% csrf_token %}
-      <input type="hidden" id="imgdata" name="base64">
-      <input type="hidden" id="imgname" name="name">
-    </form>
   </div>
 
 

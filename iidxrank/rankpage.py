@@ -235,8 +235,16 @@ class DateTimeEncoder(json.JSONEncoder):
             #return o.isoformat()
         return json.JSONEncoder.default(self,o)
 
+# <script> 안에 그대로 박을 JSON 이라 < > & 를 유니코드 이스케이프로 바꾼다(Django json_script 와 같은 처리).
+# 안 하면 닉네임에 '</script>' 를 넣은 사람의 서열표를 여는 모든 방문자에게 스크립트가 돈다.
+# json_script 필터를 쓰지 않는 것은 날짜를 숫자로 바꾸는 DateTimeEncoder 를 유지하려는 것이다.
+# 이스케이프는 JSON 문자열 안에서 같은 글자로 풀리므로 JS 가 받는 값은 그대로다.
+_BS = chr(92)   # 역슬래시
+_JSON_SCRIPT_ESCAPES = {ord('<'): _BS + 'u003C', ord('>'): _BS + 'u003E', ord('&'): _BS + 'u0026'}
+
+
 def serialize_ranktable(ranktable):
-    return json.dumps(ranktable, cls=DateTimeEncoder)
+    return json.dumps(ranktable, cls=DateTimeEncoder).translate(_JSON_SCRIPT_ESCAPES)
 
 
 """
@@ -649,11 +657,16 @@ def update_record(sid, player, desc, log=[]):
                 return False
     if (desc['clear'] == 0):
         # NO_PLAY --> attempt to remove record
-        try:
-            obj = models.PlayRecord.objects.get(song=song,player=player)
-            obj.delete()
-        except models.PlayRecord.DoesNotExist:
-            pass # no record not means failure
+        # 단, EX SCORE 가 있으면 행을 지우지 않고 램프만 NOPLAY 로 둔다. 행을 지우면 따로
+        # 넣은 EX SCORE 까지 함께 사라진다(EX SCORE 는 램프 버튼과 따로 저장한다).
+        # filter 로 본다 — (player, song) 중복 행이 드물게 있어 get() 은 MultipleObjectsReturned 로
+        # 500 이 났다(아래 분기가 같은 사정을 적어 둔다). 중복이면 모두 같은 처리를 한다.
+        for obj in models.PlayRecord.objects.filter(song=song, player=player):
+            if obj.exscore is not None:
+                obj.playclear = 0
+                obj.save()
+            else:
+                obj.delete()
     else:
         try:
             (pr,_) = models.PlayRecord.objects.get_or_create(song=song,player=player)

@@ -198,6 +198,9 @@ msgstr "至少 8 位。可使用字母、数字和符号，没有组合规则。
 msgid "90일"
 msgstr "90 天"
 
+msgid "< > 와 제어 문자는 쓸 수 없습니다."
+msgstr "不能使用 < > 和控制字符。"
+
 msgid "<a href=\"%(kuna)s\" target=\"_blank\" rel=\"noopener\">@lazykuna</a> 님의 iidxranktable 레포를 클론하여 만들어졌습니다.<br>SP 난이도표 관리 : <a href=\"%(cold)s\" target=\"_blank\" rel=\"noopener\">@Coldlapse</a>, DP 난이도표 관리 : P."
 msgstr "基于 <a href=\"%(kuna)s\" target=\"_blank\" rel=\"noopener\">@lazykuna</a> 的 iidxranktable 仓库克隆制作。<br>SP 难度表维护 : <a href=\"%(cold)s\" target=\"_blank\" rel=\"noopener\">@Coldlapse</a>，DP 难度表维护 : P."
 
@@ -245,6 +248,9 @@ msgstr "DJ NAME"
 
 msgid "DP 단위"
 msgstr "DP 段位"
+
+msgid "EX SCORE 는 0 에서 %(n)d 사이여야 합니다."
+msgstr "EX SCORE 必须在 0 到 %(n)d 之间。"
 
 msgid "Google Sheets (서열표 출처)"
 msgstr "Google Sheets（难度表来源）"
@@ -453,6 +459,9 @@ msgstr "需要同意隐私政策才能注册。"
 msgid "갱신"
 msgstr "已更新"
 
+msgid "갱신 이력"
+msgstr "更新记录"
+
 msgid "건의 및 난이도 갱신 요청, 서버 상태 등은"
 msgstr "建议、难度更新请求与服务器状态请参见"
 
@@ -530,6 +539,15 @@ msgstr "分享"
 
 msgid "공유 주소 복사"
 msgstr "复制分享链接"
+
+msgid "공지 채널"
+msgstr "公告频道"
+
+msgid "공지를 불러오지 못했습니다."
+msgstr "无法加载公告。"
+
+msgid "공지사항"
+msgstr "公告"
 
 msgid "공통"
 msgstr "通用"
@@ -642,6 +660,9 @@ msgstr "此操作无法撤销。"
 msgid "디스코드"
 msgstr "Discord"
 
+msgid "디스코드에서 보기"
+msgstr "在 Discord 查看"
+
 msgid "램프"
 msgstr "灯"
 
@@ -743,6 +764,9 @@ msgstr "为确认是本人操作，请一并输入当前密码。"
 
 msgid "본인의 프로필이라면 로그인 후 설정에서 공개 여부를 확인해 보세요."
 msgstr "若这是你的资料，请登录后在设置中检查公开状态。"
+
+msgid "불러오는 중…"
+msgstr "加载中…"
 
 msgid "비공개로 설정되어 있거나, 존재하지 않는 아이디입니다."
 msgstr "该资料已设为不公开，或此用户名不存在。"
@@ -915,6 +939,9 @@ msgstr "维持收录曲数据更新、服务器稳定化与维护"
 msgid "수록곡을 긁어 오는 페이지에 닿는지. 내려받아 표식까지 확인한다."
 msgstr "能否访问抓取曲目的页面。会下载并检查标记。"
 
+msgid "수정됨"
+msgstr "已编辑"
+
 msgid "수집한 정보를 다른 곳에 팔거나 넘기지 않습니다."
 msgstr "不会将收集的信息出售或转交他人。"
 
@@ -971,6 +998,9 @@ msgstr "还没有账号？"
 
 msgid "아직 기록이 없습니다. IIDXwidget 을 연결하면 여기에 쌓입니다."
 msgstr "还没有记录。连接 IIDXwidget 后会显示在这里。"
+
+msgid "아직 올라온 공지가 없습니다."
+msgstr "暂无公告。"
 
 msgid "앱"
 msgstr "应用"
@@ -1149,6 +1179,9 @@ msgstr "请在开始验证的浏览器中继续。"
 msgid "일반"
 msgstr "普通"
 
+msgid "일반 공지"
+msgstr "一般公告"
+
 msgid "일별 타건 수"
 msgstr "每日打键数"
 
@@ -1182,6 +1215,9 @@ msgstr "你可以随时在<a href=\"/account/\">账号设置</a>中查看和修�
 msgid "작동 원리와 계산식"
 msgstr "工作原理与计算公式"
 
+msgid "잘못된 요청입니다."
+msgstr "无效的请求。"
+
 msgid "잠시 뒤에 다시 올려 주세요."
 msgstr "请稍后再试。"
 
@@ -1190,6 +1226,9 @@ msgstr "重新发放"
 
 msgid "저장"
 msgstr "保存"
+
+msgid "저장했습니다."
+msgstr "已保存。"
 
 msgid "저희는 계정 인증과 아이디·비밀번호 찾기 외의 목적으로는 메일을 보내지 않습니다. 마케팅 메일도 보내지 않습니다."
 msgstr "除账号验证和找回 ID、密码之外，我们不会因其他目的发送邮件，也没有营销邮件。"
@@ -1226,6 +1265,9 @@ msgstr "准备中"
 
 msgid "준비 중입니다"
 msgstr "准备中"
+
+msgid "중요 공지"
+msgstr "重要公告"
 
 msgid "지금 기록보다 좋을 때만 올립니다. 직접 입력한 기록을 낮추지 않습니다."
 msgstr "仅在比现有记录更好时更新，不会降低您手动输入的记录。"

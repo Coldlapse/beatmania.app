@@ -29,6 +29,8 @@ JOBS = [
     ('signup_flow.py',  [],     r'총 실패:\s*(\d+)', 0),
     ('watchtower_embed.py', [], r'총 실패:\s*(\d+)', 0),
     ('cpi_check.py',    [],     r'총 실패:\s*(\d+)', 0),
+    ('discord_notice.py', [],   r'총 실패:\s*(\d+)', 0),
+    ('security_review.py', [],  r'총 실패:\s*(\d+)', 0),
 ]
 
 failed = []

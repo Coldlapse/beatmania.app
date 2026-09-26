@@ -25,7 +25,7 @@ tracker.tsv
        맞추지 않는다(틀린 곡에 쓰는 것보다 안 쓰는 것이 낫다)
 
 반영 규칙
-  **더 좋을 때만 올린다.** 램프도 등급도 각각 max. 손으로 넣은 기록이 게임
+  **더 좋을 때만 올린다.** 램프도 등급도 EX SCORE 도 각각 max. 손으로 넣은 기록이 게임
   기록보다 높으면 그대로 둔다 — 사용자가 일부러 넣은 값을 기계가 깎지 않는다.
   같은 파일을 여러 번 보내도 결과가 같다(멱등). 앱이 파일이 바뀔 때마다
   통째로 보내도 되는 이유다.
@@ -52,7 +52,8 @@ GRADE = {'F': 0, 'E': 1, 'D': 2, 'C': 3, 'B': 4, 'A': 5, 'AA': 6, 'AAA': 7}
 GRADE_MAX = 8
 
 # 들어오는 파일 한도. 실제 tracker.tsv 는 수백 KB 로 본다(실물로 재지 못함).
-# API 경로는 Django 기본 DATA_UPLOAD_MAX_MEMORY_SIZE(2.5MB)가 먼저 막는다 — 역시 400.
+# API 경로는 DATA_UPLOAD_MAX_MEMORY_SIZE(settings.py, 5MB)가 먼저 막는다 — 역시 400.
+# 웹 업로드(views_sync)는 그 설정이 파일에 걸리지 않아 읽기 전에 이 값으로 직접 본다.
 MAX_BYTES = 4 * 1024 * 1024
 
 # 겉모양은 같고 코드가 다른 글자. 곡 DB(textage)와 게임 쪽 제목이 서로 다른
@@ -100,7 +101,7 @@ def _int(s):
 
 
 def parse(text):
-    """tracker.tsv 본문 → [(제목, 슬롯, 레벨, playclear, playscore)].
+    """tracker.tsv 본문 → [(제목, 슬롯, 레벨, playclear, playscore, exscore)].
 
     기록이 없는 채보(램프 NP 이고 점수 0)와 레벨 10 미만은 여기서 버린다.
     """
@@ -137,7 +138,7 @@ def parse(text):
                 grade = GRADE_MAX
             else:
                 grade = GRADE.get(col('Letter').strip(), 0)
-            out.append((title, slot, level, clear, grade))
+            out.append((title, slot, level, clear, grade, ex))
     return out
 
 
@@ -175,15 +176,15 @@ def apply(user, text, source):
     index = _Index()
     player = newplayer(user)
 
-    matched = {}                      # song_id → (clear, grade). 같은 채보가 두 번 나오면 좋은 쪽
+    matched = {}                      # song_id → (clear, grade, ex). 같은 채보가 두 번 나오면 좋은 쪽
     missing = []
-    for title, slot, level, clear, grade in rows:
+    for title, slot, level, clear, grade, ex in rows:
         sid = index.find(title, slot, level)
         if sid is None:
             missing.append('%s [%s %d]' % (title, slot, level))
             continue
-        c0, g0 = matched.get(sid, (0, 0))
-        matched[sid] = (max(c0, clear), max(g0, grade))
+        c0, g0, e0 = matched.get(sid, (0, 0, 0))
+        matched[sid] = (max(c0, clear), max(g0, grade), max(e0, ex))
 
     created = improved = unchanged = 0
     with transaction.atomic():
@@ -191,21 +192,24 @@ def apply(user, text, source):
                 models.PlayRecord.objects.select_for_update()
                 .filter(player=player, song_id__in=list(matched))}
         new, changed = [], []
-        for sid, (clear, grade) in matched.items():
+        for sid, (clear, grade, ex) in matched.items():
+            # EX 0 은 '점수 기록 없음'(FAILED 만 있는 채보 등)으로 보고 n/a 를 유지한다
+            ex = ex or None
             pr = have.get(sid)
             if pr is None:
                 new.append(models.PlayRecord(player=player, song_id=sid,
-                                             playclear=clear, playscore=grade))
+                                             playclear=clear, playscore=grade, exscore=ex))
                 continue
             c = max(pr.playclear or 0, clear)
             g = max(pr.playscore or 0, grade)
-            if (c, g) == (pr.playclear, pr.playscore):
+            e = pr.exscore if ex is None else max(pr.exscore or 0, ex)
+            if (c, g, e) == (pr.playclear, pr.playscore, pr.exscore):
                 unchanged += 1
                 continue
-            pr.playclear, pr.playscore = c, g
+            pr.playclear, pr.playscore, pr.exscore = c, g, e
             changed.append(pr)
         models.PlayRecord.objects.bulk_create(new)
-        models.PlayRecord.objects.bulk_update(changed, ['playclear', 'playscore'])
+        models.PlayRecord.objects.bulk_update(changed, ['playclear', 'playscore', 'exscore'])
         created, improved = len(new), len(changed)
         models.RecordSync.objects.create(
             user=user, source=source, charts=len(rows), created=created,

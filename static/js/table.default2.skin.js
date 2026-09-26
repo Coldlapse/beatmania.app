@@ -28,7 +28,7 @@ function Default2Renderer(ctx) {
   img_score.onload = function() { img_loadcnt++; }
   self.isLoaded = function() { return img_loadcnt >= 2; }
   img_clear.src = "/static/img/clearlamp2.png";
-  img_score.src = "/static/img/rank2.png";
+  img_score.src = "/static/img/rank2.png?v=2";
 
   //
   // privates
@@ -111,12 +111,12 @@ function Default2Renderer(ctx) {
         var sy = -1;
         var sw = 16;
         var sh = 16;
-        /*
-        if (d.rank == "F") sy = 116;
-        else if (d.rank == "E") sy = 100;
-        else if (d.rank == "D") sy = 83;
-        else if (d.rank == "C") sy = 67;
-        else */if (d.rank == "4") sy = 50;
+        // 등급은 숫자(0 F, 1 E, 2 D, 3 C, 4 B ... 8 MAX). F 는 '기록 없음' 과 같은 0 이라 그리지 않는다.
+        // E·D·C 는 등급이 글자에서 숫자로 바뀔 때 옛 글자 비교로 남아 막혀 있었다 — 숫자로 되살린다.
+        if (d.rank == "1") sy = 100;
+        else if (d.rank == "2") sy = 83;
+        else if (d.rank == "3") sy = 67;
+        else if (d.rank == "4") sy = 50;
         else if (d.rank == "5") sy = 33;
         else if (d.rank == "6") sy = 16;
         else if (d.rank == "7") sy = 0;
@@ -390,7 +390,7 @@ function DefaultDarkRenderer(ctx) {
   img_score.onload = function() { img_loadcnt++; }
   self.isLoaded = function() { return img_loadcnt >= 2; }
   img_clear.src = "/static/img/clearlamp2dark.png";
-  img_score.src = "/static/img/rank2.png";
+  img_score.src = "/static/img/rank2.png?v=2";
 
   //
   // privates
@@ -475,12 +475,12 @@ function DefaultDarkRenderer(ctx) {
         var sy = -1;
         var sw = 16;
         var sh = 16;
-        /*
-        if (d.rank == "F") sy = 116;
-        else if (d.rank == "E") sy = 100;
-        else if (d.rank == "D") sy = 83;
-        else if (d.rank == "C") sy = 67;
-        else */if (d.rank == "4") sy = 50;
+        // 등급은 숫자(0 F, 1 E, 2 D, 3 C, 4 B ... 8 MAX). F 는 '기록 없음' 과 같은 0 이라 그리지 않는다.
+        // E·D·C 는 등급이 글자에서 숫자로 바뀔 때 옛 글자 비교로 남아 막혀 있었다 — 숫자로 되살린다.
+        if (d.rank == "1") sy = 100;
+        else if (d.rank == "2") sy = 83;
+        else if (d.rank == "3") sy = 67;
+        else if (d.rank == "4") sy = 50;
         else if (d.rank == "5") sy = 33;
         else if (d.rank == "6") sy = 16;
         else if (d.rank == "7") sy = 0;

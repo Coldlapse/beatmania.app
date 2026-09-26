@@ -1,0 +1,75 @@
+{% load i18n %}
+{% comment %}
+  공지사항 칸의 채널 내용 (/notice/<번호>/, iidxrank/views_notice.py).
+  메인 페이지(user/userpage.html)가 불러와 탭 아래에 끼워 넣는다.
+
+  디스코드 채널 화면을 따른다 — 오래된 것이 위, 최신이 아래. 날짜가 바뀌면 구분선,
+  같은 사람이 잇따라 쓴 메시지는 머리(아바타·이름)를 생략한다.
+  m.html 은 discord_notice.render 가 이스케이프한 뒤 만든 것이라 safe 로 쓴다.
+{% endcomment %}
+{% if messages is None %}
+<div class="dn-empty">
+  <i class="bi bi-cloud-slash" aria-hidden="true"></i>
+  {% trans '공지를 불러오지 못했습니다.' %}
+  <a href="{{ invite }}" target="_blank" rel="noopener">{% trans '디스코드에서 보기' %}</a>
+</div>
+{% else %}
+<div class="dn-messages">
+  {% for m in messages %}
+    {% if m.new_day %}
+    <div class="dn-divider" role="separator"><span>{{ m.when|date:"Y-m-d" }}</span></div>
+    {% endif %}
+    <article class="dn-msg{% if m.grouped %} dn-grouped{% endif %}">
+      {% if m.reply %}
+      <div class="dn-reply">
+        <img src="{{ m.reply.avatar }}" alt="" loading="lazy" width="16" height="16">
+        <b>{{ m.reply.name }}</b> <span>{{ m.reply.text }}</span>
+      </div>
+      {% endif %}
+      <div class="dn-row">
+        {% if m.grouped %}
+        <time class="dn-side-time" datetime="{{ m.when|date:'c' }}">{{ m.when|date:"H:i" }}</time>
+        {% else %}
+        <img class="dn-avatar" src="{{ m.avatar }}" alt="" loading="lazy" width="40" height="40">
+        {% endif %}
+        <div class="dn-body">
+          {% if not m.grouped %}
+          <div class="dn-head">
+            <span class="dn-name"{% if m.name_color %} style="color: {{ m.name_color }}"{% endif %}>{{ m.name }}</span>
+            {% if m.bot %}<span class="dn-bot">BOT</span>{% endif %}
+            <time class="dn-ts" datetime="{{ m.when|date:'c' }}">{{ m.when|date:"Y-m-d H:i" }}</time>
+          </div>
+          {% endif %}
+          {% if m.html or m.edited %}
+          <div class="dn-content">{{ m.html|safe }}{% if m.edited %} <span class="dn-edited">({% trans '수정됨' %})</span>{% endif %}</div>
+          {% endif %}
+          {% for e in m.embeds %}
+          <div class="dn-embed"{% if e.color %} style="border-left-color: {{ e.color }}"{% endif %}>
+            {% if e.title %}<div class="dn-embed-title">{% if e.url %}<a href="{{ e.url }}" target="_blank" rel="noopener nofollow ugc">{{ e.title }}</a>{% else %}{{ e.title }}{% endif %}</div>{% endif %}
+            {% if e.html %}<div class="dn-embed-desc">{{ e.html|safe }}</div>{% endif %}
+            {% if e.image %}<img class="dn-embed-img" src="{{ e.image }}" alt="" loading="lazy">{% endif %}
+          </div>
+          {% endfor %}
+          {% if m.images %}
+          <div class="dn-images">
+            {% for img in m.images %}
+            <a href="{{ img.full }}" target="_blank" rel="noopener nofollow">
+              <img src="{{ img.url }}" alt="{{ img.name }}" loading="lazy"{% if img.width %} width="{{ img.width }}" height="{{ img.height }}"{% endif %}>
+            </a>
+            {% endfor %}
+          </div>
+          {% endif %}
+          {% for f in m.files %}
+          <a class="dn-file" href="{{ f.url }}" target="_blank" rel="noopener nofollow">
+            <i class="bi bi-file-earmark" aria-hidden="true"></i> {{ f.name }}
+            <span>{{ f.size|filesizeformat }}</span>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+    </article>
+  {% empty %}
+    <div class="dn-empty">{% trans '아직 올라온 공지가 없습니다.' %}</div>
+  {% endfor %}
+</div>
+{% endif %}

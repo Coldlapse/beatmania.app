@@ -204,13 +204,41 @@ table .loading { color: var(--bm-text-subtle); text-align: center; padding: 20px
 /* 편집 위젯 — 본문 위에 뜨는 반투명 오버레이라 테마와 무관하게 어둡다 */
 #editor {
   position: absolute; background: var(--bm-widget-bg);
-  width: 380px; height: 220px; border-radius: 8px; padding: 10px; display: none;
+  width: 380px; border-radius: 8px; padding: 10px; display: none;
   color: var(--bm-widget-text); border: 4px solid var(--bm-widget-border);
   box-shadow: var(--bm-shadow);
 }
 #editor .title { color: #fff; font-weight: bold; }
 #editor .row { clear: both; margin-bottom: 10px; }
 #editor .name { display: block; clear: both; margin-bottom: 10px; }
+/* 제목 줄: 곡명 왼쪽, EX SCORE 오른쪽 끝. 곡명이 길면 곡명이 줄어든다 */
+#editor .rankedit-head { clear: both; display: flex; align-items: baseline; justify-content: space-between; gap: .75rem; margin: 0 0 10px; }
+#editor .rankedit-head .title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#editor .rankedit-ex { flex: none; font-size: .85rem; white-space: nowrap; }
+#editor .rankedit-ex b { color: #fff; }
+/* 섹션(CLEAR LAMP · DJ RANK · EX SCORE): 부트스트랩 .row 를 쓰지 않는다 — .row 의 음수 여백과
+   자식 폭 100% 때문에 제목과 버튼의 왼쪽 끝이 어긋났다. 제목·버튼·입력칸이 모두 같은 왼쪽 선에서
+   시작하고, 한 줄의 칸들은 폭을 나눠 오른쪽 끝도 맞춘다. */
+#editor .rankedit-section { display: grid; gap: 6px; margin: 0 0 12px; }
+#editor .rankedit-section .name { grid-column: 1 / -1; margin: 0; font-size: .8rem; font-weight: 600;
+  letter-spacing: .06em; opacity: .8; }
+#editor .rankedit-section .edit-button { float: none; margin: 0; width: auto; min-width: 0; height: 26px;
+  padding: 0 4px; line-height: 24px; white-space: nowrap; }
+#editor .rankedit-lamps { grid-template-columns: repeat(4, 1fr); }
+/* DJ RANK: 12칸 격자. F E D C B A 는 한 칸씩(앞 절반), AA AAA MAX- 는 두 칸씩(뒤 절반) —
+   AA 부터는 전과 같은 폭이고, 전의 F B A 자리에 여섯 개가 들어간다 */
+#editor .rankedit-ranks { grid-template-columns: repeat(12, 1fr); }
+#editor .rankedit-ranks .edit-rank-AA,
+#editor .rankedit-ranks .edit-rank-AAA,
+#editor .rankedit-ranks .edit-rank-MAX { grid-column: span 2; }
+#editor .rankedit-ranks .edit-rank { padding: 0; }
+/* EX SCORE: 양옆을 채우지 않는다. 네 자리 숫자에 맞는 입력칸 + 저장 버튼을 왼쪽에 붙인다 */
+#editor .rankedit-exrow { grid-template-columns: 1fr; }
+#editor .rankedit-ex-form { display: flex; align-items: center; gap: 6px; margin: 0; }
+#editor .rankedit-ex-form .edit-ex-save { flex: none; width: 4.5rem; }
+#editor .edit-ex-input { flex: none; width: 6.5rem; height: 26px; min-height: 0; padding: 0 8px; font-size: .9rem;
+  background: transparent; color: var(--bm-widget-text); border-color: var(--bm-widget-border); border-radius: .25rem; }
+#editor .edit-ex-save:hover { border-color: var(--bm-widget-text); }
 
 #editwidget > a { color: var(--bm-widget-text); }
 #editwidget.beforeedit .afteredit { display: none; }
@@ -238,7 +266,7 @@ table .loading { color: var(--bm-text-subtle); text-align: center; padding: 20px
   line-height: 10px; padding: 5px; width: 80px; text-align: center; float: right; margin-right: 10px;
   border-radius: .25rem;
 }
-.rank-item .edit-rank { width: 45px; }
+.rank-item .edit-rank { width: auto; min-width: 45px; padding: 5px 6px; white-space: nowrap; }
 .rank-item .edit-clear-0:before { content: 'NOPLAY'; color: #9aa3ad; }
 .rank-item .edit-clear-1:before { content: 'FAILED'; color: #b9c0c7; }
 .rank-item .edit-clear-2:before { content: 'ASSIST'; color: #ccaaaa; }

@@ -19,9 +19,14 @@ NEW = [
     ('/u/sadang/', 200), ('/u/sadang/table/SP12H/', 200),
     ('/u/sadang/table/SP12H/embed/', 200), ('/u/sadang/table/SP12H/json/', 200),
     ('/login/', 200), ('/join/', 200), ('/status/', 200), ('/privacy/', 200),
-    ('/converter/', 200), ('/about/', 200), ('/songrank/', 200),
-    ('/userrank/', 200), ('/musiclist/', 200), 
-    ('/json/userlist/', 200),
+    ('/converter/', 200), ('/about/', 200),
+    # 2026-09-26 에 지운 것 — 되살아나지 않게 404 를 확인한다
+    ('/songrank/', 404), ('/userrank/', 404), ('/musiclist/', 404),
+    ('/json/userlist/', 404), ('/json/musiclist/SP/level/12/', 404),
+    ('/json/recommend/user_sadang/SP/', 404),
+    ('/lampupdate/', 404), ('/jsi18n/', 404),
+    # 옛 주소는 규칙에 없으면 홈으로 301(legacy.redirect_bang 설계). 전에는 500 이었다
+    ('/!/userrank/', 301), ('/!/songrank/', 301),
 ]
 bad = 0
 for u, want in NEW:

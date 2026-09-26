@@ -117,7 +117,9 @@ def _uptime():
 
     rows = (models.HealthCheck.objects
             .filter(checked_at__gte=start)
-            .values('target', 'status', 'latency_ms', 'checked_at'))
+            # note 는 전에 빠져 있어 템플릿의 점검 문장이 누구에게도 나오지 않았다(2026-09-26 확인).
+            # 이제 읽되, 템플릿이 staff 에게만 보인다(예외 문장이라 공개하지 않는다).
+            .values('target', 'status', 'latency_ms', 'checked_at', 'note'))
 
     grid = {t: [None] * UPTIME_SLOTS for t in health.CHECKS}
     latest = {}

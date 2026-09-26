@@ -914,3 +914,90 @@ body.bm-rankpage #rankimg { margin-top: .5rem; }
 .bm-cpi-lamp-5 { background: var(--bm-clear-hard); }
 .bm-cpi-lamp-6 { background: var(--bm-clear-exhard); color: #222; }
 .bm-cpi-lamp-7 { background: var(--bm-clear-fc); color: #06343a; }
+
+/* --- 공지사항: 디스코드 채널 (user/userpage.html, widgets/discord_notice.html) --- */
+.bm-notice { overflow: hidden; }
+.bm-notice-head {
+  display: flex; align-items: center; justify-content: space-between; gap: .5rem;
+  padding: .8rem 1rem; border-bottom: 1px solid var(--bm-border);
+}
+.bm-notice-body { display: flex; min-height: 0; }
+/* 넓은 화면: 디스코드처럼 왼쪽에 채널 목록 */
+.bm-notice-channels {
+  flex: 0 0 11rem; display: flex; flex-direction: column; gap: 2px;
+  padding: .6rem .5rem; background: var(--bm-surface-2); border-right: 1px solid var(--bm-border);
+}
+.dn-chan {
+  display: flex; align-items: center; gap: .35rem; width: 100%;
+  padding: .35rem .55rem; border: 0; border-radius: 6px; background: transparent;
+  color: var(--bm-text-muted); font-size: .92rem; font-weight: 500; text-align: left; white-space: nowrap;
+}
+.dn-chan:hover { background: var(--bm-pill-hover-bg); color: var(--bm-text); }
+.dn-chan.active { background: var(--bm-surface-3); color: var(--bm-text); font-weight: 600; }
+.dn-hash { font-size: 1.15rem; line-height: 1; color: var(--bm-text-faint); font-weight: 400; }
+.bm-notice-pane { flex: 1 1 auto; min-width: 0; }
+.dn-messages { height: 28rem; overflow-y: auto; padding: .5rem 0 .75rem; overscroll-behavior: contain; }
+.dn-empty { padding: 2rem 1rem; text-align: center; color: var(--bm-text-muted); font-size: .92rem; }
+
+/* 좁은 화면: 채널 목록을 위쪽 가로 줄로 */
+@media (max-width: 767.98px) {
+  .bm-notice-body { flex-direction: column; }
+  .bm-notice-channels {
+    flex: none; flex-direction: row; overflow-x: auto; padding: .4rem .5rem;
+    border-right: 0; border-bottom: 1px solid var(--bm-border);
+  }
+  .dn-chan { width: auto; }
+  .dn-messages { height: 24rem; }
+}
+
+.dn-divider { display: flex; align-items: center; margin: .9rem 1rem .3rem; color: var(--bm-text-faint); font-size: .72rem; font-weight: 600; }
+.dn-divider::before, .dn-divider::after { content: ''; flex: 1; height: 1px; background: var(--bm-border); }
+.dn-divider span { padding: 0 .5rem; }
+
+.dn-msg { padding: .15rem 1rem .15rem 1rem; margin-top: .9rem; }
+.dn-msg.dn-grouped { margin-top: 0; }
+.dn-divider + .dn-msg { margin-top: .3rem; }
+.dn-msg:hover { background: var(--bm-surface-2); }
+.dn-row { display: flex; gap: .85rem; align-items: flex-start; }
+.dn-avatar { flex: none; width: 40px; height: 40px; border-radius: 50%; margin-top: 2px; }
+/* 묶인 메시지는 아바타 자리에 시각을 두고, 올렸을 때만 보인다(디스코드와 같다) */
+.dn-side-time { flex: none; width: 40px; text-align: right; font-size: .66rem; line-height: 1.6rem;
+  color: var(--bm-text-faint); visibility: hidden; }
+.dn-msg:hover .dn-side-time { visibility: visible; }
+.dn-body { min-width: 0; flex: 1 1 auto; }
+.dn-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: .1rem .5rem; line-height: 1.4; }
+.dn-name { font-weight: 600; color: var(--bm-text); }
+.dn-bot { font-size: .62rem; font-weight: 700; padding: 0 .3em; border-radius: 3px; background: var(--bm-accent); color: var(--bm-text-on-accent); }
+.dn-ts { font-size: .72rem; color: var(--bm-text-faint); }
+.dn-content { font-size: .94rem; line-height: 1.55; color: var(--bm-text); overflow-wrap: anywhere; }
+.dn-content a, .dn-embed a { color: var(--bm-accent); }
+.dn-edited { font-size: .66rem; color: var(--bm-text-faint); }
+.dn-mention { padding: 0 .15em; border-radius: 3px; font-weight: 500;
+  background: var(--bm-accent-soft); color: var(--bm-accent); }
+.dn-emoji { width: 1.375em; height: 1.375em; vertical-align: -.3em; object-fit: contain; }
+.dn-code { padding: .1em .3em; border-radius: 4px; background: var(--bm-surface-3); font-size: .85em; }
+.dn-codeblock { margin: .3rem 0; padding: .5rem .65rem; border-radius: 6px; background: var(--bm-surface-3);
+  border: 1px solid var(--bm-border); font-size: .82rem; white-space: pre-wrap; }
+.dn-quote { margin: .15rem 0; padding-left: .7rem; border-left: 4px solid var(--bm-border-strong); }
+.dn-list { margin: .15rem 0; padding-left: 1.3rem; }
+.dn-h1 { font-size: 1.35rem; font-weight: 700; margin: .4rem 0 .2rem; }
+.dn-h2 { font-size: 1.15rem; font-weight: 700; margin: .35rem 0 .15rem; }
+.dn-h3 { font-size: 1rem; font-weight: 700; margin: .3rem 0 .1rem; }
+.dn-sub { font-size: .76rem; color: var(--bm-text-muted); }
+.dn-spoiler { border-radius: 3px; background: var(--bm-text-faint); color: transparent; cursor: pointer; }
+.dn-spoiler.revealed { background: var(--bm-surface-3); color: inherit; cursor: auto; }
+.dn-images { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .35rem; }
+.dn-images img { display: block; max-width: 100%; height: auto;
+  border-radius: 8px; border: 1px solid var(--bm-border); background: var(--bm-surface-2); }
+.dn-images a { display: block; max-width: 100%; }
+.dn-file { display: inline-flex; align-items: center; gap: .4rem; margin-top: .35rem; padding: .45rem .7rem;
+  border: 1px solid var(--bm-border); border-radius: 8px; background: var(--bm-surface-2); font-size: .88rem; }
+.dn-file span { color: var(--bm-text-faint); font-size: .75rem; }
+.dn-embed { margin-top: .35rem; max-width: 32rem; padding: .5rem .75rem; border-radius: 4px;
+  border-left: 4px solid var(--bm-border-strong); background: var(--bm-surface-2); font-size: .88rem; }
+.dn-embed-title { font-weight: 600; margin-bottom: .2rem; }
+.dn-embed-img { display: block; max-width: 100%; max-height: 18rem; margin-top: .4rem; border-radius: 4px; }
+.dn-reply { display: flex; align-items: center; gap: .3rem; margin-left: 1.4rem; padding-left: 1.9rem;
+  font-size: .78rem; color: var(--bm-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dn-reply img { border-radius: 50%; }
+.dn-reply span { overflow: hidden; text-overflow: ellipsis; }

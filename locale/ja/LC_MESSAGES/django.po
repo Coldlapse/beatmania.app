@@ -198,6 +198,9 @@ msgstr "8文字以上。英数字と記号が使えます。組み合わせの�
 msgid "90일"
 msgstr "90日"
 
+msgid "< > 와 제어 문자는 쓸 수 없습니다."
+msgstr "< > と制御文字は使えません。"
+
 msgid "<a href=\"%(kuna)s\" target=\"_blank\" rel=\"noopener\">@lazykuna</a> 님의 iidxranktable 레포를 클론하여 만들어졌습니다.<br>SP 난이도표 관리 : <a href=\"%(cold)s\" target=\"_blank\" rel=\"noopener\">@Coldlapse</a>, DP 난이도표 관리 : P."
 msgstr "<a href=\"%(kuna)s\" target=\"_blank\" rel=\"noopener\">@lazykuna</a> 氏の iidxranktable リポジトリをクローンして作られました。<br>SP 難易度表担当 : <a href=\"%(cold)s\" target=\"_blank\" rel=\"noopener\">@Coldlapse</a>、DP 難易度表担当 : P."
 
@@ -245,6 +248,9 @@ msgstr "DJ NAME"
 
 msgid "DP 단위"
 msgstr "DP 段位"
+
+msgid "EX SCORE 는 0 에서 %(n)d 사이여야 합니다."
+msgstr "EX SCORE は 0 から %(n)d の間で入力してください。"
 
 msgid "Google Sheets (서열표 출처)"
 msgstr "Google Sheets（難易度表データ元）"
@@ -453,6 +459,9 @@ msgstr "プライバシーポリシーに同意しないと登録できません
 msgid "갱신"
 msgstr "更新"
 
+msgid "갱신 이력"
+msgstr "更新履歴"
+
 msgid "건의 및 난이도 갱신 요청, 서버 상태 등은"
 msgstr "ご意見・難易度更新の依頼・サーバー状況は"
 
@@ -530,6 +539,15 @@ msgstr "共有"
 
 msgid "공유 주소 복사"
 msgstr "共有URLをコピー"
+
+msgid "공지 채널"
+msgstr "お知らせチャンネル"
+
+msgid "공지를 불러오지 못했습니다."
+msgstr "お知らせを読み込めませんでした。"
+
+msgid "공지사항"
+msgstr "お知らせ"
 
 msgid "공통"
 msgstr "共通"
@@ -642,6 +660,9 @@ msgstr "元に戻すことはできません。"
 msgid "디스코드"
 msgstr "Discord"
 
+msgid "디스코드에서 보기"
+msgstr "Discord で見る"
+
 msgid "램프"
 msgstr "ランプ"
 
@@ -743,6 +764,9 @@ msgstr "ご本人確認のため、現在のパスワードもあわせて入力
 
 msgid "본인의 프로필이라면 로그인 후 설정에서 공개 여부를 확인해 보세요."
 msgstr "ご自身のプロフィールの場合は、ログイン後に設定で公開状態をご確認ください。"
+
+msgid "불러오는 중…"
+msgstr "読み込み中…"
 
 msgid "비공개로 설정되어 있거나, 존재하지 않는 아이디입니다."
 msgstr "非公開に設定されているか、存在しない ID です。"
@@ -915,6 +939,9 @@ msgstr "収録曲データの更新維持、サーバー安定化と保守"
 msgid "수록곡을 긁어 오는 페이지에 닿는지. 내려받아 표식까지 확인한다."
 msgstr "楽曲データを取得するページに到達できるか。取得して目印まで確認する。"
 
+msgid "수정됨"
+msgstr "編集済"
+
 msgid "수집한 정보를 다른 곳에 팔거나 넘기지 않습니다."
 msgstr "収集した情報を他所に売ったり渡したりしません。"
 
@@ -971,6 +998,9 @@ msgstr "アカウントをお持ちでないですか？"
 
 msgid "아직 기록이 없습니다. IIDXwidget 을 연결하면 여기에 쌓입니다."
 msgstr "まだ記録がありません。IIDXwidget を connect すればここに溜まります。"
+
+msgid "아직 올라온 공지가 없습니다."
+msgstr "まだお知らせはありません。"
 
 msgid "앱"
 msgstr "アプリ"
@@ -1149,6 +1179,9 @@ msgstr "認証を開始したブラウザで進めてください。"
 msgid "일반"
 msgstr "通常"
 
+msgid "일반 공지"
+msgstr "一般のお知らせ"
+
 msgid "일별 타건 수"
 msgstr "日別の打鍵数"
 
@@ -1182,6 +1215,9 @@ msgstr "自分の情報は<a href=\"/account/\">アカウント設定</a>でい�
 msgid "작동 원리와 계산식"
 msgstr "仕組みと計算式"
 
+msgid "잘못된 요청입니다."
+msgstr "不正なリクエストです。"
+
 msgid "잠시 뒤에 다시 올려 주세요."
 msgstr "しばらくしてから再度お試しください。"
 
@@ -1190,6 +1226,9 @@ msgstr "再発行"
 
 msgid "저장"
 msgstr "保存"
+
+msgid "저장했습니다."
+msgstr "保存しました。"
 
 msgid "저희는 계정 인증과 아이디·비밀번호 찾기 외의 목적으로는 메일을 보내지 않습니다. 마케팅 메일도 보내지 않습니다."
 msgstr "当サイトはアカウント認証と ID・パスワードの確認以外の目的でメールを送ることはありません。マーケティングメールもお送りしません。"
@@ -1226,6 +1265,9 @@ msgstr "準備中"
 
 msgid "준비 중입니다"
 msgstr "準備中です"
+
+msgid "중요 공지"
+msgstr "重要なお知らせ"
 
 msgid "지금 기록보다 좋을 때만 올립니다. 직접 입력한 기록을 낮추지 않습니다."
 msgstr "今の記録より良い場合のみ更新します。手入力した記録を下げることはありません。"

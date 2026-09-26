@@ -25,17 +25,16 @@ from django.conf.urls import include, url
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.views.generic import RedirectView
-from django.views.i18n import JavaScriptCatalog
 
 import iidxrank.legacy as legacy
 import iidxrank.views as views
 import iidxrank.views_account as views_account
-import iidxrank.views_json as views_json
 import iidxrank.views_manage as views_manage
 import iidxrank.views_overjoy as views_overjoy
 import iidxrank.views_status as views_status
 import iidxrank.views_sync as views_sync
 import iidxrank.views_cpi as views_cpi
+import iidxrank.views_notice as views_notice
 import iidxrank.views_typing as views_typing
 
 # 서열표 한 개에 딸린 하위 경로. 내 것과 남의 것이 같은 모양을 갖도록 공유한다.
@@ -51,8 +50,6 @@ urlpatterns = [
     # 언어 전환. URL 에 언어를 넣지 않고 쿠키/세션에 저장한다.
     # set_language 는 POST + next 로만 동작하므로 오픈 리다이렉트가 되지 않는다.
     url(r'^i18n/', include('django.conf.urls.i18n')),
-    url(r'^jsi18n/$', JavaScriptCatalog.as_view(), name='javascript-catalog'),
-    url(r'^imgdownload/$', views.imgdownload, name='imgdownload'),
 
     # --- 서열표 -----------------------------------------------------------
     url(r'^$', views.userpage, name='home'),
@@ -61,12 +58,14 @@ urlpatterns = [
     # CPI(추정). 공개 규칙은 서열표와 같다.
     url(r'^cpi/$', views_cpi.cpi_page, name='cpi_page'),
     url(r'^u/(?P<username>[\w-]+)/cpi/$', views_cpi.cpi_page, name='cpi_page_user'),
+    url(r'^notice/(?P<idx>\d+)/$', views_notice.notice_fragment, name='notice_fragment'),
     url(r'^u/(?P<username>[\w-]+)/table/(?P<tablename>\w+)/', include(table_patterns)),
 
     # --- 일반 페이지 -------------------------------------------------------
-    url(r'^songrank/$', views.songrank, name='songrank'),
-    url(r'^userrank/$', views.userrank, name='userrank'),
-    url(r'^musiclist/$', views.musiclist, name='musiclist'),
+    # 곡 랭킹·유저 랭킹·곡 목록(/songrank/ /userrank/ /musiclist/)과 그 JSON 은 2026-09-26 에 지웠다.
+    # 메뉴 링크가 없었고, 보여 주는 값(곡·유저 난이도 계산)이 전부 0 이었으며, 2022-08 이후 접근 로그에
+    # 일반 사용자가 정상으로 쓴 기록이 없었다(옛 주소는 441건 전부 500). 유저 목록 JSON 은 공개 사용자의
+    # IIDX ID 를 한꺼번에 내주었다. 조사는 handoff-security-review.md 6장.
     url(r'^converter/$', views.converter, name='converter'),
     # '개발 로드맵' 이었다. 개발자 소개를 같이 담게 되어 이름을 넓혔다.
     # 옛 주소는 넘긴다.
@@ -126,23 +125,14 @@ urlpatterns = [
     url(r'^withdraw/$', views.withdraw, name='withdraw'),
 
     # --- 기록 편집 --------------------------------------------------------
-    url(r'^lampupdate/$', views.updatelamp, name='updatelamp'),
+    # /lampupdate/(CSV 램프 가져오기, 2019~2020)와 /jsi18n/ 은 2026-09-26 에 지웠다 — 앞의 것은
+    # 인자 불일치로 늘 500 이던 csrf_exempt 업로드였고(대신 /sync/), 뒤의 것은 부르는 JS 가 없는 빈 카탈로그였다.
     url(r'^rankedit/(?P<id>[0-9]+)/$', views.rankedit, name='rankedit'),
     url(r'^modify/$', views.modify, name='modify'),
     url(r'^update/rankedit/(?P<tablename>\w+)/$',
         views.ranktableedit, name='ranktableedit'),
 
     # --- 게시판 -----------------------------------------------------------
-
-    # --- JSON -------------------------------------------------------------
-    url(r'^json/', include([
-        url(r'^musiclist/(?P<type>\w+)/level/(?P<level>[0-9]+)/$', views_json.json_level),
-        url(r'^musiclist/(?P<type>\w+)/series/(?P<series>\w+)/$', views_json.json_series),
-        url(r'^userlist/$', views_json.json_user, name='json_userlist'),
-        url(r'^recommend/(?P<username>[\w-]+)/(?P<type>\w+)/$', views_json.json_recommend),
-        url(r'^recommend/(?P<username>[\w-]+)/(?P<type>\w+)/(?P<level>[0-9]+)/$',
-            views_json.json_recommend),
-    ])),
 
     # --- API --------------------------------------------------------------
     url(r'^api/v1/update-typing-count/$',

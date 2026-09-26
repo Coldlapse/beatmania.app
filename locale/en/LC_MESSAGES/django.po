@@ -198,6 +198,9 @@ msgstr "At least 8 characters. Letters, digits and symbols; no composition rules
 msgid "90일"
 msgstr "90 days"
 
+msgid "< > 와 제어 문자는 쓸 수 없습니다."
+msgstr "< > and control characters are not allowed."
+
 msgid "<a href=\"%(kuna)s\" target=\"_blank\" rel=\"noopener\">@lazykuna</a> 님의 iidxranktable 레포를 클론하여 만들어졌습니다.<br>SP 난이도표 관리 : <a href=\"%(cold)s\" target=\"_blank\" rel=\"noopener\">@Coldlapse</a>, DP 난이도표 관리 : P."
 msgstr "Built by cloning the iidxranktable repository by <a href=\"%(kuna)s\" target=\"_blank\" rel=\"noopener\">@lazykuna</a>.<br>SP tables: <a href=\"%(cold)s\" target=\"_blank\" rel=\"noopener\">@Coldlapse</a>, DP tables: P."
 
@@ -245,6 +248,9 @@ msgstr "DJ NAME"
 
 msgid "DP 단위"
 msgstr "DP class"
+
+msgid "EX SCORE 는 0 에서 %(n)d 사이여야 합니다."
+msgstr "EX SCORE must be between 0 and %(n)d."
 
 msgid "Google Sheets (서열표 출처)"
 msgstr "Google Sheets (rank table source)"
@@ -453,6 +459,9 @@ msgstr "You must agree to the Privacy Policy to sign up."
 msgid "갱신"
 msgstr "Improved"
 
+msgid "갱신 이력"
+msgstr "Update log"
+
 msgid "건의 및 난이도 갱신 요청, 서버 상태 등은"
 msgstr "For suggestions, difficulty updates and server status, see"
 
@@ -530,6 +539,15 @@ msgstr "Share"
 
 msgid "공유 주소 복사"
 msgstr "Copy share link"
+
+msgid "공지 채널"
+msgstr "Announcement channels"
+
+msgid "공지를 불러오지 못했습니다."
+msgstr "Could not load announcements."
+
+msgid "공지사항"
+msgstr "Announcements"
 
 msgid "공통"
 msgstr "shared"
@@ -642,6 +660,9 @@ msgstr "This cannot be undone."
 msgid "디스코드"
 msgstr "Discord"
 
+msgid "디스코드에서 보기"
+msgstr "View on Discord"
+
 msgid "램프"
 msgstr "Lamp"
 
@@ -743,6 +764,9 @@ msgstr "Enter your current password to confirm it is you."
 
 msgid "본인의 프로필이라면 로그인 후 설정에서 공개 여부를 확인해 보세요."
 msgstr "If this is your profile, log in and check the privacy setting."
+
+msgid "불러오는 중…"
+msgstr "Loading…"
 
 msgid "비공개로 설정되어 있거나, 존재하지 않는 아이디입니다."
 msgstr "It is either set to private, or the username does not exist."
@@ -915,6 +939,9 @@ msgstr "Kept the song data updated; server stabilisation and maintenance"
 msgid "수록곡을 긁어 오는 페이지에 닿는지. 내려받아 표식까지 확인한다."
 msgstr "Whether the song source page is reachable. We fetch it and check for a marker."
 
+msgid "수정됨"
+msgstr "edited"
+
 msgid "수집한 정보를 다른 곳에 팔거나 넘기지 않습니다."
 msgstr "We do not sell or hand over collected information to anyone."
 
@@ -971,6 +998,9 @@ msgstr "No account yet?"
 
 msgid "아직 기록이 없습니다. IIDXwidget 을 연결하면 여기에 쌓입니다."
 msgstr "No records yet. Connect IIDXwidget and they will show up here."
+
+msgid "아직 올라온 공지가 없습니다."
+msgstr "No announcements yet."
 
 msgid "앱"
 msgstr "App"
@@ -1149,6 +1179,9 @@ msgstr "Continue in the browser where you started the verification."
 msgid "일반"
 msgstr "Normal"
 
+msgid "일반 공지"
+msgstr "General"
+
 msgid "일별 타건 수"
 msgstr "Keystrokes per day"
 
@@ -1182,6 +1215,9 @@ msgstr "You can view and edit your information at any time in <a href=\"/account
 msgid "작동 원리와 계산식"
 msgstr "How it works, and the formulas"
 
+msgid "잘못된 요청입니다."
+msgstr "Invalid request."
+
 msgid "잠시 뒤에 다시 올려 주세요."
 msgstr "Please try again in a moment."
 
@@ -1190,6 +1226,9 @@ msgstr "Reissue"
 
 msgid "저장"
 msgstr "Save"
+
+msgid "저장했습니다."
+msgstr "Saved."
 
 msgid "저희는 계정 인증과 아이디·비밀번호 찾기 외의 목적으로는 메일을 보내지 않습니다. 마케팅 메일도 보내지 않습니다."
 msgstr "We never send email for anything other than account verification and recovering your ID or password. No marketing email either."
@@ -1226,6 +1265,9 @@ msgstr "Coming soon"
 
 msgid "준비 중입니다"
 msgstr "Coming soon"
+
+msgid "중요 공지"
+msgstr "Important"
 
 msgid "지금 기록보다 좋을 때만 올립니다. 직접 입력한 기록을 낮추지 않습니다."
 msgstr "Records are only raised when better. Records you entered by hand are never lowered."

@@ -142,9 +142,6 @@ IIDX 와 beatoraja 사이의 서든+ 값을 환산합니다. 리프트를 함께
 
 | 메서드 | 경로 | 설명 |
 |---|---|---|
-| `GET` | `/songrank/` | 곡 랭킹 |
-| `GET` | `/userrank/` | 유저 랭킹 |
-| `GET` | `/musiclist/` | 곡 목록 |
 | `GET` | `/converter/` | 흰숫 변환기 |
 | `GET` | `/my-page/` | 일일 타건 기록 · 건실 랭킹 |
 | `GET` `POST` | `/sync/` | 데이터 동기화 — `tracker.tsv` 직접 올리기(로그인), 최근 동기화 이력 |
@@ -181,7 +178,6 @@ IIDX 와 beatoraja 사이의 서든+ 값을 환산합니다. 리프트를 함께
 
 | 메서드 | 경로 | 설명 |
 |---|---|---|
-| `POST` | `/lampupdate/` | 클리어 램프 갱신 |
 | `GET` `POST` | `/rankedit/<id>/` | 곡 배치 편집 |
 | `POST` | `/modify/` | 기록 수정 |
 | `GET` `POST` | `/update/rankedit/<표이름>/` | 표 전체 편집 |
@@ -190,11 +186,6 @@ IIDX 와 beatoraja 사이의 서든+ 값을 환산합니다. 리프트를 함께
 
 | 메서드 | 경로 | 설명 |
 |---|---|---|
-| `GET` | `/json/userlist/` | 사용자 목록 (**비공개 계정 제외**) |
-| `GET` | `/json/musiclist/<타입>/level/<레벨>/` | 레벨별 곡 |
-| `GET` | `/json/musiclist/<타입>/series/<시리즈>/` | 시리즈별 곡 |
-| `GET` | `/json/recommend/<아이디>/<타입>/` | 추천 곡 |
-| `GET` | `/json/recommend/<아이디>/<타입>/<레벨>/` | 레벨을 좁힌 추천 곡 |
 | `GET` | `/status/views.json` | 사이트뷰 시계열 |
 | `GET` | `/status/health.json` | 가동 상태 요약 (외부 감시용) |
 | `GET` | `/my-page/typing.json` | 타건 기록 시계열 |

@@ -258,8 +258,11 @@ USE_TZ = True
 MEDIA_URL = '/media/'
 MEDIA_ROOT = env('MEDIA_ROOT', os.path.join(BASE_DIR, 'media'))
 
-# 업로드 상한. 넘으면 Django 가 요청 단계에서 거부한다.
-# 폼에서도 따로 검사하지만, 여기서 막아야 디스크·메모리를 안 쓴다.
+# 업로드 상한.
+# DATA_UPLOAD_MAX_MEMORY_SIZE 는 파일을 뺀 요청 본문(폼 필드·JSON 본문)에만 걸린다 — 넘으면 400.
+# FILE_UPLOAD_MAX_MEMORY_SIZE 는 거부 한도가 아니라 '이보다 크면 메모리 대신 임시 파일에 받는다'
+# 는 기준이다. 그래서 업로드 파일의 크기는 받는 뷰가 f.size 로 직접 본다(아바타 폼, views_sync).
+# (전에는 "넘으면 Django 가 거부한다" 고 적혀 있었는데 파일에 대해서는 사실이 아니었다.)
 MAX_AVATAR_BYTES = 2 * 1024 * 1024          # 2MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024
 FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024
@@ -291,6 +294,10 @@ WSGI_APPLICATION = 'wsgi.application'
 NOCAPTCHA = False
 RECAPTCHA_PUBLIC_KEY = env('RECAPTCHA_PUBLIC_KEY', required=True)
 RECAPTCHA_PRIVATE_KEY = env('RECAPTCHA_PRIVATE_KEY', required=True)
+
+# 메인 페이지 '공지사항' 칸 (iidxrank/discord_notice.py). 토큰이 비면 칸이 숨는다.
+DISCORD_BOT_TOKEN = env('DISCORD_BOT_TOKEN', '')
+DISCORD_NOTICE_CHANNELS = env_list('DISCORD_NOTICE_CHANNELS')
 
 
 # ---------------------------------------------------------------------------

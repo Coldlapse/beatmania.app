@@ -149,6 +149,10 @@ class PlayRecord(models.Model):
     playclear = models.IntegerField(default=0)
     #playrank = models.IntegerField(default=0)
     playmiss = models.IntegerField(default=0, null=True)
+    # EX SCORE. BPI 계산에 쓴다(서열표에는 그리지 않는다). None = 입력한 적 없음(n/a).
+    # 0 과 구별해야 해서 null 을 쓴다 — 0 점도 기록이다.
+    # 손으로 넣으면 그 값으로 바꾸고, 동기화(records_import)는 더 높을 때만 올린다.
+    exscore = models.PositiveIntegerField(null=True, blank=True)
 
 
 class RankTable(models.Model):

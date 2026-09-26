@@ -62,6 +62,10 @@ def rec(player, sid):
             .values_list('playclear', 'playscore').first())
 
 
+def ex(player, sid):
+    return models.PlayRecord.objects.filter(player=player, song_id=sid).values_list('exscore', flat=True).first()
+
+
 # 기준 곡들 (dev DB = 라이브 덤프)
 spa12 = models.Song.objects.filter(songtype='SPA', songlevel=12).exclude(
     songtitle__in=['uәn']).order_by('id')
@@ -134,6 +138,43 @@ try:
     check('직접 넣은 FC/MAX 를 낮추지 않음', rec(player, A.id) == (7, 8), str(rec(player, A.id)))
     check('더 좋은 기록은 올림 (HC 5 / A 5)', rec(player, TMH_UP.id) == (5, 5), str(rec(player, TMH_UP.id)))
     check('갱신 1 · 변화 없음 1', (r3['improved'], r3['unchanged']) == (1, 1), str(r3))
+
+    print('=== 4-1. EX SCORE ===')
+    check('처음 반영에서 EX SCORE 도 저장 (A 3000)', ex(player, A.id) == 3000, str(ex(player, A.id)))
+    check('낮은 EX 는 무시 (A 3000 유지)', ex(player, A.id) == 3000, str(ex(player, A.id)))
+    check('높은 EX 는 올림 (Take Me Higher 1300)', ex(player, TMH_UP.id) == 1300, str(ex(player, TMH_UP.id)))
+    # 손으로 0 을 넣은 기록에 EX 0 이 오면 0 을 그대로 둔다(n/a 로 지우지 않는다)
+    models.PlayRecord.objects.filter(player=player, song_id=B.id).update(exscore=0)
+    records_import.apply(u, chr(10).join([HEAD, row(B.songtitle, {'SPA': (12, 'F', 'F', 0, 2000)})]),
+                         models.RecordSync.APP)
+    check('EX 0 이 와도 손으로 넣은 0 유지', ex(player, B.id) == 0, str(ex(player, B.id)))
+
+    print('=== 4-2. 팝업의 EX SCORE 저장 (/modify/ action=exscore) ===')
+    import json as _json
+    m = Client()
+    m.force_login(u)
+    models.AccountSecurity.objects.update_or_create(user=u, defaults={'newrulepassed': True})
+    post = lambda sid, v: m.post('/modify/', {'action': 'exscore',
+                                              'v': _json.dumps({'id': sid, 'exscore': v})}).json()
+    rj = post(A.id, 1234)
+    check('저장 → 1234 (낮춰도 그 값)', rj.get('code') == 0 and ex(player, A.id) == 1234, str(rj))
+    rj = post(A.id, None)
+    check('빈 값 → n/a(None)', rj.get('code') == 0 and ex(player, A.id) is None, str(rj))
+    rj = post(A.id, -1)
+    check('음수 거부', rj.get('code') == 1 and ex(player, A.id) is None, str(rj))
+    rj = post(A.id, 10000)
+    check('상한 초과 거부', rj.get('code') == 1, str(rj))
+    rj = m.post('/modify/', {'action': 'exscore', 'v': 'nope'}).json()
+    check('형식 오류 거부', rj.get('code') == 1, str(rj))
+    rj = Client().post('/modify/', {'action': 'exscore', 'v': _json.dumps({'id': A.id, 'exscore': 1})}).json()
+    check('비로그인 거부', rj.get('code') == 1, str(rj))
+    html = m.get('/rankedit/%d/' % A.id).content.decode()
+    check('팝업: n/a 표기 · CLEAR LAMP · DJ RANK · EX SCORE',
+          'EX SCORE : <b id="ex-current">n/a</b>' in html and 'CLEAR LAMP' in html and 'DJ RANK' in html, html[:400])
+    post(A.id, 2500)
+    html = m.get('/rankedit/%d/' % A.id).content.decode()
+    check('팝업: 저장값 표기', 'EX SCORE : <b id="ex-current">2500</b>' in html, html[html.find('EX SCORE'):][:120])
+    check('없는 곡 팝업 500 아님', m.get('/rankedit/99999999/').status_code == 200)
 
     print('=== 5. 형식 오류 ===')
     for bad in ('', 'hello\tworld\n1\t2\n'):

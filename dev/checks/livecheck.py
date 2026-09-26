@@ -30,13 +30,9 @@ URLS = [
     ('/table/SP12H/json/', '서열표 JSON'),
     ('/u/%s/' % name, '타인 프로필'),
     ('/u/%s/table/SP12H/' % name, '타인 서열표'),
-    ('/json/userlist/', '유저목록 JSON'),
     ('/login/', '로그인'),
     ('/join/', '가입'),
     ('/status/', '서비스 현황'),
-    ('/musiclist/', '곡목록'),
-    ('/songrank/', '곡랭킹'),
-    ('/userrank/', '유저랭킹'),
 ]
 
 print('%-28s %-14s %6s %8s %7s' % ('URL', '이름', '상태', '시간(ms)', '쿼리'))

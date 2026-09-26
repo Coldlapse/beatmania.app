@@ -50,6 +50,85 @@
       </ul>
     </div>
   </div>
+
+  {% comment %}
+    공지사항 — 디스코드 공지 채널을 그대로 보여 준다(iidxrank/discord_notice.py).
+    탭 이름만 여기서 그리고 내용은 /notice/<번호>/ 로 불러온다. 디스코드가 늦어도
+    메인 페이지가 기다리지 않는다. 봇 토큰이 없으면 notice_tabs 가 비어 칸이 숨는다.
+  {% endcomment %}
+  {% if notice_tabs %}
+  <section class="card bm-intro-card bm-notice mt-3" aria-labelledby="bm-notice-title">
+    <div class="bm-notice-head">
+      <h2 id="bm-notice-title" class="h6 mb-0"><i class="bi bi-megaphone me-1" aria-hidden="true"></i>{% trans '공지사항' %}</h2>
+      <a class="small" href="https://discord.gg/RxjwbvWa8D" target="_blank" rel="noopener">
+        <i class="bi bi-discord me-1" aria-hidden="true"></i>{% trans '디스코드에서 보기' %}</a>
+    </div>
+    <div class="bm-notice-body">
+      <div class="bm-notice-channels" role="tablist" aria-label="{% trans '공지 채널' %}">
+        {% for i, name in notice_tabs %}
+        <button type="button" role="tab" class="dn-chan{% if forloop.first %} active{% endif %}" data-idx="{{ i }}"
+                aria-selected="{% if forloop.first %}true{% else %}false{% endif %}" aria-controls="bm-notice-pane">
+          <span class="dn-hash" aria-hidden="true">#</span>{{ name }}</button>
+        {% endfor %}
+      </div>
+      <div class="bm-notice-pane" id="bm-notice-pane" role="tabpanel" aria-live="polite">
+        <div class="dn-empty">{% trans '불러오는 중…' %}</div>
+      </div>
+    </div>
+  </section>
+  <script>
+  (function () {
+    var pane = document.getElementById('bm-notice-pane');
+    var tabs = document.querySelectorAll('.bm-notice .dn-chan');
+    var loaded = {};   // 한 번 불러온 채널은 탭을 오갈 때 다시 묻지 않는다
+    var current = null;
+
+    function show(idx) {
+      current = idx;
+      tabs.forEach(function (t) {
+        var on = t.getAttribute('data-idx') === idx;
+        t.classList.toggle('active', on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      if (loaded[idx]) { put(loaded[idx]); return; }
+      pane.innerHTML = '<div class="dn-empty">{% trans "불러오는 중…" as t %}{{ t|escapejs }}</div>';
+      fetch('/notice/' + idx + '/', { credentials: 'same-origin' })
+        .then(function (r) { if (!r.ok) { throw new Error(r.status); } return r.text(); })
+        .then(function (html) { loaded[idx] = html; if (current === idx) { put(html); } })
+        .catch(function () {
+          if (current === idx) {
+            pane.innerHTML = '<div class="dn-empty">{% trans "공지를 불러오지 못했습니다." as t %}{{ t|escapejs }}</div>';
+          }
+        });
+    }
+    // 최신 공지의 **첫머리**가 보이게 둔다. 맨 아래로 내리면 긴 공지는 끝부분만 보인다.
+    // 그 공지가 그날 첫 메시지면 바로 위 날짜 구분선부터 보이게 한다. 위아래 스크롤은 그대로 열려 있다.
+    // 이미지 크기는 서버가 미리 정해 두므로(discord_notice._image) 이미지가 떠도 이 위치가 밀리지 않는다.
+    function put(html) {
+      pane.innerHTML = html;
+      var list = pane.querySelector('.dn-messages');
+      if (!list) { return; }
+      var msgs = list.querySelectorAll('.dn-msg');
+      if (!msgs.length) { return; }
+      var anchor = msgs[msgs.length - 1];
+      var prev = anchor.previousElementSibling;
+      if (prev && prev.classList.contains('dn-divider')) { anchor = prev; }
+      // 목록 안에서의 위치. 끝을 넘으면 브라우저가 맨 아래로 맞춘다
+      list.scrollTop = anchor.getBoundingClientRect().top - list.getBoundingClientRect().top
+                       + list.scrollTop - 4;
+    }
+    tabs.forEach(function (t) {
+      t.addEventListener('click', function () { show(t.getAttribute('data-idx')); });
+    });
+    // 스포일러(||...||)는 눌러야 보인다
+    pane.addEventListener('click', function (e) {
+      var s = e.target.closest('.dn-spoiler');
+      if (s) { s.classList.add('revealed'); }
+    });
+    show(tabs[0].getAttribute('data-idx'));
+  })();
+  </script>
+  {% endif %}
 </div>
 
 {% endblock %}

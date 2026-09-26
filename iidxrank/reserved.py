@@ -28,7 +28,11 @@ about account admin analytics api board converter embed health i18n
 imgdownload join json jsi18n login logout manage media musiclist my-page
 overjoy privacy rankedit roadmap robots.txt favicon.ico songrank static
 status sync table u user userrank
+cpi notice modify setpassword withdraw find-id reset-password update lampupdate
 """.split())
+# 마지막 줄은 2026-09-26 에 더했다. 실제 경로인데 빠져 있었고(cpi·notice·modify 등),
+# 지운 경로(lampupdate)는 옛 사용자 주소 규칙에 걸려 /u/lampupdate/ 로 301 되었다.
+# 라이브에 이 이름을 쓰는 계정은 없었다.
 
 # 위에 더해 가입만 막을 이름.
 _EXTRA = frozenset("""

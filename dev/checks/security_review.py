@@ -1,0 +1,234 @@
+"""보안 코드 리뷰(handoff-security-review.md, 2026-09-26) 1장·2-1 의 수정을 확인한다.
+
+  1-1 서열표 페이지: 닉네임의 '</script>' 가 스크립트 블록을 끝내지 못한다
+  1-2 유저 랭킹: 페이지와 /json/userlist/ 를 지웠다(쓰지 않던 기능) → 404
+  1-3 /modify/: POST 만, CSRF 검사, 쓰지 않던 동작(djname 등) 제거, edit 입력 검증
+      + 계정 설정 폼이 이름의 < > 를 거부한다
+  2-1 /json/recommend/: 지웠다(쓰지 않던 기능) → 404
+  덧: NOPLAY 로 바꿔도 EX SCORE 가 있는 기록은 지우지 않는다
+
+임시 사용자 zz_sec_* 를 만들고 끝나면 지운다.
+
+    python dev/checks/security_review.py
+"""
+import json
+import re
+
+import _bootstrap  # noqa: F401
+import django
+
+django.setup()
+
+from django.contrib.auth.models import User  # noqa: E402
+from django.test import Client  # noqa: E402
+
+from iidxrank import forms, models  # noqa: E402
+from iidxrank.rankpage import newplayer  # noqa: E402
+
+fails = []
+EVIL = '</script><i>&x'   # 이름 칸(20자) 안에 들어가는 탈출 페이로드
+
+
+def check(name, cond, detail=''):
+    print('%-4s %s%s' % ('OK' if cond else 'FAIL', name,
+                         (' — %s' % detail) if detail and not cond else ''))
+    if not cond:
+        fails.append(name)
+
+
+# 서열표에 있는 SP☆12 곡 하나
+table = models.RankTable.objects.get(tablename='SP12H')
+song = models.Song.objects.filter(songtype='SPA', songlevel=12).first()
+
+u = User.objects.create_user('zz_sec_a', password='x-Unused-123', first_name=EVIL)
+v = User.objects.create_user('zz_sec_b', password='x-Unused-123')
+extra = []   # 검사 중에 만드는 임시 계정(끝나면 지운다)
+try:
+    player = newplayer(u)
+    player.iidxnick = EVIL
+    player.iidxid = EVIL
+    player.save()
+    models.AccountSecurity.objects.update_or_create(user=u, defaults={'newrulepassed': True})
+    pv = newplayer(v)
+    models.AccountSecurity.objects.update_or_create(user=v, defaults={'newrulepassed': True})
+
+    print('=== 1-1. 서열표 페이지의 JSON ===')
+    html = Client().get('/u/zz_sec_a/table/SP12H/').content.decode()
+    m = re.search(r'var tabledata = (.*?);\n', html)
+    check('tabledata 줄이 있다', m is not None)
+    if m:
+        raw = m.group(1)
+        check('JSON 안에 < > & 가 그대로 없다', not re.search(r'[<>&]', raw), raw[:200])
+        check('풀면 원래 값', EVIL in json.dumps(json.loads(raw), ensure_ascii=False))
+    check('페이지 어디에도 날것의 페이로드가 없다', EVIL not in html)
+
+    print('=== 1-3. /modify/ ===')
+    c = Client(enforce_csrf_checks=True)
+    c.force_login(v)
+    check('GET 은 405', c.get('/modify/', {'action': 'edit', 'v': '[]'}).status_code == 405)
+    check('CSRF 토큰 없는 POST 는 403',
+          c.post('/modify/', {'action': 'edit', 'v': '[]'}).status_code == 403)
+    w = Client()
+    w.force_login(v)
+    post = lambda action, val: w.post('/modify/', {'action': action, 'v': val}).json()
+    for gone in ('djname', 'iidxid', 'spclass', 'dpclass', 'delete'):
+        check('없앤 동작 %s → invalid action' % gone,
+              post(gone, 'X').get('message') == 'invalid action')
+    pv.refresh_from_db()
+    check('djname 이 바뀌지 않음', pv.iidxnick != 'X')
+    rj = post('edit', json.dumps([{'id': song.id, 'rank': 6}]))
+    check('rank 만 보내도 500 이 아니다(code 0)', rj.get('code') == 0, str(rj))
+    rec = models.PlayRecord.objects.get(player=pv, song=song)
+    check('rank 반영', rec.playscore == 6)
+    rj = post('edit', json.dumps([{'id': song.id, 'clear': 5}]))
+    check('clear 반영', rj.get('code') == 0 and models.PlayRecord.objects.get(player=pv, song=song).playclear == 5)
+    for bad, label in ((json.dumps([{'id': song.id, 'clear': 9}]), 'clear 범위 밖'),
+                       (json.dumps([{'id': song.id, 'rank': -1}]), 'rank 범위 밖'),
+                       (json.dumps([{'id': song.id}]), '값 없음'),
+                       (json.dumps([{'id': 99999999, 'clear': 3}]), '없는 곡'),
+                       ('nope', 'JSON 아님')):
+        r = w.post('/modify/', {'action': 'edit', 'v': bad})
+        check('거부: %s' % label, r.status_code == 200 and r.json().get('code') == 1,
+              '%s %s' % (r.status_code, r.content[:120]))
+
+    print('=== 1-3. 계정 설정 폼 ===')
+    base = {'first_name': 'ok', 'iidxnick': 'OK', 'iidxid_0': 'C', 'iidxid_1': '', 'iidxid_2': '',
+            'iidxid_3': '', 'spclass': '1', 'dpclass': '1'}
+    f = forms.AccountForm(dict(base))
+    check('평범한 이름은 통과', f.is_valid(), str(f.errors))
+    for field in ('first_name', 'iidxnick'):
+        for val in ('<b>', 'a>b', 'tab\there', 'x' * 21):
+            f = forms.AccountForm(dict(base, **{field: val}))
+            check('%s 거부 %r' % (field, val[:8]), not f.is_valid() and field in f.errors)
+    f = forms.AccountForm(dict(base, first_name='홍길동 A&B'))
+    check('& 와 한글은 허용', f.is_valid(), str(f.errors))
+
+    print('=== 덧. NOPLAY 와 EX SCORE ===')
+    models.PlayRecord.objects.filter(player=pv, song=song).update(exscore=1500)
+    post('edit', json.dumps([{'id': song.id, 'clear': 0}]))
+    rec = models.PlayRecord.objects.filter(player=pv, song=song).first()
+    check('EX SCORE 있는 기록은 NOPLAY 로 남는다', rec is not None and rec.playclear == 0 and rec.exscore == 1500,
+          str(rec and (rec.playclear, rec.exscore)))
+    models.PlayRecord.objects.filter(player=pv, song=song).update(exscore=None, playclear=3)
+    post('edit', json.dumps([{'id': song.id, 'clear': 0}]))
+    check('EX SCORE 없으면 전처럼 지운다', not models.PlayRecord.objects.filter(player=pv, song=song).exists())
+
+    print('=== 2a-1. 서열표 이미지 저장 ===')
+    check('/imgdownload/ 404', Client().post('/imgdownload/', {'name': 'x.bat', 'base64': 'eA=='}).status_code == 404)
+    js = open('static/js/common.js', encoding='utf-8').read()
+    check('downloadCanvas 가 toBlob 으로 저장', 'c.toBlob(' in js and '#imgdownload' not in js)
+    html = w.get('/table/SP12H/').content.decode()
+    check('서열표에 서버 왕복용 폼이 없다', 'id="imgdownload"' not in html and 'id="capture"' in html)
+
+    print('=== 2a-2. 탈퇴 ===')
+    s4 = User.objects.create_user('zzs4', password='x-Unused-123')     # 4자 아이디
+    extra.append(s4)
+    newplayer(s4)
+    models.AccountSecurity.objects.update_or_create(user=s4, defaults={'newrulepassed': True})
+    c4 = Client()
+    c4.force_login(s4)
+    page = c4.get('/withdraw/').content.decode()
+    check('탈퇴 폼에 아이디 칸이 없다', 'name="id"' not in page and 'name="password"' in page)
+    # 남의 자격(다른 아이디 + 그 비밀번호)을 넣어도 폼이 아이디를 받지 않으니 통하지 않는다
+    c4.post('/withdraw/', {'id': 'zz_sec_b', 'password': 'wrong-pw-1', 'password_again': 'wrong-pw-1'})
+    check('틀린 비밀번호로는 지워지지 않는다', User.objects.filter(pk=s4.pk).exists())
+    c4.post('/withdraw/', {'password': 'x-Unused-123', 'password_again': 'x-Unused-123'})
+    check('4자 아이디도 본인 비밀번호로 탈퇴된다', not User.objects.filter(pk=s4.pk).exists())
+    su = User.objects.create_superuser('zz_sec_su', 'zz_sec_su@example.invalid', 'x-Unused-123')
+    extra.append(su)
+    models.AccountSecurity.objects.update_or_create(user=su, defaults={'newrulepassed': True})
+    csu = Client()
+    csu.force_login(su)
+    check('superuser 탈퇴 화면은 403(500 아님)', csu.get('/withdraw/').status_code == 403)
+
+    print('=== 2a-3. /modify/ 상한, Player 없는 계정 ===')
+    rj = post('edit', json.dumps([{'id': song.id, 'clear': 3}] * 1001))
+    check('1,001개는 거부', rj.get('code') == 1, str(rj))
+    rj = post('edit', json.dumps({'id': song.id, 'clear': 3}))
+    check('목록이 아니면 거부', rj.get('code') == 1, str(rj))
+    rj = post('edit', json.dumps([{'id': song.id, 'clear': 3}] * 1000))
+    check('1,000개는 받는다', rj.get('code') == 0, str(rj))
+    np_user = User.objects.create_user('zz_sec_np', password='x-Unused-123')   # Player 행 없음
+    extra.append(np_user)
+    models.AccountSecurity.objects.update_or_create(user=np_user, defaults={'newrulepassed': True})
+    cn = Client()
+    cn.force_login(np_user)
+    r = cn.post('/modify/', {'action': 'exscore', 'v': json.dumps({'id': song.id, 'exscore': 100})})
+    check('Player 없는 계정도 500 이 아니다', r.status_code == 200 and r.json().get('code') == 0,
+          '%s %s' % (r.status_code, r.content[:120]))
+
+    print('=== 2a-4. /sync/ 업로드 크기 ===')
+    from django.core.files.uploadedfile import SimpleUploadedFile
+    from iidxrank import records_import
+    big = SimpleUploadedFile('tracker.tsv', b'x' * (records_import.MAX_BYTES + 1), 'text/tab-separated-values')
+    w.post('/sync/', {'tracker': big})
+    check('큰 파일은 읽기 전에 거부', '파일이 너무 큽니다' in w.get('/sync/').content.decode())
+
+    print('=== 2a-5. 타건 기록 API ===')
+    tok = models.ApiToken.objects.create(user=v).key
+    api = lambda body: Client().post('/api/v1/update-typing-count/', body, content_type='application/json',
+                                      HTTP_AUTHORIZATION='Token ' + tok)
+    check('600,000 은 받는다', api(json.dumps({'count': 600000})).status_code == 200)
+    check('600,001 은 거부', api(json.dumps({'count': 600001})).status_code == 400)
+    check('true 는 거부', api(json.dumps({'count': True})).status_code == 400)
+    check('배열 본문은 400(500 아님)', api(json.dumps([1, 2])).status_code == 400)
+    check('UTF-8 아닌 본문은 400', api(b'\xff\xfe').status_code == 400)
+    for _i in range(2):
+        api(json.dumps({'count': 600000}))          # 합계 1,800,000
+    r = api(json.dumps({'count': 200000}))
+    check('하루 합계 2,000,000 까지 받는다', r.status_code == 200 and r.json().get('daily_total') == 2000000,
+          str(r.content[:120]))
+    r = api(json.dumps({'count': 1}))
+    check('하루 합계를 넘으면 거부', r.status_code == 400, str(r.content[:120]))
+    User.objects.filter(pk=v.pk).update(is_active=False)
+    check('비활성 계정 토큰은 401', api(json.dumps({'count': 1})).status_code == 401)
+    User.objects.filter(pk=v.pk).update(is_active=True)
+    models.TypingLog.objects.filter(user=v).delete()
+
+    print('=== 2a-6. 로그아웃 ===')
+    lo = Client()
+    lo.force_login(v)
+    lo.get('/logout/')
+    check('GET 으로는 로그아웃되지 않는다', '_auth_user_id' in lo.session)
+    lo.post('/logout/')
+    check('POST 로 로그아웃된다', '_auth_user_id' not in lo.session)
+
+    print('=== 2a-7. 비밀번호 앞뒤 공백 ===')
+    pw_user = User.objects.create_user('zz_sec_pw', password='Pw-long-9 ')   # 옛 가입처럼 그대로 저장
+    extra.append(pw_user)
+    check('그대로 저장된 비밀번호를 그대로 입력하면 로그인', forms.LoginForm({'id': 'zz_sec_pw', 'password': 'Pw-long-9 '}).is_valid())
+    pw_user.set_password('Pw-long-9')                                        # 옛 변경·재설정처럼 자른 값
+    pw_user.save()
+    check('잘려 저장된 비밀번호에 공백을 붙여 입력해도 로그인', forms.LoginForm({'id': 'zz_sec_pw', 'password': 'Pw-long-9 '}).is_valid())
+    check('틀린 비밀번호는 거부', not forms.LoginForm({'id': 'zz_sec_pw', 'password': 'Pw-long-8'}).is_valid())
+    models.AccountSecurity.objects.update_or_create(user=pw_user, defaults={'newrulepassed': True})
+    lc = Client()
+    r = lc.post('/login/', {'id': 'zz_sec_pw', 'password': 'Pw-long-9 '})
+    check('로그인 뷰가 폼이 찾은 사용자로 로그인(302)', r.status_code == 302 and '_auth_user_id' in lc.session,
+          str(r.status_code))
+
+    print('=== 2a-8. 서비스 현황의 점검 문장 ===')
+    from django.utils import timezone as tz
+    from iidxrank import health
+    now = tz.now()
+    hc = [models.HealthCheck.objects.create(target=t, status='down', note='ZZ_SEC_NOTE %s' % t, checked_at=now)
+          for t in health.CHECKS]
+    try:
+        check('익명에게는 점검 문장이 안 보인다', 'ZZ_SEC_NOTE' not in Client().get('/status/').content.decode())
+        check('staff 에게는 보인다', 'ZZ_SEC_NOTE' in csu.get('/status/').content.decode())
+    finally:
+        models.HealthCheck.objects.filter(pk__in=[h.pk for h in hc]).delete()
+
+    print('=== 1-2·2-1. 지운 페이지·JSON (유저 랭킹, 추천) ===')
+    player.iidxmeid = 'user_zz_sec_a'
+    player.save()
+    for path in ('/userrank/', '/json/userlist/', '/json/recommend/user_zz_sec_a/SP/'):
+        check('%s 404' % path, Client().get(path).status_code == 404)
+finally:
+    for x in [u, v] + [e for e in extra if User.objects.filter(pk=e.pk).exists()]:
+        models.PlayRecord.objects.filter(player__user=x).delete()
+        models.Player.objects.filter(user=x).delete()
+        x.delete()
+
+print('')
+print('총 실패: %d' % len(fails))

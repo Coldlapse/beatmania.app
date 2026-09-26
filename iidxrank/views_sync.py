@@ -47,6 +47,10 @@ def data_sync(request):
         f = request.FILES.get('tracker')
         if f is None:
             r = {'error': _('파일을 골라 주세요.')}
+        # 크기는 읽기 전에 본다. f.read() 는 파일 전체를 메모리로 올리는데, 업로드 파일에는
+        # DATA_UPLOAD_MAX_MEMORY_SIZE 가 걸리지 않는다(요청 본문의 폼 필드에만 걸린다).
+        elif f.size > records_import.MAX_BYTES:
+            r = {'error': _('파일이 너무 큽니다.')}
         elif _too_soon(request.user):
             r = {'error': _('잠시 뒤에 다시 올려 주세요.')}
         else:

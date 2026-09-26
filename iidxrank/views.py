@@ -4,23 +4,25 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.core.exceptions import MultipleObjectsReturned
 from django.urls import reverse
+from django.utils.translation import gettext as _
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from django.views.decorators.http import require_POST
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.core.paginator import Paginator
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.models import User
+from django.db import transaction
 from django.db.models import F
 from iidxrank import accounts
 from iidxrank import models
 from iidxrank import forms
 import settings
 from iidxrank import rankpage as rp
-import update.parser_csv as parser_csv
 from iidxrank import iidx
 from iidxrank import views_json
+from iidxrank import views_notice
 import json
-import base64
 import os
 import requests
 
@@ -59,6 +61,7 @@ def userpage(request, username=None):
         'userdata': userinfo,
         'viewing_other': username is not None,
         'other_username': username,
+        'notice_tabs': views_notice.tabs(),
     })
 
 def get_pdata(request, username, tablename):
@@ -170,13 +173,18 @@ def rankedit(request, id=-1):
         user = request.user
         # check song is exists
         song_obj = models.Song.objects.filter(id=id).first()
-        title = song_obj.songtitle
+        pr_obj = None
+        # 없는 곡이면 제목을 읽기 전에 걸러야 한다(전에는 None.songtitle 로 500 이 났다)
+        title = song_obj.songtitle if song_obj else ''
         if (song_obj == None):
             valid = False
         else:
             valid = True
             # fetch playrecord if available
-            pr_obj = models.PlayRecord.objects.filter(player_id=user.id, song_id=id).first()
+            # Player 의 id 는 User 의 id 와 다르다. 전에는 player_id=user.id 로 찾아
+            # 남의 기록(또는 없음)을 읽었다 — 저장은 맞게 되고 팝업 표시만 틀렸다.
+            player = rp.get_player_from_request(request)
+            pr_obj = models.PlayRecord.objects.filter(player=player, song_id=id).first()
             if (pr_obj == None):
                 pr_obj = models.PlayRecord()
     return render(request, 'user/rankedit.html', {
@@ -208,12 +216,6 @@ def ranktableedit(request, tablename):
     tableinfo = rp.get_ranktable_metadata(ranktable)
     return render(request, 'rankedit.html', { 'categories': categories, 'tableid': ranktable.id, 'tableinfo': tableinfo })
 
-# /iidx/musiclist
-#@xframe_options_exempt
-def musiclist(request):
-    # all the other things will done in json & html
-    return render(request, 'musiclist.html')
-
 # converter
 def converter(request):
     return render(request, 'converter.html')
@@ -228,13 +230,6 @@ def roadmap(request):
 def privacy(request):
     return render(request, 'privacy.html')
 
-# /iidx/!/songrank/
-def songrank(request):
-    return render(request, 'songrank.html')
-
-# /iidx/!/userrank/
-def userrank(request):
-    return render(request, 'userrank.html')
 
 
 """
@@ -249,8 +244,7 @@ def login(request):
     if (request.method == "POST"):
         form = forms.LoginForm(request.POST)
         if (form.is_valid()):
-            user = authenticate(username=form.data['id'], password=form.data['password'])
-            login_django(request, user)
+            login_django(request, form.user_cache)
             return redirect('home')
     else:
         form = forms.LoginForm()
@@ -264,11 +258,15 @@ def join(request):
     if (request.method == "POST"):
         form = forms.JoinForm(request, request.POST)
         if (form.is_valid()):
+            # 검증을 거친 값(cleaned_data)을 저장한다. 전에는 날것 form.data 를 저장해 앞뒤 공백이
+            # 붙은 아이디·이메일이 생겼다(라이브에 아이디 2·이메일 1). 이메일은 clean_email 이
+            # 소문자·공백 정리를 한 값이라 중복 검사(iexact)·아이디 찾기와도 어긋나지 않는다.
+            cd = form.cleaned_data
             user = User.objects.create_user(
-                    username=form.data['id'],
-                    first_name=form.data['id'],
-                    email=form.data['email'],
-                    password=form.data['password'])
+                    username=cd['id'],
+                    first_name=cd['id'],
+                    email=cd['email'],
+                    password=cd['password'])
             # automatically create player object
             #rp.get_player_from_user(user)
             rp.newplayer(user)
@@ -281,7 +279,7 @@ def join(request):
             sec.email_verified_at = timezone.now()
             sec.save()
             accounts.clear_verification(request, 'signup')
-            user = authenticate(username=form.data['id'], password=form.data['password'])
+            user = authenticate(username=cd['id'], password=cd['password'])
             login_django(request, user)
             return redirect('home')
     else:
@@ -289,26 +287,30 @@ def join(request):
     return render(request, 'user/join.html', {'form': form})
 
 # /!/logout/
+# POST 로만 로그아웃한다. GET 으로 되던 때는 남의 페이지에 <img src="/logout/"> 한 줄로 방문자를
+# 로그아웃시킬 수 있었다. GET 으로 오면(옛 북마크·옛 주소 /!/logout/) 아무것도 하지 않고 홈으로.
 logout_django = logout
 def logout(request):
-    logout_django(request)
+    if request.method == 'POST':
+        logout_django(request)
     return redirect('home')
 
 # /!/withdraw/
 def withdraw(request):
-    if (request.user.is_superuser):
-        raise Exception("Superuser CANNOT withdraw!")
     if (not request.user.is_authenticated):
         return redirect('login')
+    # 운영자 계정은 지우지 않는다. 전에는 raise Exception 이라 500 으로 오류 로그에 남았다
+    if (request.user.is_superuser):
+        raise PermissionDenied
     if (request.method == "POST"):
-        form = forms.WithdrawForm(request.POST)
+        form = forms.WithdrawForm(request.user, request.POST)
         if (form.is_valid()):
             user = request.user
             user.delete()
             logout_django(request)
             return redirect('home')
     else:
-        form = forms.WithdrawForm(initial={'id': request.user.username})
+        form = forms.WithdrawForm(request.user)
     return render(request, 'user/withdraw.html', {'form': form})
 
 # /!/account/
@@ -390,85 +392,85 @@ def set_password(request):
         form = forms.SetPasswordForm(request.user)
     return render(request, 'user/setpassword.html', {'form':form})
 
-# /!/update/
-# XXX: should allow cross-domain request to allow extern site
-@csrf_exempt
-def updatelamp(request):
-    form = {'is_valid': True, 'errors':'no errors.', 'message': ['Ready.',]}
-    if (request.method == "POST"):
-        if (not request.user.is_authenticated):
-            return JsonResponse({'status': 'Please login to iidx.me first.'})
-        if ('type' not in request.POST or 'file' not in request.FILES):
-            form['is_valid'] = False
-            form['errors'] = 'Invalid form data.'
-        else:
-            import csv
-            csvtype = request.POST['type']
-            csvfile = request.FILES['file']
-            tbl = csv.reader(csvfile, delimiter=',')
-            log = []
-            print("* updatelamp: user %s, %s" % (request.user.username, csvtype))
-            parser_csv.update(tbl, csvtype, request.user, log)
-            form['message'] = log
-            print("* updatelamp end.")
-    if (not request.user.is_authenticated):
-        return redirect('home')
-    return render(request, 'user/updatelamp.html', {'form':form})
-
 # JSON
-# /!/modify/
+# /modify/ — 서열표 편집 팝업이 기록을 바꾸는 입구.
+#
+# POST 만 받는다. 전에는 GET 도 받아서, 외부 페이지가 방문자를 이 주소로 보내기만 하면
+# (SameSite=Lax 쿠키는 최상위 GET 이동에 실려 간다) 그 사람 계정의 값을 바꿀 수 있었다.
+# POST 는 Django CSRF 검사를 거친다(이 뷰는 csrf_exempt 가 아니다).
+#
+# 동작은 둘뿐이다: edit(램프·DJ RANK), exscore. 예전의 djname·iidxid·spclass·dpclass·delete 는
+# 사이트 어디에서도 부르지 않는 채로 계정 설정 폼(AccountForm)의 검증을 건너뛰는 뒷문이어서 지웠다.
+# 이름·ID·단위는 /account/ 에서만 바꾼다.
+MODIFY_MAX_ITEMS = 1000
+
+
+@require_POST
 def modify(request):
     if (not request.user.is_authenticated):
         return JsonResponse({'code': 1, 'message': 'please log in'})
-    user = request.user
-    player = rp.get_player_from_request(request)
-    if (request.method == "POST"):
-        action = request.POST.get('action', '')
-        v = request.POST.get('v', '')
-    else:
-        action = request.GET.get('action', '')
-        v = request.GET.get('v', '')
+    # Player 행이 없는 계정(/admin/ 에서 만든 계정 등)도 여기서 만든다 — 없으면 PlayRecord 의
+    # player(NOT NULL)에 None 이 들어가 500 이었다. account 뷰와 같은 처리.
+    player = rp.newplayer(request.user)
+    action = request.POST.get('action', '')
+    v = request.POST.get('v', '')
     if (action == 'edit'):
-        lst = json.loads(v)
-        for l in lst:
-            sid = int(l['id'])
-            if ('clear' in l):
-                desc = { 'clear': int(l['clear']) }
-            if ('rate' in l):
-                desc['rate'] = float(l['rate'])
-            if ('rank' in l):
-                desc = { 'rank': int(l['rank']) }
-            #desc['rank'] = int(l['rank'])
-            if ('score' in l):
-                desc['score'] = int(l['score'])
-            log = []
-            if (not rp.update_record(sid, player, desc, log)):
-                return JsonResponse({
-                    'code': 1,
-                    'message': log[0],
-                    'detail':str(e)
-                })
-    elif (action == 'delete'):
+        # v = [{"id": 곡 pk, "clear": 0~7} 또는 {"id": 곡 pk, "rank": 0~8}, ...]
+        # 전에는 clear 없이 rank 만 오면 desc 가 정의되지 않은 채 쓰이거나, 실패 응답에서
+        # 없는 변수 e 를 읽어 500 이 났다.
+        # 항목 수 상한: 팝업은 1개씩 보내고, 옛 오프라인 편집 저장분 복원(common.js)이 한 표의 곡
+        # 수(최대 약 700)만큼 보낸다. 상한이 없으면 요청 하나로 수십만 항목 × 쿼리를 일으킬 수 있었다.
         try:
-            sid = int(v)
-            song = models.Song.objects.get(id=sid)
-            pr = models.PlayRecord.objects.filter(song=song,player=player).first()
-            if (pr):
-                pr.delete()
-        except Exception as e:
-            return JsonResponse({'code': 1, 'message': 'Invalid, or not existing Song ID'})
-    elif (action == 'djname'):
-        player.iidxnick = v
-        player.save()
-    elif (action == 'iidxid'):
-        player.iidxid = v
-        player.save()
-    elif (action == 'spclass'):
-        player.spclass = int(v)
-        player.save()
-    elif (action == 'dpclass'):
-        player.dpclass = int(v)
-        player.save()
+            lst = json.loads(v)
+            if not isinstance(lst, list) or len(lst) > MODIFY_MAX_ITEMS:
+                raise ValueError
+            items = []
+            for l in lst:
+                desc = {}
+                if 'clear' in l:
+                    desc['clear'] = int(l['clear'])
+                    if not 0 <= desc['clear'] <= 7:
+                        raise ValueError
+                if 'rank' in l:
+                    desc['rank'] = int(l['rank'])
+                    if not 0 <= desc['rank'] <= 8:
+                        raise ValueError
+                if not desc:
+                    raise ValueError
+                items.append((int(l['id']), desc))
+        except (ValueError, TypeError, KeyError):
+            return JsonResponse({'code': 1, 'message': _('잘못된 요청입니다.')})
+        for sid, desc in items:
+            log = []
+            try:
+                ok = rp.update_record(sid, player, desc, log)
+            except models.Song.DoesNotExist:
+                return JsonResponse({'code': 1, 'message': _('잘못된 요청입니다.')})
+            if not ok:
+                return JsonResponse({'code': 1, 'message': log[0] if log else _('잘못된 요청입니다.')})
+    elif (action == 'exscore'):
+        # v = {"id": 곡 pk, "exscore": 숫자 또는 null(지우기)}
+        # 손으로 넣은 값은 그대로 쓴다(낮춰도 된다) — 잘못 넣은 것을 고칠 길이어야 한다.
+        try:
+            d = json.loads(v)
+            song = models.Song.objects.get(id=int(d['id']))
+            ex = d.get('exscore')
+            ex = None if ex in (None, '') else int(ex)
+        except (ValueError, TypeError, KeyError, models.Song.DoesNotExist):
+            return JsonResponse({'code': 1, 'message': _('잘못된 요청입니다.')})
+        # 노트 수를 알면 만점(노트×2)까지, 모르면 넉넉한 상한. 곡 DB 의 노트 수는 아직
+        # 대부분 비어 있다(2026-09-26 라이브 SP/DP 4,410채보 모두 0).
+        limit = song.songnotes * 2 if song.songnotes else 9999
+        if ex is not None and not (0 <= ex <= limit):
+            return JsonResponse({'code': 1, 'message': _('EX SCORE 는 0 에서 %(n)d 사이여야 합니다.') % {'n': limit}})
+        pr = models.PlayRecord.objects.filter(song=song, player=player).first()
+        if pr is None:
+            if ex is None:
+                return JsonResponse({'code': 0, 'message': _('저장했습니다.'), 'exscore': None})
+            pr = models.PlayRecord(song=song, player=player)
+        pr.exscore = ex
+        pr.save()
+        return JsonResponse({'code': 0, 'message': _('저장했습니다.'), 'exscore': ex})
     else:
         return JsonResponse({'code': 1, 'message': 'invalid action'})
     return JsonResponse({'code': 0, 'message': 'Done'})
@@ -476,24 +478,14 @@ def modify(request):
 user end
 """
 
-# imgdownload/
-@csrf_exempt
-def imgdownload(request):
-    if request.method != "POST":
-        # allow only POST method
-        raise PermissionDenied
-    filename = request.POST['name']
-    pngdata = base64.b64decode(request.POST['base64'])
-    print("got request: %s (%d byte)" % (filename, len(pngdata)))
-    r = HttpResponse(pngdata, content_type="application/octet-stream")
-    r['Content-Disposition'] = 'attachment; filename=%s' % filename
-    return r
-
-
-
-
-
 # --- 1. Electron 앱과 통신할 API 뷰 ---
+# 상한은 사람이 칠 수 있는 한계로 잡았다(2026-09-26 사용자 결정). 라이브 실측은 7명, 하루 합계
+# 최대 223,789 · 99번째 백분위 182,142. 상한이 없으면 토큰 하나(누구나 발급)로 한 번에 리더보드 1위가
+# 되고, 2^31 을 넘기면 IntegerField 가 넘친다.
+TYPING_MAX_PER_REQUEST = 600000
+TYPING_MAX_PER_DAY = 2000000
+
+
 @csrf_exempt
 def update_typing_count_api(request):
     if request.method != 'POST':
@@ -509,31 +501,33 @@ def update_typing_count_api(request):
         user = api_token.user
     except models.ApiToken.DoesNotExist:
         return JsonResponse({'error': 'Invalid token.'}, status=401)
+    if not user.is_active:
+        return JsonResponse({'error': 'Invalid token.'}, status=401)
 
     try:
         data = json.loads(request.body)
-        count_to_add = data.get('count')
-    except json.JSONDecodeError:
+    except (ValueError, UnicodeDecodeError):     # JSONDecodeError 는 ValueError 의 하위
         return JsonResponse({'error': 'Invalid JSON format.'}, status=400)
+    # 본문이 객체가 아니면(배열·숫자) data.get 에서 500 이었다. true 는 int 로 통과했었다
+    count_to_add = data.get('count') if isinstance(data, dict) else None
+    if (isinstance(count_to_add, bool) or not isinstance(count_to_add, int)
+            or not 0 < count_to_add <= TYPING_MAX_PER_REQUEST):
+        return JsonResponse({'error': "1 이상 %d 이하의 정수 'count' 값을 보내야 합니다."
+                             % TYPING_MAX_PER_REQUEST}, status=400)
 
-    if count_to_add is None or not isinstance(count_to_add, int) or count_to_add <= 0:
-        return JsonResponse({'error': "0보다 큰 정수 형태의 'count' 값을 보내야 합니다."}, status=400)
-
-    # ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
-    # '오늘'의 기준을 한국 시간으로 변경
+    # '오늘'의 기준은 한국 시간
     today = timezone.localdate()
-    # ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
-    
-    try:
-        log_entry = models.TypingLog.objects.get(user=user, date=today)
+
+    # 행을 잠그고 더한다. 전에는 get → create 사이가 벌어져, 같은 날 첫 요청 둘이 겹치면
+    # unique_together(user, date)에 걸려 500 이었다. get_or_create 는 그 경합을 스스로 처리한다.
+    with transaction.atomic():
+        log_entry, _created = (models.TypingLog.objects.select_for_update()
+                               .get_or_create(user=user, date=today, defaults={'count': 0}))
+        if log_entry.count + count_to_add > TYPING_MAX_PER_DAY:
+            return JsonResponse({'error': '하루 합계 상한(%d)을 넘습니다.' % TYPING_MAX_PER_DAY,
+                                 'daily_total': log_entry.count}, status=400)
         log_entry.count = F('count') + count_to_add
         log_entry.save(update_fields=['count'])
-    except models.TypingLog.DoesNotExist:
-        log_entry = models.TypingLog.objects.create(
-            user=user,
-            date=today,
-            count=count_to_add
-        )
 
     log_entry.refresh_from_db()
 

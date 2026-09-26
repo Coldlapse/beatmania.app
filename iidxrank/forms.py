@@ -26,6 +26,27 @@ membership related
 
 alphanumeric = RegexValidator(r'^[0-9a-zA-Z_]*$', 'ID: Only alphanumeric characters are allowed. 영문/숫자,_만 입력 가능합니다.')
 
+def check_password_lenient(user, raw):
+    """비밀번호를 입력 그대로 맞춰 보고, 틀리면 앞뒤 공백을 뺀 값으로 한 번 더 본다.
+
+    비밀번호 칸은 모두 strip=False 다(입력한 그대로 저장·비교). 그런데 2026-09-26 전에는
+    변경·재설정·1회 인증 폼이 앞뒤 공백을 자른 값을 저장했고, 가입만 그대로 저장했다.
+    어느 쪽으로 저장된 사람도 막히지 않게 둘 다 받아 준다. 공백만 다른 두 값이라 추측 공간은 늘지 않는다.
+    """
+    if user.check_password(raw):
+        return True
+    stripped = raw.strip()
+    return stripped != raw and user.check_password(stripped)
+
+
+def authenticate_lenient(username, raw):
+    """check_password_lenient 와 같은 규칙의 authenticate."""
+    user = authenticate(username=username, password=raw)
+    if user is None and raw.strip() != raw:
+        user = authenticate(username=username, password=raw.strip())
+    return user
+
+
 class LoginForm(forms.Form):
     id = forms.CharField(
             label=_('아이디'), min_length=4,
@@ -34,7 +55,7 @@ class LoginForm(forms.Form):
                 'placeholder': _('아이디')}))
     password = forms.CharField(
             label=_('비밀번호'),
-            widget=forms.PasswordInput(attrs={
+            strip=False, widget=forms.PasswordInput(attrs={
                 'autocomplete': 'current-password', 'placeholder': _('비밀번호')}))
 
     def clean(self):
@@ -45,9 +66,12 @@ class LoginForm(forms.Form):
             return
         _username = cleaned_data['id']
         _password = cleaned_data['password']
-        user = authenticate(username=_username, password=_password)
+        user = authenticate_lenient(_username, _password)
         if (user==None):
             raise forms.ValidationError('ID or Password does not exists.')
+        # 뷰는 이 사용자를 그대로 쓴다. 전에는 뷰가 날것 form.data 로 한 번 더 authenticate 해서,
+        # 폼(공백을 뺀 값)과 결과가 다르면 login(None) 으로 500 이었다.
+        self.user_cache = user
 
 class JoinForm(forms.Form):
     id = forms.CharField(
@@ -69,11 +93,11 @@ class JoinForm(forms.Form):
     password = forms.CharField(
             label=_('비밀번호'), min_length=8,
             help_text=_('8자 이상. 영문·숫자·기호를 쓸 수 있고 조합 규칙은 없습니다.'),
-            widget=forms.PasswordInput(attrs={
+            strip=False, widget=forms.PasswordInput(attrs={
                 'autocomplete': 'new-password', 'placeholder': _('8자 이상')}))
     password_again = forms.CharField(
             label=_('비밀번호 확인'),
-            widget=forms.PasswordInput(attrs={
+            strip=False, widget=forms.PasswordInput(attrs={
                 'autocomplete': 'new-password', 'placeholder': _('한 번 더 입력')}))
     # 동의는 캡차보다 먼저 와야 한다. 캡차를 푼 뒤에 체크박스가 나오면
     # 놓치기 쉽고, 놓치면 캡차를 다시 풀어야 한다.
@@ -213,8 +237,16 @@ class IIDXIDField(forms.MultiValueField):
         return '%s-%s-%s-%s' % tuple(values)
 
 
+# 공개 이름(닉네임·DJ NAME)에 꺾쇠와 제어 문자를 받지 않는다. 화면 쪽에서 이미 글자로만
+# 그리지만(자동 이스케이프, 서열표 JSON 이스케이프, 유저 랭킹 render.text), 이름은 여러
+# 화면·JSON 으로 퍼지므로 들어오는 곳에서도 막는다. 2026-09-26 라이브에 해당하는 값은 0건.
+# 길이 20 은 Player.iidxnick 의 max_length 와 같다(라이브 최대 15자).
+no_markup = RegexValidator(r'^[^<>\x00-\x1f\x7f]*$', _('< > 와 제어 문자는 쓸 수 없습니다.'))
+
+
 class AccountForm(forms.Form):
     first_name = forms.CharField(
+            max_length=20, validators=[no_markup],
             label=_('닉네임'),
             help_text=_('순위표 등 사이트 곳곳에 표시되는 공개 이름입니다. '
                         '다른 사람과 같아도 되며 언제든 바꿀 수 있습니다. '
@@ -223,6 +255,7 @@ class AccountForm(forms.Form):
     # 게임 안의 이름(DJ NAME)을 ID 보다 먼저 묻는다. 사람이 자기 이름을 먼저
     # 떠올리고 숫자를 나중에 찾아보기 때문이다.
     iidxnick = forms.CharField(
+            max_length=20, validators=[no_markup],
             label='IIDX DJ NAME',
             required=False,
             help_text=_('서열표 프로필에 DJ NAME 으로 표시됩니다. 사이트 닉네임과는 '
@@ -257,18 +290,18 @@ class SetPasswordForm(forms.Form):
 
     old_password = forms.CharField(
             label=_('현재 비밀번호'),
-            widget=forms.PasswordInput(attrs={
+            strip=False, widget=forms.PasswordInput(attrs={
                 'autocomplete': 'current-password', 'autofocus': True,
                 'placeholder': _('지금 쓰는 비밀번호')}))
     new_password = forms.CharField(
             label=_('새 비밀번호'), min_length=8,
             help_text=_('8자 이상. 영문·숫자·기호를 쓸 수 있고 조합 규칙은 없습니다.'),
-            widget=forms.PasswordInput(attrs={
+            strip=False, widget=forms.PasswordInput(attrs={
                 'autocomplete': 'new-password',
                 'placeholder': _('8자 이상')}))
     new_password_again = forms.CharField(
             label=_('새 비밀번호 확인'),
-            widget=forms.PasswordInput(attrs={
+            strip=False, widget=forms.PasswordInput(attrs={
                 'autocomplete': 'new-password', 'placeholder': _('한 번 더 입력')}))
 
     def __init__(self, user, *args, **kwargs):
@@ -277,7 +310,7 @@ class SetPasswordForm(forms.Form):
 
     def clean_old_password(self):
         old = self.cleaned_data['old_password']
-        if not self.user.check_password(old):
+        if not check_password_lenient(self.user, old):
             raise forms.ValidationError(_('현재 비밀번호가 맞지 않습니다.'))
         return old
 
@@ -308,27 +341,33 @@ class SetPasswordForm(forms.Form):
 
 
 class WithdrawForm(forms.Form):
-    id = forms.CharField(
-            label=_('아이디'), min_length=5,
-            widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+    """탈퇴 확인. 지우는 것은 로그인한 본인(user)이고, 확인도 그 사람의 비밀번호로 한다.
+
+    전에는 폼의 '아이디' 칸(readonly 는 브라우저에서만 걸린다)으로 authenticate 했다. 그래서
+    남의 세션을 쥔 사람이 그 칸을 자기 계정으로 바꾸고 자기 비밀번호를 넣으면 세션 주인이
+    지워졌다. 그 칸은 min_length=5 여서 4자 아이디(가입은 4자부터, 라이브 16명)는 탈퇴할 수도
+    없었다. SetPasswordForm 과 같이 첫 인자로 user 를 받는다.
+    """
     password = forms.CharField(
             label=_('비밀번호'),
-            widget=forms.PasswordInput(attrs={
+            strip=False, widget=forms.PasswordInput(attrs={
                 'autocomplete': 'current-password', 'autofocus': True}))
     password_again = forms.CharField(
             label=_('비밀번호 확인'),
-            widget=forms.PasswordInput(attrs={'autocomplete': 'current-password'}))
+            strip=False, widget=forms.PasswordInput(attrs={'autocomplete': 'current-password'}))
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super(WithdrawForm, self).__init__(*args, **kwargs)
 
     def clean(self):
         cleaned_data = super(WithdrawForm, self).clean()
-        username = cleaned_data.get('id')
         password = cleaned_data.get('password')
         again = cleaned_data.get('password_again')
         if password and again and password != again:
             self.add_error('password_again', _('비밀번호가 서로 다릅니다.'))
             return cleaned_data
-        if username and password and authenticate(
-                username=username, password=password) is None:
+        if password and not check_password_lenient(self.user, password):
             self.add_error('password', _('비밀번호가 맞지 않습니다.'))
         return cleaned_data
 
@@ -428,11 +467,11 @@ class ResetPasswordForm(_VerifiedEmailForm):
     new_password = forms.CharField(
         label=_('새 비밀번호'), min_length=8,
         help_text=_('8자 이상. 영문·숫자·기호를 쓸 수 있고 조합 규칙은 없습니다.'),
-        widget=forms.PasswordInput(attrs={
+        strip=False, widget=forms.PasswordInput(attrs={
             'autocomplete': 'new-password', 'placeholder': _('8자 이상')}))
     new_password_again = forms.CharField(
         label=_('새 비밀번호 확인'),
-        widget=forms.PasswordInput(attrs={
+        strip=False, widget=forms.PasswordInput(attrs={
             'autocomplete': 'new-password', 'placeholder': _('한 번 더 입력')}))
 
     def clean_new_password(self):
@@ -471,11 +510,11 @@ class MigrateForm(_VerifiedEmailForm):
     new_password = forms.CharField(
         label=_('비밀번호'), min_length=8,
         help_text=_('8자 이상. 영문·숫자·기호를 쓸 수 있고 조합 규칙은 없습니다. 쓰시던 비밀번호가 규칙에 맞으면 그대로 입력하셔도 됩니다.'),
-        widget=forms.PasswordInput(attrs={
+        strip=False, widget=forms.PasswordInput(attrs={
             'autocomplete': 'new-password', 'placeholder': _('8자 이상')}))
     new_password_again = forms.CharField(
         label=_('비밀번호 확인'),
-        widget=forms.PasswordInput(attrs={
+        strip=False, widget=forms.PasswordInput(attrs={
             'autocomplete': 'new-password', 'placeholder': _('한 번 더 입력')}))
 
     def clean_new_password(self):
