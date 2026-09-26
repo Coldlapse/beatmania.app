@@ -20,6 +20,7 @@ from iidxrank import forms
 import settings
 from iidxrank import rankpage as rp
 from iidxrank import iidx
+from iidxrank import record_version
 from iidxrank import views_json
 from iidxrank import views_notice
 import json
@@ -442,14 +443,18 @@ def modify(request):
                 items.append((int(l['id']), desc))
         except (ValueError, TypeError, KeyError):
             return JsonResponse({'code': 1, 'message': _('잘못된 요청입니다.')})
-        for sid, desc in items:
-            log = []
-            try:
-                ok = rp.update_record(sid, player, desc, log)
-            except models.Song.DoesNotExist:
-                return JsonResponse({'code': 1, 'message': _('잘못된 요청입니다.')})
-            if not ok:
-                return JsonResponse({'code': 1, 'message': log[0] if log else _('잘못된 요청입니다.')})
+        # 중간 항목에서 실패해도 앞 항목은 이미 저장됐다 — 성공·실패 모두 기록 버전을 올린다.
+        try:
+            for sid, desc in items:
+                log = []
+                try:
+                    ok = rp.update_record(sid, player, desc, log)
+                except models.Song.DoesNotExist:
+                    return JsonResponse({'code': 1, 'message': _('잘못된 요청입니다.')})
+                if not ok:
+                    return JsonResponse({'code': 1, 'message': log[0] if log else _('잘못된 요청입니다.')})
+        finally:
+            record_version.bump(player.pk)      # BPI·CPI 를 곧바로 다시 계산(iidxrank/record_version.py)
     elif (action == 'exscore'):
         # v = {"id": 곡 pk, "exscore": 숫자 또는 null(지우기)}
         # 손으로 넣은 값은 그대로 쓴다(낮춰도 된다) — 잘못 넣은 것을 고칠 길이어야 한다.
@@ -473,6 +478,7 @@ def modify(request):
         lowered = pr.exscore is not None and (ex is None or ex < pr.exscore)
         pr.exscore = ex
         pr.save()
+        record_version.bump(player.pk)
         if lowered:
             # 합산 BPI 는 최고값을 붙잡아 둔다(bpi.BpiBest). 잘못 넣은 높은 값을 고쳤는데 그 값이
             # 계속 남으면 안 되므로 최고값을 지우고 지금 기록으로 다시 잰다.

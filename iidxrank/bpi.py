@@ -266,7 +266,9 @@ def for_player(player):
     """프로필에 쓸 값. {'value': 52.31, 'fresh': 50.02, 'charts': 312} 또는 None. 10분 캐시."""
     if not ENABLED or player is None:
         return None
-    key = 'bpi:%d:%s' % (player.pk, _data_version())
+    from iidxrank import record_version
+    # 채보별 값의 적재 시각 + 이 플레이어 기록의 버전. 둘 중 하나가 바뀌면 곧바로 다시 계산한다.
+    key = 'bpi:%d:%s:%s' % (player.pk, _data_version(), record_version.get(player.pk))
     hit = cache.get(key)
     if hit is not None:
         return hit or None
@@ -281,7 +283,7 @@ def for_player(player):
 def forget_best(player):
     """합산 최고값을 지운다 — EX SCORE 를 손으로 낮췄을 때(잘못 넣은 값이 최고값을 붙잡지 않게)."""
     models.BpiBest.objects.filter(player=player).delete()
-    cache.delete('bpi:%d:%s' % (player.pk, _data_version()))
+    # 캐시는 기록 버전으로 바뀐다(이 함수를 부르는 views.modify 가 record_version.bump 를 한다).
 
 
 def details(player, limit=50):

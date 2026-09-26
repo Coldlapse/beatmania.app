@@ -160,12 +160,35 @@ try:
         r = c.post('/modify/', {'action': 'exscore', 'v': json.dumps({'id': vals[0].song_id, 'exscore': 100})})
         check('EX SCORE 저장', r.json().get('code') == 0, r.content.decode()[:200])
         check('손으로 낮추면 최고값을 지운다', not models.BpiBest.objects.filter(player=pl).exists())
-        cache.clear()
+        # 캐시를 비우지 않는다 — 서열표 수정(/modify/)이 기록 버전을 올려 곧바로 다시 계산해야 한다
         s3 = bpi.for_player(pl)
         check('지운 뒤에는 지금 기록으로 다시', s3['value'] == s3['fresh'] < s1['value'], str(s3))
         det = bpi.details(pl)
         check('BPI 높은 순 목록', [x['bpi'] for x in det['top']] == sorted([x['bpi'] for x in det['top']], reverse=True)
               and len(det['top']) == 21)
+        # 동기화 업로드(records_import.apply)도 캐시를 비우지 않고 곧바로 반영돼야 한다
+        from iidxrank import records_import, record_version
+        v2 = next((v for v in vals if v.songtype == 'SPA'), None)
+        if v2 is None:
+            print('SKIP SPA 채보가 없어 업로드 경로를 확인하지 못함')
+        else:
+            before = bpi.for_player(pl)
+            ver0 = record_version.get(pl.pk)
+            s = v2.song
+            head = chr(9).join(['title', 'SPA Lamp', 'SPA Rating', 'SPA EX Score', 'SPA Note Count', 'SPA Letter'])
+            row = chr(9).join([s.songtitle, 'FC', str(s.songlevel), str(v2.notes * 2 - 1), str(v2.notes), 'AAA'])
+            tsv = head + chr(10) + row + chr(10)
+            res = records_import.apply(u, tsv, 'web')
+            after = bpi.for_player(pl)
+            check('업로드로 기록이 오르면 기록 버전이 바뀜', res['improved'] == 1 and record_version.get(pl.pk) != ver0, str(res))
+            check('업로드 직후 합산 BPI 가 곧바로 바뀜(캐시 비우지 않음)', after['fresh'] > before['fresh'],
+                  '%s → %s' % (before, after))
+            from iidxrank import cpi
+            c_before = cpi.for_player(pl)
+            c.post('/modify/', {'action': 'edit', 'v': json.dumps([{'id': vals[2].song_id, 'clear': 1}])})
+            c_after = cpi.for_player(pl)
+            check('서열표 램프 수정 직후 CPI 도 새로 계산(캐시 비우지 않음)',
+                  c_before != c_after or c_before is None, '%s → %s' % (c_before, c_after))
     models.PlayRecord.objects.filter(player=pl).delete()
 finally:
     models.Player.objects.filter(user=u).delete()

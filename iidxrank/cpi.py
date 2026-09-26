@@ -104,7 +104,7 @@ def fetch_and_store():
         models.CpiValue.objects.all().delete()
         models.CpiValue.objects.bulk_create(rows)
     # 캐시는 지우지 않는다. 수집은 cron 의 별도 프로세스라 웹 워커의 캐시에 닿지 않는다.
-    # 프로필 값은 CACHE_SECONDS 뒤에 새 값으로 바뀐다.
+    # 키에 적재 시각이 들어 있어(_data_version, 60초 기억) 1분 안에 새 값으로 바뀐다.
     return {'charts': len(charts), 'matched': len(charts) - len(missing), 'missing': missing}
 
 
@@ -183,7 +183,8 @@ def for_player(player):
     # 키에 채보별 값의 적재 시각을 넣는다. 캐시는 워커(5개)마다 따로 있는 메모리라, update_cpi 가 값을
     # 바꿔도 각 워커는 옛 결과를 10분 들고 있었다 — 첫 적재 직후에는 '기록이 부족합니다' 와 실제 값이
     # 새로고침마다 번갈아 나왔다(2026-09-26 라이브). 적재 시각이 바뀌면 키가 바뀌어 곧바로 다시 계산한다.
-    key = 'cpi:%d:%s' % (player.pk, _data_version())
+    from iidxrank import record_version
+    key = 'cpi:%d:%s:%s' % (player.pk, _data_version(), record_version.get(player.pk))
     hit = cache.get(key)
     if hit is not None:
         return hit or None

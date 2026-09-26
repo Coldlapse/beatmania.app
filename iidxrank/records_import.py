@@ -215,6 +215,10 @@ def apply(user, text, source):
         models.RecordSync.objects.create(
             user=user, source=source, charts=len(rows), created=created,
             improved=improved, unmatched=len(missing))
+    if created or improved:
+        # BPI·CPI 를 곧바로 다시 계산하게 한다(iidxrank/record_version.py)
+        from iidxrank import record_version
+        record_version.bump(player.pk)
 
     return {'charts': len(rows), 'created': created, 'improved': improved,
             'unchanged': unchanged, 'unmatched': len(missing),
