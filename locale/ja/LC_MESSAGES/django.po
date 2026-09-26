@@ -207,8 +207,20 @@ msgstr "<a href=\"%(kuna)s\" target=\"_blank\" rel=\"noopener\">@lazykuna</a> �
 msgid "<a href=\"/privacy/\" target=\"_blank\" rel=\"noopener\">개인정보처리방침</a>을 읽었고 이에 동의합니다."
 msgstr "<a href=\"/privacy/\" target=\"_blank\" rel=\"noopener\">プライバシーポリシー</a>を読み、これに同意します。"
 
+msgid "<a href=\"https://bpi2.poyashi.me/\" target=\"_blank\" rel=\"noopener\">BPIManager (bpi2.poyashi.me)</a>의 데이터를 활용했습니다. 문제가 있다면 <a href=\"mailto:beatmania.app@gmail.com\">beatmania.app@gmail.com</a> 이나 <a href=\"https://discord.gg/RxjwbvWa8D\" target=\"_blank\" rel=\"noopener\">디스코드</a>로 문의해주시면 감사하겠습니다. 양질의 데이터 제공에 진심으로 감사드립니다."
+msgstr "<a href=\"https://bpi2.poyashi.me/\" target=\"_blank\" rel=\"noopener\">BPIManager (bpi2.poyashi.me)</a> のデータを活用しています。問題がありましたら <a href=\"mailto:beatmania.app@gmail.com\">beatmania.app@gmail.com</a> または <a href=\"https://discord.gg/RxjwbvWa8D\" target=\"_blank\" rel=\"noopener\">Discord</a> までお問い合わせいただけると幸いです。質の高いデータのご提供に心より感謝申し上げます。"
+
 msgid "<a href=\"https://bpi2.poyashi.me/\" target=\"_blank\" rel=\"noopener\">BPIManager</a> 의 BPI V2 와 같은 식으로 계산합니다. 채보별 값(세계 기록·분포 모수)은 BPIManager 가 공개하는 값을 하루 한 번 받아 씁니다."
 msgstr "<a href=\"https://bpi2.poyashi.me/\" target=\"_blank\" rel=\"noopener\">BPIManager</a> の BPI V2 と同じ式で計算しています。譜面ごとの値(世界記録・分布パラメータ)は BPIManager が公開している値を1日1回取得して使います。"
+
+msgid "<a href=\"https://cpi.makecir.com/\" target=\"_blank\" rel=\"noopener\">CPI (cpi.makecir.com)</a>의 데이터를 활용했습니다. 문제가 있다면 <a href=\"mailto:beatmania.app@gmail.com\">beatmania.app@gmail.com</a> 이나 <a href=\"https://discord.gg/RxjwbvWa8D\" target=\"_blank\" rel=\"noopener\">디스코드</a>로 문의해주시면 감사하겠습니다. 양질의 데이터 제공에 진심으로 감사드립니다."
+msgstr "<a href=\"https://cpi.makecir.com/\" target=\"_blank\" rel=\"noopener\">CPI (cpi.makecir.com)</a> のデータを活用しています。問題がありましたら <a href=\"mailto:beatmania.app@gmail.com\">beatmania.app@gmail.com</a> または <a href=\"https://discord.gg/RxjwbvWa8D\" target=\"_blank\" rel=\"noopener\">Discord</a> までお問い合わせいただけると幸いです。質の高いデータのご提供に心より感謝申し上げます。"
+
+msgid "<b>SmartScreen</b> — \"Windows에서 PC를 보호했습니다\" 창이 뜨면 <b>추가 정보</b>를 누른 뒤 <b>실행</b>을 누릅니다."
+msgstr "<b>SmartScreen</b> — 「Windows によって PC が保護されました」と表示されたら、<b>詳細情報</b>を押してから<b>実行</b>を押します。"
+
+msgid "<b>백신이 파일을 지우거나 격리할 때</b> — Windows 보안 → 바이러스 및 위협 방지 → 보호 기록에서 해당 항목을 <b>허용</b>하고, 설정 관리 → 제외 → <b>제외 추가 → 폴더</b>로 아래 폴더를 추가합니다. 다른 백신은 예외(제외) 목록에 같은 폴더를 넣습니다."
+msgstr "<b>ウイルス対策ソフトがファイルを削除・隔離した場合</b> — Windows セキュリティ → ウイルスと脅威の防止 → 保護の履歴で該当項目を<b>許可</b>し、設定の管理 → 除外 → <b>除外の追加 → フォルダー</b>で下のフォルダーを追加します。他のウイルス対策ソフトでは、除外リストに同じフォルダーを追加してください。"
 
 msgid "<b>비트매니아 IIDX INFINITAS</b>의 수록곡들만 제공합니다."
 msgstr "<b>beatmania IIDX INFINITAS</b> の収録曲のみを扱います。"
@@ -345,8 +357,14 @@ msgstr "SP☆12 %(n)s 譜面の記録に基づく"
 msgid "SP☆12 %(n)s채보 기준"
 msgstr "SP☆12 %(n)s 譜面から"
 
+msgid "SP☆12 %(n)s채보의 EX SCORE 로 계산한 합산 BPI 입니다. 계산식과 채보별 값은 BPIManager(bpi2.poyashi.me)를 따릅니다."
+msgstr "SP☆12 %(n)s 譜面の EX SCORE から計算した総合BPIです。計算式と譜面ごとの値は BPIManager(bpi2.poyashi.me)に準拠しています。"
+
 msgid "SP☆12 %(n)s채보의 EX SCORE 로 계산한 합산 BPI 입니다. 계산식과 채보별 값은 BPIManager(bpi2.poyashi.me)를 따릅니다. 문제가 있으면 알려 주세요."
 msgstr "SP☆12 %(n)s 譜面の EX SCORE から計算した総合BPIです。計算式と譜面ごとの値は BPIManager(bpi2.poyashi.me)に準拠しています。問題があればお知らせください。"
+
+msgid "SP☆12 %(n)s채보의 클리어 램프로 계산한 추정값입니다. 채보별 값은 cpi.makecir.com 의 공개 수치를 씁니다."
+msgstr "SP☆12 %(n)s 譜面のクリアランプから計算した推定値です。譜面ごとの値は cpi.makecir.com の公開値を使用しています。"
 
 msgid "SP☆12 %(n)s채보의 클리어 램프로 계산한 추정값입니다. 채보별 값은 cpi.makecir.com 의 공개 수치를 씁니다. 문제가 있으면 알려 주세요."
 msgstr "SP☆12 %(n)s譜面のクリアランプから計算した推定値です。譜面ごとの値は cpi.makecir.com の公開数値を使っています。問題があればお知らせください。"
@@ -708,6 +726,9 @@ msgstr "データベース"
 msgid "데이터베이스에 질의가 되는지."
 msgstr "データベースに問い合わせができるか。"
 
+msgid "동기화 앱이 받는 Reflux"
+msgstr "同期アプリがダウンロードする Reflux"
+
 msgid "되돌리는 쪽에 <code>ceil</code>을 쓰는 이유가 있다. 게임이 실제로 하는 계산은 beatoraja → IIDX 방향의 내림뿐이므로, IIDX 수치 S를 얻으려면 그 식에 넣었을 때 S가 나오는 가장 작은 BMS 값을 찾아야 한다. 내림으로 되돌리면 리프트에 따라 한 칸 모자란 값이 나온다."
 msgstr "戻す側に <code>ceil</code> を使うのには理由があります。ゲームが実際に行う計算は beatoraja → IIDX 方向の切り捨てだけなので、IIDX の値 S を得るには、その式に入れたときに S になる最小の BMS 値を求める必要があります。切り捨てで戻すと、LIFT によっては 1 だけ足りない値になります。"
 
@@ -788,6 +809,12 @@ msgstr "メールを送信できませんでした。しばらくしてから再
 
 msgid "명령"
 msgstr "コマンド"
+
+msgid "모든 beatmania.app 배포 프로그램에는 디지털 서명이 없어, 백신이 악성 프로그램으로 오진하거나 Windows SmartScreen 이 실행을 막을 수 있습니다. 특히 동기화 앱이 쓰는 Reflux 는 게임 메모리를 읽는 도구라 오진이 잦습니다."
+msgstr "beatmania.app が配布するプログラムにはデジタル署名がないため、ウイルス対策ソフトがマルウェアと誤検知したり、Windows SmartScreen が実行をブロックしたりすることがあります。特に同期アプリが使う Reflux はゲームのメモリを読むツールのため、誤検知がよく起こります。"
+
+msgid "모든 프로그램은 오픈소스이므로, 무엇을 하는지 위해성을 코드로 직접 검증할 수 있습니다:"
+msgstr "すべてのプログラムはオープンソースなので、安全性をコードで直接確認できます:"
 
 msgid "못 찾은 곡"
 msgstr "見つからない曲"
@@ -995,6 +1022,9 @@ msgstr "設定"
 
 msgid "설정으로 돌아가기"
 msgstr "設定に戻る"
+
+msgid "설치가 막히거나 백신이 경고할 때"
+msgstr "インストールがブロックされたり、ウイルス対策ソフトが警告したりする場合"
 
 msgid "세션 정보는 만료되면 사라집니다."
 msgstr "セッション情報は有効期限が切れると消えます。"
@@ -1464,6 +1494,9 @@ msgstr "最新版をダウンロード"
 msgid "최신 버전(2.1.0 이상)을 받아 설치합니다."
 msgstr "最新版(2.1.0 以上)をダウンロードしてインストールします。"
 
+msgid "최신 버전을 받아 설치합니다."
+msgstr "最新バージョンをダウンロードしてインストールします。"
+
 msgid "최신 버전을 받아 설치합니다. 처음 실행할 때 \"Windows에서 PC를 보호했습니다\" 가 뜨면 추가 정보 → 실행을 누릅니다."
 msgstr "最新版をダウンロードしてインストールします。初回起動時に「Windows によって PC が保護されました」と表示されたら、詳細情報 → 実行 を押してください。"
 
@@ -1478,6 +1511,9 @@ msgstr "今後の予定"
 
 msgid "충분한 플레이 기록(FAIL이 없거나 전부 HC~EXHC 이상이거나)이 없을 경우에는 수치가 올바르게 표시되지 않을 수 있습니다."
 msgstr "プレー記録が十分でない場合（FAIL が無い、または全て HC〜EXHC 以上など）、数値が正しく表示されないことがあります。"
+
+msgid "켜 두면 INFINITAS 기록이 바뀔 때마다 클리어 램프·DJ RANK·EX SCORE 를 서열표에 자동으로 반영합니다."
+msgstr "起動しておくと、INFINITAS の記録が変わるたびにクリアランプ・DJ RANK・EX SCORE を序列表へ自動で反映します。"
 
 msgid "켜 두면 타건 수가 자동으로 올라가고, <a href=\"%(mypage_url)s\">일일 타건 기록</a>에서 볼 수 있습니다."
 msgstr "起動しておくと打鍵数が自動で送信され、<a href=\"%(mypage_url)s\">日別打鍵記録</a>で確認できます。"

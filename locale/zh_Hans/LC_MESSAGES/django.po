@@ -207,8 +207,20 @@ msgstr "基于 <a href=\"%(kuna)s\" target=\"_blank\" rel=\"noopener\">@lazykuna
 msgid "<a href=\"/privacy/\" target=\"_blank\" rel=\"noopener\">개인정보처리방침</a>을 읽었고 이에 동의합니다."
 msgstr "我已阅读并同意<a href=\"/privacy/\" target=\"_blank\" rel=\"noopener\">隐私政策</a>。"
 
+msgid "<a href=\"https://bpi2.poyashi.me/\" target=\"_blank\" rel=\"noopener\">BPIManager (bpi2.poyashi.me)</a>의 데이터를 활용했습니다. 문제가 있다면 <a href=\"mailto:beatmania.app@gmail.com\">beatmania.app@gmail.com</a> 이나 <a href=\"https://discord.gg/RxjwbvWa8D\" target=\"_blank\" rel=\"noopener\">디스코드</a>로 문의해주시면 감사하겠습니다. 양질의 데이터 제공에 진심으로 감사드립니다."
+msgstr "本页使用了 <a href=\"https://bpi2.poyashi.me/\" target=\"_blank\" rel=\"noopener\">BPIManager (bpi2.poyashi.me)</a> 的数据。如有问题,请通过 <a href=\"mailto:beatmania.app@gmail.com\">beatmania.app@gmail.com</a> 或 <a href=\"https://discord.gg/RxjwbvWa8D\" target=\"_blank\" rel=\"noopener\">Discord</a> 联系我们,不胜感激。衷心感谢对方提供优质的数据。"
+
 msgid "<a href=\"https://bpi2.poyashi.me/\" target=\"_blank\" rel=\"noopener\">BPIManager</a> 의 BPI V2 와 같은 식으로 계산합니다. 채보별 값(세계 기록·분포 모수)은 BPIManager 가 공개하는 값을 하루 한 번 받아 씁니다."
 msgstr "采用与 <a href=\"https://bpi2.poyashi.me/\" target=\"_blank\" rel=\"noopener\">BPIManager</a> 的 BPI V2 相同的公式计算。各谱面数值(世界纪录・分布参数)每天从 BPIManager 公开的数据获取一次。"
+
+msgid "<a href=\"https://cpi.makecir.com/\" target=\"_blank\" rel=\"noopener\">CPI (cpi.makecir.com)</a>의 데이터를 활용했습니다. 문제가 있다면 <a href=\"mailto:beatmania.app@gmail.com\">beatmania.app@gmail.com</a> 이나 <a href=\"https://discord.gg/RxjwbvWa8D\" target=\"_blank\" rel=\"noopener\">디스코드</a>로 문의해주시면 감사하겠습니다. 양질의 데이터 제공에 진심으로 감사드립니다."
+msgstr "本页使用了 <a href=\"https://cpi.makecir.com/\" target=\"_blank\" rel=\"noopener\">CPI (cpi.makecir.com)</a> 的数据。如有问题,请通过 <a href=\"mailto:beatmania.app@gmail.com\">beatmania.app@gmail.com</a> 或 <a href=\"https://discord.gg/RxjwbvWa8D\" target=\"_blank\" rel=\"noopener\">Discord</a> 联系我们,不胜感激。衷心感谢对方提供优质的数据。"
+
+msgid "<b>SmartScreen</b> — \"Windows에서 PC를 보호했습니다\" 창이 뜨면 <b>추가 정보</b>를 누른 뒤 <b>실행</b>을 누릅니다."
+msgstr "<b>SmartScreen</b> — 出现“Windows 已保护你的电脑”时,点击<b>更多信息</b>,然后点击<b>仍要运行</b>。"
+
+msgid "<b>백신이 파일을 지우거나 격리할 때</b> — Windows 보안 → 바이러스 및 위협 방지 → 보호 기록에서 해당 항목을 <b>허용</b>하고, 설정 관리 → 제외 → <b>제외 추가 → 폴더</b>로 아래 폴더를 추가합니다. 다른 백신은 예외(제외) 목록에 같은 폴더를 넣습니다."
+msgstr "<b>杀毒软件删除或隔离文件时</b> — 在 Windows 安全中心 → 病毒和威胁防护 → 保护历史记录中<b>允许</b>该项目,然后在管理设置 → 排除项 → <b>添加排除项 → 文件夹</b>中添加以下文件夹。其他杀毒软件请将相同文件夹加入排除列表。"
 
 msgid "<b>비트매니아 IIDX INFINITAS</b>의 수록곡들만 제공합니다."
 msgstr "仅收录 <b>beatmania IIDX INFINITAS</b> 中的曲目。"
@@ -345,8 +357,14 @@ msgstr "基于 %(n)s 个 SP☆12 谱面的记录"
 msgid "SP☆12 %(n)s채보 기준"
 msgstr "基于 %(n)s 张 SP☆12 谱面"
 
+msgid "SP☆12 %(n)s채보의 EX SCORE 로 계산한 합산 BPI 입니다. 계산식과 채보별 값은 BPIManager(bpi2.poyashi.me)를 따릅니다."
+msgstr "根据 %(n)s 个 SP☆12 谱面的 EX SCORE 计算的总合 BPI。计算公式和各谱面数值遵循 BPIManager(bpi2.poyashi.me)。"
+
 msgid "SP☆12 %(n)s채보의 EX SCORE 로 계산한 합산 BPI 입니다. 계산식과 채보별 값은 BPIManager(bpi2.poyashi.me)를 따릅니다. 문제가 있으면 알려 주세요."
 msgstr "根据 %(n)s 个 SP☆12 谱面的 EX SCORE 计算的总合 BPI。计算公式和各谱面数值遵循 BPIManager(bpi2.poyashi.me)。如有问题请告诉我们。"
+
+msgid "SP☆12 %(n)s채보의 클리어 램프로 계산한 추정값입니다. 채보별 값은 cpi.makecir.com 의 공개 수치를 씁니다."
+msgstr "根据 %(n)s 个 SP☆12 谱面的通关灯计算的估算值。各谱面数值使用 cpi.makecir.com 公开的数据。"
 
 msgid "SP☆12 %(n)s채보의 클리어 램프로 계산한 추정값입니다. 채보별 값은 cpi.makecir.com 의 공개 수치를 씁니다. 문제가 있으면 알려 주세요."
 msgstr "根据 SP☆12 %(n)s 张谱面的通关灯计算的估算值。各谱面数值使用 cpi.makecir.com 公开的数据。如有问题请告诉我们。"
@@ -708,6 +726,9 @@ msgstr "数据库"
 msgid "데이터베이스에 질의가 되는지."
 msgstr "数据库能否响应查询。"
 
+msgid "동기화 앱이 받는 Reflux"
+msgstr "同步应用下载的 Reflux"
+
 msgid "되돌리는 쪽에 <code>ceil</code>을 쓰는 이유가 있다. 게임이 실제로 하는 계산은 beatoraja → IIDX 방향의 내림뿐이므로, IIDX 수치 S를 얻으려면 그 식에 넣었을 때 S가 나오는 가장 작은 BMS 값을 찾아야 한다. 내림으로 되돌리면 리프트에 따라 한 칸 모자란 값이 나온다."
 msgstr "回算时使用 <code>ceil</code> 是有原因的。游戏本身执行的运算只有 beatoraja → IIDX 方向的向下取整，因此若要得到 IIDX 数值 S，就必须找出代入该公式后能得出 S 的最小 BMS 值。若回算时也向下取整，在某些 LIFT 下会少一格。"
 
@@ -788,6 +809,12 @@ msgstr "邮件发送失败。请稍后再试。"
 
 msgid "명령"
 msgstr "命令"
+
+msgid "모든 beatmania.app 배포 프로그램에는 디지털 서명이 없어, 백신이 악성 프로그램으로 오진하거나 Windows SmartScreen 이 실행을 막을 수 있습니다. 특히 동기화 앱이 쓰는 Reflux 는 게임 메모리를 읽는 도구라 오진이 잦습니다."
+msgstr "beatmania.app 发布的所有程序都没有数字签名,因此杀毒软件可能误报为恶意程序,或 Windows SmartScreen 可能阻止运行。尤其是同步应用使用的 Reflux 会读取游戏内存,更容易被误报。"
+
+msgid "모든 프로그램은 오픈소스이므로, 무엇을 하는지 위해성을 코드로 직접 검증할 수 있습니다:"
+msgstr "所有程序均为开源,你可以直接查看代码来验证其安全性:"
 
 msgid "못 찾은 곡"
 msgstr "未找到的曲目"
@@ -995,6 +1022,9 @@ msgstr "设置"
 
 msgid "설정으로 돌아가기"
 msgstr "返回设置"
+
+msgid "설치가 막히거나 백신이 경고할 때"
+msgstr "安装被阻止或杀毒软件发出警告时"
 
 msgid "세션 정보는 만료되면 사라집니다."
 msgstr "会话信息在过期后消失。"
@@ -1464,6 +1494,9 @@ msgstr "下载最新版"
 msgid "최신 버전(2.1.0 이상)을 받아 설치합니다."
 msgstr "下载并安装最新版（2.1.0 及以上）。"
 
+msgid "최신 버전을 받아 설치합니다."
+msgstr "下载并安装最新版本。"
+
 msgid "최신 버전을 받아 설치합니다. 처음 실행할 때 \"Windows에서 PC를 보호했습니다\" 가 뜨면 추가 정보 → 실행을 누릅니다."
 msgstr "下载并安装最新版。首次运行若出现\"Windows 已保护你的电脑\"，请点击\"更多信息\"→\"仍要运行\"。"
 
@@ -1478,6 +1511,9 @@ msgstr "后续计划"
 
 msgid "충분한 플레이 기록(FAIL이 없거나 전부 HC~EXHC 이상이거나)이 없을 경우에는 수치가 올바르게 표시되지 않을 수 있습니다."
 msgstr "若游玩记录不足（没有 FAIL，或全部为 HC~EXHC 以上），数值可能无法正确显示。"
+
+msgid "켜 두면 INFINITAS 기록이 바뀔 때마다 클리어 램프·DJ RANK·EX SCORE 를 서열표에 자동으로 반영합니다."
+msgstr "保持运行时,每当 INFINITAS 记录变化,都会自动将通关灯・DJ RANK・EX SCORE 反映到难度表。"
 
 msgid "켜 두면 타건 수가 자동으로 올라가고, <a href=\"%(mypage_url)s\">일일 타건 기록</a>에서 볼 수 있습니다."
 msgstr "保持运行即可自动上传击键数，可在<a href=\"%(mypage_url)s\">每日击键记录</a>中查看。"

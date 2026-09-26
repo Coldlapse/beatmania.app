@@ -72,8 +72,10 @@
   </div>
   {% endif %}
 
+  {% include "widgets/unsigned_notice.html" %}
+
   {% comment %} 토큰을 쓰는 곳 — 앱 받기·사용법은 widgets/app_guide.html 한 곳에 있다 {% endcomment %}
-  <div class="row g-3">
+  <div class="row g-3 bm-app-guides">
     <div class="col-12 col-lg-6">{% include "widgets/app_guide.html" with app="sync" %}</div>
     <div class="col-12 col-lg-6">{% include "widgets/app_guide.html" with app="iidxwidget" %}</div>
   </div>

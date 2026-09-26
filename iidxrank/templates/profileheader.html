@@ -36,14 +36,14 @@
       <div class="profile-scores">
       {% if userdata.bpi_badge %}
       <a class="profile-cpi profile-bpi{% if not userdata.bpi %} is-empty{% endif %}" href="{{ userdata.bpi_url }}"
-         title="{% if not userdata.bpi %}{% trans 'SP☆12 EX SCORE 가 아직 없어 합산 BPI 를 계산하지 못했습니다. 데이터 동기화 앱이나 서열표에서 EX SCORE 를 넣으면 나타납니다.' %}{% else %}{% blocktrans with n=userdata.bpi.charts12 %}SP☆12 {{ n }}채보의 EX SCORE 로 계산한 합산 BPI 입니다. 계산식과 채보별 값은 BPIManager(bpi2.poyashi.me)를 따릅니다. 문제가 있으면 알려 주세요.{% endblocktrans %}{% endif %}">
+         title="{% if not userdata.bpi %}{% trans 'SP☆12 EX SCORE 가 아직 없어 합산 BPI 를 계산하지 못했습니다. 데이터 동기화 앱이나 서열표에서 EX SCORE 를 넣으면 나타납니다.' %}{% else %}{% blocktrans with n=userdata.bpi.charts12 %}SP☆12 {{ n }}채보의 EX SCORE 로 계산한 합산 BPI 입니다. 계산식과 채보별 값은 BPIManager(bpi2.poyashi.me)를 따릅니다.{% endblocktrans %}{% endif %}">
         <span class="profile-cpi-label">BPI</span>
         <span class="profile-cpi-value">{% if userdata.bpi %}{{ userdata.bpi.value|floatformat:2 }}{% else %}-{% endif %}</span>
       </a>
       {% endif %}
       {% if userdata.cpi_badge %}
       <a class="profile-cpi{% if not userdata.cpi %} is-empty{% endif %}" href="{{ userdata.cpi_url }}"
-         title="{% if not userdata.cpi %}{% trans 'CPI 를 추정할 SP☆12 클리어 램프 기록이 부족합니다. 눌러서 자세한 조건을 볼 수 있습니다.' %}{% else %}{% blocktrans with n=userdata.cpi.charts %}SP☆12 {{ n }}채보의 클리어 램프로 계산한 추정값입니다. 채보별 값은 cpi.makecir.com 의 공개 수치를 씁니다. 문제가 있으면 알려 주세요.{% endblocktrans %}{% endif %}">
+         title="{% if not userdata.cpi %}{% trans 'CPI 를 추정할 SP☆12 클리어 램프 기록이 부족합니다. 눌러서 자세한 조건을 볼 수 있습니다.' %}{% else %}{% blocktrans with n=userdata.cpi.charts %}SP☆12 {{ n }}채보의 클리어 램프로 계산한 추정값입니다. 채보별 값은 cpi.makecir.com 의 공개 수치를 씁니다.{% endblocktrans %}{% endif %}">
         <span class="profile-cpi-label">CPI</span>
         <span class="profile-cpi-value">{% if userdata.cpi %}{{ userdata.cpi.value }}{% else %}-{% endif %}</span>
       </a>

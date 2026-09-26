@@ -46,9 +46,10 @@
           <li>{% trans '새 기록 하나로 추정 실력이 내려가면 합산 값도 내려갈 수 있어, BPIManager 처럼 지금까지의 최고값을 보여 줍니다. EX SCORE 를 손으로 낮추면 최고값을 지우고 다시 계산합니다.' %}</li>
           {% if detail.fresh < detail.value %}<li>{% blocktrans with v=detail.fresh|floatformat:2 %}지금 기록만으로 계산한 값: {{ v }}{% endblocktrans %}</li>{% endif %}
           {% if detail.fetched_at %}<li>{% blocktrans with d=detail.fetched_at|date:"Y-m-d" c=detail.constants_date %}채보별 값 갱신: {{ d }} · 모델 상수: {{ c }}{% endblocktrans %}</li>{% endif %}
-          <li>{% trans 'BPIManager 에 표시되는 값과 다르면 디스코드로 알려 주세요.' %}</li>
         </ul>
       </details>
+      {% comment %} 데이터 출처와 감사 인사(사용자 문구, 2026-09-26). 접어 두지 않고 늘 보이게 둔다 {% endcomment %}
+      <p class="small text-body-secondary mt-3 mb-0">{% blocktrans %}<a href="https://bpi2.poyashi.me/" target="_blank" rel="noopener">BPIManager (bpi2.poyashi.me)</a>의 데이터를 활용했습니다. 문제가 있다면 <a href="mailto:beatmania.app@gmail.com">beatmania.app@gmail.com</a> 이나 <a href="https://discord.gg/RxjwbvWa8D" target="_blank" rel="noopener">디스코드</a>로 문의해주시면 감사하겠습니다. 양질의 데이터 제공에 진심으로 감사드립니다.{% endblocktrans %}</p>
     </div>
   </div>
 

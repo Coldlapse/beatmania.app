@@ -1025,3 +1025,18 @@ body.bm-rankpage #rankimg { margin-top: .5rem; }
 .bm-app-guide-os { margin-left: .4rem; font-size: .7rem; font-weight: 600; padding: .1em .45em; border-radius: 4px;
   background: var(--bm-surface-3); color: var(--bm-text-muted); vertical-align: middle; }
 .bm-app-guide .bm-steps li { margin-bottom: .25rem; }
+/* 옛 common.css 의 '#container .row { margin: 0 0 30px }' 가 Bootstrap 행의 음수 여백을 지워, 칸 안쪽 여백(8px)만큼
+   카드가 위 칸들보다 안으로 들어가 있었고, 위쪽도 칸 여백(16px)이 더해져 다른 칸 사이(16px)의 두 배로 벌어졌다.
+   이 행에만 음수 여백을 돌려준다(아래 여백은 그대로) */
+#container .row.bm-app-guides { margin-left: calc(-.5 * var(--bs-gutter-x)); margin-right: calc(-.5 * var(--bs-gutter-x));
+  margin-top: calc(-1 * var(--bs-gutter-y)); }
+
+/* --- 서명 없는 배포 프로그램 안내 (widgets/unsigned_notice.html) ----------- */
+/* 오른쪽 위에 큰 방패 아이콘을 배경처럼 깔고, 글은 그 위에 둔다 */
+.bm-unsigned { position: relative; overflow: hidden; }
+.bm-unsigned-bg { position: absolute; top: -1.25rem; right: -.75rem; font-size: 9.5rem; line-height: 1;
+  color: var(--bm-accent); opacity: .08; pointer-events: none; }
+.bm-unsigned .card-body { position: relative; }
+.bm-unsigned .bm-steps li { margin-bottom: .35rem; }
+.bm-unsigned-paths { margin: .35rem 0 0; padding-left: 1.1rem; }
+.bm-unsigned-paths code { word-break: break-all; }   /* 좁은 화면에서 긴 경로가 가로로 넘치지 않게 */

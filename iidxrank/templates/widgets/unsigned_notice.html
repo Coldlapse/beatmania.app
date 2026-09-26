@@ -1,0 +1,34 @@
+{% load i18n %}
+{% comment %}
+  배포 프로그램(동기화 앱·IIDXwidget)이 디지털 서명 없이 나가서 생기는 설치 문제 안내.
+  API 토큰 페이지(user/api_token.html)의 토큰 칸과 앱 받기 칸 사이에 둔다.
+
+  설치 경로는 electron-builder 의 사용자별 설치 기본값(%LOCALAPPDATA%\Programs\<제품 이름>)이다.
+  둘 다 실제 설치 위치로 확인했다(2026-09-26).
+  Reflux 는 동기화 앱이 %APPDATA%\beatmania.app Synchronizer\Reflux 에 받아 둔다(게임 메모리를 읽는 도구라 오진이 잦다).
+{% endcomment %}
+<div class="card bm-panel bm-unsigned mb-3">
+  <i class="bi bi-shield-exclamation bm-unsigned-bg" aria-hidden="true"></i>
+  <div class="card-body">
+    <h2 class="bm-panel-title h6"><i class="bi bi-info-circle me-2" aria-hidden="true"></i>{% trans '설치가 막히거나 백신이 경고할 때' %}</h2>
+    <p class="small mb-2">
+      {% blocktrans %}모든 beatmania.app 배포 프로그램에는 디지털 서명이 없어, 백신이 악성 프로그램으로 오진하거나 Windows SmartScreen 이 실행을 막을 수 있습니다. 특히 동기화 앱이 쓰는 Reflux 는 게임 메모리를 읽는 도구라 오진이 잦습니다.{% endblocktrans %}
+    </p>
+    <ol class="bm-steps small mb-2">
+      <li>{% blocktrans %}<b>SmartScreen</b> — "Windows에서 PC를 보호했습니다" 창이 뜨면 <b>추가 정보</b>를 누른 뒤 <b>실행</b>을 누릅니다.{% endblocktrans %}</li>
+      <li>{% blocktrans %}<b>백신이 파일을 지우거나 격리할 때</b> — Windows 보안 → 바이러스 및 위협 방지 → 보호 기록에서 해당 항목을 <b>허용</b>하고, 설정 관리 → 제외 → <b>제외 추가 → 폴더</b>로 아래 폴더를 추가합니다. 다른 백신은 예외(제외) 목록에 같은 폴더를 넣습니다.{% endblocktrans %}
+        <ul class="bm-unsigned-paths">
+          <li>beatmania.app Synchronizer — <code>%LOCALAPPDATA%\Programs\beatmania.app Synchronizer</code></li>
+          <li>{% trans '동기화 앱이 받는 Reflux' %} — <code>%APPDATA%\beatmania.app Synchronizer\Reflux</code></li>
+          <li>IIDXwidget — <code>%LOCALAPPDATA%\Programs\IIDXwidget</code></li>
+        </ul>
+      </li>
+    </ol>
+    <p class="small text-body-secondary mb-0">
+      {% blocktrans %}모든 프로그램은 오픈소스이므로, 무엇을 하는지 위해성을 코드로 직접 검증할 수 있습니다:{% endblocktrans %}
+      <a href="https://github.com/Coldlapse/beatmania.app-synchronizer" target="_blank" rel="noopener">beatmania.app Synchronizer</a> ·
+      <a href="https://github.com/Coldlapse/IIDXwidget" target="_blank" rel="noopener">IIDXwidget</a> ·
+      <a href="https://github.com/OhSorry-DP/Reflux" target="_blank" rel="noopener">Reflux</a>
+    </p>
+  </div>
+</div>

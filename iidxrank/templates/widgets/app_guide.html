@@ -32,10 +32,12 @@
       <i class="bi bi-arrow-repeat me-2" aria-hidden="true"></i>beatmania.app Synchronizer
       <span class="bm-app-guide-os">Windows</span></h2>
     <p class="text-body-secondary small mb-2">
-      {% blocktrans %}INFINITAS 를 켜 둔 동안 트레이에 머물며, 기록이 바뀌면 클리어 램프·DJ RANK·EX SCORE 를 서열표에 자동으로 반영합니다.{% endblocktrans %}
+      {% comment %} 0.1.4 부터 트레이 없이 보통 창 앱이다 — '트레이에 머물며' 를 뺐다 {% endcomment %}
+      {% blocktrans %}켜 두면 INFINITAS 기록이 바뀔 때마다 클리어 램프·DJ RANK·EX SCORE 를 서열표에 자동으로 반영합니다.{% endblocktrans %}
     </p>
     <ol class="bm-steps small mb-3">
-      <li>{% blocktrans %}최신 버전을 받아 설치합니다. 처음 실행할 때 "Windows에서 PC를 보호했습니다" 가 뜨면 추가 정보 → 실행을 누릅니다.{% endblocktrans %}</li>
+      {% comment %} SmartScreen 안내는 API 토큰 페이지의 공통 안내(widgets/unsigned_notice.html)로 옮겼다 {% endcomment %}
+      <li>{% trans '최신 버전을 받아 설치합니다.' %}</li>
       <li>{% url 'api_token' as token_url %}{% blocktrans %}앱의 API 토큰 칸에 <a href="{{ token_url }}">API 토큰</a>을 넣습니다.{% endblocktrans %}</li>
       <li>{% blocktrans %}게임을 켜고 곡 선택 화면에 한 번 들어가면 기록이 올라갑니다. INF오소리와 동시 실행이 가능하며, 충돌이 일어나지 않게끔 설계했습니다.{% endblocktrans %}</li>
     </ol>

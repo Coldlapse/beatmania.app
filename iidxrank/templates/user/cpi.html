@@ -46,9 +46,10 @@
           <li>{% trans '각 채보·램프를 "달성했는가" 로 보고, 모든 기록을 가장 잘 설명하는 CPI 를 찾습니다(최대우도). ASSIST 는 FAILED 로, 기록 없는 채보는 뺍니다.' %}</li>
           <li>{% trans '원래 CPI 는 약 3만 명의 램프와 직접 비교해 계산하므로 같은 값이 나오지 않습니다. 공개 사용자 9명과 비교했을 때 평균 13점, 가장 크게 35점 차이가 났습니다(2026-09-26).' %}</li>
           {% if detail.fetched_at %}<li>{% blocktrans with d=detail.fetched_at|date:"Y-m-d" %}채보별 값 갱신: {{ d }}{% endblocktrans %}</li>{% endif %}
-          <li>{% trans '문제가 있으면 디스코드로 알려 주세요.' %}</li>
         </ul>
       </details>
+      {% comment %} 데이터 출처와 감사 인사(사용자 문구, 2026-09-26). 접어 두지 않고 늘 보이게 둔다 {% endcomment %}
+      <p class="small text-body-secondary mt-3 mb-0">{% blocktrans %}<a href="https://cpi.makecir.com/" target="_blank" rel="noopener">CPI (cpi.makecir.com)</a>의 데이터를 활용했습니다. 문제가 있다면 <a href="mailto:beatmania.app@gmail.com">beatmania.app@gmail.com</a> 이나 <a href="https://discord.gg/RxjwbvWa8D" target="_blank" rel="noopener">디스코드</a>로 문의해주시면 감사하겠습니다. 양질의 데이터 제공에 진심으로 감사드립니다.{% endblocktrans %}</p>
     </div>
   </div>
 
