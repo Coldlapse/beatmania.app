@@ -474,7 +474,8 @@ def modify(request):
         if pr is None:
             if ex is None:
                 return JsonResponse({'code': 0, 'message': _('저장했습니다.'), 'exscore': None})
-            pr = models.PlayRecord(song=song, player=player)
+            # 새로 만들 때도 get_or_create — 같은 순간 램프 저장이 줄을 만들었으면(유일 제약 위반) 그 줄을 쓴다
+            pr, _created = models.PlayRecord.objects.get_or_create(song=song, player=player)
         lowered = pr.exscore is not None and (ex is None or ex < pr.exscore)
         pr.exscore = ex
         pr.save()

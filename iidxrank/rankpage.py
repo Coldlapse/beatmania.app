@@ -658,12 +658,9 @@ def update_record(sid, player, desc, log=[]):
                 #    pr.playscore = int(song.songnotes * rate * 2 / 100)
                 pr.save()
                 return True
-            except MultipleObjectsReturned as e:
-                # check if pr returns more than one
-                pr = models.PlayRecord.objects.filter(song=song,player=player).first()
-                pr.delete()
-                log.append('Internal error (MultipleObjectReturned). Please try again!')
-                return False
+            # 중복 줄을 지우던 'except MultipleObjectsReturned' 는 뺐다 — 이름을 import 하지 않아 그 줄에서
+            # NameError(500)가 났고, 설령 돌았어도 첫 줄(다른 값이 든)을 지웠다. 이제 (player, song) 유일 제약이
+            # 중복을 막는다(마이그레이션 0030).
             except Exception as e:
                 log.append('Invalid Song modification - ' + str(e))
                 return False
@@ -699,12 +696,6 @@ def update_record(sid, player, desc, log=[]):
             #elif (rate != None):
             #    pr.playscore = int(song.songnotes * rate * 2 / 100)
             pr.save()
-        except MultipleObjectsReturned as e:
-            # check if pr returns more than one
-            pr = models.PlayRecord.objects.filter(song=song,player=player).first()
-            pr.delete()
-            log.append('Internal error (MultipleObjectReturned). Please try again!')
-            return False
         except Exception as e:
             log.append('Invalid Song modification - ' + str(e))
             return False

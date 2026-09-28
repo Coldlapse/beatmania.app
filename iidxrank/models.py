@@ -154,6 +154,12 @@ class PlayRecord(models.Model):
     # 손으로 넣으면 그 값으로 바꾸고, 동기화(records_import)는 더 높을 때만 올린다.
     exscore = models.PositiveIntegerField(null=True, blank=True)
 
+    class Meta:
+        # 사용자·채보당 한 줄. 전에는 제약이 없어, 서열표에서 램프와 DJ RANK 를 거의 동시에 저장하면
+        # 두 요청이 각각 get_or_create 로 새 줄을 만들었다(라이브 8쌍, 2026-09-28). 두 줄이 되면 램프 저장이
+        # MultipleObjectsReturned 로 실패했다. 제약이 있으면 get_or_create 가 위반 시 다시 읽어 한 줄을 쓴다.
+        constraints = [models.UniqueConstraint(fields=['player', 'song'], name='uniq_playrecord_player_song')]
+
 
 class RankTable(models.Model):
     time = models.DateTimeField(default=now)        # db updated time
