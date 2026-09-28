@@ -135,6 +135,9 @@ msgstr "2022 Q4（已完成）"
 msgid "2022년에 IIDX와 BMS를 시작하여, 현재 SP 발광개전을 취득한 BMS 플레이어입니다. IIDX 인피니타스를 위한 독점 서열표 사이트가 없다는 점에 착안, <a href=\"%(repo)s\" target=\"_blank\" rel=\"noopener\">lazykuna/iidxranktable</a> 을 포크하여 인피니타스 독점 서비스로 개발 및 유지보수 해왔습니다. 서비스에 대한 문의는 <a href=\"%(discord)s\" target=\"_blank\" rel=\"noopener\">디스코드</a>에서 부탁드립니다."
 msgstr "2022 年开始接触 IIDX 与 BMS，目前是已取得 SP 发狂皆传的 BMS 玩家。注意到没有专为 IIDX INFINITAS 打造的难度表站点，于是 fork 了 <a href=\"%(repo)s\" target=\"_blank\" rel=\"noopener\">lazykuna/iidxranktable</a>，作为 INFINITAS 专用服务持续开发与维护。有关服务的咨询请前往 <a href=\"%(discord)s\" target=\"_blank\" rel=\"noopener\">Discord</a>。"
 
+msgid "2022년에 IIDX와 BMS를 시작한 플레이어입니다. IIDX 인피니타스를 위한 독점 서열표 사이트가 없다는 점에 착안, <a href=\"%(repo)s\" target=\"_blank\" rel=\"noopener\">lazykuna/iidxranktable</a> 을 포크하여 인피니타스 독점 서비스로 개발 및 유지보수 해왔습니다. 서비스에 대한 문의는 <a href=\"%(discord)s\" target=\"_blank\" rel=\"noopener\">디스코드</a>에서 부탁드립니다."
+msgstr "2022 年开始接触 IIDX 与 BMS 的玩家。注意到没有专为 IIDX INFINITAS 打造的难度表站点，于是 fork 了 <a href=\"%(repo)s\" target=\"_blank\" rel=\"noopener\">lazykuna/iidxranktable</a>，作为 INFINITAS 专用服务持续开发与维护。有关服务的咨询请前往 <a href=\"%(discord)s\" target=\"_blank\" rel=\"noopener\">Discord</a>。"
+
 msgid "2023 Q1 (완료)"
 msgstr "2023 Q1（已完成）"
 

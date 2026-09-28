@@ -873,6 +873,7 @@ body.bm-rankpage #rankimg { margin-top: .5rem; }
 .bm-devlink-yt:hover  { color: #FF0000 !important; }
 .bm-devlink-dc:hover  { color: #5865F2 !important; }
 .bm-devlink-gh:hover  { color: var(--bm-nav-link-hover) !important; }
+.bm-devlink-web:hover { color: var(--bm-accent) !important; }
 /* 보쿠타치는 아이콘 폰트가 없어 로고 이미지를 쓴다. 버튼 안의 글자와
    눈높이를 맞추기 위해 높이를 1em 에 맞추고 너비는 비율대로 둔다. */
 .bm-devlink-ir img { height: 1em; width: auto; display: block; }
