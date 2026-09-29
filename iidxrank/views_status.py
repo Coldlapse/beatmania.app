@@ -239,6 +239,18 @@ def service_status(request):
     })
 
 
+def _visit_rows(start, trunc):
+    """구간(trunc)별 고유 세션 수. views_json 의 사이트뷰와 summary_json 이 같이 쓴다 —
+    두 곳이 따로 세면 포트폴리오와 이 페이지의 방문 수가 어긋난다."""
+    return (Hit.objects
+            .filter(hitcount__content_type__model='ranktable',
+                    created__gte=start)
+            .order_by()                     # views_json 의 order_by() 설명 참고
+            .annotate(bucket=trunc)
+            .values('bucket')
+            .annotate(n=Count('session', distinct=True)))
+
+
 @require_GET
 def views_json(request):
     """기간별 조회수 시계열.
@@ -315,13 +327,7 @@ def views_json(request):
     # /about/ 이나 /status/ 만 보고 나간 방문은 여기 잡히지 않는다.
     # 사이트 전체를 세려면 모든 페이지에 조회 기록을 남겨야 하는데, 그건
     # 지금 구조를 바꾸는 일이라 하지 않았다.
-    visit_rows = (Hit.objects
-                  .filter(hitcount__content_type__model='ranktable',
-                          created__gte=start)
-                  .order_by()                     # 위와 같은 이유
-                  .annotate(bucket=trunc)
-                  .values('bucket')
-                  .annotate(n=Count('session', distinct=True)))
+    visit_rows = _visit_rows(start, trunc)
     visits = [0] * len(keys)
     for r in visit_rows:
         b = r['bucket']
@@ -414,4 +420,56 @@ def health_json(request):
     }, status=200 if live_ok else 503)
     # Cloudflare 뒤다. 캐시되면 죽은 DB 가 살아 보인다.
     resp['Cache-Control'] = 'no-store'
+    return resp
+
+
+# --- 외부 공개 요약 ---------------------------------------------------------
+#
+# 개발자 포트폴리오(coldlapse.dev)가 브라우저에서 규모 숫자를 읽어 간다.
+# /status/ 는 HTML 이라 읽을 수 없고, views.json·health.json 은 CORS 헤더가 없어
+# 다른 사이트의 브라우저가 받지 못한다. 그래서 숫자만 담은 경로를 따로 둔다.
+#
+# - 허용하는 출처는 포트폴리오 하나다. 공개해도 되는 숫자지만 아무 사이트나
+#   방문자 브라우저로 이 경로를 두드리게 둘 이유는 없다.
+# - 서비스 현황 문장과 같은 값을 낸다. _service_numbers 와 _visit_rows 를 그대로 쓴다.
+# - 10분 캐시한다. /status/ 는 "지금 몇 명" 이라 캐시하지 않지만, 이 경로는 남의
+#   페이지가 열릴 때마다 불리고 365일치 조회 기록을 훑는다. 몇 분 늦는 것은 괜찮다.
+#   캐시는 워커별 메모리(default)라 워커마다 한 번씩은 센다.
+SUMMARY_ORIGINS = frozenset({'https://coldlapse.dev'})
+SUMMARY_TTL = 600
+_SUMMARY_KEY = 'status:summary'
+
+
+def _summary():
+    data = cache.get(_SUMMARY_KEY)
+    if data is not None:
+        return data
+    now = timezone.localtime()
+    n = _service_numbers()
+    # views_json 의 '지난 365일' 과 같은 시작점 — 두 숫자가 같아야 한다
+    start = (now - PERIODS['year'][2]).replace(hour=0, minute=0, second=0, microsecond=0)
+    visits = sum(r['n'] for r in _visit_rows(start, TruncDate('created')))
+    data = {
+        'users': n['users'],
+        'playersWithRecord': n['players_with_record'],
+        'records': n['records'],
+        'charts': n['songs'],
+        'tables': n['tables'],
+        'visits365': visits,
+        'generatedAt': _iso(now),
+    }
+    cache.set(_SUMMARY_KEY, data, SUMMARY_TTL)
+    return data
+
+
+@require_safe
+def summary_json(request):
+    """서비스 규모 요약. 필드: users, playersWithRecord, records, charts, tables,
+    visits365(지난 365일 사이트뷰), generatedAt."""
+    resp = JsonResponse(_summary())
+    origin = request.META.get('HTTP_ORIGIN', '')
+    if origin in SUMMARY_ORIGINS:
+        resp['Access-Control-Allow-Origin'] = origin
+    resp['Vary'] = 'Origin'
+    resp['Cache-Control'] = 'public, max-age=%d' % SUMMARY_TTL
     return resp

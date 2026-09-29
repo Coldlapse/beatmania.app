@@ -25,6 +25,7 @@ JOBS = [
     ('test_urls.py',    [],     r'총 실패:\s*(\d+)', 0),
     ('untranslated.py', [],     r'번역이 빠진 원문:\s*(\d+)개', 0),
     ('health_json.py',  [],     r'총 실패:\s*(\d+)', 0),
+    ('summary_json.py', [],     r'총 실패:\s*(\d+)', 0),
     ('records_import.py', [],   r'총 실패:\s*(\d+)', 0),
     ('signup_flow.py',  [],     r'총 실패:\s*(\d+)', 0),
     ('watchtower_embed.py', [], r'총 실패:\s*(\d+)', 0),

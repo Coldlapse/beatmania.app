@@ -94,6 +94,9 @@ urlpatterns = [
     # 외부 감시탑이 1분마다 읽는다. 아래 status/<machine_id>/ 는 끝이 / 라 겹치지 않는다.
     url(r'^status/health\.json$', views_status.health_json,
         name='status_health_json'),
+    # 포트폴리오(coldlapse.dev)가 브라우저에서 읽는 규모 요약
+    url(r'^status/summary\.json$', views_status.summary_json,
+        name='status_summary_json'),
     url(r'^analytics/$',
         RedirectView.as_view(pattern_name='service_status', permanent=True)),
     # 일일 타건 기록. 로그인하지 않아도 열린다 — 리더보드가 있어서 남이 봐도
