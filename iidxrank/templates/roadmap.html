@@ -89,6 +89,25 @@
       <p class="mb-0">
         {% blocktrans %}이 사이트가 마음에 드셨다면 <a href="https://buymeacoffee.com/sadang" target="_blank" rel="noopener">커피 한 잔<i class="bi bi-cup-hot-fill ms-1"></i></a> 부탁드립니다. 서버 유지에 보탬이 됩니다.{% endblocktrans %}
       </p>
+
+      {% comment %}
+        후원자 목록 — 배지를 공개한 후원자만(iidxrank/supporters.public_list). 지정된 순서.
+        프로필을 비공개로 둔 사람은 서열표 링크 없이 이름만 둔다(링크가 404 라서).
+      {% endcomment %}
+      {% if supporters %}
+      <hr>
+      <div class="bm-supporters">
+        <h3 class="h6 mb-2"><i class="bi bi-cup-hot-fill me-1" aria-hidden="true"></i>{% trans '후원자 목록' %}</h3>
+        <ul class="bm-supporter-list">
+          {% for s in supporters %}
+          <li>{% if s.username %}<a href="/u/{{ s.username }}/">{{ s.nickname }}</a>{% else %}{{ s.nickname }}{% endif %}</li>
+          {% endfor %}
+        </ul>
+        <p class="small text-body-secondary mb-0">
+          {% trans '후원해 주신 분들께 진심으로 감사드립니다. 덕분에 서버를 유지하고 사이트를 계속 다듬을 수 있습니다.' %}
+        </p>
+      </div>
+      {% endif %}
     </div>
   </div>
   </div>

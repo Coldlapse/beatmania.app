@@ -379,6 +379,9 @@ def get_udata_from_player(player, username=None):
         userdata['has_avatar'] = bool(player.avatar)
         # 사이트 닉네임. 서열표에 보이는 DJ NAME(iidxnick)과는 별개다.
         userdata['nickname'] = (player.user.first_name or player.user.username)             if player.user else ''
+        # 후원자 배지. 공개한 후원자만 — 비공개면 본인 서열표에서도 보이지 않는다(설정에서 다시 켜면 보인다).
+        from iidxrank import supporters
+        userdata['supporter'] = supporters.is_public(player.user)
         # CPI(추정). 값이 없어도 칸은 보인다('-') — BPI 와 같다. 프로필이 CPI 계산 때문에 깨지면 안 된다 —
         # 실패하거나 기능이 꺼져 있으면 칸만 빠진다.
         userdata['cpi_badge'] = False

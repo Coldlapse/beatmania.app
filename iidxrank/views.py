@@ -227,7 +227,8 @@ def converter(request):
 def roadmap(request):
     # 템플릿 이름은 roadmap.html 그대로다. 개발자 소개가 위에 붙었을 뿐
     # 로드맵이 이 페이지의 본체라, 파일까지 옮기면 이력만 끊긴다.
-    return render(request, 'roadmap.html')
+    from iidxrank import supporters
+    return render(request, 'roadmap.html', {'supporters': supporters.public_list()})
 
 
 def privacy(request):
@@ -328,8 +329,9 @@ def account(request):
     # 여기서 만들어 준다 - 가입 때와 같은 함수라 결과도 같다.
     if (player is None):
         player = rp.newplayer(user)
+    backer = models.Supporter.objects.filter(user=user).first()
     if (request.method == "POST"):
-        form = forms.AccountForm(request.POST)
+        form = forms.AccountForm(request.POST, supporter=backer is not None)
         avatar_form = forms.AvatarForm(request.POST, request.FILES)
 
         # 사진 삭제는 폼 유효성과 무관하게 처리한다
@@ -358,10 +360,14 @@ def account(request):
             player.private = bool(cd.get('private'))
             user.save()
             player.save()
+            if backer is not None:
+                backer.public = bool(cd.get('supporter_public'))
+                backer.save(update_fields=['public'])
             return redirect('home')
     else:
         avatar_form = forms.AvatarForm()
-        form = forms.AccountForm(initial={
+        form = forms.AccountForm(supporter=backer is not None, initial={
+            'supporter_public': backer.public if backer else True,
             'first_name': user.first_name,
             'iidxid': player.iidxid,
             'iidxnick': player.iidxnick,

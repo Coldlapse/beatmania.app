@@ -102,6 +102,89 @@
     {% endfor %}
   </div>
 
+  {% comment %}
+    후원자 지정. 아이디·이메일 일부로 찾아 지정·해제한다(views_manage.supporter_*).
+    공개 여부는 본인이 계정 설정에서 정한다 — 여기서는 보기만 한다.
+  {% endcomment %}
+  <h2 class="bm-panel-title mb-2" id="supporters">{% trans '후원자' %}</h2>
+  <div class="card bm-panel mb-5">
+    <div class="card-body">
+      {% if notice %}
+      <div class="alert alert-success py-2 small" role="status">{{ notice }}</div>
+      {% endif %}
+      <form method="GET" action="#supporters" class="d-flex gap-2 mb-3">
+        <input type="search" name="q" value="{{ q }}" class="form-control form-control-sm"
+               placeholder="{% trans '아이디 또는 이메일' %}" aria-label="{% trans '아이디 또는 이메일' %}" required>
+        <button type="submit" class="btn btn-sm btn-primary text-nowrap">
+          <i class="bi bi-search me-1" aria-hidden="true"></i>{% trans '검색' %}</button>
+      </form>
+
+      {% if searched %}
+      <div class="table-scroll mb-4">
+        <table class="table table-sm align-middle mb-0">
+          <thead><tr><th>{% trans '아이디' %}</th><th>{% trans '닉네임' %}</th><th>{% trans '이메일' %}</th><th></th></tr></thead>
+          <tbody>
+          {% for u in found %}
+            <tr>
+              <td class="text-nowrap"><a href="/u/{{ u.username }}/" target="_blank" rel="noopener">{{ u.username }}</a></td>
+              <td>{{ u.first_name|default:"-" }}</td>
+              <td class="small text-body-secondary">{{ u.email|default:"-" }}</td>
+              <td class="text-end">
+                {% if u.backer %}
+                <span class="badge text-bg-warning me-1">{% trans '후원자' %}</span>
+                {% else %}
+                <form method="POST" action="{% url 'manage_supporter_add' %}" class="d-inline-flex gap-1"
+                      data-confirm="{{ u.username }} 님을 후원자로 지정할까요?">
+                  {% csrf_token %}
+                  <input type="hidden" name="user_id" value="{{ u.pk }}">
+                  <input type="hidden" name="q" value="{{ q }}">
+                  <input type="text" name="note" class="form-control form-control-sm" style="width: 11rem"
+                         placeholder="{% trans '메모(선택)' %}" maxlength="200">
+                  <button type="submit" class="btn btn-sm btn-outline-primary text-nowrap">{% trans '후원자로 지정' %}</button>
+                </form>
+                {% endif %}
+              </td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="4" class="text-center text-body-secondary py-3">{% trans '찾은 사용자가 없습니다.' %}</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+
+      <h3 class="h6">{% blocktrans with n=supporters|length %}지정된 후원자 {{ n }}명{% endblocktrans %}</h3>
+      <div class="table-scroll">
+        <table class="table table-sm align-middle mb-0">
+          <thead><tr><th>{% trans '아이디' %}</th><th>{% trans '닉네임' %}</th><th>{% trans '지정일' %}</th>
+            <th>{% trans '공개' %}</th><th>{% trans '메모' %}</th><th></th></tr></thead>
+          <tbody>
+          {% for s in supporters %}
+            <tr>
+              <td class="text-nowrap"><a href="/u/{{ s.user.username }}/" target="_blank" rel="noopener">{{ s.user.username }}</a></td>
+              <td>{{ s.user.first_name|default:"-" }}</td>
+              <td class="small text-nowrap">{{ s.since|date:"Y-m-d" }}</td>
+              <td>{% if s.public %}<i class="bi bi-eye" title="{% trans '공개' %}"></i>{% else %}<i class="bi bi-eye-slash text-body-secondary" title="{% trans '비공개' %}"></i>{% endif %}</td>
+              <td class="small text-body-secondary">{{ s.note|default:"-" }}</td>
+              <td class="text-end">
+                <form method="POST" action="{% url 'manage_supporter_remove' %}"
+                      data-confirm="{{ s.user.username }} 님의 후원자 지정을 해제할까요?">
+                  {% csrf_token %}
+                  <input type="hidden" name="user_id" value="{{ s.user_id }}">
+                  <input type="hidden" name="q" value="{{ q }}">
+                  <button type="submit" class="btn btn-sm btn-outline-danger text-nowrap">{% trans '해제' %}</button>
+                </form>
+              </td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="6" class="text-center text-body-secondary py-3">{% trans '아직 지정된 후원자가 없습니다.' %}</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <h2 class="bm-panel-title mb-2">{% trans '실행 기록' %}</h2>
   <div class="card bm-panel">
     <div class="card-body">

@@ -19,7 +19,8 @@
         {% endif %}
       </div>
       <div class="profile-text-wrapper">
-        <h3 class="profile-djname">DJ {{ userdata.djname }}</h3>
+        <h3 class="profile-djname">DJ {{ userdata.djname }}{% if userdata.supporter %}
+          {% include "widgets/supporter_badge.html" %}{% endif %}</h3>
         <p class="profile-iidxid">{{ userdata.iidxid }}</p>
         <div class="profile-dan-wrapper">
           <span class="profile-dan dan-sp dan{{ userdata.spclass }}">{{ userdata.spclassstr }}</span>

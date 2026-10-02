@@ -12,10 +12,18 @@ import json
 from django.contrib.auth.decorators import user_passes_test
 from django.http import Http404, JsonResponse
 from django.shortcuts import redirect, render
+from django.urls import reverse
+from urllib.parse import urlencode
 from django.views.decorators.http import require_POST
 
+from django.contrib.auth.models import User
+from django.db.models import Q
+
+from iidxrank import models
 from update import runner
 from update.models import CommandRun
+
+SUPPORTER_SEARCH_LIMIT = 20
 
 
 def _is_staff(user):
@@ -33,12 +41,55 @@ def dashboard(request):
     runner.reap_stale()
     running = CommandRun.objects.filter(
         status__in=[CommandRun.PENDING, CommandRun.RUNNING]).first()
+    q = request.GET.get('q', '').strip()[:100]
+    found = []
+    if q:
+        # 아이디·이메일 일부로 찾는다. 정확히 같은 것을 먼저 보인다.
+        qs = (User.objects.filter(Q(username__icontains=q) | Q(email__icontains=q))
+              .select_related('supporter').order_by('username'))[:SUPPORTER_SEARCH_LIMIT]
+        found = sorted(qs, key=lambda u: (u.username.lower() != q.lower() and u.email.lower() != q.lower()))
+        for u in found:
+            u.backer = getattr(u, 'supporter', None)   # 없으면 RelatedObjectDoesNotExist(AttributeError) → None
     return render(request, 'manage/dashboard.html', {
         'commands': runner.COMMANDS,
         'runs': CommandRun.objects.all()[:20],
         'running': running,
         'error': request.session.pop('manage_error', None),
+        'notice': request.session.pop('manage_notice', None),
+        'q': q,
+        'found': found,
+        'searched': bool(q),
+        'supporters': models.Supporter.objects.select_related('user').all(),
     })
+
+
+def _back_to_supporters(request):
+    q = request.POST.get('q', '')
+    url = reverse('manage_dashboard')
+    return redirect('%s?%s#supporters' % (url, urlencode({'q': q})) if q else url + '#supporters')
+
+
+@staff_only
+@require_POST
+def supporter_add(request):
+    """후원자로 지정한다. 공개 여부는 본인이 정한다(기본 공개)."""
+    user = User.objects.filter(pk=request.POST.get('user_id')).first()
+    if user is None:
+        request.session['manage_error'] = '사용자를 찾지 못했습니다.'
+        return _back_to_supporters(request)
+    note = request.POST.get('note', '').strip()[:200]
+    _s, created = models.Supporter.objects.get_or_create(user=user, defaults={'note': note})
+    request.session['manage_notice'] = ('%s 님을 후원자로 지정했습니다.' if created else '%s 님은 이미 후원자입니다.') % user.username
+    return _back_to_supporters(request)
+
+
+@staff_only
+@require_POST
+def supporter_remove(request):
+    user = User.objects.filter(pk=request.POST.get('user_id')).first()
+    n = models.Supporter.objects.filter(user=user).delete()[0] if user else 0
+    request.session['manage_notice'] = ('%s 님의 후원자 지정을 해제했습니다.' % user.username) if n else '후원자가 아닙니다.'
+    return _back_to_supporters(request)
 
 
 @staff_only

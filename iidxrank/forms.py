@@ -292,6 +292,17 @@ class AccountForm(forms.Form):
             label=_('프로필 비공개'),
             help_text=_('켜면 다른 사람이 내 서열표와 유저 목록에서 나를 볼 수 없습니다.'),
             widget=forms.CheckboxInput(), required=False)
+    # 후원자에게만 생기는 칸(__init__ 에서 지운다). 기본값은 공개(models.Supporter.public).
+    supporter_public = forms.BooleanField(
+            label=_('후원자 배지 공개'),
+            help_text=_('끄면 서열표(내 서열표 포함)와 리더보드에서 Supporter 배지가 보이지 않고, 프로젝트 소개의 '
+                        '후원자 목록에서도 빠집니다. 언제든 다시 켜면 바로 보입니다.'),
+            widget=forms.CheckboxInput(), required=False)
+
+    def __init__(self, *args, supporter=False, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not supporter:
+            del self.fields['supporter_public']
 
 
 class SetPasswordForm(forms.Form):

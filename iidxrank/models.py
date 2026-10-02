@@ -405,3 +405,18 @@ class BpiBest(models.Model):
     player = models.OneToOneField(Player, on_delete=models.CASCADE, related_name='bpi_best')
     value = models.FloatField()
     updated_at = models.DateTimeField(auto_now=True)
+
+
+class Supporter(models.Model):
+    """후원자(Buy me a coffee 등). 관리자가 대시보드에서 지정한다(views_manage.supporters).
+
+    계정(User)에 붙인다 — Player 는 계정당 여러 행이 될 수 있는 구조라 피했다.
+    public 이 꺼져 있으면 어디에도(본인 서열표 포함) 배지를 내지 않는다. 본인이 계정 설정에서 바꾼다.
+    """
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='supporter')
+    public = models.BooleanField(default=True)
+    since = models.DateTimeField(auto_now_add=True)
+    note = models.CharField(max_length=200, blank=True)   # 관리자 메모(후원 날짜·경로 등). 화면에 내지 않는다
+
+    class Meta:
+        ordering = ['since']

@@ -154,6 +154,8 @@ urlpatterns = [
     # --- 관리자 대시보드 (staff 전용) --------------------------------------
     url(r'^manage/$', views_manage.dashboard, name='manage_dashboard'),
     url(r'^manage/run/$', views_manage.run_command, name='manage_run_command'),
+    url(r'^manage/supporters/add/$', views_manage.supporter_add, name='manage_supporter_add'),
+    url(r'^manage/supporters/remove/$', views_manage.supporter_remove, name='manage_supporter_remove'),
     url(r'^manage/run/(?P<run_id>[0-9]+)/$', views_manage.run_detail, name='manage_run'),
     url(r'^manage/run/(?P<run_id>[0-9]+)/log/$', views_manage.run_log, name='manage_run_log'),
     url(r'^manage/run/(?P<run_id>[0-9]+)/abort/$', views_manage.abort_run, name='manage_run_abort'),

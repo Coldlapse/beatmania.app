@@ -429,6 +429,9 @@ msgstr "beatmania.app has <b>%(users)s</b> users, and <b>%(players)s</b> of them
 msgid "beatmania.app 은 %(phrase)s <b>%(n)s</b> 번의 방문을 기록했습니다."
 msgstr "beatmania.app recorded <b>%(n)s</b> visits %(phrase)s."
 
+msgid "beatmania.app 을 후원해 주신 분입니다."
+msgstr "This person has supported beatmania.app."
+
 msgid "beatmania.app 프로젝트의 개발 진행 상황과 앞으로 업데이트될 기능들입니다."
 msgstr "Development progress of the beatmania.app project and what is coming next."
 
@@ -609,6 +612,9 @@ msgstr "Song list"
 msgid "곡 제목 검색"
 msgstr "Search song title"
 
+msgid "공개"
+msgstr "Public"
+
 msgid "공개를 원하지 않으면 가입 후 <b>설정 → 프로필 비공개</b>를 켜면 됩니다. 켜면 이 주소로 접속해도 아무것도 보이지 않고, 유저 목록에도 나타나지 않습니다. 언제든 다시 끌 수 있습니다."
 msgstr "If you would rather stay hidden, turn on <b>Settings → Private profile</b> after signing up. Then this URL shows nothing and you will not appear in the user list. You can turn it back off at any time."
 
@@ -656,6 +662,12 @@ msgstr "No data"
 
 msgid "기록한 날"
 msgstr "Days logged"
+
+msgid "끄면 다른 사람에게 Supporter 배지가 보이지 않고 프로젝트 소개의 후원자 목록에서도 빠집니다. 내 서열표에서는 나에게만 흐리게 보입니다."
+msgstr "When off, other people will not see your Supporter badge and you are left out of the supporter list on the About page. On your own rank table it stays visible, dimmed, only to you."
+
+msgid "끄면 서열표(내 서열표 포함)와 리더보드에서 Supporter 배지가 보이지 않고, 프로젝트 소개의 후원자 목록에서도 빠집니다. 언제든 다시 켜면 바로 보입니다."
+msgstr "When off, your Supporter badge is hidden on rank tables (including your own) and leaderboards, and you are left out of the supporter list on the About page. Turn it back on any time to show it again."
 
 msgid "날짜"
 msgstr "Date"
@@ -807,6 +819,12 @@ msgstr "Request a verification code first."
 msgid "메뉴 열기"
 msgstr "Open menu"
 
+msgid "메모"
+msgstr "Note"
+
+msgid "메모(선택)"
+msgstr "Note (optional)"
+
 msgid "메일로 받은 6자리 숫자"
 msgstr "The 6-digit number from the email"
 
@@ -866,6 +884,9 @@ msgstr "If you did not make this change, please tell the operator on the site Di
 
 msgid "불러오는 중…"
 msgstr "Loading…"
+
+msgid "비공개"
+msgstr "Private"
 
 msgid "비공개로 설정되어 있거나, 존재하지 않는 아이디입니다."
 msgstr "It is either set to private, or the username does not exist."
@@ -1083,6 +1104,9 @@ msgstr "your-id"
 msgid "아이디 — 공개 프로필 주소가 됩니다. 가입 후 바꿀 수 없습니다."
 msgstr "ID — becomes your public profile address. Cannot be changed after signup."
 
+msgid "아이디 또는 이메일"
+msgstr "Username or email"
+
 msgid "아이디 찾기"
 msgstr "Find ID"
 
@@ -1109,6 +1133,9 @@ msgstr "No records yet. Connect IIDXwidget and they will show up here."
 
 msgid "아직 올라온 공지가 없습니다."
 msgstr "No announcements yet."
+
+msgid "아직 지정된 후원자가 없습니다."
+msgstr "No supporters yet."
 
 msgid "앱"
 msgstr "App"
@@ -1464,6 +1491,15 @@ msgstr "in the last 7 days"
 msgid "지난 기록"
 msgstr "History"
 
+msgid "지정된 후원자 %(n)s명"
+msgstr "%(n)s supporters"
+
+msgid "지정일"
+msgstr "Since"
+
+msgid "찾은 사용자가 없습니다."
+msgstr "No users found."
+
 msgid "채보마다 가장 높은 램프 하나를, 그 램프의 적정CPI 가 높은 순으로 보여 줍니다. 달성 확률은 이 CPI 의 플레이어가 그 램프를 달성할 확률입니다 — 낮을수록 실력에 비해 잘 해낸 기록입니다."
 msgstr "Your best lamp on each chart, sorted by that lamp's appropriate CPI. The chance is how likely a player at this CPI would achieve it — the lower, the more impressive for your level."
 
@@ -1653,6 +1689,9 @@ msgstr "No records in this period."
 msgid "해당 기간에 조회된 기록이 없습니다."
 msgstr "No views in this period."
 
+msgid "해제"
+msgstr "Remove"
+
 msgid "현재 비밀번호"
 msgstr "Current password"
 
@@ -1679,6 +1718,24 @@ msgstr "Used only for your account. Never shared."
 
 msgid "회원가입을 마무리해 주세요"
 msgstr "Finish creating your account"
+
+msgid "후원자"
+msgstr "Supporters"
+
+msgid "후원자 목록"
+msgstr "Supporters"
+
+msgid "후원자 배지 공개"
+msgstr "Show supporter badge"
+
+msgid "후원자 배지를 비공개로 두어 나에게만 보입니다. 계정 설정에서 바꿀 수 있습니다."
+msgstr "Your supporter badge is set to private, so only you can see it. You can change this in account settings."
+
+msgid "후원자로 지정"
+msgstr "Mark as supporter"
+
+msgid "후원해 주신 분들께 진심으로 감사드립니다. 덕분에 서버를 유지하고 사이트를 계속 다듬을 수 있습니다."
+msgstr "Heartfelt thanks to everyone who has supported the site. Your support keeps the server running and lets me keep improving the site."
 
 msgid "흰숫 변환기"
 msgstr "Sudden+ Converter"

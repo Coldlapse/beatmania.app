@@ -79,6 +79,9 @@ def _leaderboard(key, request_user):
     ids = [r['user_id'] for r in rows[:TOP_N]]
     players = {p.user_id: p for p in
                models.Player.objects.filter(user_id__in=ids)}
+    # 후원자 배지(공개한 사람만). 같은 이유로 한 번에 읽는다.
+    from iidxrank import supporters
+    backers = supporters.public_user_ids(ids)
 
     top = []
     for i, r in enumerate(rows[:TOP_N], 1):
@@ -91,6 +94,7 @@ def _leaderboard(key, request_user):
             'username': r['user__username'],
             'total': r['total'],
             'avatar': _avatar_url(p),
+            'supporter': r['user_id'] in backers,
             'is_me': bool(request_user and request_user.is_authenticated
                           and r['user_id'] == request_user.id),
         })
