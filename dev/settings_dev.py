@@ -61,7 +61,7 @@ SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
 # 이메일이 그대로 들어 있다는 뜻이다. 여기서 SMTP 를 켜 둔 채로 무언가를
 # 잘못 돌리면 그 사람들에게 진짜 메일이 나간다. 되돌릴 수 없는 종류의 사고다.
 #
-# 그래서 .env 에 Gmail 자격증명이 들어 있어도 dev 는 콘솔을 쓴다.
+# 그래서 .env 에 메일(Resend) 자격증명이 들어 있어도 dev 는 콘솔을 쓴다.
 # 실제 발송을 한 번 시험해야 할 때만 명시적으로 켠다.
 #
 #   set DEV_REAL_EMAIL=1  &&  python manage.py runserver ...

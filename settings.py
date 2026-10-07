@@ -331,14 +331,16 @@ DISCORD_NOTICE_CHANNELS = env_list('DISCORD_NOTICE_CHANNELS')
 # 계정 인증(가입·이메일 변경·아이디/비밀번호 찾기)에만 쓴다. 마케팅 메일은
 # 보내지 않는다 — 가입 폼에 그렇게 적어 두었으므로 코드도 그래야 한다.
 #
-# Gmail 은 계정 비밀번호로 SMTP 로그인을 받지 않는다. 2단계 인증을 켜고
-# '앱 비밀번호'(16자)를 따로 발급해 EMAIL_HOST_PASSWORD 에 넣는다.
+# 발송은 Resend(2026-10-08 부터, 전에는 Gmail SMTP). Resend 의 SMTP 입구를 쓴다 — 사용자 이름은
+# 'resend', 비밀번호는 API 키. HTTP API 대신 SMTP 를 고른 것은 Django 기본 백엔드를 그대로 쓰고
+# 백그라운드 발송·시간 제한(accounts._later, EMAIL_TIMEOUT)을 바꾸지 않기 위해서다.
+# 보내는 주소는 Resend 에 등록한 도메인(beatmania.app, DKIM resend._domainkey)이어야 한다.
 #
 # 값이 없으면 콘솔 백엔드로 떨어진다. 개발 중에 메일 서버 없이 인증 코드를
 # 터미널에서 확인하기 위해서다. 운영에서 실수로 값이 빠지면 메일이 조용히
 # 사라지는 대신 로그에 찍히므로, 그 사실을 알아챌 수 있다.
 # ---------------------------------------------------------------------------
-EMAIL_HOST = env('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_HOST = env('EMAIL_HOST', 'smtp.resend.com')
 EMAIL_PORT = int(env('EMAIL_PORT', '587'))
 EMAIL_USE_TLS = env_bool('EMAIL_USE_TLS', True)
 EMAIL_HOST_USER = env('EMAIL_HOST_USER', '')
@@ -350,9 +352,8 @@ if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-# 받는 사람에게 보이는 주소. Gmail 은 EMAIL_HOST_USER 와 다른 주소로 보내면
-# 대개 거부하거나 갈아 끼운다. 굳이 다르게 두지 않는다.
-DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER or 'noreply@beatmania.app')
+# 받는 사람에게 보이는 주소. Resend 에 등록한 도메인이어야 한다(아니면 Resend 가 거부한다).
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', 'beatmania.app <noreply@beatmania.app>')
 
 # --- 계정 인증 정책 -------------------------------------------------------
 # 인증 코드 유효 시간과 재발송 간격. 둘 다 초 단위.

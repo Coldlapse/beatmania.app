@@ -487,15 +487,15 @@ ASCIIPasswordValidator             한글·이모지 (아래 참조)
 
 ## 메일 발송
 
-계정 인증에만 씁니다. SMTP 설정은 환경변수로 넣습니다.
+계정 인증에만 씁니다. [Resend](https://resend.com) 의 SMTP 입구로 보내며, 설정은 환경변수로 넣습니다.
 
 ```
-EMAIL_HOST=smtp.gmail.com
+EMAIL_HOST=smtp.resend.com
 EMAIL_PORT=587
 EMAIL_USE_TLS=true
-EMAIL_HOST_USER=...
-EMAIL_HOST_PASSWORD=...      # Gmail 은 '앱 비밀번호' 16자
-DEFAULT_FROM_EMAIL=...
+EMAIL_HOST_USER=resend
+EMAIL_HOST_PASSWORD=re_...   # Resend API 키
+DEFAULT_FROM_EMAIL=beatmania.app <noreply@beatmania.app>   # Resend 에 등록한 도메인
 ```
 
 `EMAIL_HOST_USER` 와 `EMAIL_HOST_PASSWORD` 가 **둘 다 있어야** SMTP 로 보냅니다.
