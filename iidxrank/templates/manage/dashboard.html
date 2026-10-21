@@ -21,7 +21,8 @@
   <div class="alert alert-info d-flex align-items-center justify-content-between flex-wrap gap-2" role="alert">
     <span>
       <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
-      <b>{{ running.command }}</b> 실행 중입니다. 끝나기 전에는 다른 작업을 시작할 수 없습니다.
+      <b>{{ running.command }}</b> {% if running.status == 'waiting' %}답을 기다리는 중입니다{% else %}실행 중입니다{% endif %}. 끝나기 전에는 다른 작업을 시작할 수 없습니다.
+      {% if running.status == 'waiting' %}<span class="d-block small mt-1">답했는데도 넘어가지 않으면 실행이 끊긴 것입니다 — 강제 해제 후 다시 실행하세요.</span>{% endif %}
     </span>
     <span class="d-flex gap-2">
       <a href="{% url 'manage_run' running.pk %}" class="btn btn-sm btn-primary">로그 보기</a>

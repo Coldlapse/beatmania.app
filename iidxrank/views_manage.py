@@ -40,7 +40,9 @@ def dashboard(request):
     # 안 하면 그 기록이 남아 이후 모든 실행을 막는다.
     runner.reap_stale()
     running = CommandRun.objects.filter(
-        status__in=[CommandRun.PENDING, CommandRun.RUNNING]).first()
+        # 입력 대기(WAITING)도 넣는다. 빠져 있어서, 질문을 띄운 채 실행 스레드가 죽으면(워커 재활용, 2026-10-22)
+        # 이 알림과 '강제 해제' 버튼이 사라져 잠금을 풀 길이 없었다.
+        status__in=[CommandRun.PENDING, CommandRun.RUNNING, CommandRun.WAITING]).first()
     q = request.GET.get('q', '').strip()[:100]
     found = []
     if q:
