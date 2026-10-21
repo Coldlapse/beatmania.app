@@ -113,6 +113,16 @@ try:
           RankItem.objects.filter(rankcategory__ranktable=tb, song=other).exists()
           and RankItem.objects.filter(rankcategory__ranktable=tb).count() == before)
 
+    print('=== 4b. 정규화하면 같아지는 두 곡(Zenith / ZEИITH) ===')
+    zs = list(Song.objects.filter(songtitle__in=['Zenith', 'ZEИITH'], songtype='SPA'))
+    if len(zs) == 2:
+        idx = p._song_index(Song.objects.filter(id__in=[z.id for z in zs]))
+        got = {z.songtitle: p._lookup(idx, z.songtitle, 'SPA') for z in zs}
+        check('제목이 정확히 같은 곡을 먼저 찾는다(둘 다 매칭)', got == {z.songtitle: z.id for z in zs}, str(got))
+        check('정확한 제목이 없으면 정규화 매칭은 여전히 두 후보라 못 찾음', p._lookup(idx, 'zenith', 'SPA') is None)
+    else:
+        print('SKIP 곡 DB 에 Zenith/ZEИITH SPA 가 없습니다')
+
     print('=== 5. 관리자 대시보드 ===')
     cmd = runner.COMMANDS_BY_NAME['updateSongInfinitas']
     opt = next((o for o in cmd.options if o.name == 'tables'), None)

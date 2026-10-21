@@ -159,7 +159,6 @@ class IIDXSheetParser:
 
     def _parse_sp11(self, sheet_info):
         """11레벨 탭 → (parsed_data, fail_count). 읽지 못하면 (None, 0)."""
-        from iidxrank.records_import import norm_title
         try:
             r = requests.get(self.SP11_SHEET % sheet_info['gid'], timeout=30)
             r.raise_for_status()
@@ -191,10 +190,7 @@ class IIDXSheetParser:
 
         hard = '超個人差' in headers
         offset = 1 if hard else 0                    # 하드는 초개인차가 맨 앞(정렬 1)
-        songs = {}
-        for sid, title, ty in Song.objects.filter(songlevel=sheet_info['level'], songtype__in=('SPH', 'SPA', 'SPL')) \
-                .values_list('id', 'songtitle', 'songtype'):
-            songs.setdefault((norm_title(title), ty), []).append(sid)
+        index = self._song_index(Song.objects.filter(songlevel=sheet_info['level'], songtype__in=('SPH', 'SPA', 'SPL')))
         song_obj = {s.id: s for s in Song.objects.filter(songlevel=sheet_info['level'])}
 
         parsed, fails = {}, []
@@ -216,11 +212,11 @@ class IIDXSheetParser:
                 m = self._RX_SUFFIX.search(text)
                 ty = 'SP' + m.group(1) if m else sheet_info['default_type']
                 title = text[:m.start()] if m else text
-                ids = songs.get((norm_title(title), ty), [])
-                if len(ids) != 1:
+                sid = self._lookup(index, title, ty)
+                if sid is None:
                     fails.append('%s [%s]' % (title, ty))
                     continue
-                parsed[ids[0]] = {'song': song_obj[ids[0]], 'cat_name': name,
+                parsed[sid] = {'song': song_obj[sid], 'cat_name': name,
                                   'c_type': c_type, 'c_sort': c_sort, 'score': 100}
         print(f"🔍 {len(parsed)}곡 분류, 곡 DB 에서 못 찾은 것 {len(fails)}곡")
         for f in fails[:30]:
@@ -265,28 +261,24 @@ class IIDXSheetParser:
         return rows
 
     def _parse_zasa(self, sheet_info):
-        """DP n레벨 → (parsed_data, fail_count). 곡 매칭은 SP11 과 같다: (정규화 제목, 타입)을
-        그 레벨의 곡으로 거르고 정확히 한 곡일 때만 받는다."""
-        from iidxrank.records_import import norm_title
+        """DP n레벨 → (parsed_data, fail_count). 곡 매칭은 SP11 과 같다(_lookup: 정확한 제목 → 정규화 제목,
+        그 레벨에서 딱 한 곡일 때만)."""
         rows = self._zasa_rows()
         if rows is None:
             return None, 0
         level = sheet_info['level']
-        songs = {}
-        for sid, title, ty in Song.objects.filter(songlevel=level, songtype__in=('DPH', 'DPA', 'DPL')) \
-                .values_list('id', 'songtitle', 'songtype'):
-            songs.setdefault((norm_title(title), ty), []).append(sid)
+        index = self._song_index(Song.objects.filter(songlevel=level, songtype__in=('DPH', 'DPA', 'DPL')))
         song_obj = {x.id: x for x in Song.objects.filter(songlevel=level, songtype__in=('DPH', 'DPA', 'DPL'))}
         parsed, fails = {}, []
         for title, ty, lv, val in rows:
             if lv != level:
                 continue
-            ids = songs.get((norm_title(title), ty), [])
-            if len(ids) != 1:
+            sid = self._lookup(index, title, ty)
+            if sid is None:
                 fails.append('%s [%s]' % (title, ty))
                 continue
             # c_sort 는 새 분류를 만들 때만 쓰인다. 순서는 반영 뒤 _renumber_numeric_categories 가 맞춘다
-            parsed[ids[0]] = {'song': song_obj[ids[0]], 'cat_name': val, 'c_type': 1,
+            parsed[sid] = {'song': song_obj[sid], 'cat_name': val, 'c_type': 1,
                               'c_sort': float(val), 'score': 100}
         print(f"🔍 {len(parsed)}곡 분류, 곡 DB 에서 못 찾은 것 {len(fails)}곡(INFINITAS 에 없는 곡 포함)")
         for f in fails[:30]:
@@ -313,6 +305,32 @@ class IIDXSheetParser:
             if c.sortindex != base + i:
                 c.sortindex = base + i
                 c.save(update_fields=['sortindex'])
+
+    @staticmethod
+    def _song_index(qs):
+        """(정확한 제목, 타입) 과 (정규화 제목, 타입) 두 조회표."""
+        from iidxrank.records_import import norm_title
+        exact, normed = {}, {}
+        for sid, title, ty in qs.values_list('id', 'songtitle', 'songtype'):
+            exact.setdefault((title.strip(), ty), []).append(sid)
+            normed.setdefault((norm_title(title), ty), []).append(sid)
+        return exact, normed
+
+    @staticmethod
+    def _lookup(index, title, ty):
+        """제목이 정확히 같은 곡을 먼저, 없으면 정규화 제목으로. 딱 한 곡일 때만 그 id, 아니면 None.
+
+        정규화는 키릴 И 를 라틴 n 으로 접는 등 비슷한 글자를 합친다. 그래서 'Zenith' 와 'ZEИITH'(둘 다 ☆11)가
+        같은 키가 되어 둘 다 '못 찾음' 이었다 — Zenith 는 원본 분류 변경이 반영되지 않았고, ZEИITH SPA 는
+        SP11 서열표에 한 번도 들어가지 못했다(2026-10-22). 동기화(records_import._Index)와 같은 순서로 찾는다.
+        """
+        from iidxrank.records_import import norm_title
+        exact, normed = index
+        hit = exact.get((title.strip(), ty), [])
+        if len(hit) == 1:
+            return hit[0]
+        cands = normed.get((norm_title(title), ty), [])
+        return cands[0] if len(cands) == 1 else None
 
     def _get_red_classes(self, soup):
         red_classes = []
