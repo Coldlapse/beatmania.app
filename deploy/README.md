@@ -403,8 +403,9 @@ sudo ./svc.sh start
 돌리는 대화형 명령이라 cron 에는 넣지 않습니다.
 이 명령은 SP12 서열표(구글 시트)에 더해 SP11 NORMAL·HARD 서열표도 동기화합니다.
 
-스코어 난이도표(SP10S·SP12S)는 이미지가 원본이라 `update/data/scoring_sp*.tsv` 를 고친 뒤
+스코어 난이도표(SP10S·SP11S·SP12S)는 이미지가 원본이라 `update/data/scoring_sp*.tsv` 를 고친 뒤
 `python manage.py load_scoring_tables` 로 무엇이 매칭되는지 먼저 보고, `--apply` 로 만듭니다.
+한 표만 만들려면 `--only SP11S` 처럼 줍니다(다시 만든 표는 updated 날짜가 그날로 바뀝니다).
 
 ---
 

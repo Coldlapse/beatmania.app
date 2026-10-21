@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""스코어 난이도표(SP10S · SP12S)를 데이터 파일에서 만든다.
+"""스코어 난이도표(SP10S · SP11S · SP12S)를 데이터 파일에서 만든다.
 
     python manage.py load_scoring_tables            # 무엇이 매칭되는지만 보여 준다
     python manage.py load_scoring_tables --apply    # 서열표를 새로 만든다(있으면 갈아 끼운다)
@@ -32,6 +32,8 @@ COPYRIGHT = 'beatmania.app'
 TABLES = [
     {'file': 'scoring_sp10.tsv', 'name': 'SP10S', 'title': 'IIDX INFINITAS SP ☆10 Scoring Rank by KENTAN', 'level': 10,
      'copyright': COPYRIGHT},
+    {'file': 'scoring_sp11.tsv', 'name': 'SP11S', 'title': 'IIDX INFINITAS SP ☆11 Scoring Rank by KENTAN', 'level': 11,
+     'copyright': COPYRIGHT},
     {'file': 'scoring_sp12.tsv', 'name': 'SP12S', 'title': 'IIDX INFINITAS SP ☆12 Scoring Rank by KENTAN', 'level': 12,
      'copyright': COPYRIGHT},
 ]
@@ -51,22 +53,22 @@ def read(path):
 
 
 def match(rows, level):
-    index = {}
+    # 정확한 제목을 먼저, 없으면 정규화 제목으로 찾는다. 정규화만 쓰면 'Zenith' 와 'ZEИITH'(키릴 И)처럼
+    # 같은 키가 되는 두 곡이 서로를 덮어 한쪽이 사라진다(☆11 에 실제로 있다, 2026-10-22).
+    # 정규화 쪽은 같은 (키, 타입) 에 곡이 둘 이상이면 고르지 않는다.
+    exact, normed = {}, {}
     for sid, title, ty in (models.Song.objects
                            .filter(songlevel=level, songtype__in=('SPA', 'SPH', 'SPL'))
                            .values_list('id', 'songtitle', 'songtype')):
-        index.setdefault(norm_title(title), {})[ty] = sid
-
-    def find(title, types):
-        hit = index.get(norm_title(title), {})
-        for ty in types:
-            if ty in hit:
-                return hit[ty]
-        return None
+        exact.setdefault(title.strip(), {})[ty] = sid
+        normed.setdefault(norm_title(title), {}).setdefault(ty, []).append(sid)
 
     def find_all(title, types):
-        hit = index.get(norm_title(title), {})
-        return [hit[ty] for ty in types if ty in hit]
+        hit = exact.get(title.strip())
+        if hit:
+            return [hit[ty] for ty in types if ty in hit]
+        hit = normed.get(norm_title(title), {})
+        return [hit[ty][0] for ty in types if len(hit.get(ty, [])) == 1]
 
     placed, missing, dup = {}, [], []
     for tier, title in rows:
@@ -93,9 +95,14 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('--apply', action='store_true', help='실제로 서열표를 만든다')
+        parser.add_argument('--only', nargs='+', choices=[t['name'] for t in TABLES],
+                            help='이 표만(예: --only SP11S). 안 주면 전부 — 다시 만든 표는 updated 날짜도 바뀐다')
 
     def handle(self, *args, **options):
+        only = set(options.get('only') or [])
         for t in TABLES:
+            if only and t['name'] not in only:
+                continue
             rows = read(os.path.join(DATA, t['file']))
             placed, missing, dup = match(rows, t['level'])
             self.stdout.write('[%s] 목록 %d곡 → 매칭 %d, 못 찾음 %d, 중복 %d'
