@@ -106,6 +106,10 @@ try:
     slots = sorted({r[1] for r in rows})
     check('레벨 10 미만·SPB·NP·모르는 램프는 버림', len(rows) == 6, str(rows))
     check('SPB 없음', 'SPB' not in slots, str(slots))
+    # MAX- 경계: 노트 1000(만점 2000)이면 17/18 = 1888.8… → 1889 부터 MAX-(8). Letter 는 AAA 로 온다
+    edge = records_import.parse(chr(10).join([HEAD] + [
+        row('edge %d' % e, {'SPA': (12, 'HC', 'AAA', e, 1000)}) for e in (1888, 1889, 2000)]) + chr(10))
+    check('MAX- 경계: 1888→AAA(7), 1889·2000→MAX-(8)', [r[4] for r in edge] == [7, 8, 8], str(edge))
 
     print('=== 2. 처음 반영 ===')
     r = records_import.apply(u, tsv, models.RecordSync.WEB)
@@ -114,7 +118,7 @@ try:
     check('못 찾은 곡 1개(모르는 곡)', r['unmatched'] == 1 and '존재하지' in r['unmatched_titles'][0],
           str(r['unmatched_titles']))
     check('A: HC(5) / AA(6)', rec(player, A.id) == (5, 6), str(rec(player, A.id)))
-    check('B: PFC→FC(7) / 만점→MAX(8)', rec(player, B.id) == (7, 8), str(rec(player, B.id)))
+    check('B: PFC→FC(7) / 만점→MAX-(8)', rec(player, B.id) == (7, 8), str(rec(player, B.id)))
     check('uən(라틴) → DB uәn(키릴)', rec(player, UEN.id) == (3, 5), str(rec(player, UEN.id)))
     check("'Take Me Higher' → 1003 에 NC(4)/B(4)", rec(player, TMH_UP.id) == (4, 4),
           str(rec(player, TMH_UP.id)))

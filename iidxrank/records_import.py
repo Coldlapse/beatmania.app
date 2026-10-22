@@ -47,8 +47,10 @@ MIN_LEVEL = 10
 # Reflux Lamp → playclear (iidxrank/iidx.py 의 getclearstring 순서)
 LAMP = {'NP': 0, 'F': 1, 'AC': 2, 'EC': 3, 'NC': 4, 'HC': 5, 'EX': 6,
         'FC': 7, 'PFC': 7}
-# Reflux Grade → playscore (서열표 편집의 data-rank 순서: F E D C B A AA AAA MAX)
+# Reflux Grade → playscore (서열표 편집의 data-rank 순서: F E D C B A AA AAA MAX-)
 GRADE = {'F': 0, 'E': 1, 'D': 2, 'C': 3, 'B': 4, 'A': 5, 'AA': 6, 'AAA': 7}
+# 8 은 화면에서 MAX- 로 보인다(static/css/common.css). Reflux 의 Letter 는 AAA 까지라 EX 로 직접 판정한다.
+# MAX- 는 만점의 17/18(94.44…%) 이상 — 게임의 등급 경계(만점의 n/9)와 같은 방식으로 반 칸 위다.
 GRADE_MAX = 8
 
 # 들어오는 파일 한도. 실제 tracker.tsv 는 수백 KB 로 본다(실물로 재지 못함).
@@ -134,7 +136,7 @@ def parse(text):
             notes = _int(col('Note Count'))
             if clear == 0 and ex == 0:
                 continue                    # 안 친 채보
-            if notes > 0 and ex >= notes * 2:
+            if notes > 0 and ex * 9 >= notes * 17:      # ex >= 노트×2×17/18, 정수로
                 grade = GRADE_MAX
             else:
                 grade = GRADE.get(col('Letter').strip(), 0)
